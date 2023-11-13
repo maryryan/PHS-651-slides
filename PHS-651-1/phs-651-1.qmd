@@ -1,25 +1,61 @@
 ---
-title: "PHS 651: Advanced Regression Methods"
-subtitle: "Lecture 1"
-format: revealjs
-editor: visual
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+execute: 
+   eval: true
+   echo: true
 ---
 
-## Quarto
 
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+<h1> PHS 651: Advanced regression methods </h1>
 
-## Bullets
+<h2> Lecture 1: Introduction </h2>
 
-When you click the **Render** button a document will be generated that includes:
+<hr>
 
--   Content authored with markdown
--   Output from executable code
+<h3> Mary Ryan, PhD </h3>
 
-## Code
+<h3> date! </h3>
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+---
 
-```{r}
-1 + 1
-```
+## Our focus
+
+- What you covered in PHS 552
+   - What is regression
+   - How to build a mean model
+   - Models for different types of outcomes (normal, logistic, Poisson, etc)
+   - What happens when constant variance breaks?
+
+. . .
+
+- What we'll focus on here:
+   - Same foundations, different style: what happens when observations **are not** independent
+      - Clustered data
+      - Longitudinal/repeated measures data
+      - Time-to-event/survival data
+   
+---
+
+## Outline
+
+- Review of generalized linear models, weighted least squares
+- Model misspecification
+- What are clustered & longitudinal studies?
+- EDA
+- Linear mixed effect models (LMEs), generalized linear mixed models (GLMMs)
+- Generalized estimationg equations (GEEs)
+- Longitudinal smoothing
+- Time-to-event/survival analysis
+
+   

@@ -33,6 +33,8 @@
   <link href="phs-651-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="phs-651-1_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="phs-651-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
   <link href="phs-651-1_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
 
@@ -340,8 +342,8 @@ Mary Ryan, PhD
 date!
 </h3>
 </section>
-<section id="our-focus" class="slide level2">
-<h2>Our focus</h2>
+<section id="how-this-is-different" class="slide level2">
+<h2>How this is different</h2>
 <ul>
 <li>What you covered in PHS 552
 <ul>
@@ -355,15 +357,40 @@ date!
 <ul>
 <li>What we’ll focus on here:
 <ul>
-<li>Same foundations, different style: what happens when observations <strong>are not</strong> independent
-<ul>
-<li>Clustered data</li>
-<li>Longitudinal/repeated measures data</li>
-<li>Time-to-event/survival data</li>
-</ul></li>
+<li>Same foundations, different style: what happens when observations <span class="alert">are not</span> independent <!-- - Clustered data --> <!-- - Longitudinal/repeated measures data --> <!-- - Time-to-event/survival data --></li>
 </ul></li>
 </ul>
 </div>
+</section>
+<section id="our-focus" class="slide level2">
+<h2>Our focus</h2>
+<ul>
+<li>We’ve previously assumed all observations are <span class="alert">independent</span>
+<ul>
+<li>Can be a reasonable assumption in certain settings (certain cross-sectional studies)</li>
+<li>When not reasonable, methods from PHS 552 can still be useful if other tools aren’t available</li>
+</ul></li>
+<li>Here, we’ll be <span class="alert">expanding our statistical toolbox</span>
+<ul>
+<li>Allows us to be <span class="alert">more precise</span> when independence isn’t reasonable</li>
+<li>Lets us ask a <span class="alert">wider variety</span> of questions</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<ul>
+<li>When might independence not be reasonable?
+<ul>
+<li>Group membership makes in-group outcome variability different from between-group variability
+<ul>
+<li>i.e., health outcomes correlated by neighborhood</li>
+</ul></li>
+<li>We’re observing the same individuals repeatedly (longitudinal data)</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="examples" class="slide level2">
+<h2>Examples!</h2>
 </section>
 <section id="outline" class="slide level2">
 <h2>Outline</h2>
@@ -377,6 +404,45 @@ date!
 <li>Longitudinal smoothing</li>
 <li>Time-to-event/survival analysis</li>
 </ul>
+</section>
+<section id="background" class="slide level2">
+<h2>Background</h2>
+<ul>
+<li>Familiarity with basic statistical inference concepts (i.e., hypothesis tesitng, confidence intervals)</li>
+<li>Basic regression/ANOVA</li>
+<li>How to build a mean model (i.e., confounding and precision variables)</li>
+<li>Familiarity with matrix notation
+<ul>
+<li>Do NOT need to know advanced linear algebra/calculus</li>
+<li>Should be familiar with matrix addition/subtraction/multiplication/inversion</li>
+<li>Won’t make you do the nitty gritty but will help you understand how some concepts work</li>
+<li>We’ll review and I’ll post resources</li>
+</ul></li>
+</ul>
+</section>
+<section id="review-ordinary-linear-regression" class="slide level2">
+<h2>Review: ordinary linear regression</h2>
+<div class="{columns}">
+<div class="column" style="width:45%;">
+<p><span class="math display">\[Y_i = \beta_0 + \beta_1 X_i + \epsilon_i\]</span></p>
+<ul>
+<li><span class="math inline">\(Y_i\)</span>: outcome/dependent variable for individual <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(X_i\)</span>: treatment/exposure/independent variable for individual <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(\beta_0\)</span>: model intercept
+<ul>
+<li>Interpretation: <br> <br> <br> <br></li>
+</ul></li>
+<li><span class="math inline">\(\beta_1\)</span>: model slope
+<ul>
+<li>Interpretation: <br> <br> <br> <br></li>
+</ul></li>
+<li><span class="math inline">\(\epsilon_i\)</span>: error term</li>
+</ul>
+</div>
+<div class="column" style="width:45%;">
+<p><br> What do I mean by the <span class="alert">mean model</span>? <span class="math display">\[E[Y_i] = \beta_0 + \beta_1 X_i\]</span></p>
+</div>
+</div>
 
 <img src="POPUHEALSMPH_color-flush.png" class="slide-logo r-stretch"><div class="footer footer-default">
 
@@ -392,6 +458,7 @@ date!
   <script src="phs-651-1_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
   <script src="phs-651-1_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
   <script src="phs-651-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
   <script src="phs-651-1_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
@@ -413,7 +480,8 @@ date!
 'autoAnimateEasing': "ease",
 'autoAnimateDuration': 1,
 'autoAnimateUnmatched': true,
-'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
 'smaller': false,
  
         // Display controls in the bottom right corner
@@ -584,7 +652,7 @@ date!
         },
 
         // reveal.js plugins
-        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
 
           RevealMath,
           RevealNotes,

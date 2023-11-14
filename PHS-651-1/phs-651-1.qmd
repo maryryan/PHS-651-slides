@@ -11,6 +11,7 @@ format:
       highlight-style: a11y
       height: 1080
       width: 1920
+      chalkboard: true
 execute: 
    eval: true
    echo: true
@@ -29,7 +30,7 @@ execute:
 
 ---
 
-## Our focus
+## How this is different
 
 - What you covered in PHS 552
    - What is regression
@@ -40,11 +41,34 @@ execute:
 . . .
 
 - What we'll focus on here:
-   - Same foundations, different style: what happens when observations **are not** independent
-      - Clustered data
-      - Longitudinal/repeated measures data
-      - Time-to-event/survival data
+   - Same foundations, different style: what happens when observations [are not]{.alert} independent
+      <!-- - Clustered data -->
+      <!-- - Longitudinal/repeated measures data -->
+      <!-- - Time-to-event/survival data -->
+
+---
+
+## Our focus
+
+- We've previously assumed all observations are [independent]{.alert}
+   - Can be a reasonable assumption in certain settings (certain cross-sectional studies)
+   - When not reasonable, methods from PHS 552 can still be useful if other tools aren't available
    
+- Here, we'll be [expanding our statistical toolbox]{.alert}
+   - Allows us to be [more precise]{.alert} when independence isn't reasonable
+   - Lets us ask a [wider variety]{.alert} of questions
+
+. . .
+
+- When might independence not be reasonable?
+   - Group membership makes in-group outcome variability different from between-group variability
+      - i.e., health outcomes correlated by neighborhood
+   - We're observing the same individuals repeatedly (longitudinal data)
+
+---
+
+## Examples!
+
 ---
 
 ## Outline
@@ -58,4 +82,50 @@ execute:
 - Longitudinal smoothing
 - Time-to-event/survival analysis
 
+---
+
+## Background
+
+- Familiarity with basic statistical inference concepts (i.e., hypothesis tesitng, confidence intervals)
+- Basic regression/ANOVA
+- How to build a mean model (i.e., confounding and precision variables)
+- Familiarity with matrix notation
+   - Do NOT need to know advanced linear algebra/calculus
+   - Should be familiar with matrix addition/subtraction/multiplication/inversion
+   - Won't make you do the nitty gritty but will help you understand how some concepts work
+   - We'll review and I'll post resources
    
+---
+
+## Review: ordinary linear regression
+::: {columns}
+
+::: {.column width="45%"}
+$$Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$$
+
+- $Y_i$: outcome/dependent variable for individual $i$
+- $X_i$: treatment/exposure/independent variable for individual $i$
+- $\beta_0$: model intercept
+   - Interpretation:
+   <br>
+   <br>
+   <br>
+   <br>
+- $\beta_1$: model slope
+   - Interpretation:
+   <br>
+   <br>
+   <br>
+   <br>
+   
+- $\epsilon_i$: error term
+
+:::
+
+::: {.column width="45%"}
+<br>
+What do I mean by the [mean model]{.alert}?
+$$E[Y_i] = \beta_0 + \beta_1 X_i$$ 
+:::
+
+:::

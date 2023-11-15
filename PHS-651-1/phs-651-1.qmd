@@ -53,6 +53,7 @@ execute:
 - We've previously assumed all observations are [independent]{.alert}
    - Can be a reasonable assumption in certain settings (certain cross-sectional studies)
    - When not reasonable, methods from PHS 552 can still be useful if other tools aren't available
+      - We'll explore the boundaries of this
    
 - Here, we'll be [expanding our statistical toolbox]{.alert}
    - Allows us to be [more precise]{.alert} when independence isn't reasonable
@@ -62,9 +63,15 @@ execute:
 
 - When might independence not be reasonable?
    - Group membership makes in-group outcome variability different from between-group variability
-      - i.e., health outcomes correlated by neighborhood
+      - i.e., health outcomes correlated by neighborhood, occular outcomes correlated by individual
    - We're observing the same individuals repeatedly (longitudinal data)
 
+. . .
+
+- Non-independence we [won't]{.alert} be getting into
+   - Time series modeling
+   - Spatial statistical modeling
+   
 ---
 
 ## Examples!
@@ -75,25 +82,29 @@ execute:
 
 - Review of generalized linear models, weighted least squares
 - Model misspecification
-- What are clustered & longitudinal studies?
-- EDA
+- Clustered data
 - Linear mixed effect models (LMEs), generalized linear mixed models (GLMMs)
 - Generalized estimationg equations (GEEs)
+- Multi-period cross-sectional data
+- Longitudinal data
 - Longitudinal smoothing
 - Time-to-event/survival analysis
 
 ---
 
-## Background
+## What I'm assuming you're coming in with
 
-- Familiarity with basic statistical inference concepts (i.e., hypothesis tesitng, confidence intervals)
+- Familiarity with basic statistical inference concepts (i.e., estimation, hypothesis testing, confidence intervals)
 - Basic regression/ANOVA
-- How to build a mean model (i.e., confounding and precision variables)
+- (Generally) how to build a mean model (i.e., confounding and precision variables)
 - Familiarity with matrix notation
    - Do NOT need to know advanced linear algebra/calculus
    - Should be familiar with matrix addition/subtraction/multiplication/inversion
    - Won't make you do the nitty gritty but will help you understand how some concepts work
    - We'll review and I'll post resources
+- Basic SAS coding knowledge
+   - I'll use SAS in teaching, but I also know how to do all of this in R
+   - You can use whatever software you want for your assignments, just know there are softwares I may be less good at providing support in
    
 ---
 

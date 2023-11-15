@@ -368,7 +368,10 @@ date!
 <li>We’ve previously assumed all observations are <span class="alert">independent</span>
 <ul>
 <li>Can be a reasonable assumption in certain settings (certain cross-sectional studies)</li>
-<li>When not reasonable, methods from PHS 552 can still be useful if other tools aren’t available</li>
+<li>When not reasonable, methods from PHS 552 can still be useful if other tools aren’t available
+<ul>
+<li>We’ll explore the boundaries of this</li>
+</ul></li>
 </ul></li>
 <li>Here, we’ll be <span class="alert">expanding our statistical toolbox</span>
 <ul>
@@ -382,9 +385,18 @@ date!
 <ul>
 <li>Group membership makes in-group outcome variability different from between-group variability
 <ul>
-<li>i.e., health outcomes correlated by neighborhood</li>
+<li>i.e., health outcomes correlated by neighborhood, occular outcomes correlated by individual</li>
 </ul></li>
 <li>We’re observing the same individuals repeatedly (longitudinal data)</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Non-independence we <span class="alert">won’t</span> be getting into
+<ul>
+<li>Time series modeling</li>
+<li>Spatial statistical modeling</li>
 </ul></li>
 </ul>
 </div>
@@ -397,26 +409,32 @@ date!
 <ul>
 <li>Review of generalized linear models, weighted least squares</li>
 <li>Model misspecification</li>
-<li>What are clustered &amp; longitudinal studies?</li>
-<li>EDA</li>
+<li>Clustered data</li>
 <li>Linear mixed effect models (LMEs), generalized linear mixed models (GLMMs)</li>
 <li>Generalized estimationg equations (GEEs)</li>
+<li>Multi-period cross-sectional data</li>
+<li>Longitudinal data</li>
 <li>Longitudinal smoothing</li>
 <li>Time-to-event/survival analysis</li>
 </ul>
 </section>
-<section id="background" class="slide level2">
-<h2>Background</h2>
+<section id="what-im-assuming-youre-coming-in-with" class="slide level2">
+<h2>What I’m assuming you’re coming in with</h2>
 <ul>
-<li>Familiarity with basic statistical inference concepts (i.e., hypothesis tesitng, confidence intervals)</li>
+<li>Familiarity with basic statistical inference concepts (i.e., estimation, hypothesis testing, confidence intervals)</li>
 <li>Basic regression/ANOVA</li>
-<li>How to build a mean model (i.e., confounding and precision variables)</li>
+<li>(Generally) how to build a mean model (i.e., confounding and precision variables)</li>
 <li>Familiarity with matrix notation
 <ul>
 <li>Do NOT need to know advanced linear algebra/calculus</li>
 <li>Should be familiar with matrix addition/subtraction/multiplication/inversion</li>
 <li>Won’t make you do the nitty gritty but will help you understand how some concepts work</li>
 <li>We’ll review and I’ll post resources</li>
+</ul></li>
+<li>Basic SAS coding knowledge
+<ul>
+<li>I’ll use SAS in teaching, but I also know how to do all of this in R</li>
+<li>You can use whatever software you want for your assignments, just know there are softwares I may be less good at providing support in</li>
 </ul></li>
 </ul>
 </section>

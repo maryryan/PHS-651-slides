@@ -20,13 +20,13 @@ execute:
 
 <h1> PHS 651: Advanced regression methods </h1>
 
-<h2> Lecture 1: Introduction </h2>
+<h2> Lecture 0: Introduction </h2>
 
 <hr>
 
 <h3> Mary Ryan, PhD </h3>
 
-<h3> date! </h3>
+<h3> September 5, 2024 </h3>
 
 ---
 
@@ -81,12 +81,11 @@ execute:
 ## Outline
 
 - Review of generalized linear models, weighted least squares
-- Model misspecification
-- Clustered data
-- Linear mixed effect models (LMEs), generalized linear mixed models (GLMMs)
-- Generalized estimationg equations (GEEs)
-- Multi-period cross-sectional data
-- Longitudinal data
+- Cross-sectional clustered data
+- Conditional modeling: linear mixed effect models (LMEs), generalized linear mixed models (GLMMs)
+- Marginal modeling : generalized estimationg equations (GEEs)
+- Modeling repeated measures: multi-period cross-sectional data, longitudinal data
+- Multilevel modeling
 - Longitudinal smoothing
 - Time-to-event/survival analysis
 

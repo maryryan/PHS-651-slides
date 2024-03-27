@@ -7,16 +7,16 @@
 <link href="phs-651-1_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="phs-651-1_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="phs-651-1_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="phs-651-1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.3.353">
-
-  <title>phs-651-1</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="phs-651-1_files/libs/revealjs/dist/reset.css">
-  <link rel="stylesheet" href="phs-651-1_files/libs/revealjs/dist/reveal.css">
-  <style>
+<link href="phs-651-1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+<title>phs-651-1</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+<link rel="stylesheet" href="phs-651-1_files/libs/revealjs/dist/reset.css">
+<link rel="stylesheet" href="phs-651-1_files/libs/revealjs/dist/reveal.css">
+<style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -29,14 +29,14 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="phs-651-1_files/libs/revealjs/dist/theme/quarto.css">
-  <link href="phs-651-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-  <link href="phs-651-1_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-  <link href="phs-651-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-  <link href="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-  <link href="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-  <link href="phs-651-1_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
-  <style type="text/css">
+<link rel="stylesheet" href="phs-651-1_files/libs/revealjs/dist/theme/quarto.css">
+<link href="phs-651-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+<link href="phs-651-1_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+<link href="phs-651-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+<link href="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+<link href="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+<link href="phs-651-1_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+<style type="text/css">
 
   .callout {
     margin-top: 1em;
@@ -233,7 +233,7 @@
   }
 
   </style>
-  <style type="text/css">
+<style type="text/css">
     .reveal div.sourceCode {
       margin: 0;
       overflow: auto;
@@ -326,9 +326,7 @@
     <div class="slides">
 
 
-<section class="slide level2">
-
-<h1>
+<section class="slide level2"><h1>
 PHS 651: Advanced regression methods
 </h1>
 <h2>
@@ -341,35 +339,94 @@ Mary Ryan, PhD
 <h3>
 September 10, 2024
 </h3>
-</section>
-<section class="slide level2">
-
+</section><section id="what-is-correlated-data" class="slide level2"><h2>What is correlated data?</h2>
+<ul>
+<li><p><u>Independent data</u>: data where each observation of a variable are not correlated with other observations of the same variable</p></li>
+<li>
+<p><u>Correlated data</u>: data where each observation of a variable is not entirely independent of other observations of the same variable</p>
+<ul>
+<li>AKA: multilevel/hierarchical data</li>
+</ul>
+</li>
+</ul></section><section id="why-is-data-correlated" class="slide level2"><h2>Why is data correlated?</h2>
+<ul>
+<li>
+<p>Natural group membership</p>
+<ul>
+<li><p>Observations belonging to one group more similar than observations belonging to another group</p></li>
+<li><p>e.g., Household members, city residents, classroom students</p></li>
+</ul>
+</li>
+<li>
+<p>Clustered by design</p>
+<ul>
+<li>
+<p>Exposure applied to entire group based on single characteristic</p>
+<ul>
+<li><p>e.g., All residents of City X are exposed to a new policy</p></li>
+<li><p>Exposure can be randomized or not</p></li>
+</ul>
+</li>
+<li>
+<p>Cluster/multi-stage sampling</p>
+<ul>
+<li>e.g., NHANES</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul></section><section id="how-does-clustering-affect-outcomes" class="slide level2"><h2>How does clustering affect outcomes?</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="phs-651-1_files/figure-revealjs/cluster%20DAG-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="phs-651-1_files/figure-revealjs/cluster%20DAG-2.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Clustering is both a <u>data structure</u> element and potentially a <u>confounding variable</u></p>
+</section><section id="other-issues-from-correlated-data" class="slide level2"><h2>Other issues from correlated data</h2>
+<ul>
+<li><p>Groups/clusters may not be the same size</p></li>
+<li>
+<p>“Clustering” of data may also affect variance</p>
+<ul>
+<li><p>Some groups have lower variation than others</p></li>
+<li>
+<p>This breaks the <u>homoskedasticity</u> assumption of OLS</p>
+<ul>
+<li>Recall PHS 552!</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul></section><section id="measuring-clustered-ness" class="slide level2"><h2>Measuring “clustered-ness”</h2>
+<ul>
+<li>
+<p><u>Intracluster correlation coefficient</u> (ICC): measure of within- vs.&nbsp;between-cluster variation</p>
+<ul>
+<li><p>Cluster-specific mean: <span class="math inline">\(\bar{y}_i = \frac{1}{n_i} \sum_{j=1}^{n_i} y_{ij}\)</span></p></li>
+<li><p>Variation in cluster means: <span class="math inline">\(\gamma^2 = \text{var}(\bar{y}_i)\)</span></p></li>
+<li><p>Individual-level variation: <span class="math inline">\(\sigma^2 = \text{var}(y_{ij})\)</span></p></li>
+<li><p>ICC: <span class="math inline">\(\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}\)</span></p></li>
+</ul>
+</li>
+</ul>
 
 <img src="POPUHEALSMPH_color-flush.png" class="slide-logo r-stretch"><div class="footer footer-default">
 
 </div>
 </section>
-    </div>
+</div>
   </div>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script>
-  <script src="phs-651-1_files/libs/revealjs/dist/reveal.js"></script>
-  <!-- reveal.js plugins -->
-  <script src="phs-651-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
-  <script src="phs-651-1_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
-  <script src="phs-651-1_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
-  <script src="phs-651-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
-  <script src="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
-  <script src="phs-651-1_files/libs/revealjs/plugin/quarto-support/support.js"></script>
-  
-
-  <script src="phs-651-1_files/libs/revealjs/plugin/notes/notes.js"></script>
-  <script src="phs-651-1_files/libs/revealjs/plugin/search/search.js"></script>
-  <script src="phs-651-1_files/libs/revealjs/plugin/zoom/zoom.js"></script>
-  <script src="phs-651-1_files/libs/revealjs/plugin/math/math.js"></script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
-
-  <script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="phs-651-1_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="phs-651-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/notes/notes.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/search/search.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
 
       // Full list of configuration options available at:
       // https://revealjs.com/config/
@@ -561,8 +618,42 @@ September 10, 2024
           RevealZoom
         ]
       });
-    </script>
-    <script id="quarto-html-after-body" type="application/javascript">
+    </script><script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script><script id="quarto-html-after-body" type="application/javascript">
     window.document.addEventListener("DOMContentLoaded", function (event) {
       const toggleBodyColorMode = (bsSheetEl) => {
         const mode = bsSheetEl.getAttribute("data-mode");
@@ -708,6 +799,6 @@ September 10, 2024
       }
     });
     </script>
-    
+
 
 </body></html>

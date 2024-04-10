@@ -22,9 +22,9 @@ library(ggdag)
 library(dagitty)
 library(gridExtra)
 ```
-<h1> PHS 651: Advanced regression methods </h1>
+<h1> Lecture 1: Correlated data </h1>
 
-<h2> Lecture 1: Correlated data </h2>
+<h2> PHS 651: Advanced regression methods </h2>
 
 <hr>
 
@@ -36,7 +36,7 @@ library(gridExtra)
 
 ## What is correlated data?
 
-- [Independent data]{.underline}: data where each observation of a variable are not correlated with other observations of the same variable
+- [Independent data]{.underline}: data where each observation of a variable are not meaningfully correlated with other observations of the same variable
 
 - [Correlated data]{.underline}: data where each observation of a variable is not entirely independent of other observations of the same variable
    - AKA: multilevel/hierarchical data
@@ -49,7 +49,7 @@ library(gridExtra)
 
    - Observations belonging to one group more similar than observations belonging to another group
    
-   - e.g., Household members, city residents, classroom students
+   - e.g., Household members, classroom students, eyes in a person's head
    
 - Clustered by design
    
@@ -110,6 +110,8 @@ precision
 ```
 
 Clustering is both a [data structure]{.underline} element and potentially a [confounding variable]{.underline}
+
+<!-- Seaman S, Pavlou M, Copas A. Review of methods for handling confounding by cluster and informative cluster size in clustered data. Stat Med. 2014 Dec 30;33(30):5371-87. doi: 10.1002/sim.6277. Epub 2014 Aug 4. PMID: 25087978; PMCID: PMC4320764. -->
 
 ---
 

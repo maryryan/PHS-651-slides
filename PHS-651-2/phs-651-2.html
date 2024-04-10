@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<script src="phs-651-1_files/libs/clipboard/clipboard.min.js"></script>
-<script src="phs-651-1_files/libs/quarto-html/tabby.min.js"></script>
-<script src="phs-651-1_files/libs/quarto-html/popper.min.js"></script>
-<script src="phs-651-1_files/libs/quarto-html/tippy.umd.min.js"></script>
-<link href="phs-651-1_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="phs-651-1_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="phs-651-1_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="phs-651-1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="phs-651-2_files/libs/clipboard/clipboard.min.js"></script>
+<script src="phs-651-2_files/libs/quarto-html/tabby.min.js"></script>
+<script src="phs-651-2_files/libs/quarto-html/popper.min.js"></script>
+<script src="phs-651-2_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="phs-651-2_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="phs-651-2_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="phs-651-2_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="phs-651-2_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.3.353">
-<title>phs-651-1</title>
+<title>phs-651-2</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-<link rel="stylesheet" href="phs-651-1_files/libs/revealjs/dist/reset.css">
-<link rel="stylesheet" href="phs-651-1_files/libs/revealjs/dist/reveal.css">
+<link rel="stylesheet" href="phs-651-2_files/libs/revealjs/dist/reset.css">
+<link rel="stylesheet" href="phs-651-2_files/libs/revealjs/dist/reveal.css">
 <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -29,13 +29,13 @@
       vertical-align: middle;
     }
   </style>
-<link rel="stylesheet" href="phs-651-1_files/libs/revealjs/dist/theme/quarto.css">
-<link href="phs-651-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-<link href="phs-651-1_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-<link href="phs-651-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-<link href="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-<link href="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-<link href="phs-651-1_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+<link rel="stylesheet" href="phs-651-2_files/libs/revealjs/dist/theme/quarto.css">
+<link href="phs-651-2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+<link href="phs-651-2_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+<link href="phs-651-2_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+<link href="phs-651-2_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+<link href="phs-651-2_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+<link href="phs-651-2_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
 <style type="text/css">
 
   .callout {
@@ -327,7 +327,7 @@
 
 
 <section class="slide level2"><h1>
-Lecture 1: Correlated data
+Lecture 2: Conditional models for correlated data
 </h1>
 <h2>
 PHS 651: Advanced regression methods
@@ -337,87 +337,106 @@ PHS 651: Advanced regression methods
 Mary Ryan, PhD
 </h3>
 <h3>
-September 10, 2024
+September 17, 2024
 </h3>
-</section><section id="what-is-correlated-data" class="slide level2"><h2>What is correlated data?</h2>
+</section><section id="the-linear-mixed-effects-model" class="slide level2"><h2>The linear mixed effects model</h2>
+<p>The linear mixed effects (LME) model takes the form:</p>
+<p><span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <ul>
-<li><p><u>Independent data</u>: data where each observation of a variable are not meaningfully correlated with other observations of the same variable</p></li>
-<li>
-<p><u>Correlated data</u>: data where each observation of a variable is not entirely independent of other observations of the same variable</p>
-<ul>
-<li>AKA: multilevel/hierarchical data</li>
-</ul>
-</li>
-</ul></section><section id="why-is-data-correlated" class="slide level2"><h2>Why is data correlated?</h2>
-<ul>
-<li>
-<p>Natural group membership</p>
-<ul>
-<li><p>Observations belonging to one group more similar than observations belonging to another group</p></li>
-<li><p>e.g., Household members, classroom students, eyes in a person’s head</p></li>
-</ul>
-</li>
-<li>
-<p>Clustered by design</p>
+<li><p><span class="math inline">\(\vec{Y}_i\)</span> is the response vector for cluster <span class="math inline">\(i\)</span> (dimensions: <span class="math inline">\(n_i \times 1\)</span>)</p></li>
+<li><p><span class="math inline">\(\boldsymbol{X}_i\)</span> is the fixed effects design matrix for cluster <span class="math inline">\(i\)</span> (dimensions: <span class="math inline">\(n_i \times p\)</span>)</p></li>
+<li><p><span class="math inline">\(\vec{\beta}\)</span> is the fixed effects parameter vector (dimensions: <span class="math inline">\(p \times 1\)</span>)</p></li>
+<li><p><span class="math inline">\(\vec{Z}_i\)</span> is the random effects vector for cluster <span class="math inline">\(i\)</span> (dimensions: <span class="math inline">\(n_i \times 1\)</span>)</p></li>
+<li><p><span class="math inline">\(b_{0i}\)</span> is the <u>random intercept</u> for cluster <span class="math inline">\(i\)</span> (dimensions: <span class="math inline">\(1\times 1\)</span>)</p></li>
+<li><p><span class="math inline">\(\vec{\epsilon}_i\)</span> is the vector of error terms (dimensions: <span class="math inline">\(n_i \times 1\)</span>)</p></li>
+</ul></section><section id="the-linear-mixed-effects-model-cont." class="slide level2"><h2>The linear mixed effects model (cont.)</h2>
+<p><span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <ul>
 <li>
-<p>Exposure applied to entire group based on single characteristic</p>
+<p>What’s “mixed” about it?</p>
 <ul>
-<li><p>e.g., All residents of City X are exposed to a new policy</p></li>
-<li><p>Exposure can be randomized or not</p></li>
+<li>Named because it uses <u>fixed effects</u> (effects for covariates <span class="math inline">\(\vec{\beta}\)</span>) as well as <u>random effects</u> (cluster-specific intercepts <span class="math inline">\(b_{0i}\)</span>)</li>
 </ul>
 </li>
 <li>
-<p>Cluster/multi-stage sampling</p>
+<p>We typically assume <span class="math display">\[b_{0i} \sim N(0, \sigma^2_b)\]</span> <span class="math display">\[\vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i)\]</span></p>
 <ul>
-<li>e.g., NHANES</li>
+<li>
+<p>Also assume <span class="math inline">\(b_{0i}\)</span> and <span class="math inline">\(\vec{\epsilon}_i\)</span> are <em>independent</em> (<span class="math inline">\(b_{0i}\perp \vec{\epsilon}_i\)</span>)</p>
+<ul>
+<li>What happens when this is violated? Stay tuned for later this semester <span class="emoji" data-emoji="grinning">😀</span>
+</li>
 </ul>
 </li>
 </ul>
 </li>
-</ul></section><section id="how-does-clustering-affect-outcomes" class="slide level2"><h2>How does clustering affect outcomes?</h2>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="phs-651-1_files/figure-revealjs/cluster%20DAG-1.png" width="960"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="phs-651-1_files/figure-revealjs/cluster%20DAG-2.png" width="960"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Clustering is both a <u>data structure</u> element and potentially a <u>confounding variable</u></p>
-<!-- Seaman S, Pavlou M, Copas A. Review of methods for handling confounding by cluster and informative cluster size in clustered data. Stat Med. 2014 Dec 30;33(30):5371-87. doi: 10.1002/sim.6277. Epub 2014 Aug 4. PMID: 25087978; PMCID: PMC4320764. -->
-</section><section id="other-issues-from-correlated-data" class="slide level2"><h2>Other issues from correlated data</h2>
+</ul></section><section id="breaking-down-lmes" class="slide level2"><h2>Breaking down LMEs</h2>
+<p><span class="math display">\[\vec{Y}_i = \color{green}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{\xi}_i}\]</span></p>
 <ul>
-<li><p>Groups/clusters may not be the same size</p></li>
 <li>
-<p>“Clustering” of data may also affect variance</p>
+<p>Can break down an LME into 2 main components:</p>
+<ol type="1">
+<li>Mean response (as function of covariates)</li>
+</ol>
+<p><span class="math display">\[\color{green}{\boldsymbol{X}_i\vec{\beta}}\]</span></p>
+<ol start="2" type="1">
+<li>Systematic variation (of the response) <span class="math display">\[\color{blue}{\vec{\xi}_i} = \color{red}{\vec{Z}_ib_{0i}}+\color{purple}{\vec{\epsilon}_i}\]</span>
+<ol type="i">
+<li>Random effects
 <ul>
-<li><p>Some groups have lower variation than others</p></li>
-<li>
-<p>This breaks the <u>homoskedasticity</u> assumption of OLS</p>
-<ul>
-<li>Recall PHS 552!</li>
-</ul>
+<li>Random between-cluster variation: <span class="math inline">\(\color{red}{\vec{Z}_ib_{0i}}\)</span>
 </li>
 </ul>
 </li>
-</ul></section><section id="measuring-clustered-ness" class="slide level2"><h2>Measuring “clustered-ness”</h2>
+<li>Within-cluster variation - Variation of cluster members: <span class="math inline">\(\color{purple}{\vec{\epsilon}_i}\)</span>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul></section><section id="systematic-variation" class="slide level2"><h2>Systematic variation</h2>
+<p>Random effects: <span class="math display">\[b_{0i} \sim N(0, \sigma^2_b)\]</span></p>
 <ul>
-<li>
-<p><u>Intracluster correlation coefficient</u> (ICC): measure of within- vs.&nbsp;between-cluster variation</p>
+<li><p>Assumes that clusters are <em>randomly</em> varying around the population mean response: <span class="math inline">\(E[b_{0i}]=0\)</span></p></li>
+<li><p><span class="math inline">\(\sqrt{\sigma^2_b}\)</span>: the typical cluster-to-cluster deviation in the overall level of the response</p></li>
+</ul>
+<p>Within-cluster variation: <span class="math display">\[\vec{\epsilon} \sim N(0, \boldsymbol{R}_i)\]</span></p>
 <ul>
-<li><p>Cluster-specific mean: <span class="math inline">\(\bar{y}_i = \frac{1}{n_i} \sum_{j=1}^{n_i} y_{ij}\)</span></p></li>
-<li><p>Variation in cluster means: <span class="math inline">\(\gamma^2 = \text{var}(\bar{y}_i)\)</span></p></li>
-<li><p>Individual-level variation: <span class="math inline">\(\sigma^2 = \text{var}(y_{ij})\)</span></p></li>
-<li><p>ICC: <span class="math inline">\(\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}\)</span></p></li>
+<li>Assumes that cluster members are <em>randomly</em> varying around the cluster-specific mean response: <span class="math inline">\(E[\vec{\epsilon}_i]=0\)</span>
+</li>
+<li>For now, assume <span class="math inline">\(\boldsymbol{R}_i = \sigma^2_\epsilon \boldsymbol{I}\)</span>
+<ul>
+<li>Assumes all observations in cluster <span class="math inline">\(i\)</span> are <em>conditionally independent</em> given <span class="math inline">\(b_{0i}\)</span>
+<ul>
+<li>Given cluster membership, all members of cluster are independent</li>
 </ul>
 </li>
+<li>Also known as an <u>independence model</u> of within-clsuter variation</li>
+</ul>
+</li>
+<li>
+<span class="math inline">\(\sqrt{\sigma^2_\epsilon}\)</span>: the typical member-to-member deviation in the cluster-specific level of the response</li>
+</ul></section><section id="what-does-this-covariance-matrix-look-like" class="slide level2"><h2>What does this covariance matrix look like?</h2>
+<p><span class="math display">\[\begin{align*}Var[\vec{Y}_i] &amp;= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \boldsymbol{R}_i\\
+&amp;=\begin{bmatrix}
+\sigma^2_b &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b
+\end{bmatrix} + \begin{bmatrix}
+\sigma^2_\epsilon &amp; 0 &amp; \dots &amp; 0\\
+0 &amp; \ddots &amp; \dots &amp; 0\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+0&amp; \dots &amp; 0 &amp; \sigma^2_\epsilon
+\end{bmatrix}\\
+&amp;=\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}\end{align*}\]</span></p>
+<ul>
+<li>Known as a <u>block exchangeable</u> matrix</li>
 </ul>
 
 <img src="POPUHEALSMPH_color-flush.png" class="slide-logo r-stretch"><div class="footer footer-default">
@@ -427,7 +446,7 @@ September 10, 2024
 </div>
   </div>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="phs-651-1_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="phs-651-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/notes/notes.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/search/search.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="phs-651-1_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="phs-651-2_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="phs-651-2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="phs-651-2_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="phs-651-2_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="phs-651-2_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="phs-651-2_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="phs-651-2_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="phs-651-2_files/libs/revealjs/plugin/notes/notes.js"></script><script src="phs-651-2_files/libs/revealjs/plugin/search/search.js"></script><script src="phs-651-2_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="phs-651-2_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
 
       // Full list of configuration options available at:
       // https://revealjs.com/config/

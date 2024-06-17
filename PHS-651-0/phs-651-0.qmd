@@ -96,7 +96,7 @@ execute:
 - Familiarity with basic statistical inference concepts (i.e., estimation, hypothesis testing, confidence intervals)
 - Basic regression/ANOVA
 - (Generally) how to build a mean model (i.e., confounding and precision variables)
-- Familiarity with matrix notation
+- Some familiarity with matrix notation
    - Do NOT need to know advanced linear algebra/calculus
    - Should be familiar with matrix addition/subtraction/multiplication/inversion
    - Won't make you do the nitty gritty but will help you understand how some concepts work
@@ -108,13 +108,13 @@ execute:
 ---
 
 ## Review: ordinary linear regression
-::: {columns}
 
-::: {.column width="45%"}
-$$Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$$
+AKA: ordinary least squares
 
-- $Y_i$: outcome/dependent variable for individual $i$
-- $X_i$: treatment/exposure/independent variable for individual $i$
+$$Y_i = \beta_0 + \beta_1 W_i + \epsilon_i$$
+
+- $Y_i$: (continuous) outcome/dependent variable for individual $i$
+- $W_i$: treatment/exposure/independent variable for individual $i$
 - $\beta_0$: model intercept
    - Interpretation:
    <br>
@@ -130,12 +130,101 @@ $$Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$$
    
 - $\epsilon_i$: error term
 
+
+---
+
+## Review: ordinary linear regression
+
+We can write this in matrix notation: 
+$$\vec{Y} = \boldsymbol{X\beta} + \vec{\epsilon},$$
+where
+
+::: {.columns}
+
+::: {.column width="50%"}
+- $\vec{Y} = \begin{bmatrix}
+    y_1\\
+    y_2\\
+    \vdots\\
+    y_n
+\end{bmatrix}$ is a [vector]{.alert} of responses
+
+- $\boldsymbol{X} = \begin{bmatrix}
+    1 & w_1\\
+    1 & w_2\\
+    \vdots & \vdots\\
+    1 & w_n
+\end{bmatrix}$ is the [design matrix]{.alert}
 :::
 
-::: {.column width="45%"}
+::: {.column width="50%"}
 <br>
-What do I mean by the [mean model]{.alert}?
-$$E[Y_i] = \beta_0 + \beta_1 X_i$$ 
+
+- $\vec{\beta} = \begin{bmatrix}
+    \beta_0\\
+    \beta_1
+\end{bmatrix}$ is a vector of coefficients
+
+- $\vec{\epsilon} =\begin{bmatrix}
+    \epsilon_1\\
+    \epsilon_2\\
+    \vdots\\
+    \epsilon_n
+\end{bmatrix}$ a vector of residuals
+:::
 :::
 
-:::
+. . .
+
+$\vec{Y}$ and $\boldsymbol{X}$ are [data]{.alert}, while $\vec{\beta}$ and $\vec{\epsilon}$ are [model parameters]{.alert}
+
+---
+
+## Review: ordinary linear regression
+
+$$\vec{Y} = \boldsymbol{X\beta} + \vec{\epsilon}$$
+
+What do I mean by the [mean model]{.alert}?
+
+. . .
+
+$$E[\vec{Y}] = \boldsymbol{X\beta}$$
+
+. . .
+
+We then usually assume 
+$$\vec{\epsilon} \sim N(0, \sigma^2)$$
+---
+
+## Review: OLS estimation
+
+- Model parameters are "truth" that tell us the relationship between our independent variables and our response
+   - We try to estimate what that relationship might be using data
+
+- We can estimate a [point estimate]{.alert} for $\beta$ using the data:
+$$\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\vec{Y}$$
+   - This is our single best guess for what $\beta$ is
+   
+---
+
+## Review: OLS inference
+
+- Because our data is only a [sample]{.alert}, we always have uncertainty...
+
+   - The [covariance]{.alert} for $\beta$ is
+   $$V = \sigma^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}$$
+   
+      - which we estimate with
+   $$\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}$$
+
+   - We then assume our estimate $\widehat{\beta}$ has a distribution:
+   $$\widehat{\beta} \sim N(\beta, V)$$
+   
+   - And then we can create a $(100-\alpha/2)$% [confidence interval]{.alert} for $\widehat{beta}$:
+   $$\widehat{\beta} \pm Z_{1-\alpha/2}\sqrt{\widehat{V}}$$
+   
+---
+
+## Review: logistic regression
+
+- What happens if $\vec{Y}$ is binary?

@@ -332,14 +332,14 @@
 PHS 651: Advanced regression methods
 </h1>
 <h2>
-Lecture 1: Introduction
+Lecture 0: Introduction
 </h2>
 <hr>
 <h3>
 Mary Ryan, PhD
 </h3>
 <h3>
-date!
+September 5, 2024
 </h3>
 </section>
 <section id="how-this-is-different" class="slide level2">
@@ -439,12 +439,11 @@ date!
 </section>
 <section id="review-ordinary-linear-regression" class="slide level2">
 <h2>Review: ordinary linear regression</h2>
-<div class="{columns}">
-<div class="column" style="width:45%;">
-<p><span class="math display">\[Y_i = \beta_0 + \beta_1 X_i + \epsilon_i\]</span></p>
+<p>AKA: ordinary least squares</p>
+<p><span class="math display">\[Y_i = \beta_0 + \beta_1 W_i + \epsilon_i\]</span></p>
 <ul>
 <li><span class="math inline">\(Y_i\)</span>: outcome/dependent variable for individual <span class="math inline">\(i\)</span></li>
-<li><span class="math inline">\(X_i\)</span>: treatment/exposure/independent variable for individual <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(W_i\)</span>: treatment/exposure/independent variable for individual <span class="math inline">\(i\)</span></li>
 <li><span class="math inline">\(\beta_0\)</span>: model intercept
 <ul>
 <li>Interpretation: <br> <br> <br> <br></li>
@@ -455,11 +454,65 @@ date!
 </ul></li>
 <li><span class="math inline">\(\epsilon_i\)</span>: error term</li>
 </ul>
+</section>
+<section id="review-ordinary-linear-regression-1" class="slide level2">
+<h2>Review: ordinary linear regression</h2>
+<p>We can write this in matrix notation: <span class="math display">\[\vec{Y} = \boldsymbol{X\beta} + \vec{\epsilon},\]</span> where</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li><p><span class="math inline">\(\vec{Y} = \begin{bmatrix}  y_1\\  y_2\\  \vdots\\  y_n \end{bmatrix}\)</span> is a <span class="alert">vector</span> of responses</p></li>
+<li><p><span class="math inline">\(\boldsymbol{X} = \begin{bmatrix}  1 &amp; w_1\\  1 &amp; w_2\\  \vdots &amp; \vdots\\  1 &amp; w_n \end{bmatrix}\)</span> is the <span class="alert">design matrix</span></p></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><br></p>
+<ul>
+<li><p><span class="math inline">\(\vec{\beta} = \begin{bmatrix}  \beta_0\\  \beta_1 \end{bmatrix}\)</span> is a vector of coefficients</p></li>
+<li><p><span class="math inline">\(\vec{\epsilon} =\begin{bmatrix}  \epsilon_1\\  \epsilon_2\\  \vdots\\  \epsilon_n \end{bmatrix}\)</span> a vector of residuals</p></li>
+</ul>
 </div>
-<div class="column" style="width:45%;">
-<p><br> What do I mean by the <span class="alert">mean model</span>? <span class="math display">\[E[Y_i] = \beta_0 + \beta_1 X_i\]</span></p>
 </div>
+<div class="fragment">
+<p><span class="math inline">\(\vec{Y}\)</span> and <span class="math inline">\(\boldsymbol{X}\)</span> are <span class="alert">data</span>, while <span class="math inline">\(\vec{\beta}\)</span> and <span class="math inline">\(\vec{\epsilon}\)</span> are <span class="alert">model parameters</span></p>
 </div>
+</section>
+<section id="review-ordinary-linear-regression-2" class="slide level2">
+<h2>Review: ordinary linear regression</h2>
+<p><span class="math display">\[\vec{Y} = \boldsymbol{X\beta} + \vec{\epsilon}\]</span></p>
+<p>What do I mean by the <span class="alert">mean model</span>?</p>
+<div class="fragment">
+<p><span class="math display">\[E[\vec{Y}] = \boldsymbol{X\beta}\]</span></p>
+</div>
+<div class="fragment">
+<p>We then usually assume <span class="math display">\[\vec{\epsilon} \sim N(0, \sigma^2)\]</span></p>
+</div>
+</section>
+<section id="review-ols-estimation" class="slide level2">
+<h2>Review: OLS estimation</h2>
+<ul>
+<li>Model parameters are “truth” that tell us the relationship between our independent variables and our response
+<ul>
+<li>We try to estimate what that relationship might be using data</li>
+</ul></li>
+<li>We can estimate a <span class="alert">point estimate</span> for <span class="math inline">\(\beta\)</span> using the data: <span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\vec{Y}\]</span>
+<ul>
+<li>This is our single best guess for what <span class="math inline">\(\beta\)</span> is</li>
+</ul></li>
+</ul>
+</section>
+<section id="review-ols-inference" class="slide level2">
+<h2>Review: OLS inference</h2>
+<ul>
+<li><p>Because our data is only a <span class="alert">sample</span>, we always have uncertainty…</p>
+<ul>
+<li><p>The <span class="alert">covariance</span> for <span class="math inline">\(\beta\)</span> is <span class="math display">\[V = \sigma^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\]</span></p>
+<ul>
+<li>which we estimate with <span class="math display">\[\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\]</span></li>
+</ul></li>
+<li><p>We then assume our estimate <span class="math inline">\(\widehat{\beta}\)</span> has a distribution: <span class="math display">\[\widehat{\beta} \sim N(\beta, V)\]</span></p></li>
+<li><p>And then we can create a <span class="math inline">\((100-\alpha/2)\)</span>% <span class="alert">confidence interval</span> for <span class="math inline">\(\widehat{beta}\)</span>: <span class="math display">\[\widehat{\beta} \pm Z_{1-\alpha/2}\sqrt{\widehat{V}}\]</span></p></li>
+</ul></li>
+</ul>
 
 <img src="POPUHEALSMPH_color-flush.png" class="slide-logo r-stretch"><div class="footer footer-default">
 

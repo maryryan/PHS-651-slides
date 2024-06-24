@@ -423,7 +423,7 @@ September 5, 2024
 <li>Familiarity with basic statistical inference concepts (i.e., estimation, hypothesis testing, confidence intervals)</li>
 <li>Basic regression/ANOVA</li>
 <li>(Generally) how to build a mean model (i.e., confounding and precision variables)</li>
-<li>Familiarity with matrix notation
+<li>Some familiarity with matrix notation
 <ul>
 <li>Do NOT need to know advanced linear algebra/calculus</li>
 <li>Should be familiar with matrix addition/subtraction/multiplication/inversion</li>
@@ -437,12 +437,20 @@ September 5, 2024
 </ul></li>
 </ul>
 </section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="lets-go" class="title-slide slide level1 center">
+<h1>Let’s go!</h1>
+
+</section>
 <section id="review-ordinary-linear-regression" class="slide level2">
 <h2>Review: ordinary linear regression</h2>
 <p>AKA: ordinary least squares</p>
 <p><span class="math display">\[Y_i = \beta_0 + \beta_1 W_i + \epsilon_i\]</span></p>
 <ul>
-<li><span class="math inline">\(Y_i\)</span>: outcome/dependent variable for individual <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(Y_i\)</span>: (continuous) outcome/dependent variable for some individual <span class="math inline">\(i\)</span></li>
 <li><span class="math inline">\(W_i\)</span>: treatment/exposure/independent variable for individual <span class="math inline">\(i\)</span></li>
 <li><span class="math inline">\(\beta_0\)</span>: model intercept
 <ul>
@@ -457,7 +465,7 @@ September 5, 2024
 </section>
 <section id="review-ordinary-linear-regression-1" class="slide level2">
 <h2>Review: ordinary linear regression</h2>
-<p>We can write this in matrix notation: <span class="math display">\[\vec{Y} = \boldsymbol{X\beta} + \vec{\epsilon},\]</span> where</p>
+<p>We can write this in matrix notation: <span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon},\]</span> where</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
@@ -478,46 +486,90 @@ September 5, 2024
 </section>
 <section id="review-ordinary-linear-regression-2" class="slide level2">
 <h2>Review: ordinary linear regression</h2>
-<p><span class="math display">\[\vec{Y} = \boldsymbol{X\beta} + \vec{\epsilon}\]</span></p>
-<p>What do I mean by the <span class="alert">mean model</span>?</p>
+<p><span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon}\]</span> We like to think of splitting our model into 2 parts:</p>
 <div class="fragment">
-<p><span class="math display">\[E[\vec{Y}] = \boldsymbol{X\beta}\]</span></p>
+<ol type="1">
+<li>the <span class="alert">mean model</span> <span class="math display">\[E[\vec{Y}] = \boldsymbol{X}\vec{\beta}\]</span></li>
+</ol>
 </div>
 <div class="fragment">
-<p>We then usually assume <span class="math display">\[\vec{\epsilon} \sim N(0, \sigma^2)\]</span></p>
+<ol start="2" type="1">
+<li><p>and the model of the <span class="alert">covariance</span> <span class="math display">\[Cov[\vec{Y}] = \boldsymbol{\epsilon}\]</span></p>
+<ul>
+<li>In OLS we usually assume <span class="math inline">\(\vec{\epsilon} \sim N(0, \sigma^2)\)</span>
+<ul>
+<li>Common variance across all observations, observations are completely independent (covariance of 0)</li>
+</ul></li>
+</ul></li>
+</ol>
 </div>
 </section>
 <section id="review-ols-estimation" class="slide level2">
 <h2>Review: OLS estimation</h2>
 <ul>
-<li>Model parameters are “truth” that tell us the relationship between our independent variables and our response
+<li>Model parameters are the “true” relationship between our independent variables and our response (given how we’re modeling the relationship…)
 <ul>
-<li>We try to estimate what that relationship might be using data</li>
+<li>We try to estimate what that particular relationship might be using data</li>
 </ul></li>
 <li>We can estimate a <span class="alert">point estimate</span> for <span class="math inline">\(\beta\)</span> using the data: <span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\vec{Y}\]</span>
 <ul>
-<li>This is our single best guess for what <span class="math inline">\(\beta\)</span> is</li>
+<li>This is our single best guess for what <span class="math inline">\(\beta\)</span> is 🎯</li>
 </ul></li>
 </ul>
 </section>
 <section id="review-ols-inference" class="slide level2">
 <h2>Review: OLS inference</h2>
-<ul>
-<li><p>Because our data is only a <span class="alert">sample</span>, we always have uncertainty…</p>
+<p>Because our data is only a <span class="alert">sample</span> from the entire <span class="alert">population of interest</span>, we always have uncertainty in that estimate…</p>
 <ul>
 <li><p>The <span class="alert">covariance</span> for <span class="math inline">\(\beta\)</span> is <span class="math display">\[V = \sigma^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\]</span></p>
 <ul>
 <li>which we estimate with <span class="math display">\[\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\]</span></li>
 </ul></li>
 <li><p>We then assume our estimate <span class="math inline">\(\widehat{\beta}\)</span> has a distribution: <span class="math display">\[\widehat{\beta} \sim N(\beta, V)\]</span></p></li>
-<li><p>And then we can create a <span class="math inline">\((100-\alpha/2)\)</span>% <span class="alert">confidence interval</span> for <span class="math inline">\(\widehat{beta}\)</span>: <span class="math display">\[\widehat{\beta} \pm Z_{1-\alpha/2}\sqrt{\widehat{V}}\]</span></p></li>
+<li><p>And then we can create a <span class="math inline">\((100-\alpha/2)\)</span>% <span class="alert">confidence interval</span> for <span class="math inline">\(\widehat{beta}\)</span>: <span class="math display">\[\widehat{\beta} \pm Z_{1-\alpha/2}\sqrt{\widehat{V}}\]</span><br>
+</p></li>
+</ul>
+<p>We call this statistical <span class="alert">inference</span></p>
+<ul>
+<li>It’s a way of providing context for our point estimate</li>
+</ul>
+</section>
+<section id="review-weighted-least-squares" class="slide level2">
+<h2>Review: weighted least squares</h2>
+</section>
+<section id="review-logistic-regression" class="slide level2">
+<h2>Review: logistic regression</h2>
+<p>What happens if <span class="math inline">\(\vec{Y}\)</span> is binary?</p>
+<ul>
+<li>We could still try to model <span class="math inline">\(\vec{Y}\)</span> with <span class="math display">\[E[\vec{Y}] = \boldsymbol{X}\vec{\beta}\]</span>
+<ul>
+<li>What do the interpretations of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> then become?</li>
+</ul></li>
+<li>But this gets squirrel-y as your probability of an “event” drifts toward 0 or 1</li>
+</ul>
+<div class="fragment">
+<p>An alternative model is <span class="alert">logistic regression</span></p>
+<p><span class="math display">\[ln\left(\frac{E[\vec{Y}]}{1-E[\vec{Y}]}\right) = \boldsymbol{X}\vec{\beta}\]</span></p>
+<ul>
+<li><p>Interpretation of <span class="math inline">\(e^{\beta_1}\)</span>: the relative difference in the <span class="alert">odds</span> of ‘success’ comparing two populations differing by 1 unit in <span class="math inline">\(\boldsymbol{X}\)</span></p>
+<ul>
+<li>The above regression is modeling the <span class="alert">odds ratio</span></li>
+</ul></li>
+<li><p>We call the function <span class="math inline">\(ln\left(\frac{x}{1-x}\right)\)</span> the <span class="alert">logit</span></p>
+<ul>
+<li><p>That makes this type of regression a <span class="alert">logistic regression</span></p></li>
+<li><p>In PHS 552, you derived why we use that transformation based on the binomial likeihood</p></li>
 </ul></li>
 </ul>
+</div>
+</section>
+<section id="review-link-functions" class="slide level2">
+<h2>Review: link functions</h2>
 
 <img src="POPUHEALSMPH_color-flush.png" class="slide-logo r-stretch"><div class="footer footer-default">
 
 </div>
-</section>
+</section></section>
     </div>
   </div>
 

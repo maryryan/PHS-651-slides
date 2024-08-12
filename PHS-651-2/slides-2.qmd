@@ -1,0 +1,295 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+execute: 
+   eval: true
+   echo: true
+---
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+```
+<h1> Lecture 2: Conditional models for correlated data </h1>
+
+<h2> PHS 651: Advanced regression methods </h2>
+
+<hr>
+
+<h3> Mary Ryan, PhD </h3>
+
+<h3> September 17, 2024 </h3>
+
+---
+
+## Recap: correlated/clustered data
+
+What do we mean by correlated data or data that is clustered?
+
+- [Independent data]{.underline}: data where each observation of a variable are not meaningfully correlated with other observations of the same variable
+
+- [Correlated data]{.underline}: data where each observation of a variable is not entirely independent of other observations of the same variable
+   - AKA: multilevel/hierarchical data
+   
+. . .
+
+The ICC is a way to measure the "clustered-ness" of the outcome
+
+$$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} = \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}$$
+
+---
+
+## Recap: correlated/clustered data
+
+Clustering may impact analysis in several ways
+
+- Groups/clusters may not be the same size
+
+- May affect variance/break the homoskedasticity assumption of OLS
+
+- Reduces the amount of information we get from each individual data point
+
+[How do we account for this clustering in analysis?]{.alert}
+
+. . .
+
+Two "classes" of modeling approaches:
+
+- "Conditional" models (today's focus)
+
+- "Marginal" models (we'll get to these later)
+
+---
+
+## Conditional models
+
+Basic idea: some clusters will [randomly]{.alert} having higher/lower means than other
+
+- This means we might assume to have one population-level mean $\beta_0$
+
+- And that each cluster $i$ will have a [cluster-specific mean]{.alert} a little bit above/below this: $\beta_0 \pm b_{0i}$
+
+- We'll add $b_{0i}$ to our regression model
+
+. . .
+
+Model is [conditional]{.alert} because the interpretation of $\beta_1$ assumes we're comparing individuals *in the same cluster* (conditional on group membership)
+
+- Just like how interpretation of $\beta_1$ assumes we're comparing individuals who have the same value for all other covariates
+
+. . .
+
+We can put this into practice with a [linear mixed effects]{.alert} model
+
+---
+
+## The linear mixed effects model
+
+The linear mixed effects (LME) model takes the form:
+
+$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+- $\vec{Y}_i$ is the response vector for cluster $i$ (dimensions: $n_i \text{ individuals} \times 1 \text{ variable}$)
+
+- $\boldsymbol{X}_i$ is the [fixed effects]{.alert} design matrix for cluster $i$ (dimensions: $n_i \times p$)
+
+- $\vec{\beta}$ is the fixed effects parameter vector (dimensions: $p \times 1$)
+
+- $\vec{Z}_i$ is the random effects vector for cluster $i$ (dimensions: $n_i \times 1$)
+
+- $b_{0i}$ is the [random intercept]{.alert} for cluster $i$ (dimensions: $1\times 1$)
+
+- $\vec{\epsilon}_i$ is the vector of error terms (dimensions: $n_i \times 1$)
+
+---
+
+## Interpreting LMEs
+
+Consider a simple LME with 1 exposure variable $W$:
+$$\vec{Y}_i = \beta_0 + \beta_1 \vec{W}_{i} + b_{0i} + \vec{\epsilon}_i$$
+
+- $\beta_0$: the (sample) population-level mean in $Y$ when $w=0$
+
+- $\beta_0 + b_{0i}$: the mean in $Y$ for cluster $i$ when $w=0$
+
+- $\beta_1$: the change in $Y$ for increasing $W$ by one unit, comparing 2 individuals *in the same cluster*
+
+. . .
+
+Conditional mean:
+$$E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + b_{0i}$$
+
+- Mean outcome for an individual cluster
+
+Marginal mean:
+$$E[Y_{ij}|\boldsymbol{X}_i] = \boldsymbol{X}_i\vec{\beta}$$
+
+- Mean outcome averaged over the entire sample
+
+---
+
+## Breaking down LMEs
+
+Can also represent an LME model as:
+
+$$\vec{Y}_i = \color{green}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{\xi}_i}$$
+
+- Allows us to break down an LME into 2 main components:
+
+   1. Mean response (as function of [fixed]{.alert} covariates)
+   
+   $$\color{green}{\boldsymbol{X}_i\vec{\beta}}$$
+   
+   2. Systematic variation (of the response/outcome)
+   $$\color{blue}{\vec{\xi}_i} = \color{red}{\vec{Z}_ib_{0i}}+\color{purple}{\vec{\epsilon}_i}$$
+   made up of:
+         i. Random effects
+         
+            - Random between-cluster variation: $\color{red}{\vec{Z}_i b_{0i}}$
+            
+         ii. Within-cluster variation: $\color{purple}{\vec{\epsilon}_i}$
+
+---
+
+## The linear mixed effects model (cont.)
+
+<!-- $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$ -->
+
+$$\vec{\xi}_i = \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+We typically assume
+$$b_{0i} \sim N(0, \sigma^2_b)$$
+$$\vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i)$$
+
+- Also assume $b_{0i}$ and $\vec{\epsilon}_i$ are *independent* ($b_{0i}\perp \vec{\epsilon}_i$)
+   
+   - What happens when this is violated? Stay tuned for later this semester :grinning:
+
+. . .
+
+What's "mixed" about this model?
+
+$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+- Named because it uses [fixed effects]{.alert} (effects for covariates $\vec{\beta}$) as well as [random effects]{.alert} (cluster-specific intercepts $b_{0i}$)
+
+. . .
+
+What's "conditional" about this model?
+
+- Because the mean of the outcome variable is [conditional]{.alert} on both the fixed effects (always true in regressions) *and* the random effects:
+$$E[\vec{Y}_i|\boldsymbol{X}_i,\vec{b}_{0i}] = \boldsymbol{X}_i\vec{\beta}$$
+
+---
+
+## Breaking down systematic variation
+
+Random effects:
+$$b_{0i} \sim N(0, \sigma^2_b)$$
+
+- Assumes that [clusters]{.alert} are *randomly* varying around the population mean response: $E[b_{0i}]=0$
+
+- The typical cluster-to-cluster deviation in the overall level of the response is $\sqrt{\sigma^2_b}$
+
+. . .
+
+Within-cluster variation:
+$$\vec{\epsilon} \sim N(0, \boldsymbol{R}_i)$$
+
+- Assumes that [cluster members]{.alert} are *randomly* varying around the cluster-specific mean response: $E[\vec{\epsilon}_i]=0$
+- For now, assume $\boldsymbol{R}_i = \sigma^2_\epsilon \boldsymbol{I}$
+   - Assumes all observations in cluster $i$ are *conditionally independent* given $b_{0i}$
+      - Given cluster membership, all members of cluster are independent
+   - Also known as an [independence model]{.alert} of within-cluster variation
+-  The typical member-to-member deviation in the cluster-specific level of the response is $\sqrt{\sigma^2_\epsilon}$
+
+---
+
+## Variance/covariance of the outcome
+
+$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+Then the variance of a single outcome measure is:
+$$\begin{align*}Var[Y_{ij}] &= Var[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\epsilon_{ij}]\\
+&= Var[\vec{Z}_ib_{0i}+\epsilon_{ij}]\\
+&= \sigma^2_b + \sigma^2_{\epsilon}\end{align*}$$
+
+. . .
+
+And the covariance between 2 outcome measures in the same cluster is:
+$$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= Cov[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\epsilon_{ij}, \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\epsilon_{ijk}]\\
+&= Cov[\vec{Z}_ib_{0i}+\epsilon_{ij}, \vec{Z}_ib_{0i}+\epsilon_{ik}]\\
+&= Cov[\vec{Z}_ib_{0i}, \vec{Z}_ib_{0i}] + Cov[\epsilon_{ij}, \vec{Z}_ib_{0i}] + Cov[\vec{Z}_ib_{0i}, \epsilon_{ik}] + Cov[\epsilon_{ij}, \epsilon_{ik}]\\
+&= \sigma^2_b + 0 + 0 + 0\\
+&= \sigma^2_b\end{align*}$$
+
+. . .
+
+[In 552, we were used to seeing $Cov[Y_{ij}, Y_{ik}]=0$!]{.alert}
+
+---
+
+## What does this covariance matrix look like?
+
+$$\begin{align*}Var[\vec{Y}_i] &= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \boldsymbol{R}_i\\
+&= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
+&=\begin{bmatrix}
+\sigma^2_b & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b
+\end{bmatrix} + \begin{bmatrix}
+\sigma^2_\epsilon & 0 & \dots & 0\\
+0 & \ddots & \dots & 0\\
+\vdots & \dots & \ddots & \vdots\\
+0& \dots & 0 & \sigma^2_\epsilon
+\end{bmatrix}\\
+&=\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}\end{align*}$$
+
+- Known as a [block exchangeable]{.alert} matrix
+
+---
+
+## ICC in LMEs
+
+It is also very intuitive to calculate the ICC from an LME:
+$$\begin{align*}\text{ICC} &= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\\
+&= \frac{\sigma^2_b}{\sigma^2_b + \sigma^2_{\epsilon}}\end{align*}$$
+
+<!-- --- -->
+
+<!-- ## Distributional assumptions -->
+
+<!-- LMEs assume that the outcome follows a [multivariate normal]{.alert} distribution -->
+
+---
+
+## Inference
+
+A note:
+
+- In OLS and WLS, we used [maximum likelihood]{.alert} to estimate $\beta$'s and variance components 
+   
+- In LMEs, we use [restricted maximum likelihood (REML)]{.alert} estimation because MLE gives us biased estimates of the covariance components in small samples
+
+- This means that we [cannot]{.alert} perform likelihood ratio test-based inference for $\vec{\beta}$ when using REML!
+
+   - Wald-based inference (z/t-tests and confidence intervals) are still fine, though

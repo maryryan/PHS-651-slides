@@ -1,0 +1,410 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+execute: 
+   eval: true
+   echo: true
+---
+
+
+<h1> PHS 651: Advanced regression methods </h1>
+
+<h2> Lecture 0: Introduction </h2>
+
+<hr>
+
+<h3> Mary Ryan Baumann, PhD </h3>
+
+<h3> September 5, 2024 </h3>
+
+---
+
+## Howdy! 🤠
+
+[Instructor]{.alert}: Mary Ryan Baumann (she/her)
+
+- Assistant Professor - Population Health Sciences; Biostatistics & Medical Informatics
+
+   - Biostatistician by training & practice
+
+   - Research in correlated data & study design
+
+Logistics
+
+- My office: 701 WARF
+
+- Email: mary.ryan@wisc.edu
+
+- Office hours: xxxxx
+
+- Calendly: https://calendly.com/mary-m-ryan/
+
+---
+
+## Introduction
+
+- What you covered in PHS 552
+   - What is regression
+   - How to build a mean model
+   - Models for different types of outcomes (normal, logistic, Poisson, etc)
+   - What happens when constant variance breaks?
+
+. . .
+
+- What we'll focus on here:
+   - Same foundations, different style: what happens when observations [are not independent]{.alert}
+      <!-- - Clustered data -->
+      <!-- - Longitudinal/repeated measures data -->
+      <!-- - Time-to-event/survival data -->
+
+---
+
+## Our focus
+
+- We've previously assumed all observations are [independent]{.alert}
+   - Can be a reasonable assumption in certain settings (certain cross-sectional studies)
+   - When not reasonable, methods from PHS 552 can still be useful if other tools aren't available
+      - We'll explore the boundaries of this
+   
+- Here, we'll be [expanding our statistical toolbox]{.alert}
+   - Allows us to be [more precise]{.alert} when independence isn't reasonable
+   - Lets us ask a [wider variety]{.alert} of questions
+
+. . .
+
+- When might independence not be reasonable?
+   - Group membership makes in-group outcome variability different from between-group variability
+      - i.e., health outcomes correlated by neighborhood, occular outcomes correlated by individual
+   - We're observing the same individuals repeatedly (longitudinal data)
+
+. . .
+
+- Non-independence we [won't]{.alert} be getting into
+   - Time series modeling
+   - Spatial statistical modeling
+   
+---
+
+## Examples!
+
+---
+
+## Course outline
+
+- Review of generalized linear models, weighted least squares
+- Cross-sectional clustered data
+- Conditional modeling: linear mixed effect models (LMEs), generalized linear mixed models (GLMMs)
+- Marginal modeling : generalized estimationg equations (GEEs)
+- Modeling repeated measures: multi-period cross-sectional data, longitudinal data
+- Multilevel modeling
+- Longitudinal smoothing
+- Time-to-event/survival analysis
+
+---
+
+## What I'm assuming you're coming in with
+
+- Familiarity with basic statistical inference concepts (i.e., estimation, hypothesis testing, confidence intervals)
+- Basic regression/ANOVA
+- (Generally) how to build a mean model (i.e., confounding and precision variables)
+- Some familiarity with matrix notation
+   - Should be familiar with matrix addition/subtraction/multiplication/inversion
+   - We'll review and I'll post resources
+- Basic SAS/R coding knowledge
+   - I'll use both in teaching
+   - My primary software is R
+   - You can use whatever software you want for your assignments, just know there are softwares I may be less good at providing support in
+
+---
+
+## Course logistics
+
+[Instruction times]{.alert}
+
+- Tuesdays/Thursdays 4-5:40p CT
+
+- Location: 726 WARF
+
+- Tuesdays will (mostly) be concepts
+
+- Thursdays will (mostly) be application/coding
+
+[Attendance]{.alert}
+
+- I don't take it
+
+- All in-person lectures will also have a synchronous Zoom-in option & will be recorded
+
+   - Plan A: attend in person
+   
+   - Plan B: attend synchronously on Zoom
+   
+   - Plan C: watch lecture recording on Canvas
+   
+- Please don't make me lecture to an empty room
+
+---
+
+## How you'll be evaluated
+
+[Weekly homeworks (et al)]{.alert} (35%)
+
+- Assigned Tuesdays at end of class, due following Tuesday at beginning of class
+
+- Some small assignments completed over several weeks may also fall in this bucket
+
+[Midterm]{.alert} (15%)
+
+- Small in-class exam focused on understanding of concepts (not computation)
+
+[Final data analysis project]{.alert} (40%)
+
+- Intermediate milestone assignments (5% / 40%)
+
+- 10-15 minute oral presentation (10% / 40%)
+
+- Final written report (25% / 40%)
+
+---
+
+## Resources for you
+
+[Piazza]{.alert}
+
+- This is our main forum for questions
+
+- It is my expectation that most questions can (and will) be answered by your fellow students
+
+[Peer feedback groups]{.alert}
+
+- Randomly assigned groups of 3-4
+
+- Guarantees everyone with some continuing level of informal brainstorming/feedback through the semester
+
+- Will use for final project feedback, but also feel free to use as study groups
+
+
+# Let's go! {.center}
+
+---
+
+## Review: ordinary linear regression
+
+AKA: ordinary least squares
+
+$$Y_i = \beta_0 + \beta_1 W_i + \epsilon_i$$
+
+- $Y_i$: (continuous) outcome/dependent variable for some individual $i$
+- $W_i$: treatment/exposure/independent variable for individual $i$
+- $\beta_0$: model intercept
+   - Interpretation:
+   <br>
+   <br>
+   <br>
+   <br>
+- $\beta_1$: model slope
+   - Interpretation:
+   <br>
+   <br>
+   <br>
+   <br>
+   
+- $\epsilon_i$: error term
+
+
+---
+
+## Review: ordinary linear regression
+
+We can write this in matrix notation: 
+$$\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon},$$
+where
+
+::: {.columns}
+
+::: {.column width="50%"}
+- $\vec{Y} = \begin{bmatrix}
+    y_1\\
+    y_2\\
+    \vdots\\
+    y_n
+\end{bmatrix}$ is a [vector]{.alert} of responses
+
+- $\boldsymbol{X} = \begin{bmatrix}
+    1 & w_1\\
+    1 & w_2\\
+    \vdots & \vdots\\
+    1 & w_n
+\end{bmatrix}$ is the [design matrix]{.alert}
+:::
+
+::: {.column width="50%"}
+<br>
+
+- $\vec{\beta} = \begin{bmatrix}
+    \beta_0\\
+    \beta_1
+\end{bmatrix}$ is a vector of coefficients
+
+- $\vec{\epsilon} =\begin{bmatrix}
+    \epsilon_1\\
+    \epsilon_2\\
+    \vdots\\
+    \epsilon_n
+\end{bmatrix}$ a vector of residuals
+:::
+:::
+
+. . .
+
+$\vec{Y}$ and $\boldsymbol{X}$ are [data]{.alert}, while $\vec{\beta}$ and $\vec{\epsilon}$ are [model parameters]{.alert}
+
+---
+
+## Review: ordinary linear regression
+
+$$\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon}$$
+We like to think of splitting our model into 2 parts:
+
+
+. . .
+
+1. the [mean model]{.alert}
+$$E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}$$
+
+. . .
+
+2. and the model of the [covariance]{.alert} 
+$$Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\epsilon}$$
+
+   - In OLS we usually assume $\vec{\epsilon} \sim N(0, \sigma^2)$
+      - Common variance across all observations, observations are completely independent (covariance of 0)
+      - [Homoskedasticity]{.alert}
+   
+---
+
+## Review: OLS estimation
+
+- Model parameters are the "true" relationship between our independent variables and our response (given how we're modeling the relationship...)
+   - We try to estimate what that particular relationship might be using data
+
+- We can estimate a [point estimate]{.alert} for $\beta$ using the data:
+$$\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\vec{Y}$$
+   - This is our single best guess for what $\beta$ is 🎯
+   
+---
+
+## Review: OLS inference
+
+Because our data is only a [sample]{.alert} from the entire [population of interest]{.alert}, we always have uncertainty in that estimate...
+
+- The [covariance]{.alert} for $\beta$ is
+   $$V = \sigma^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}$$
+   
+   - which we estimate with
+   $$\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}$$
+
+- We then assume our estimate $\widehat{\beta}$ has a distribution:
+   $$\widehat{\beta} \sim N(\beta, V)$$
+   
+- And then we can create a $(100-\alpha/2)$% [confidence interval]{.alert} for $\widehat{beta}$:
+   $$\widehat{\beta} \pm Z_{1-\alpha/2}\sqrt{\widehat{V}}$$\
+   
+We call this statistical [inference]{.alert}
+
+- It's a way of providing context for our point estimate
+   
+   
+---
+
+## Review: weighted least squares
+
+What happens when $Var[\vec{Y}|\boldsymbol{X}]$ is [NOT the same]{.alert} across all of $\vec{Y}$?
+
+- Estimate of $\beta$ will be fine, but [inference]{.alert} will be incorrect
+
+We can fixed this with [weighted least squares]{.alert}
+
+$$\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}$$
+
+- $\boldsymbol{W}$ is a diagonal matrix of weights
+
+- Which gives us an estimated variance for $\widehat{\beta}$ of
+
+$$\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}$$
+
+- Lots of choices for $\boldsymbol{W}$
+
+---
+
+## Review: robust variance
+
+WLS can help if our assumptions are correct, but what if $Var[\vec{Y}|\boldsymbol{X}] \ne \sigma^2\boldsymbol{W}^{-1}$?
+
+- Then true variance of $\widehat{\beta}$ is
+$$(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{\Sigma}\boldsymbol{W}\boldsymbol{X})(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}$$
+
+   - $\boldsymbol{\Sigma}$ is the true variance of $\vec{Y}$
+   
+- If the WLS variance is correct ($\boldsymbol{V} = \sigma^2\boldsymbol{W}^{-1}$) then this simplifies back to $\sigma^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}$
+
+   - That's why it's called a [robust variance]{.alert} estimate -- it doesn't penalize us if our assumptions about $\boldsymbol{W}$ are correct, but helps fix it if they're wrong
+   
+   - Also known as [sandwich variance]{.alert} because it looks a bit like meat ($\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{\Sigma}\boldsymbol{W}\boldsymbol{X}$) between 2 slices of bread ($\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X}$)
+
+. . .
+
+We can estimate each element of $\boldsymbol{\Sigma}$ with the squared residual of our model: $e_i^2 = (Y_i - \hat{Y}_i)^2$
+
+- In 552, we assumed $\boldsymbol{\Sigma}$ was a diagonal matrix (because assume 0 covariance)
+
+   - We'll break that assumption in this class
+
+. . .
+
+Robust variance is known as a [post hoc]{.alert} correction because it only affects inference of $\widehat{\beta}$, not how we construct the mean model
+
+- Note that if $\boldsymbol{W} = \boldsymbol{1}$, then we're just applying the robust variance correction to OLS!
+
+---
+
+## Review: logistic regression
+
+Now what happens if $\vec{Y}$ is binary?
+
+- We could still try to model $\vec{Y}$ with
+$$E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}$$
+   - What do the interpretations of $\beta_0$ and $\beta_1$ then become?
+   
+- But this gets squirrel-y as your probability of an "event" drifts toward 0 or 1
+
+. . .
+
+An alternative model is [logistic regression]{.alert}
+
+$$\log\left(\frac{E[\vec{Y}|\boldsymbol{X}]}{1-E[\vec{Y}|\boldsymbol{X}]}\right) = \boldsymbol{X}\vec{\beta}$$
+
+- Interpretation of $e^{\beta_1}$: the relative difference in the [odds]{.alert} of 'success' comparing two populations differing by 1 unit in $\boldsymbol{X}$
+   
+   - The above regression is modeling the [odds ratio]{.alert}
+
+- We call the function $ln\left(\frac{x}{1-x}\right)$ the [logit]{.alert}
+
+   - That makes this type of regression a [logistic regression]{.alert}
+
+   - In PHS 552, you derived why we use that transformation based on the binomial likelihood
+
+---
+
+## Review: link functions

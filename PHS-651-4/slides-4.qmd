@@ -1,0 +1,266 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+execute: 
+   eval: true
+   echo: true
+---
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+```
+<h1> Lecture 4: Marginal models for correlated data </h1>
+
+<h2> PHS 651: Advanced regression methods </h2>
+
+<hr>
+
+<h3> Mary Ryan, PhD </h3>
+
+<h3> October 1, 2024 </h3>
+
+---
+
+## Recap: linear mixed effect models
+
+One way to account for clustering in analysis is with a [linear mixed effects]{.alert} model
+$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+- $\boldsymbol{X}_i\vec{\beta}$ are the [fixed effects]{.alert} representing the mean response
+
+- $\vec{Z}_ib_{0i}$ are the [random effects]{.alert} accounting for random between-cluster variation
+
+- $\vec{\epsilon}_i$ is the regular between-individual variation
+
+. . .
+
+The [fixed effects]{.alert} are shared across everyone in the sample, while the [random effects]{.alert} are unique to a particular cluster
+
+. . .
+
+Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they are comparing 2 individuals with the same cluster membership
+
+- Often referred to as having individual-specific or cluster-specific interpretation
+
+. . .
+
+[What if we want to look at the effect of an exposure *averaged across* all clusters?]{.alert}
+
+---
+
+## Marginal models
+
+Basic idea: we want to account for clustering of data, but make inference about [population averages]{.alert} (marginal effects)
+
+- These are the ones we're most interested in in public and population health!
+
+- Mean response is conditional *only* on the fixed covariates we add to the mean model
+
+This means we have to model (estimate) the outcome mean and the outcome covariance *explicitly*
+
+---
+
+## Marginal model components
+
+There are 3 main components of a marginal model
+
+1. The marginal expectation of the outcome ($E[Y_{ij}| \vec{X}_{ij}] = \mu_{ij}$) only depends on the covariates in the model:
+$$\mu_{ij} = \vec{X}_{ij}\vec{\beta}$$
+
+- Obviously, our data $\vec{X}_{ij}$ is known, while $\vec{\beta}$ needs to be estimated
+
+2. The marginal variance of the outcome depends on the marginal mean through the [variance function $v(\cdot)$]{.alert} and a scale parameter $\varphi$:
+$$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
+
+- The variance function is known/assumed, while $\varphi$ may need to be estimated
+
+3. The within-cluster association of the outcomes, which depends on the means and a parameter $\alpha$ that also needs to be estimated
+
+---
+
+## Marginal model components (cont.)
+
+In a model with clustered continuous responses and only one exposure $W$:
+
+1. $E[Y_{ij}|\boldsymbol{X}] = \mu_{ij} = \beta_0 + W_{ij}\beta_1$
+
+   - To account for confounding, we would add additional variables to the right hand side so that we [correctly model the mean]{.alert}
+
+2. $Var[Y_{ij}|W_{ij}] = \varphi_{i} = \sigma^2_{i}$
+
+   - Different variance for each cluster
+
+3. $Corr[Y_{ij}, Y_{ik}] = \alpha$
+
+   - Outcomes in same cluster have correlation of $\alpha$
+   
+. . .
+
+We build the linear model for 1, and 2 is usually determined by the type of outcome variable we're using. But 3 has some subjectivity in how we assume observations are related.
+
+---
+
+## Examples of correlation structures
+
+Are they completely independent from each other?
+
+Independence
+
+---
+
+## Examples of correlation structures
+
+Are all observations related to each other to the same degree?
+Exchangeable
+
+- AKA: compound symmetry
+
+---
+
+## Examples of correlation structures
+
+Or do you assume all observations are possibly related to each other in different ways?
+Unstructured
+
+
+- This offers maximum flexibility, but also requires you to estimate every correlation in this matrix separately
+
+   - This can cause computational and efficiency issues
+   
+---
+
+## Marginal model components
+
+There are 3 main components of a marginal model
+
+1. The marginal expectation of the outcome ($E[Y_{ij}| \vec{X}_{ij}] = \mu_{ij}$) only depends on the covariates in the model:
+$$\mu_{ij} = \vec{X}_{ij}\vec{\beta}$$
+
+- Obviously, our data $\vec{X}_{ij}$ is known, while $\vec{\beta}$ needs to be estimated
+
+2. The marginal variance of the outcome depends on the marginal mean through the [variance function $v(\cdot)$]{.alert} and a scale parameter $\varphi$:
+$$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
+
+- The variance function is known/assumed, while $\varphi$ may need to be estimated
+
+3. The within-cluster association of the outcomes, which depends on the means and a parameter $\alpha$ that also needs to be estimated
+
+
+### [How do we take these components and use them to make some sort of equation with which to estimate our regression coefficients?]{.alert}
+
+---
+
+## Marginal models and estimating equations
+
+We want to take the 3 components of the marginal model
+
+1. The marginal expectation of the outcome $g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$
+
+2. The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
+
+3. The within-cluster association of the outcomes
+
+and shove them into something that looks like the GLM estimating equation
+
+. . .
+
+Thus is born [generalized estimating equations]{.alert}
+
+---
+
+## Generalized estimating equations
+
+Generalized estimating equations (GEEs) find the $\beta$ that solves an estimating equation of the general form:
+$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
+
+- Difference here: $v_i$ is the [working covariance]{.alert} for the outcome
+
+   - Accounts for models of outcome variance *and* within-cluster association (components 2 and 3)
+   
+. . .
+
+Since this [only depends on the mean $\mu_{ij}(\cdot)$ and the variance $v_i(\cdot)$ functions]{.alert}, a GEE doesn't have to actually correspond to a full likelihood/distribution
+
+- This lets us "mix and match" different forms for the 3 marginal model components into this one estimating equation
+
+- e.g., we don't need to theoretically derive the covariance - we can just approximate it using the variance and the chosen correlation structure
+
+---
+
+## Building the working covariance
+
+Based on your outcome variable, you'll likely know what the variance would be if all your outcome datapoints were *independent*
+
+We can fill in what the covariance would be by making assumptions about how observations within a cluster are correlated
+
+---
+
+## Building the working covariance
+
+If we assume the cluster-specific variance is $\sigma^2_{i}$, then let 
+$$S_i(\mu_i) = \begin{bmatrix}
+    \sigma^2_i  & 0 & \dots  & 0 \\
+    0 & \sigma^2_i & \dots & 0\\
+    \vdots & & \ddots & \vdots\\
+    0 &\dots & 0 & \sigma^2_i
+\end{bmatrix}$$
+
+Then assume a correlation structure and call it $R_i(\alpha)$
+
+Finally, the working covariance matrix will be:
+$$S_i(\mu_i)^{1/2}R_i(\alpha)S_i(\mu_i)^{1/2}$$
+
+---
+
+## What does this look like?
+
+For exchangeable correlation:
+
+$$\begin{bmatrix}
+    \sigma^2_i  & \alpha & \dots  & \alpha \\
+    \alpha & \sigma^2_i & \dots & \alpha\\
+    \vdots & & \ddots & \vdots\\
+    \alpha &\dots & \alpha & \sigma^2_i
+\end{bmatrix}$$
+
+
+---
+
+## GEEs and non-Normal data
+
+Similarly, we can extend GEEs to non-Normal outcome data
+
+Recall: GEEs find the $\beta$ that solves an estimating equation of the general form:
+$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
+
+[Why does this work when we transform the outcome with a link function?]{.alert}
+
+---
+
+## GEE limitations
+
+Since we're only specifying mean and covariance structures, though, this means that our GEE won't behave nicely when we deviate from those structures (more on this later in the semester)
+
+- By loosening distributional assumptions, we've placed more reliance on *structure*
+
+---
+
+## LME vs GEE
+
+We noted that GEEs are *marginal* models while LMEs are *conditional* models...
+
+Let's see how they compare:

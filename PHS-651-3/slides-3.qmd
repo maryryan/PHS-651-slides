@@ -29,13 +29,13 @@ library(gridExtra)
 
 <hr>
 
-<h3> Mary Ryan, PhD </h3>
+<h3> Mary Ryan Baumann, PhD </h3>
 
 <h3> September 24, 2024 </h3>
 
 ---
 
-## Review: linear mixed effect models
+## Recap: linear mixed effect models
 
 One way to account for clustering in analysis is with a [linear mixed effects]{.alert} model
 $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
@@ -58,10 +58,10 @@ Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they ar
 
 ---
 
-## Recap: logistic regression
+## 522 review: logistic regression
 
 If our outcome $Y_{i}$ is [binary]{.alert}, we can model it using a logistic regression:
-$$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W_i\beta_1$$
+$$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W_i\beta_1 + \epsilon_i$$
 
 - We assume $Y_i \sim \text{Binomial}(p_i)$
 
@@ -69,7 +69,7 @@ $$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W
    
 - The logit function $\log\left(\frac{x}{1-x}\right)$ acts as the [link]{.alert} between $E[Y_i]$ and the linear model $\boldsymbol{X}_i\vec{\beta}$
 
-   - $\left(\frac{x}{1-x}\right)$ are known as the [odds]{.alert} of $w=1$ compared to $w=0$
+   - $\left(\frac{p_i}{1-p_i}\right)$ are known as the [odds]{.alert} of $w=1$ compared to $w=0$
 
 - $\beta_1$ tells us about the [log odds]{.alert}:
 
@@ -81,7 +81,7 @@ $$e^{\beta_1} = \frac{\text{odds}(w=1)}{\text{odds}(w=0)}=\frac{\frac{p(w=1)}{1-
 
 ---
 
-## Review: logistic regression
+## 522 review: logistic regression
 
 Logistic regression is solving 2 problems for us:
 
@@ -89,11 +89,11 @@ Logistic regression is solving 2 problems for us:
 
    - Remember, variance of binary data is a function of its mean!
 
-2. Transforms the outcome so we don't have to worry about it staying between 0 and 1
+2. Transforms the outcome so we don't have to worry about predictions going above 1 or below 0
 
 . . .
 
-These are common problems when analyzing non-Normal data
+These are common problems when analyzing many types of non-Normal data
 
 - Logistic regression is a specific example of a broader class of [generalized linear models]{.alert}
 
@@ -106,6 +106,14 @@ In the independent observation setting, many types of data are modeled using a c
 
 $$g(Y_i) = \boldsymbol{X}_i\vec{\beta} + \epsilon_i$$
 
+- $g(\cdot)$ is known as the [link function]{.alert} because it *links* a linear model on the righthand side to the outcome on the lefthand side
+
+- $\epsilon_i$ will still be Normally distributed, but its variance $\sigma^2_{\epsilon}$ will match the distribution of $Y_i$
+
+---
+
+## Generalized linear models
+
 In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
 $$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i - \mu_i(\beta)] = 0$$
 
@@ -113,7 +121,7 @@ $$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i
 
 - $Var[Y_i] = v_i = \sigma^2$
 
-- The estimating equation is actually just $\partial f(y_i)/\partial \beta$ (AKA: the score)
+- The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ (AKA: the score $\partial f(y_i)/\partial \beta$)
 
 . . .
    
@@ -127,60 +135,118 @@ OLS is a type of GLM!
 
 This estimating equation is based on the [likelihood function]{.alert} associated with the distribution we assume the outcome is coming from
 
-   - Many types of data distributions have likelihoods with a similar form - GLMs exploit that
+   - Many types of data distributions have likelihoods with a similar form called the [exponential family form]{.alert} - GLMs exploits this
 
 ---
 
 ## Exponential family
 
-Many common types of data distributions belong to a family called the [exponential family]{.alert}
+Exponential family distributions share some common statistical properties
 
-- Called such because their likelihoods can be written in a common form:
-$$f(y_i)= \exp\left\{\frac{[y_i\theta_i - \psi(\theta_i)]}{\varphi} + c(y_i,\varphi)\right\}$$
+- Variance of $Y_i$ can be expressed in terms of
+$$\text{Var}[Y_i] = \phi v(\mu_i),$$
+
+   - $\phi$ is a scale parameter $>0$
    
-   - $\theta_i$ is the natural parameter
-   
-   - $\psi(\cdot)$ related $\theta_i$ to $E[Y_i]$ through $E[Y_i]=\partial\psi(\theta_i)/\partial \theta_i$
-   
-   - $\varphi$ is a variance scaling parameter
-   
-   - $c(y_i,\varphi)$ is a catch-all for everything else
+   - $v(\mu_i)$ is the variance function that describes how the outcome variance $\text{Var}[Y_i]$ is related to the mean of the outcome $\mu_i$
    
 ---
 
-## A caveat: exponential family (cont.)
-   
-Examples:
+## Exponential family and GLMs
 
-- Normal: $\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left\{-\frac{(y_i-\mu_i)^2}{2\sigma^2}\right\}=\exp\left\{\frac{y_i\mu_i - 1/2\mu_i^2}{\sigma^2} -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}\right\}$
+| Distribution | Var. function $v(\mu)$ | Link function                                                                     |
+|--------------|------------------------|-----------------------------------------------------------------------------------|
+| Normal       | $v(\mu)=1$             | Identity: $g(\mu) = \mu = \boldsymbol{X}_i\vec{\beta}$                            |
+| Bernoulli    | $v(\mu)=\mu(1-\mu)$    | Logit: $g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_i\vec{\beta}$ |
+| Poisson      | $v(\mu)=\mu$           | Log: $g(\mu) = \log(\mu)= \boldsymbol{X}_i\vec{\beta}$                            |
 
-   - $\theta_i = \mu_i$
-   
-   - $\psi(\theta_i) = 1/2 \mu_i^2$
-   
-   - $\varphi = \sigma^2$
-   
-   - $c(y_i,\varphi) = -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}$
+---
 
-- Binomial: ${n_i\choose n_i y_i}\pi_i^{n_i y_i})(1-\pi_i)^{n_i - n_i y_i} = \exp\left\{\frac{y_i \theta_i - \log[1+\exp(\theta_i)]}{1/n_i} + \log\left[{n_i \choose n_i y_i} \right]\right\}$
+## Exponential family and GLMs: examples
 
-   - $\theta_i = \log\left[\frac{\pi_i}{1-\pi_i}\right]$
-   
-   - $\psi(\theta_i) = \log[1+\exp(\theta_i)]$
-   
-   - $\varphi = 1/n_i$
-   
-   - $c(y_i,\theta_i) = \log\left[{n_i \choose n_i y_i} \right]$
+Normal distribution
 
-- Poisson: $\frac{\exp\{-\mu_i\}\mu_i^{y_i}}{y_i!} = \exp\{y_i\log(\mu_i) - \mu_i - \log(y_i!)\}$
+- Assume that $g(\cdot)$ is the identity function $g(\mu) = \mu$
 
-   - $\theta_i = \log(\mu_i)$
-   
-   - $psi(\theta_i) = \exp(\theta_i)$
-   
-   - $\varphi = 1$
-   
-   - $c(y_i, \theta_i) = -\log(y_i!)$
+- Model is then
+
+$$g(E[Y_i]) = \mu_i = \boldsymbol{X}_i\vec{\beta}$$
+
+a standard linear regression model
+
+- Variance is $\text{Var}[Y_i] = \phi$ (independent of mean)
+
+---
+
+## Exponential family and GLMs: examples
+
+Bernoulli distribution
+
+- Assume that $g(\cdot)$ is the logit function $g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)$
+
+- Model is then
+
+$$g(E[Y_i]) = \log\left(\frac{\mu_i}{1-\mu_i}\right) = \boldsymbol{X}_i\vec{\beta}$$
+
+a logistic regression model
+
+- Variance is $\text{Var}[Y_i] = \mu_i(1-\mu_i)$ (*dependent* on mean)
+<!-- ## Exponential family -->
+
+<!-- Many common types of data distributions belong to a family called the [exponential family]{.alert} -->
+
+<!-- - Called such because their likelihoods can be written in a common form: -->
+<!-- $$f(y_i)= \exp\left\{\frac{[y_i\theta_i - \psi(\theta_i)]}{\varphi} + c(y_i,\varphi)\right\}$$ -->
+
+<!--    - $\theta_i$ is the natural parameter -->
+
+<!--    - $\psi(\cdot)$ related $\theta_i$ to $E[Y_i]$ through $E[Y_i]=\partial\psi(\theta_i)/\partial \theta_i$ -->
+
+<!--    - $\varphi$ is a variance scaling parameter -->
+
+<!--    - $c(y_i,\varphi)$ is a catch-all for everything else -->
+
+<!-- --- -->
+
+<!-- ## Exponential family examples -->
+
+<!-- Normal: $\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left\{-\frac{(y_i-\mu_i)^2}{2\sigma^2}\right\}=\exp\left\{\frac{y_i\mu_i - 1/2\mu_i^2}{\sigma^2} -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}\right\}$ -->
+
+<!-- - $\theta_i = \mu_i$ -->
+
+<!-- - $\psi(\theta_i) = 1/2 \mu_i^2$ -->
+
+<!-- - $\varphi = \sigma^2$ -->
+
+<!-- - $c(y_i,\varphi) = -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}$ -->
+
+<!-- --- -->
+
+<!-- ## Exponential family examples -->
+
+<!-- Binomial: ${n_i\choose n_i y_i}\pi_i^{n_i y_i})(1-\pi_i)^{n_i - n_i y_i} = \exp\left\{\frac{y_i \theta_i - \log[1+\exp(\theta_i)]}{1/n_i} + \log\left[{n_i \choose n_i y_i} \right]\right\}$ -->
+
+<!-- - $\theta_i = \log\left[\frac{\pi_i}{1-\pi_i}\right]$ -->
+
+<!-- - $\psi(\theta_i) = \log[1+\exp(\theta_i)]$ -->
+
+<!-- - $\varphi = 1/n_i$ -->
+
+<!-- - $c(y_i,\theta_i) = \log\left[{n_i \choose n_i y_i} \right]$ -->
+
+<!-- --- -->
+
+<!-- ## Exponential family examples -->
+
+<!-- Poisson: $\frac{\exp\{-\mu_i\}\mu_i^{y_i}}{y_i!} = \exp\{y_i\log(\mu_i) - \mu_i - \log(y_i!)\}$ -->
+
+<!-- - $\theta_i = \log(\mu_i)$ -->
+
+<!-- - $psi(\theta_i) = \exp(\theta_i)$ -->
+
+<!-- - $\varphi = 1$ -->
+
+<!-- - $c(y_i, \theta_i) = -\log(y_i!)$ -->
    
 ---
 
@@ -244,3 +310,58 @@ Others include:
    - Uses method 2
    
    - Can extend to longitudinal models, but can take a while to run
+   
+---
+
+## Marginal effects in GLMMs
+
+Last time we noted that marginal and conditional effects are *identical* in LMEs
+
+- This is not the case for GLMMs
+
+Take a logistic mixed effects model:
+
+$$\text{logit}(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i$$
+
+. . .
+
+- The conditional mean of our outcome is then:
+$$logit(E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}$$
+
+. . .
+
+In order to get the marginal effects, we would need to inverse-transform the outcome:
+$$E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}$$
+
+and then take the marginal expectation of that:
+$$\begin{align*}E[\vec{Y}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&=E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right]\end{align*}$$
+
+. . .
+
+- Clearly, $E[\vec{Y}_i] \ne \frac{\exp(\boldsymbol{X}_i\vec{\beta})}{1+\exp(\boldsymbol{X}_i\vec{\beta})}$
+
+---
+
+## Marginal effects in GLMMs
+
+So what happens when we have transformed outcomes and want marginal effects?
+
+. . .
+
+- You could integrate out the random effects:
+
+$$E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right] = \int_{-\infty}^{\infty}\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})} f(b_{0i})db_{0i}$$
+
+but this generally doesn't end up with a nice formulaic solution...
+
+. . .
+
+- You could use an approximation:
+$$\text{logit}(\vec{Y}_i) = \frac{\boldsymbol{X}_i\vec{\beta}}{\sqrt{(1+0.346\sigma^2_b)}}$$
+
+but this is very sensitive to any model misspecification and can be biased
+
+. . .
+
+Maybe what we need are specific [marginal models]{.alert} that incorporate clustering... (stay tuned for next week)

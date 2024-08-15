@@ -56,6 +56,8 @@ Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they ar
 
 - Often referred to as having individual-specific or cluster-specific interpretation
 
+- Possible to extract marginal effects from conditional models, but often complicated and prone to bias
+
 . . .
 
 [What if we want to look at the effect of an exposure *averaged across* all clusters?]{.alert}
@@ -71,6 +73,8 @@ Basic idea: we want to account for clustering of data, but make inference about 
 - Mean response is conditional *only* on the fixed covariates we add to the mean model
 
 This means we have to model (estimate) the outcome mean and the outcome covariance *explicitly*
+
+- The random effects in LMEs only *induce* a covariance structure (Fitzmaurice pg 474)
 
 ---
 
@@ -147,38 +151,40 @@ Unstructured
 
 There are 3 main components of a marginal model
 
-1. The marginal expectation of the outcome ($E[Y_{ij}| \vec{X}_{ij}] = \mu_{ij}$) only depends on the covariates in the model:
-$$\mu_{ij} = \vec{X}_{ij}\vec{\beta}$$
-
-- Obviously, our data $\vec{X}_{ij}$ is known, while $\vec{\beta}$ needs to be estimated
-
-2. The marginal variance of the outcome depends on the marginal mean through the [variance function $v(\cdot)$]{.alert} and a scale parameter $\varphi$:
-$$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
-
-- The variance function is known/assumed, while $\varphi$ may need to be estimated
-
-3. The within-cluster association of the outcomes, which depends on the means and a parameter $\alpha$ that also needs to be estimated
-
-
-### [How do we take these components and use them to make some sort of equation with which to estimate our regression coefficients?]{.alert}
-
----
-
-## Marginal models and estimating equations
-
-We want to take the 3 components of the marginal model
-
 1. The marginal expectation of the outcome $g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$
 
 2. The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
 
 3. The within-cluster association of the outcomes
 
-and shove them into something that looks like the GLM estimating equation
+
+[How do we take these components and use them to make some sort of equation with which to estimate our regression coefficients?]{.alert}
+
+. . .
+
+- What if we used the GLM estimating equation?
 
 . . .
 
 Thus is born [generalized estimating equations]{.alert}
+
+<!-- --- -->
+
+<!-- ## Marginal models and estimating equations -->
+
+<!-- We want to take the 3 components of the marginal model -->
+
+<!-- 1. The marginal expectation of the outcome $g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$ -->
+
+<!-- 2. The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$ -->
+
+<!-- 3. The within-cluster association of the outcomes -->
+
+<!-- and shove them into something that looks like the GLM estimating equation -->
+
+<!-- . . . -->
+
+<!-- Thus is born [generalized estimating equations]{.alert} -->
 
 ---
 
@@ -187,9 +193,13 @@ Thus is born [generalized estimating equations]{.alert}
 Generalized estimating equations (GEEs) find the $\beta$ that solves an estimating equation of the general form:
 $$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
 
+- Almost exactly the same as the one we saw for GLMs!
+
 - Difference here: $v_i$ is the [working covariance]{.alert} for the outcome
 
-   - Accounts for models of outcome variance *and* within-cluster association (components 2 and 3)
+   - Explicitly accounts for models of outcome variance *and* within-cluster association (components 2 and 3)
+   
+   - With GLMMs, our random effects were getting stuck in with $\mu_{ij}(\cdot)$ and the covariance structure was induced as a side product
    
 . . .
 

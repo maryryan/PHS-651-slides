@@ -12,10 +12,12 @@ format:
       height: 1080
       width: 1920
       chalkboard: true
+      auto-stretch: false
 execute: 
    eval: true
    echo: true
 ---
+
 ```{r load libraries, echo=F}
 library(tidyverse)
 library(ggdag)
@@ -28,7 +30,7 @@ library(gridExtra)
 
 <hr>
 
-<h3> Mary Ryan, PhD </h3>
+<h3> Mary Ryan Baumann, PhD </h3>
 
 <h3> September 10, 2024 </h3>
 
@@ -67,12 +69,12 @@ library(gridExtra)
 
 ## How does clustering affect outcomes?
 
-Cluster membership could be completely unrelated to exposure
+Cluster membership could be completely unrelated to exposure or outcome
 
 - Just a data structure (how data are collected/organized)
 
 ```{r cluster DAG1, echo=F, fig.align="center"}
-unrelated <- dagify(
+dagify(
   O ~ E,
   C ~ C,
   coords = list(x = c(E = 1, O = 2, C=2.5), y = c(E = 1, O = 1, C=0.5))
@@ -84,7 +86,13 @@ unrelated <- dagify(
   ylim(-0.5, 2) +
   geom_dag_edges_diagonal()
 
-precision <- dagify(
+#grid.arrange(precision, unrelated, ncol=2)
+```
+
+Or could impact distribution of outcome
+
+```{r cluster DAG1.5, echo=F, fig.align='center'}
+dagify(
   O ~ E,
   O ~ C,
   coords = list(x = c(E = 1, O = 2, C=2.5), y = c(E = 1, O = 1, C=0.5))
@@ -95,14 +103,16 @@ precision <- dagify(
   theme_dag() +
   ylim(-0.5, 2) +
   geom_dag_edges_diagonal()
-
-grid.arrange(precision, unrelated, ncol=2)
 ```
 
-Clustering could also potentially a [confounding variable]{.alert}
+---
+
+## How does clustering affect outcomes?
+
+It could wholly dictate who receives exposure
 
 ```{r cluster DAG2, echo=F, fig.align="center"}
-straight <- dagify(
+dagify(
   E ~ C,
   O ~ E,
   coords = list(x = c(C = 1, E = 2, O = 3), y = c(C = 1, E = 1, O = 1))
@@ -114,7 +124,15 @@ straight <- dagify(
   geom_dag_edges_link()+
   theme_dag() 
 
-med <- dagify(
+
+```
+
+. . .
+
+Clustering could also potentially a [confounding variable]{.alert}
+
+```{r cluster DAG3, echo=F, fig.align="center"}
+dagify(
   O ~ C,
   E ~ C,
   O ~ E,
@@ -128,7 +146,7 @@ med <- dagify(
   geom_dag_edges_arc(curvature = c(0,0.5, 0))
 
 
-grid.arrange(straight, med, ncol=2)
+#grid.arrange(straight, med, ncol=2)
 
 ```
 
@@ -138,15 +156,17 @@ grid.arrange(straight, med, ncol=2)
 
 ## Other issues from correlated data
 
-Even if clustering has no impact on exposure
+Even if clustering has no impact on exposure:
 
 - Groups/clusters may not be the same size
 
 - "Clustering" of data may also affect variance
 
    - Some groups have higher/lower variation than others
+   
+   - Some groups may have higher/lower measurement errror than others
 
-   - This breaks the [homoskedasticity]{.underline} assumption of OLS
+   - This all breaks the [homoskedasticity]{.underline} assumption of OLS
 
       - Recall PHS 552!
 
@@ -175,4 +195,272 @@ $$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} 
 
 ## Clustering in data analysis
 
-What is one way to handle clustering in a regression?
+What is a way to handle clustering in an analysis?
+
+
+---
+
+## Clustering in data analysis
+
+What is a way to handle clustering in an analysis?
+
+[Could ignore it and perform regular regression/t-test]{.alert}
+
+$$Y_{j} = \beta_0 + \beta_1 W_{j} + \epsilon_{j}$$
+
+   - $Y_{j}$ is outcome for individual $j$
+   
+   - $W_{j}$ is exposure for individual $j$
+   
+. . .
+
+Do we see any issues with this approach?
+
+---
+
+## Clustering in data analysis
+
+What is a way to handle clustering in an analysis?
+
+[Could perform separate regressions/t-tests for each county]{.alert}
+
+$$Y_{ij} = \beta_0 + \beta_1 W_{ij} + \epsilon_{ij}$$
+
+   - $Y_{ij}$ is outcome for individual $j$ in cluster $i$
+   
+   - $W_{ij}$ is exposure for individual $j$ in cluster $i$
+   
+. . .
+
+Do we see any issues with this approach?
+
+---
+
+## Clustering in data analysis
+
+What is a way to handle clustering in a regression?
+
+[Could add cluster membership as model covariate]{.alert}
+
+$$Y_{ij} = \beta_0 + \beta_1 W_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
+
+   - $Y_{ij}$ is outcome for individual $j$ in cluster $i$
+   
+   - $W_{ij}$ is exposure for individual $j$ in cluster $i$
+   
+   - $C^{(i)}_{ij}$ is whether individual $j$ in cluster $i$ is a member of cluster $i$
+   
+   - $\gamma_i$ is the effect of being in cluster $i$ on the outcome [compared to the reference group]{.alert}, for two individuals with the same level of exposure
+   
+. . .
+
+Do we see any issues with this approach?
+
+---
+
+## Clustering in data analysis
+
+What is a way to handle clustering in a regression?
+
+[Could add cluster membership as model covariate (modified)]{.alert}
+
+$$Y_{ij} = \beta_1 W_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
+
+   - $Y_{ij}$ is outcome for individual $j$ in cluster $i$
+   
+   - $W_{ij}$ is exposure for individual $j$ in cluster $i$
+   
+   - $C^{(i)}_{ij}$ is whether individual $j$ in cluster $i$ is a member of cluster $i$
+   
+   - $\gamma_i$ is the mean outcome of cluster $i$ for those with exposure $=0$ 
+
+
+---
+
+## Example: radon measurements in Minnesota
+
+Want to estimate how the floor we measure on affects radon measurements in Minnesota houses
+
+- Basement measurements coded as `floor=0`; 1st floor measurements coded as `floor=1`
+```{r radon cleaning, echo=F}
+radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
+
+set.seed(081524)
+
+radon.mn <- radon %>% 
+   as.data.frame() %>% 
+   mutate(log_radon = log(activity +0.1),
+          county = str_trim(county)) %>% 
+   dplyr::filter(state == "MN")
+```
+
+```{r radon summary}
+# find number of observations, mean/sd log_radon, and proportion without basements by county #
+radon.mn %>% 
+   group_by(county) %>% 
+   summarize(n=n(), mean_log_radon=mean(log_radon, na.rm=T),
+             sd_log_radon=sd(log_radon, na.rm=T), pct_no_basement = mean(floor, na.rm=T)) %>% 
+   print(n=85)
+```
+
+---
+
+## Example: radon measurements in Minnesota
+
+- Let's look at the observations for a random sample of counties
+
+```{r radon plot, fig.align='center', fig.height=10, fig.width=50}
+# pick 8 random counties #
+counties <- sample( unique(radon.mn$county), size=8 )
+
+# create density plots for selected counties by floor#
+radon.mn %>% 
+   dplyr::filter( county %in% counties ) %>% 
+    ggplot()+
+   geom_point(aes(y=log_radon,x=factor(floor)),
+              size=5)+
+   # geom_density(aes(log_radon,
+   #              fill=factor(floor)), alpha=0.75)+
+   facet_grid(cols=vars(county))+
+   theme(text=element_text(size=30))
+```
+
+- How do we think county membership might affect analysis of our question of interest?
+
+---
+
+## Example: radon measurements in Minnesota
+
+Let's see if we have any clustering...
+
+```{r radon ICC}
+library(ICC)
+
+# find ICC of log_radon by county #
+ICCest(county,log_radon, data=radon.mn)
+```
+
+. . .
+
+Breaking the output down:
+
+- Variation in cluster means: `r round(ICCest(county,log_radon, data=radon.mn)$vara,4)`
+
+- Individual-level (within-cluster) variation: `r round(ICCest(county,log_radon, data=radon.mn)$varw, 4)`
+
+- Total variation: `r round((ICCest(county,log_radon, data=radon.mn)$varw+ICCest(county,log_radon, data=radon.mn)$vara),4)`
+
+- ICC = cluster mean variation/total variation: `r round((ICCest(county,log_radon, data=radon.mn)$vara/(ICCest(county,log_radon, data=radon.mn)$varw+ICCest(county,log_radon, data=radon.mn)$vara)),6)`
+
+- 95% confidence interval: (`r round(ICCest(county,log_radon, data=radon.mn)$LowerCI,4)`, `r round(ICCest(county,log_radon, data=radon.mn)$Upper,4)`)
+
+   - Not insignificant...
+
+---
+
+## Example: radon measurements in Minnesota
+
+We'll first fit without accounting for counties ("complete pooling" of data)
+```{r radon no cluster}
+# run OLS regression #
+radon_lm <- lm(log_radon ~ floor, data=radon.mn)
+
+#get regression summary #
+summary(radon_lm)
+```
+
+- How would we interpret this result?
+
+---
+
+## Example: radon measurements in Minnesota
+
+Next we'll fit a separate regression for each county 
+```{r radon stratified}
+
+# stratify dataset by county #
+radon.cty <- split(radon.mn, radon.mn$county)
+
+# run linear regression on each county dataset separately #
+radon_seg_lm <- lapply(radon.cty, function(x){
+   lm(log_radon ~ floor, data=x)
+   })
+
+# get regression summary from each counties #
+lapply(radon_seg_lm, function(x){
+   summary(x)$coef
+})
+
+```
+
+- Is this helpful for us?
+
+---
+
+## Example: radon measurements in Minnesota
+
+Now we'll look at fitting with counties, but without removing the intercept
+```{r radon cluster}
+# run OLS regression with county as covariate #
+radon_cty_int_lm <- lm(log_radon ~ floor + factor(county), data=radon.mn)
+summary(radon_cty_int_lm)
+
+```
+
+- What changed from the last regression? The first regression?
+
+---
+
+## Example: radon measurements in Minnesota
+
+Finally we'll fit with counties, and without an intercept ("no pooling" of data)
+```{r radon cluster2}
+# run OLS regression with county as covariate and removing global intercept #
+radon_cty_lm <- lm(log_radon ~ floor + factor(county) - 1, data=radon.mn)
+summary(radon_cty_lm)
+```
+
+- What changed from the last regression?
+
+---
+
+## Example: radon measurements in Minnesota
+
+Let's look at the estimated effects for Cook (very insignificant county effect) and Hennepin (Minneapolis) counties
+
+```{r radon cook hennepin}
+# get regression summary just for effects of floor, Cook county, and Hennepin county #
+summary(radon_cty_lm)$coeff[c(1,17,27),]
+```
+
+```{r radon cook plots, fig.align='center', out.width="60%"}
+# create density plot of log radon for Cook and Hennepin counties by floor #
+radon.mn %>% 
+   dplyr::filter( county %in% c("COOK","HENNEPIN") ) %>% 
+   ggplot(aes(x=floor,y=log_radon))+
+   geom_point(size=3)+
+   facet_grid(cols=vars(county))+
+   theme(text=element_text(size=30))
+```
+
+- Should we put the same level of trust in those county-level estimates?
+
+---
+
+## Problems
+
+What did we find?
+
+- Radon data clearly clustered by county, affecting distribution of log(radon) measurements and proportion of houses with/without basements
+
+- Effect of measurement floor changes depending on whether and how accounting for clustering
+
+- Adding county as covariate to regression seems like best solution...
+
+   - ... or not
+   
+   - Violates a regression assumption that the number of parameters shouldn't be growing with the amount of data
+   
+      - Big issue when cluster sizes are small
+   
+   - May need a different solution...

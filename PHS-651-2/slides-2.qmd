@@ -29,7 +29,7 @@ library(gridExtra)
 
 <hr>
 
-<h3> Mary Ryan, PhD </h3>
+<h3> Mary Ryan Baumann, PhD </h3>
 
 <h3> September 17, 2024 </h3>
 
@@ -63,6 +63,14 @@ Clustering may impact analysis in several ways
 - Reduces the amount of information we get from each individual data point
 
 [How do we account for this clustering in analysis?]{.alert}
+
+. . .
+
+- Could fit separate regressions for each group... no "global" estimate of exposure effect
+
+- Could add group as covariate in model... violates parameters vs data size assumptions
+
+- ... Something else?
 
 . . .
 
@@ -282,6 +290,21 @@ $$\begin{align*}\text{ICC} &= \frac{\text{variation in cluster means}}{\text{var
 
 ---
 
+## Marginal effects in LMEs
+
+The default interpretation of LMEs is [conditional]{.alert}... but we can sometimes extract [marginal]{.alert} effects out of them
+
+- For continuous outcomes, or outcomes that we **do not** transform, [the conditional and marginal effects will be identical]{.alert}
+
+$$\begin{align*}E[\vec{Y}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&=E[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_i b_{0i}]\\
+&=\boldsymbol{X}_i\vec{\beta} + \vec{Z}_i E[b_{0i}]\\
+&=\boldsymbol{X}_i\vec{\beta}\end{align*}$$
+
+- For non-continuous outcomes or outcomes we do need to transform, the above will not hold and the marginal and conditional effects with be different (more on this next week)
+
+---
+
 ## Inference
 
 A note:
@@ -293,3 +316,4 @@ A note:
 - This means that we [cannot]{.alert} perform likelihood ratio test-based inference for $\vec{\beta}$ when using REML!
 
    - Wald-based inference (z/t-tests and confidence intervals) are still fine, though
+   

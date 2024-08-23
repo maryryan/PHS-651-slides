@@ -1,0 +1,191 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+```
+
+<h1>Lecture 5: Diagnostics & corrections</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>October 8, 2024</h3>
+
+---
+
+## Model diagnostics
+
+So far we've dealt with how to model correlated data
+
+- But how do we assess whether the modeling choices we've made are sound?
+
+. . .
+
+There are some analyses/diagnostics we can perform to explore this
+
+. . .
+
+- Heavy emphasis on [explore]{.alert}
+
+   - We know that our model likely won't perfectly reflect the true form/relationships in the data
+   
+   - But we should assess whether there are [major discrepancies]{.alert} between what we've assumed and what's in the data
+   
+   - Use these as a temperature check for whether the model needs to be adjusted, how much confidence can be placed in estimates, and whether estimates need to be presented with caveats
+
+---
+
+## Residual analysis
+
+[Residuals]{.alert} are the difference between the observed outcomes and the ones predicted by your model
+
+$$r_{ij} = Y_{ij} - \boldsymbol{X}_{ij}\widehat{\vec{\beta}}$$
+
+. . .
+
+If the model [adequately captures]{.alert} the systematic trend of the response, then [the residuals should exhibit no systematic pattern]{.alert}
+
+- i.e., they should be scattered fairly randomly around zero
+
+---
+
+## Residuals vs predicted response
+
+Residuals can be used to check for systematic departures from the model for the mean response
+
+- We often do this by making a scatter plot of residuals vs predicted values
+
+   - Fitting a smoothed curve (e.g., lowess) through the scatter plot is helpful in this respect
+   
+. . .
+
+![](residual-plot-example.png){width=1000}
+
+---
+
+## Residuals vs predicted response
+   
+In OLS, any systematic pattern in the residual indicates inadequacy of the model
+
+- Solution: re-fit the data with a more flexible model (e.g., interactions, quadratic terms, and perhaps more covariates)
+
+![](residual-plot-example.png){width=1000}
+
+---
+
+## Residuals vs predicted response
+
+But with correlated data, [errors from the same cluster are correlated]{.alert}, and don't necessarily have the same variance
+
+- This means that homoscedasticity may not hold for residuals vs predicted response
+
+   - i.e., "fanning" of residuals may not be a bad sign
+   
+![](residual-plot-example.png){width=1000}
+   
+---
+
+## De-correlated residuals
+
+One way to fix this is to "de-correlate" the residuals
+
+- Done by transforming the residuals via [Cholesky decomposition]{.alert}
+
+- This makes it so the components of the transformed residuals for cluster $i$ ($r^*_i$) are uncorrelated and have variance 1
+
+---
+
+## Cholesky decomposition
+
+Given an estimate of the residual covariance matrix for cluster $i$, $\widehat{\Sigma}_i$, the Cholesky decomposition of this is
+$$\widehat{\Sigma}_i = L_i L_i^T$$
+
+- $L_i$ is a lower triangular matrix
+
+The transformed residuals are then:
+$$r^*_i = L_i^{-1}r_i$$
+---  
+
+## Cholesky decomposition: Minnesota radon
+
+Let's try this for our radon LME model
+$$Y_{ij} = \beta_0 + \beta_1 (\text{floor}_{ij}) + b_{0i} + \epsilon_{ij}$$
+```{r radon cleaning, echo=F}
+radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
+
+set.seed(081524)
+
+radon.mn <- radon %>% 
+   as.data.frame() %>% 
+   mutate(log_radon = log(activity +0.1),
+          county = str_trim(county)) %>% 
+   dplyr::filter(state == "MN")
+```
+
+CHECK THE CODE BELOW!!!
+
+```{r radon lme, eval=F}
+library(lme4)
+
+# run an LME with random intercepts for county #
+radon_lme <- lmer( log_radon ~ floor + (1 | county), data=radon.mn )
+
+# get the residuals #
+resid_lme <- residuals( radon_lme, level=0 )
+
+# get the Li matrix #
+Li <- getME( radon_lme, "Lambdat" )
+
+# transform residuals #
+resid_chol <- solve(li) %*% resid_lme
+```
+
+---
+
+## De-correlated residual vs covariate
+
+Similar scatter plots of the de-correlated residuals against a particular covariate can be examined for systematic trend
+
+- Such a trend may indicate omission of a quadratic term or need for transformation of the covariate
+
+. . .
+
+![](residual-covariate-plot.png){width=2000}
+
+---
+
+## Informative cluster size
+
+---
+
+## Small n corrections
+

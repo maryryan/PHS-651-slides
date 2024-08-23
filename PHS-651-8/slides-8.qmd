@@ -1,0 +1,192 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+```
+
+<h1>Lecture 8: Longitudinal GLMMs & GEEs</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>October 29, 2024</h3>
+
+---
+
+## Recap: Non-longitudinal GLMMs
+
+Recall the random effects model we used for non-longitudinal clustered data:
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+- Where we assumed that each cluster had it's own cluster-specific mean ($\beta_0 + b_{0i}$) that varied by some $b_{0i}$ around the overall sample mean $\beta_0$
+
+- We called $b_{i0}$ the [random intercept]{.alert}
+
+. . .
+
+The random intercept induced an exchangeable covariance matrix:
+$$\begin{align*}Var[\vec{Y}_i] &= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
+&=\begin{bmatrix}
+\sigma^2_b & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b
+\end{bmatrix} + \begin{bmatrix}
+\sigma^2_\epsilon & 0 & \dots & 0\\
+0 & \ddots & \dots & 0\\
+\vdots & \dots & \ddots & \vdots\\
+0& \dots & 0 & \sigma^2_\epsilon
+\end{bmatrix}\\
+&=\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}\end{align*}$$
+
+---
+
+## Longitudinal GLMMs
+
+Recall the random effects model we used for non-longitudinal clustered data:
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+The random intercept induced an exchangeable covariance matrix:
+$$Var[\vec{Y}_i] =\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}$$
+
+This assumes that every member of cluster $i$ has the same relationship to one another (same correlation)
+
+- In longitudinal data, though, cluster $i$ is a single person and the "members" of the cluster are observations collected at separate time points
+
+- An observation collected at time 1 may relate to observations at times 2 and 3 differently
+
+. . .
+
+One solution would be to allow for each cluster to have variation in its slope as well
+
+. . .
+
+- [Random slopes and intercepts!]{.alert}
+
+---
+
+## Random slope and intercept model
+
+Consider a model with intercepts and slopes that vary randomly among individuals:
+
+$$g(Y_{ij}) = \beta_0 + t_{ij}\beta_1 + W_{ij}\beta_2 + \vec{Z}_{i0}b_{i0} + t_{ij}b_{i1} + e_{ij}$$
+
+- This model suggests that individuals vary not only in their baseline level of response (when $t_{i1} = 0$), but also in terms of their changes in the response over time
+
+. . .
+
+Here we assume:
+
+$b_{i0} \sim N(0, \sigma^2_0)$
+$b_{i1} \sim N(0, \sigma^2_1)$
+$\epsilon_{ij} \sim N(0, \sigma^2_\epsilon)$
+
+. . .
+
+We also assume:
+$$Cov[b_{i0}, b_{i1}] = \sigma^2_{01}$$
+
+- The random slopes and intercepts aren't independent!
+
+---
+
+## Variance/covariance of the outcome
+
+What does this mean for the covariance matrix of the outcome?
+
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
+
+Then the variance of a single outcome measure is:
+$$\begin{align*}Var[Y_{ij}] &= Var[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}]\\
+&= Var[\boldsymbol{Z}_i \vec{b}_{i}+\epsilon_{ij}]\\
+&= Var[\vec{Z}_{1i} b_{i0} + t_{ij} b_{i1} +\epsilon_{ij}]\\
+&= Var[\vec{Z}_{1i} b_{i0}] + Var[t_{ij} b_{i1}] + 2Cov[\vec{Z}_{1i} b_{i0}, t_{ij} b_{i1}]+Var[\epsilon_{ij}]\\
+&= \sigma^2_0 + t^2_{ij}\sigma^2_1+ 2t_{ij}\sigma^2_{01} + \sigma^2_{\epsilon}\end{align*}$$
+
+:::
+
+::: {.fragment .fade-in}
+
+Then the variance of a single outcome measure is:
+$$\begin{align*}Var[Y_{ij}] &\color{lightgray}{= Var[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}]}\\
+&\color{lightgray}{= Var[\boldsymbol{Z}_i \vec{b}_{i}+\epsilon_{ij}]}\\
+&\color{lightgray}{= Var[\vec{Z}_{1i} b_{i0} + t_{ij} b_{i1} +\epsilon_{ij}]}\\
+&\color{lightgray}{= Var[\vec{Z}_{1i} b_{i0}] + Var[t_{ij} b_{i1}] + 2Cov[\vec{Z}_{1i} b_{i0}, t_{ij} b_{i1}]+Var[\epsilon_{ij}]}\\
+&= \sigma^2_0 + t^2_{ij}\sigma^2_1+ 2t_{ij}\sigma^2_{01} + \sigma^2_{\epsilon}\end{align*}$$
+
+:::
+
+:::
+
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
+
+And the covariance between 2 outcome measures in the same cluster is:
+$$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= Cov[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}, \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ik}]\\
+&= Cov[\vec{Z}_{1i}b_{i0} +t_{ij}b_{i1}+\epsilon_{ij}, \vec{Z}_{1i}b_{i0}+t_{ik}b_{i1}+\epsilon_{ik}]\\
+&= Cov[\vec{Z}_{1i}b_{i0}, \vec{Z}_{1i}b_{i0}] + Cov[\vec{Z}_{1i}b_{i0}, t_{ik}b_{01}] + Cov[\vec{Z}_{i1}b_{i0}, \epsilon_{ik}] + Cov[t_{ij}b_{i1}, \vec{Z}_{1i}b_{i0}]\\
+&~~~~~~+ Cov[t_{ij}b_{i1}, t_{ik}b_{i1}] + Cov[t_{ij}b_{i1}, \epsilon_{ik}] + Cov[\epsilon_{ij}, \vec{Z}_{1i}b_{i0}] + Cov[\epsilon_{ij}, t_{ik}b_{i1}] + Cov[\epsilon_{ij}, \epsilon_{ik}]\\
+&= \sigma^2_0 + t_{ik}\sigma^2_{01} + 0 + t_{ij}\sigma^2_{01} + t_{ij}t_{ik}\sigma^2_2 + 0 + 0 + 0 + 0\\
+&= \sigma^2_0 + (t_{ij} + t_{ik})\sigma^2_{01} + t_{ij}t_{ik}\sigma^2_1\end{align*}$$
+
+:::
+
+::: {.fragment .fade-in}
+
+And the covariance between 2 outcome measures in the same cluster is:
+$$\begin{align*}Cov[Y_{ij}, Y_{ik}] &\color{lightgray}{= Cov[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}, \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ik}]}\\
+&\color{lightgray}{= Cov[\vec{Z}_{1i}b_{i0} +t_{ij}b_{i1}+\epsilon_{ij}, \vec{Z}_{1i}b_{i0}+t_{ik}b_{i1}+\epsilon_{ik}]}\\
+&\color{lightgray}{= Cov[\vec{Z}_{1i}b_{i0}, \vec{Z}_{1i}b_{i0}] + Cov[\vec{Z}_{1i}b_{i0}, t_{ik}b_{01}] + Cov[\vec{Z}_{i1}b_{i0}, \epsilon_{ik}] + Cov[t_{ij}b_{i1}, \vec{Z}_{1i}b_{i0}]}\\
+&\color{lightgray}{~~~~~~+ Cov[t_{ij}b_{i1}, t_{ik}b_{i1}] + Cov[t_{ij}b_{i1}, \epsilon_{ik}] + Cov[\epsilon_{ij}, \vec{Z}_{1i}b_{i0}] + Cov[\epsilon_{ij}, t_{ik}b_{i1}] + Cov[\epsilon_{ij}, \epsilon_{ik}]}\\
+&\color{lightgray}{= \sigma^2_0 + t_{ik}\sigma^2_{01} + 0 + t_{ij}\sigma^2_{01} + t_{ij}t_{ik}\sigma^2_2 + 0 + 0 + 0 + 0}\\
+&= \sigma^2_0 + (t_{ij} + t_{ik})\sigma^2_{01} + t_{ij}t_{ik}\sigma^2_1\end{align*}$$
+
+:::
+
+:::
+
+::: {.fragment .alert .absolute top=200 right=200 width="500" height="100"}
+The variance and covariance are both functions of time!
+:::

@@ -200,9 +200,9 @@ What is a way to handle clustering in an analysis?
 
 ---
 
-## Clustering in data analysis
+## Clustering in individual-level data analysis
 
-What is a way to handle clustering in an analysis?
+What is a way to handle clustering in an (individual-level) analysis?
 
 [Could ignore it and perform regular regression/t-test]{.alert}
 
@@ -218,9 +218,9 @@ Do we see any issues with this approach?
 
 ---
 
-## Clustering in data analysis
+## Clustering in individual-level data analysis
 
-What is a way to handle clustering in an analysis?
+What is a way to handle clustering in an (individual-level) analysis?
 
 [Could perform separate regressions/t-tests for each county]{.alert}
 
@@ -236,9 +236,9 @@ Do we see any issues with this approach?
 
 ---
 
-## Clustering in data analysis
+## Clustering in individual-level data analysis
 
-What is a way to handle clustering in a regression?
+What is a way to handle clustering in an (individual-level) regression?
 
 [Could add cluster membership as model covariate]{.alert}
 
@@ -258,9 +258,9 @@ Do we see any issues with this approach?
 
 ---
 
-## Clustering in data analysis
+## Clustering in individual-level data analysis
 
-What is a way to handle clustering in a regression?
+What is a way to handle clustering in an (individual-level) regression?
 
 [Could add cluster membership as model covariate (modified)]{.alert}
 
@@ -274,6 +274,37 @@ $$Y_{ij} = \beta_1 W_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
    
    - $\gamma_i$ is the mean outcome of cluster $i$ for those with exposure $=0$ 
 
+---
+
+## Clustering in cluster-level data analysis
+
+Another approach is to conduct the data analysis at the cluster level
+
+- Instead of individual-level outcomes/predictors, roll these up to cluster-level averages
+
+$$\bar{Y}_{i} = \beta_1 \bar{W}_{i} + \epsilon_{i}$$
+
+   - $\bar{Y}_{i}$ is the mean outcome in cluster $i$
+   
+   - $\bar{W}_{i}$ is mean exposure vin cluster $i$
+
+. . .
+
+Do we see any issues with this approach?
+
+. . .
+
+- Downside: removes ability of individual covariates to predict individual outcomes
+
+---
+
+## Simpson's paradox
+
+Another issue with cluster-level analyses is the possibility for [Simpson's paradox]{.alert} (BMLR 8.11)
+
+- When trends seen among smaller groups disappear when groups are combined due to differences in group sizes
+
+- We can't get a sense of the full picture if we only do an analysis at the cluster level
 
 ---
 
@@ -444,6 +475,27 @@ radon.mn %>%
 ```
 
 - Should we put the same level of trust in those county-level estimates?
+
+---
+
+## Example: radon measurements in Minnesota
+
+Now let's do a county-level analysis
+```{r radon ctylevel}
+# find county-level average log radon and floor variables, create new dataset just at the county level #
+radon.mn.ctylvl <- radon.mn %>% 
+   group_by(county) %>% 
+   mutate(log_radon_mean = mean(log_radon, na.rm=T),
+          floor_prop = mean(floor, na.rm=T)) %>% 
+   select(c(county, log_radon_mean, floor_prop)) %>% 
+   unique
+
+# run county-level OLS regression #
+radon_ctylvl_lm <- lm(log_radon_mean ~ floor_prop, data=radon.mn.ctylvl)
+summary(radon_ctylvl_lm)
+```
+
+- How would we interpret these results? How are they different from the results from our other strategies?
 
 ---
 

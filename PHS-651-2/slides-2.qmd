@@ -13,6 +13,7 @@ format:
       width: 1920
       chalkboard: true
       from: markdown+emoji
+      auto-stretch: false
 execute: 
    eval: true
    echo: true
@@ -70,6 +71,8 @@ Clustering may impact analysis in several ways
 
 - Could add group as covariate in model... violates parameters vs data size assumptions
 
+- Could do cluster-level model... we lose a lot of individual-level information
+
 - ... Something else?
 
 . . .
@@ -90,13 +93,15 @@ Basic idea: some clusters will [randomly]{.alert} having higher/lower means than
 
 - And that each cluster $i$ will have a [cluster-specific mean]{.alert} a little bit above/below this: $\beta_0 \pm b_{0i}$
 
-- We'll add $b_{0i}$ to our regression model
+   - Can think of $b_{0i}$ as the cluster-specific deviation -- we'll add this to our regression model
 
 . . .
 
 Model is [conditional]{.alert} because the interpretation of $\beta_1$ assumes we're comparing individuals *in the same cluster* (conditional on group membership)
 
 - Just like how interpretation of $\beta_1$ assumes we're comparing individuals who have the same value for all other covariates
+
+- We'll dig into this more later
 
 . . .
 
@@ -186,7 +191,9 @@ $$\vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i)$$
    
    - What happens when this is violated? Stay tuned for later this semester :grinning:
 
-. . .
+---
+
+## The linear mixed effects model (cont.)
 
 What's "mixed" about this model?
 
@@ -196,10 +203,14 @@ $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
 . . .
 
-What's "conditional" about this model?
+How is this different from adding groups as covariates?
 
-- Because the mean of the outcome variable is [conditional]{.alert} on both the fixed effects (always true in regressions) *and* the random effects:
-$$E[\vec{Y}_i|\boldsymbol{X}_i,\vec{b}_{0i}] = \boldsymbol{X}_i\vec{\beta}$$
+- Allows groups with fewer observations to be more influenced by the rest of the data, and groups with more observations to be less
+
+<!-- What's "conditional" about this model? -->
+
+<!-- - Because the mean of the outcome variable is [conditional]{.alert} on both the fixed effects (always true in regressions) *and* the random effects: -->
+<!-- $$E[\vec{Y}_i|\boldsymbol{X}_i,\vec{b}_{0i}] = \boldsymbol{X}_i\vec{\beta}$$ -->
 
 ---
 
@@ -238,7 +249,7 @@ $$\begin{align*}Var[Y_{ij}] &= Var[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}
 . . .
 
 And the covariance between 2 outcome measures in the same cluster is:
-$$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= Cov[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\epsilon_{ij}, \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\epsilon_{ijk}]\\
+$$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= Cov[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\epsilon_{ij}, \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\epsilon_{ik}]\\
 &= Cov[\vec{Z}_ib_{0i}+\epsilon_{ij}, \vec{Z}_ib_{0i}+\epsilon_{ik}]\\
 &= Cov[\vec{Z}_ib_{0i}, \vec{Z}_ib_{0i}] + Cov[\epsilon_{ij}, \vec{Z}_ib_{0i}] + Cov[\vec{Z}_ib_{0i}, \epsilon_{ik}] + Cov[\epsilon_{ij}, \epsilon_{ik}]\\
 &= \sigma^2_b + 0 + 0 + 0\\
@@ -272,7 +283,11 @@ $$\begin{align*}Var[\vec{Y}_i] &= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T +
 \sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
 \end{bmatrix}\end{align*}$$
 
-- Known as a [block exchangeable]{.alert} matrix
+- Known as a [block exchangeable]{.alert} matrix or [compound symmetry]{.alert}
+
+---
+
+## Inference for $\widehat{\beta}$
 
 ---
 
@@ -287,6 +302,77 @@ $$\begin{align*}\text{ICC} &= \frac{\text{variation in cluster means}}{\text{var
 <!-- ## Distributional assumptions -->
 
 <!-- LMEs assume that the outcome follows a [multivariate normal]{.alert} distribution -->
+
+---
+
+## Example: radon measurements in Minnesota
+
+Let's fit an LME model for our Minnesota log-radon measurements:
+$$Y_{ij} = \beta_0 + \beta_1 (\text{floor}_{ij}) + b_{0i} + \epsilon_{ij}$$
+
+   - $Y_{ij}$ is the log radon for house $j$ in county $i$
+   
+   - $\text{floor}_{ij}$ is whether the lowest floor of house $j$ in county $i$ was the basement (0) or the ground floor (1)
+   
+   - $b_{0i}$ is the county-level random intercept
+   
+---
+
+## Example: radon measurements in Minnesota
+
+Let's fit an LME model for our Minnesota log-radon measurements:
+```{r radon cleaning, echo=F}
+radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
+
+set.seed(081524)
+
+radon.mn <- radon %>% 
+   as.data.frame() %>% 
+   mutate(log_radon = log(activity +0.1),
+          county = str_trim(county)) %>% 
+   dplyr::filter(state == "MN")
+```
+
+```{r radon lme}
+library(lme4)
+
+# run an LME with random intercepts for county #
+radon_lme <- lmer(log_radon ~ floor + (1 | county), data=radon.mn)
+summary(radon_lme)
+```
+
+- LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
+
+   - 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`)
+
+   - How would we interpret this?
+   
+---
+
+## Example: radon measurements in Minnesota
+
+Let's compare this to adding county as a regression coefficient
+
+```{r radon lm cty}
+radon_cty_lm <- lm(log_radon ~ floor + factor(county) - 1, data=radon.mn)
+summary(radon_cty_lm)
+```
+
+- OLS $\beta_1$: `r round(summary(radon_cty_lm)$coef[1,1],4)`
+
+   - 95% CI: (`r round(summary(radon_cty_lm)$coef[1,1] - summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)`, `r round(summary(radon_cty_lm)$coef[1,1] + summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)`)
+   
+. . .
+
+What differences can you see compared to the previous LME?
+
+- LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
+
+   - 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`)
+   
+. . .
+
+![](clustering-SE-meme){.absolute bottom=0 right=100}
 
 ---
 
@@ -316,4 +402,3 @@ A note:
 - This means that we [cannot]{.alert} perform likelihood ratio test-based inference for $\vec{\beta}$ when using REML!
 
    - Wald-based inference (z/t-tests and confidence intervals) are still fine, though
-   

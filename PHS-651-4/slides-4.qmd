@@ -13,156 +13,336 @@ format:
       width: 1920
       chalkboard: true
       from: markdown+emoji
+      fragment: true
+      auto-stretch: false
 execute: 
    eval: true
    echo: true
+editor: 
+  markdown: 
+    wrap: 72
 ---
+
 ```{r load libraries, echo=F}
 library(tidyverse)
 library(ggdag)
 library(dagitty)
 library(gridExtra)
 ```
-<h1> Lecture 4: Marginal models for correlated data </h1>
 
-<h2> PHS 651: Advanced regression methods </h2>
+<h1>Lecture 4: Marginal models for correlated data</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
 
 <hr>
 
-<h3> Mary Ryan, PhD </h3>
+<h3>Mary Ryan Baumann, PhD</h3>
 
-<h3> October 1, 2024 </h3>
+<h3>October 1, 2024</h3>
 
----
+------------------------------------------------------------------------
 
 ## Recap: linear mixed effect models
 
-One way to account for clustering in analysis is with a [linear mixed effects]{.alert} model
+One way to account for clustering in analysis is with a [linear mixed
+effects]{.alert} model
 $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
-- $\boldsymbol{X}_i\vec{\beta}$ are the [fixed effects]{.alert} representing the mean response
+-   $\boldsymbol{X}_i\vec{\beta}$ are the [fixed effects]{.alert}
+    representing the mean response
 
-- $\vec{Z}_ib_{0i}$ are the [random effects]{.alert} accounting for random between-cluster variation
+-   $\vec{Z}_ib_{0i}$ are the [random effects]{.alert} accounting for
+    random between-cluster variation
 
-- $\vec{\epsilon}_i$ is the regular between-individual variation
-
-. . .
-
-The [fixed effects]{.alert} are shared across everyone in the sample, while the [random effects]{.alert} are unique to a particular cluster
+-   $\vec{\epsilon}_i$ is the regular between-individual variation
 
 . . .
 
-Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they are comparing 2 individuals with the same cluster membership
-
-- Often referred to as having individual-specific or cluster-specific interpretation
-
-- Possible to extract marginal effects from conditional models, but often complicated and prone to bias
+The [fixed effects]{.alert} are shared across everyone in the sample,
+while the [random effects]{.alert} are unique to a particular cluster
 
 . . .
 
-[What if we want to look at the effect of an exposure *averaged across* all clusters?]{.alert}
+Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because
+they are comparing 2 individuals with the same cluster membership
 
----
+-   Often referred to as having individual-specific or cluster-specific
+    interpretation
+
+-   Possible to extract marginal effects from conditional models, but
+    often complicated and prone to bias
+
+. . .
+
+[What if we want to look at the effect of an exposure *averaged across*
+all clusters?]{.alert}
+
+------------------------------------------------------------------------
 
 ## Marginal models
 
-Basic idea: we want to account for clustering of data, but make inference about [population averages]{.alert} (marginal effects)
+Basic idea: we want to account for clustering of data, but make
+inference about [population averages]{.alert} (marginal effects)
 
-- These are the ones we're most interested in in public and population health!
+-   These are the ones we're (usually) most interested in in public and
+    population health!
 
-- Mean response is conditional *only* on the fixed covariates we add to the mean model
+-   Mean response is conditional *only* on the adjustment covariates we add
+    to the mean model
 
-This means we have to model (estimate) the outcome mean and the outcome covariance *explicitly*
+. . .
 
-- The random effects in LMEs only *induce* a covariance structure (Fitzmaurice pg 474)
+This means we have to model (estimate) the outcome mean and the outcome
+covariance [separately]{.alert}
 
----
+-   We get these in LMEs via distribution assumptions
+
+-   What if we could [empirically estimate]{.alert} the covariance
+    structure and use that?
+
+------------------------------------------------------------------------
 
 ## Marginal model components
 
-There are 3 main components of a marginal model
+There are 2 main components of a marginal model
 
-1. The marginal expectation of the outcome ($E[Y_{ij}| \vec{X}_{ij}] = \mu_{ij}$) only depends on the covariates in the model:
-$$\mu_{ij} = \vec{X}_{ij}\vec{\beta}$$
+1.  The [marginal expectation]{.alert} of the outcome $E[Y_{ij}|\vec{X}_{ij}]=\mu_{ij}$:
 
-- Obviously, our data $\vec{X}_{ij}$ is known, while $\vec{\beta}$ needs to be estimated
+-   $\mu_{ij}$ should only depend on the covariates in the model through
+    the link function $g(\cdot)$
+    
+    $$g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$$
 
-2. The marginal variance of the outcome depends on the marginal mean through the [variance function $v(\cdot)$]{.alert} and a scale parameter $\varphi$:
-$$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
+. . .
 
-- The variance function is known/assumed, while $\varphi$ may need to be estimated
+2. The covariance of the outcome $Cov[Y_{ij}, Y_{ik}|\boldsymbol{X}_i]$
 
-3. The within-cluster association of the outcomes, which depends on the means and a parameter $\alpha$ that also needs to be estimated
+- Can be broken down into 2 more components:
+
+   i. The [marginal variance]{.alert} of the outcome:
+
+   $$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
+      - Should depend on the marginal mean through the variance function $v(\cdot)$ and a scale parameter $\varphi$
+      
+   
+. . .
+
+   ii. The [within-cluster association]{.alert} of the outcomes\
+      - Should depend on the means and a correlation parameter(s)
 
 ---
 
 ## Marginal model components (cont.)
 
-In a model with clustered continuous responses and only one exposure $W$:
+In a model with clustered continuous responses $Y_{ij}$ and only one exposure
+$W_{ij}$, we might have:
 
-1. $E[Y_{ij}|\boldsymbol{X}] = \mu_{ij} = \beta_0 + W_{ij}\beta_1$
+1.  $E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + W_{ij}\beta_1$
 
-   - To account for confounding, we would add additional variables to the right hand side so that we [correctly model the mean]{.alert}
+- We specify this based on our domain knowledge
+    
+- To account for confounding, we would add additional variables to the right hand side so that we [correctly model the mean]{.alert}
 
-2. $Var[Y_{ij}|W_{ij}] = \varphi_{i} = \sigma^2_{i}$
-
-   - Different variance for each cluster
-
-3. $Corr[Y_{ij}, Y_{ik}] = \alpha$
-
-   - Outcomes in same cluster have correlation of $\alpha$
-   
 . . .
 
-We build the linear model for 1, and 2 is usually determined by the type of outcome variable we're using. But 3 has some subjectivity in how we assume observations are related.
+2.1.  $Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}$
+
+- Different variance for each cluster
+
+. . .
+
+2.2.  $Corr[Y_{ij}, Y_{ik}] = \alpha$
+
+- Outcomes in same cluster are all correlated by $\alpha$
 
 ---
 
-## Examples of correlation structures
+## Marginal model components (cont.)
 
-Are they completely independent from each other?
+In a model with clustered continuous responses $Y_{ij}$ and only one exposure
+$W_{ij}$, we might have:
 
-Independence
+1.  $E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + W_{ij}\beta_1$
+
+2.1.  $Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}$
+
+2.2.  $Corr[Y_{ij}, Y_{ik}] = \alpha$
+
+- This means we can assume a [correlation structure]{.alert} for one cluster that looks like:
+
+$$\begin{bmatrix}
+1 & \alpha & \dots & \alpha \\
+\alpha & \ddots & \dots & \alpha \\
+\vdots & \dots & \ddots & \vdots\\
+\alpha & \dots & \alpha & 1
+\end{bmatrix}$$
 
 ---
 
-## Examples of correlation structures
+## Marginal model components (cont.)
 
-Are all observations related to each other to the same degree?
-Exchangeable
+If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster:
+$$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
+&= \sqrt{\sigma^2_i}~ \alpha ~\sqrt{\sigma^2_i}\\
+&=\alpha \sigma^2_i\end{align*}$$
 
-- AKA: compound symmetry
+. . .
 
----
+which creates us a [covariance matrix]{.alert} for cluster $i$ that looks like:
 
-## Examples of correlation structures
+$$\begin{bmatrix}
+\sigma^2_i & \alpha & \dots & \alpha \\
+\alpha & \ddots & \dots & \alpha \\
+\vdots & \dots & \ddots & \vdots\\
+\alpha & \dots & \alpha & \sigma^2_i
+\end{bmatrix}$$
 
-Or do you assume all observations are possibly related to each other in different ways?
-Unstructured
+. . .
 
+- Outcomes for individuals in **different** clusters would still have a covariance of 0 though because we're assuming that [clusters are independent of one another]{.alert}
 
-- This offers maximum flexibility, but also requires you to estimate every correlation in this matrix separately
+. . .
+
+[Can we assume other types of correlation/covariance structures?]{.alert}
+
+. . .
+
+- Yes!
+
+------------------------------------------------------------------------
+
+## Correlation structures: independence
+
+The most basic (and the one we have the most prior experience with) is the [independence]{.alert} correlation structure
+
+- Assumes all observations in a cluster are completely uncorrelated with each other
+
+$$\begin{bmatrix}
+1 & 0 & \dots & 0 \\
+0 & \ddots & \dots & 0 \\
+\vdots & \dots & \ddots & \vdots\\
+0 & \dots & 0 & 1
+\end{bmatrix}$$
+
+- We don't have to estimate anything here!
+
+. . .
+
+Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}$, creates a covariance matrix that looks like
+
+$$\begin{bmatrix}
+\sigma^2_i & 0 & \dots & 0 \\
+0 & \ddots & \dots & 0 \\
+\vdots & \dots & \ddots & \vdots\\
+0 & \dots & 0 & \sigma^2_i
+\end{bmatrix}$$
+
+------------------------------------------------------------------------
+
+## Correlation structures: exchangeable
+
+Another type is the [exchangeable]{.alert} correlation structure (AKA: compound symmetry)
+
+- Assumes all observations related to each other to the same degree
+
+$$\begin{bmatrix}
+1 & \alpha & \dots & \alpha \\
+\alpha & \ddots & \dots & \alpha \\
+\vdots & \dots & \ddots & \vdots\\
+\alpha & \dots & \alpha & 1
+\end{bmatrix}$$
+
+- Need to estimate $\alpha$
+
+. . .
+
+Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}$, creates a covariance matrix that looks like
+
+$$\begin{bmatrix}
+\sigma^2_i & \alpha & \dots & \alpha \\
+\alpha & \ddots & \dots & \alpha \\
+\vdots & \dots & \ddots & \vdots\\
+\alpha & \dots & \alpha & \sigma^2_i
+\end{bmatrix}$$
+
+------------------------------------------------------------------------
+
+## Correlation structures: unstructured
+
+Could you assume all observations are (potentially) related to each other in
+different ways?
+
+- Known as an [unstructured]{.alert} correlation structure
+
+$$\begin{bmatrix}
+1 & \alpha_{12} & \dots & \alpha_{1n} \\
+\alpha_{21} & \ddots & \dots & \alpha_{2n} \\
+\vdots & \dots & \ddots & \vdots\\
+\alpha_{n1} & \dots & \alpha_{n(n-1)} & 1
+\end{bmatrix}$$
+
+. . .
+
+Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}$, creates a covariance matrix that looks like
+
+$$\begin{bmatrix}
+\sigma^2_i & \alpha_{12} & \dots & \alpha_{1n} \\
+\alpha_{21} & \ddots & \dots & \alpha_{2n} \\
+\vdots & \dots & \ddots & \vdots\\
+\alpha_{n1} & \dots & \alpha_{n(n-1)} & \sigma^2_i
+\end{bmatrix}$$
+
+------------------------------------------------------------------------
+
+## Correlation structures: unstructured
+
+Could you assume all observations are (potentially) related to each other in
+different ways?
+
+- Known as an [unstructured]{.alert} correlation structure
+
+$$\begin{bmatrix}
+1 & \alpha_{12} & \dots & \alpha_{1n} \\
+\alpha_{21} & \ddots & \dots & \alpha_{2n} \\
+\vdots & \dots & \ddots & \vdots\\
+\alpha_{n1} & \dots & \alpha_{n(n-1)} & 1
+\end{bmatrix}$$
+
+- Offers maximum flexibility because correlations can be the same, very similar, or completely different from each other
+
+. . .
+
+- But also requires you to estimate *every* correlation parameter in this matrix separately
 
    - This can cause computational and efficiency issues
    
----
+. . .
+
+- Can get away with unstructured correlation in small data sets, but usually easier to assume a simpler structure
+
+------------------------------------------------------------------------
 
 ## Marginal model components
 
-There are 3 main components of a marginal model
+So we have the main components of a marginal model
 
-1. The marginal expectation of the outcome $g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$
+1.  The marginal expectation of the outcome: $g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$
 
-2. The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
+2. The covariance of the outcome
 
-3. The within-cluster association of the outcomes
+   i. The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
 
+   ii. The within-cluster association of the outcomes (correlation structure)
 
-[How do we take these components and use them to make some sort of equation with which to estimate our regression coefficients?]{.alert}
+[But how do we use these components to estimate our regression coefficients?]{.alert}
 
 . . .
 
-- What if we used the GLM estimating equation?
+- With OLS and GLMMs, we had a likelihood-based estimating equation we could use to derive estimates for $\beta$
+
+. . .
+
+-   What if we used something like the GLM estimating equation here?
 
 . . .
 
@@ -186,91 +366,651 @@ Thus is born [generalized estimating equations]{.alert}
 
 <!-- Thus is born [generalized estimating equations]{.alert} -->
 
----
+------------------------------------------------------------------------
 
 ## Generalized estimating equations
 
-Generalized estimating equations (GEEs) find the $\beta$ that solves an estimating equation of the general form:
+Generalized estimating equations (GEEs) find the $\beta$ that solves an
+estimating equation of the general form:
 $$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
 
-- Almost exactly the same as the one we saw for GLMs!
+-   Almost exactly the same as the one we saw for GLMs!
 
-- Difference here: $v_i$ is the [working covariance]{.alert} for the outcome
+. . .
 
-   - Explicitly accounts for models of outcome variance *and* within-cluster association (components 2 and 3)
+-   Difference here: $v_i$ is the [working covariance]{.alert} for the
+    outcome
+
+    -   Explicitly accounts for models of outcome variance *and*
+        within-cluster association (components 2.1 and 2.2)
+        
+        $$v_i = sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]$$
+
+    -   With GLMMs, our random effects were getting stuck in with
+        $\mu_{ij}(\cdot)$ and the covariance structure was induced as a
+        side product
+
+------------------------------------------------------------------------
+
+## Generalized estimating equations
+
+Generalized estimating equations (GEEs) find the $\beta$ that solves an
+estimating equation of the general form:
+$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
+
+Since this estimating equation [only depends on the mean $\mu_{ij}(\cdot)$ and the (co)variance
+$v_i(\cdot)$ functions]{.alert}, a GEE doesn't have to correspond to a full likelihood/distribution like a GLMM does
+
+- This means we have [fewer assumptions]{.alert} about how $Y_{ij}$ behaves
+
+-   Also lets us "mix and match" different forms for the marginal
+    model components into this one estimating equation
+
+   -   e.g., we don't need to theoretically derive the covariance - we can
+    just approximate it using the variance and the chosen correlation
+    structure
+    
+------------------------------------------------------------------------
+
+## Generalized estimating equations
+
+Generalized estimating equations (GEEs) find the $\beta$ that solves an
+estimating equation of the general form:
+$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
+
+Since this estimating equation [only depends on the mean $\mu_{ij}(\cdot)$ and the (co)variance
+$v_i(\cdot)$ functions]{.alert}, a GEE doesn't have to correspond to a full likelihood/distribution like a GLMM does
+
+[What's the effect of this?]{.alert}
+
+. . .
+
+- Fewer assumptions means results will be [more robust]{.alert} to incorrect assumptions about the marginal model components (e.g., wrong correlation structure, wrong variance) 🎉
+
+. . .
+
+- Also means we [need more data]{.alert} to run this model 🙁
+
+<!-- ------------------------------------------------------------------------ -->
+
+<!-- ## Building the working covariance -->
+
+<!-- Based on your outcome variable, you'll likely know what the variance -->
+<!-- would be if all your outcome datapoints were *independent* -->
+
+<!-- We can fill in what the covariance would be by making assumptions about -->
+<!-- how observations within a cluster are correlated -->
+
+------------------------------------------------------------------------
+
+## Inference for $\widehat{\beta}$
+
+We also need to be able to get variance estimates for our model parameters in order to perform inference
+
+- The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
+
+$$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
+
+   - $\left(\frac{\partial \mu_i}{\partial \beta}\right)^T$ deals with the transformation of $Y_{ij}$ to $g(\mu_{ij})$, and links in the $\beta$s
    
-   - With GLMMs, our random effects were getting stuck in with $\mu_{ij}(\cdot)$ and the covariance structure was induced as a side product
+   - $v_i^{-1}$ incorporates the marginal outcome variance and the outcome correlation
    
 . . .
 
-Since this [only depends on the mean $\mu_{ij}(\cdot)$ and the variance $v_i(\cdot)$ functions]{.alert}, a GEE doesn't have to actually correspond to a full likelihood/distribution
+The individual variances for each $\beta$ will be found along the diagonal of the covariance matrix:
 
-- This lets us "mix and match" different forms for the 3 marginal model components into this one estimating equation
+- $Var[\widehat{\beta}] = \text{diag}\left(Cov[\widehat{\beta}]\right)$
+   
+------------------------------------------------------------------------
 
-- e.g., we don't need to theoretically derive the covariance - we can just approximate it using the variance and the chosen correlation structure
+## Inference for $\widehat{\beta}$
 
----
+We also need to be able to get variance estimates for our model parameters in order to perform inference
 
-## Building the working covariance
+- The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
 
-Based on your outcome variable, you'll likely know what the variance would be if all your outcome datapoints were *independent*
+$$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
 
-We can fill in what the covariance would be by making assumptions about how observations within a cluster are correlated
+   - $\left(\frac{\partial \mu_i}{\partial \beta}\right)^T$ deals with the transformation of $Y_{ij}$ to $g(\mu_{ij})$, and links in the $\beta$s
+   
+   - $v_i^{-1}$ incorporates the marginal outcome variance and the outcome correlation
+   
+[What would this look like for OLS?]{.alert}
 
----
+. . .
 
-## Building the working covariance
-
-If we assume the cluster-specific variance is $\sigma^2_{i}$, then let 
-$$S_i(\mu_i) = \begin{bmatrix}
-    \sigma^2_i  & 0 & \dots  & 0 \\
-    0 & \sigma^2_i & \dots & 0\\
-    \vdots & & \ddots & \vdots\\
-    0 &\dots & 0 & \sigma^2_i
-\end{bmatrix}$$
-
-Then assume a correlation structure and call it $R_i(\alpha)$
-
-Finally, the working covariance matrix will be:
-$$S_i(\mu_i)^{1/2}R_i(\alpha)S_i(\mu_i)^{1/2}$$
+$$\begin{align*}&\frac{\partial \mu_i}{\partial \beta} = \frac{\partial \boldsymbol{X}\vec{\beta}}{\partial \beta} = \boldsymbol{X}\\
+&v_i = \sigma^2\\
+&Cov[\widehat{\beta}] = [\boldsymbol{X}^T (\sigma^2)^{-1} \boldsymbol{X}]^{-1} = \sigma^2 (\boldsymbol{X}^T\boldsymbol{X})^{-1}\end{align*}$$
 
 ---
 
-## What does this look like?
+## Inference for $\widehat{\beta}$
 
-For exchangeable correlation:
+We also need to be able to get variance estimates for our model parameters in order to perform inference
 
-$$\begin{bmatrix}
-    \sigma^2_i  & \alpha & \dots  & \alpha \\
-    \alpha & \sigma^2_i & \dots & \alpha\\
-    \vdots & & \ddots & \vdots\\
-    \alpha &\dots & \alpha & \sigma^2_i
-\end{bmatrix}$$
+- The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
 
+$$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
+
+The confidence intervals for $\vec{\beta}$ will take the form:
+
+$$\begin{align*}&\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(\left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\right)\\
+&\rightarrow \widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(Cov[\widehat{\beta}]\right)\end{align*}$$
 
 ---
+
+## Robust inference for $\widehat{\beta}$
+
+We can also use [robust or sandwich variance]{.alert} estimators to perform inference on $\widehat{\beta}$
+
+$$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
+where
+$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
+&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
+
+- $(Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T$ is the [empirical]{.alert} covariance of the outcome
+   
+. . .
+
+This will give us (approximately) correct variance estimates for $\widehat{\beta}$ if we're [wrong]{.alert} about the correlation structure or marginal variance (model components 2.1 and 2.2)
+
+---
+
+## Robust inference for $\widehat{\beta}$
+
+We can also use [robust or sandwich variance]{.alert} estimators to perform inference on $\widehat{\beta}$
+
+$$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
+where
+$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
+&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
+   
+If we're [right]{.alert} about model components 2.1 and 2.2, $A \approx B$ and:
+$$\begin{align*}Cov^*[\widehat{\beta}] &= B^{-1} A B^{-1}\\
+&\approx B^{-1} B B^{-1}\\
+& = B^{-1} = Cov[\widehat{\beta}]\end{align*}$$
+the robust variance is the same as the model-based variance!
+
+---
+
+## Robust inference for $\widehat{\beta}$
+
+We can also use [robust or sandwich variance]{.alert} estimators to perform inference on $\widehat{\beta}$
+
+$$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
+where
+$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
+&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
+   
+The confidence intervals for $\vec{\beta}$ will take about the same form, just using $Cov^*[\widehat{\beta}]$ instead of $Cov[\widehat{\beta}]$:
+
+$$\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(Cov^*[\widehat{\beta}]\right)$$
+
+. . .
+
+- Most people will automatically use the sandwich variance estimator over the model-based variance to cover their bases
+
+---
+
+## GEEs: radon
+
+Let's see how we'd fit a GEE using our Minnesota radon data
+
+- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses
+
+```{r radon, echo=F}
+radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
+
+set.seed(081524)
+
+radon.mn <- radon %>% 
+   as.data.frame() %>% 
+   mutate(log_radon = log(activity +0.1),
+          county = str_trim(county)) %>% 
+   dplyr::filter(state == "MN")
+```
+
+We're assuming:
+
+- Mean model: 
+
+- Variance: 
+
+- Correlation structure: 
+
+---
+
+## GEEs: radon
+
+Let's see how we'd fit a GEE using our Minnesota radon data
+
+- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses
+
+We're assuming:
+
+- Mean model: $E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})$\
+
+- Variance: $Var[Y_{ij}] = \sigma^2$
+
+- Correlation structure: exchangeable (just one correlation parameter to estimate)
+
+---
+
+## GEEs: radon
+
+We're assuming:
+
+- Mean model: $E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})$\
+
+- Variance: $Var[Y_{ij}] = \sigma^2$
+
+- Correlation structure: exchangeable
+
+Let's run it:
+
+. . .
+
+```{r radon gee}
+library(gee)
+
+# run an LME with random intercepts for county #
+radon_gee <- gee( log_radon ~ floor,
+                  id=cntyfips, # cluster ID needs to be a number, not names or categories
+                  data=radon.mn, corstr="exchangeable" )
+summary( radon_gee )$coef
+```
+
+- $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
+
+---
+
+## GEEs: radon
+
+Let's run it:
+```{r radon gee2}
+library(gee)
+
+# run an LME with random intercepts for county #
+radon_gee <- gee( log_radon ~ floor,
+                  id=cntyfips, # cluster ID needs to be a number, not names or categories
+                  data=radon.mn, corstr="exchangeable" )
+summary( radon_gee )$coef
+```
+
+- $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
+
+. . .
+
+[What abour our inference?]{.alert}
+
+. . .
+
+Two SEs: model-based/naive; robust
+
+. . .
+
+- Naive 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`)
+
+. . .
+
+- Robust 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*pnorm(0.975), 4)`)
+
+------------------------------------------------------------------------
 
 ## GEEs and non-Normal data
 
-Similarly, we can extend GEEs to non-Normal outcome data
+We can also extend GEEs to non-Normal outcome data
 
-Recall: GEEs find the $\beta$ that solves an estimating equation of the general form:
+Recall: GEEs find the $\beta$ that solves an estimating equation of the
+general form:
 $$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
 
-[Why does this work when we transform the outcome with a link function?]{.alert}
+. . .
+
+[So what's different?]{.alert}
+
+. . .
+
+- Since $g(\cdot)$ isn't the identity function, $\left(\frac{\partial \mu_i}{\partial \beta}\right)^T \ne \boldsymbol{X}$
+
+. . .
+
+- The (co)variance function $v_i(\cdot)$ will likely depend on $\mu_{ij}$
+
+   - With Normal data, $v_i(\cdot)$ was independent of $\mu_{ij}$
+   
+---
+
+## GEEs: cancer remission
+
+Let's see how this would work with a binary outcome
+
+- Recall our cancer remission example
+
+- Want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment, adjusted for disease stage
+
+```{r cancer data cleaning, echo=F}
+cancer <- read.csv("https://stats.idre.ucla.edu/stat/data/hdp.csv")
+
+cancer <- within(cancer, {
+  Married <- factor(Married, levels = 0:1, labels = c("no", "yes"))
+  DID <- factor(DID)
+  HID <- factor(HID)
+  CancerStage <- factor(CancerStage)
+})
+
+cancer <- cancer %>% 
+   as.data.frame() %>% 
+   rename(doc_ID=DID)
+```
+
+We're assuming:
+
+- Mean model: 
+
+- Variance: 
+
+- Correlation structure: 
 
 ---
 
-## GEE limitations
+## GEEs: cancer remission
 
-Since we're only specifying mean and covariance structures, though, this means that our GEE won't behave nicely when we deviate from those structures (more on this later in the semester)
+Let's see how this would work with a binary outcome
 
-- By loosening distributional assumptions, we've placed more reliance on *structure*
+- Recall our cancer remission example
+
+- Want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment, adjusted for disease stage
+
+We're assuming:
+
+- Mean model: $logit\left(E[\text{remission}_{ij}|\vec{X}_{ij}]\right) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})$
+
+- Variance: $Var[Y_{ij}] = E[\text{remission}_{ij}|\vec{X}_{ij}]\left(1-E[\text{remission}_{ij}|\vec{X}_{ij}]\right)$
+
+- Correlation structure: exchangeable
 
 ---
 
-## LME vs GEE
+## GEEs: cancer remission
 
-We noted that GEEs are *marginal* models while LMEs are *conditional* models...
+We're assuming:
 
-Let's see how they compare:
+- Mean model: $logit\left(E[\text{remission}_{ij}|\vec{X}_{ij}]\right) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})$
+
+- Variance: $Var[Y_{ij}] = E[\text{remission}_{ij}|\vec{X}_{ij}]\left(1-E[\text{remission}_{ij}|\vec{X}_{ij}]\right)$
+
+- Correlation structure: exchangeable
+
+Let's run it:
+
+. . .
+
+```{r cancer gee}
+# run an LME with random intercepts for county #
+cancer_gee <- gee( remission ~ Experience + CancerStage,
+                  id=doc_ID, data=cancer,
+                  family=binomial,
+                  corstr="exchangeable" )
+summary( cancer_gee )$coef
+```
+
+- $e^{\beta_1}$: `r round(exp(summary(cancer_gee)$coef[2,1]),4)`
+
+---
+
+## GEEs: cancer remission
+
+Let's run it:
+
+```{r cancer gee2}
+# run an LME with random intercepts for county #
+cancer_gee <- gee( remission ~ Experience + CancerStage,
+                  id=doc_ID, data=cancer,
+                  family=binomial,
+                  corstr="exchangeable" )
+summary( cancer_gee )$coef
+```
+
+- $e^{\beta_1}$: `r round(exp(summary(cancer_gee)$coef[2,1]),4)`
+
+. . .
+
+- Naive 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`)
+
+- Robust 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,4]*pnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,4]*pnorm(0.975)), 4)`)
+
+<!-- ------------------------------------------------------------------------ -->
+
+<!-- ## GEE limitations -->
+
+<!-- Since we're only specifying mean and covariance structures, though, this -->
+<!-- means that our GEE won't behave nicely when we deviate from those -->
+<!-- structures (more on this later in the semester) -->
+
+<!-- -   By loosening distributional assumptions, we've placed more reliance -->
+<!--     on *structure* -->
+
+------------------------------------------------------------------------
+
+## GLMMs vs GEEs
+
+We noted that GEEs are *marginal* models while GLMMS are *conditional*
+models...
+
+|                            | GEE                                                                    | GLMM |
+|----------------------------|------------------------------------------------------------------------|----------------------------------------------|
+| Interpretation             | Population-level                                                       | Cluster-level                                |
+| Accounting for correlation | Empirical estimation                                                   | Specification of random effects              |
+| Assumptions                | Weak assumptions; more robust (correlation structure, over-dispersion) | Strong assumptions; less robust              |
+| Sample size requirements   | Moderately large ($n > 50$)                                            | Works with smaller sample sizes provided that the entire model is correctly specified |
+| Computational burden       | Light                                                                  | Heavy                                        |
+| Cluster-level prediction?  | No                                                                     | Yes                                          |
+: {tbl-colwidths="[20,40,40]"}
+
+---
+
+## GLMMs vs GEEs: radon
+
+With these differences in mind, let's see how they compare in analyzing our Minnesota radon data
+
+- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses
+
+. . .
+
+[Do we expect there to be a difference in the estimates given by the LME and GEE?]{.alert}
+
+---
+
+## GLMMs vs GEEs: radon
+
+Let's fit our LME model:
+$$\text{log radon}_{ij} = \beta_0 + \beta_1(\text{floor}_{ij}) + b_{0i} + \epsilon_{ij}$$
+
+. . .
+
+```{r radon lme}
+library(lme4)
+
+# run an LME with random intercepts for county #
+radon_lme <- lmer( log_radon ~ floor + (1 | county), data=radon.mn )
+summary( radon_lme )$coef
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+::: {.fragment}
+
+- LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
+
+   - 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`)
+
+:::
+
+::: {.fragment}
+
+Compared to our GEE:
+
+- GEE $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
+
+   - 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`)
+
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+
+[Not much difference!]{.alert}
+
+:::
+
+:::
+
+::::
+
+---
+
+## GLMMs vs GEEs: cancer remission
+
+Now let's try an analysis with our cancer remission example
+
+- Want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment, adjusted for disease stage
+
+. . .
+
+[Do we expect there to be a difference in the estimates given by the LME and GEE?]{.alert}
+
+---
+
+## GLMMs vs GEEs: cancer remission
+
+First our LME model:
+
+$$\text{logit}(\text{remission}_{ij}) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij}) + b_{0i} + \epsilon_{ij}$$
+
+. . .
+
+```{r cancer glmm}
+library(MASS)
+cancer_glmm <- glmmPQL( remission ~ Experience + CancerStage,
+         random = ~ 1 | doc_ID, family = binomial, data = cancer, 
+         verbose = F )
+summary( cancer_glmm )$tTable
+
+```
+
+:::: {.columns}
+
+::: {.column width="50%}
+
+::: {.fragment}
+
+Logistic GLMM results:
+
+- GLMM $e^{\beta_1}$: `r round(exp(cancer_glmm$coefficients$fixed[2]), 4)`
+
+   - 95% CI: (`r round(exp(cancer_glmm$coefficients$fixed[2] - summary(cancer_glmm)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(cancer_glmm$coefficients$fixed[2] + summary(cancer_glmm)$tTable[2,2]*pnorm(0.975)), 4)`)
+
+:::
+
+::: {.fragment}
+
+Compared to our GEE:
+
+- GEE $e^{\beta_1}$: `r round(exp(summary(cancer_gee)$coef[2,1]),4)`
+
+   - 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`)
+
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+
+[A pretty big difference!]{.alert}
+
+- Went from an effect size of 11.35% higher odds of remission for each extra year of experience in the GLMM to 1.21% higher odds in the GEE
+
+:::
+
+:::
+
+::::
+
+<!-- IS THIS A BIGGER EFFECT BC THE EXPOSURE IS AT THE CLUSTER LEVEL? -->
+
+---
+
+## GEEs and count data
+
+GEEs are particularly useful when it comes to modeling [count outcomes]{.alert}
+
+- This is because GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions
+
+- Result: GEEs automatically account for over-dispersion
+
+---
+
+## GLMMs vs GEEs: murder
+
+Let's see how GLMMs and GEEs compare with count data
+
+- Recall our county murder example
+
+- Want to see whether the real per capita personal income of a county impacts the number of murders
+
+```{r murder cleaning, echo=F}
+library(wooldridge)
+
+murder <- countymurders %>% 
+   dplyr::filter(year==1980)
+```
+
+---
+
+## GLMMs vs GEEs: murder
+
+First our LME model:
+
+$$\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i} + \epsilon_{ij}$$
+
+```{r murder glmm}
+murder_glmm <- glmmPQL( murders ~ rpcpersinc,
+         random = ~ 1 | statefips, family = poisson, data = murder, 
+         verbose = F )
+summary( murder_glmm )$tTable
+
+```
+
+Logistic GLMM results:
+
+- GLMM $e^{\beta_1}$: `r round(exp(murder_glmm$coefficients$fixed[2]), 4)`
+
+   - 95% CI: (`r round(exp(murder_glmm$coefficients$fixed[2] - summary(murder_glmm)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(murder_glmm$coefficients$fixed[2] + summary(murder_glmm)$tTable[2,2]*pnorm(0.975)), 4)`)
+   
+---
+
+## GLMMs vs GEEs: murder
+
+Now let's fit a GEE:
+```{r murder gee}
+# run an LME with random intercepts for county #
+murder_gee <- gee( murders ~ rpcpersinc,
+                  id=statefips, data=murder,
+                  family=poisson,
+                  corstr="exchangeable" )
+summary( murder_gee )$coef
+```
+
+
+- GEE $e^{\beta_1}$: `r round(exp(summary(murder_gee)$coef[2,1]),4)`
+
+   - 95% CI: (`r round(exp(summary(murder_gee)$coef[2,1] - summary(murder_gee)$coef[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(murder_gee)$coef[2,1] + summary(murder_gee)$coef[2,2]*pnorm(0.975)), 4)`)

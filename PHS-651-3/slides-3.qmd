@@ -13,6 +13,7 @@ format:
       width: 1920
       chalkboard: true
       from: markdown+emoji
+      auto-stretch: false
 execute: 
    eval: true
    echo: true
@@ -58,7 +59,7 @@ Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they ar
 
 ---
 
-## 522 review: logistic regression
+## 552 review: logistic regression
 
 If our outcome $Y_{i}$ is [binary]{.alert}, we can model it using a logistic regression:
 $$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W_i\beta_1 + \epsilon_i$$
@@ -70,6 +71,12 @@ $$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W
 - The logit function $\log\left(\frac{x}{1-x}\right)$ acts as the [link]{.alert} between $E[Y_i]$ and the linear model $\boldsymbol{X}_i\vec{\beta}$
 
    - $\left(\frac{p_i}{1-p_i}\right)$ are known as the [odds]{.alert} of $w=1$ compared to $w=0$
+
+---
+
+## 522 review: logistic regression
+
+$$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W_i\beta_1 + \epsilon_i$$
 
 - $\beta_1$ tells us about the [log odds]{.alert}:
 
@@ -131,9 +138,14 @@ $$\sum_{i=1}^n\boldsymbol{X}^T\sigma^2[Y_i - \boldsymbol{X}\vec{\beta}]=0 $$
 
 OLS is a type of GLM!
 
-. . .
+---
 
-This estimating equation is based on the [likelihood function]{.alert} associated with the distribution we assume the outcome is coming from
+## Generalized linear models
+
+In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
+$$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i - \mu_i(\beta)] = 0$$
+
+- This estimating equation is based on the [likelihood function]{.alert} associated with the distribution we assume the outcome is coming from
 
    - Many types of data distributions have likelihoods with a similar form called the [exponential family form]{.alert} - GLMs exploits this
 
@@ -149,6 +161,8 @@ $$\text{Var}[Y_i] = \phi v(\mu_i),$$
    - $\phi$ is a scale parameter $>0$
    
    - $v(\mu_i)$ is the variance function that describes how the outcome variance $\text{Var}[Y_i]$ is related to the mean of the outcome $\mu_i$
+   
+      - If the mean and variance are independent, this will be 1
    
 ---
 
@@ -174,7 +188,9 @@ $$g(E[Y_i]) = \mu_i = \boldsymbol{X}_i\vec{\beta}$$
 
 a standard linear regression model
 
-- Variance is $\text{Var}[Y_i] = \phi$ (independent of mean)
+- Variance is $\text{Var}[Y_i] = \phi = \sigma^2$ 
+
+   - $v(\mu_i) = 1$ (independent of mean)
 
 ---
 
@@ -190,7 +206,9 @@ $$g(E[Y_i]) = \log\left(\frac{\mu_i}{1-\mu_i}\right) = \boldsymbol{X}_i\vec{\bet
 
 a logistic regression model
 
-- Variance is $\text{Var}[Y_i] = \mu_i(1-\mu_i)$ (*dependent* on mean)
+- Variance is $\text{Var}[Y_i] = v(\mu_i) = \mu_i(1-\mu_i)$ (*dependent* on mean)
+
+   - $\phi = 1$
 <!-- ## Exponential family -->
 
 <!-- Many common types of data distributions belong to a family called the [exponential family]{.alert} -->
@@ -256,18 +274,20 @@ We can also use the idea of GLMs in LMEs to model data that is both *clustered* 
 
 - We call this hybrid a [generalized linear mixed model]{.alert} (GLMMs)
 
+. . .
+
 $$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
-   - Assume $[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] \sim \text{exponential family}$
+   - Assumes $[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]$ is distributed as a member of the $\text{exponential family}$
    
-   - Use distribution assumption to pull assume link function $g(\cdot)$ and form of within-cluster variance
+   - Use distribution assumption to assume link function $g(\cdot)$ and the form of within-cluster variance
 
-```{r, eval=F}
+```{r, eval=F, echo=F}
 library(MASS)
 
 ## fit our GLMM ##
 glmm_fit <- glmmPQL( y ~ w, 
-                     random=~1,
+                     random= ~ 1 | cluster_id,
                      family=binomial,
                      data=df )
 
@@ -301,7 +321,7 @@ So you might see multiple functions online for running GLMMs in R and SAS
 
 Others include:
 
-- `glmmML()` and `glmm()` in R
+- `glmmML()`, `glmm()`, and `glmer()` in R
 
    - Both use method 2 but can't extend to the longitudinal models we'll get to later
    
@@ -313,11 +333,157 @@ Others include:
    
 ---
 
+## Example: cancer remission
+
+<!-- https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/ -->
+
+Say we want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment
+
+- simulated dummy data from [UCLA](https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/)
+
+- patients clustered by physician
+
+- adjust for cancer stage as confounding factor (more experienced physicians may get patients with more advanced cancer)
+
+. . .
+
+Our (loose) structural model is then:
+
+$$\text{logit}(\text{remission}_{ij}) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})$$
+
+---
+
+## Example: cancer remission
+
+```{r cancer data cleaning, echo=F}
+cancer <- read.csv("https://stats.idre.ucla.edu/stat/data/hdp.csv")
+
+cancer <- within(cancer, {
+  Married <- factor(Married, levels = 0:1, labels = c("no", "yes"))
+  DID <- factor(DID)
+  HID <- factor(HID)
+  CancerStage <- factor(CancerStage)
+})
+
+cancer <- cancer %>% 
+   as.data.frame() %>% 
+   rename(doc_ID=DID)
+```
+
+Let's get an idea of our data...
+
+```{r cancer glimpse}
+cancer %>% 
+   group_by(doc_ID) %>% 
+   summarize(n=n(), prop_remission=mean(remission, na.rm=T), mean_exp = mean(Experience, na.rm=T),
+             prop_stageI = mean(CancerStage=="I", na.rm=T), prop_stageII = mean(CancerStage=="II", na.rm=T),
+             prop_stageIII = mean(CancerStage=="III", na.rm=T), prop_stageIV = mean(CancerStage=="IV", na.rm=T))
+```
+
+---
+
+## Example: cancer remission
+
+Now we should see if there's any evidence of clustering
+
+```{r cancer icc, cache: true}
+library(ICCbin)
+
+# get ICC for remission outcomes - this function can take a while to run #
+iccbin( cid = doc_ID, y = remission, data = cancer,
+        method = "rm", ci.type = "rm" )
+```
+
+. . .
+
+- Pretty strong evidence!
+
+---
+
+## Example: cancer remission
+
+Now let's see what a non-clustered logistic regression would get us:
+
+```{r cancer logistic}
+logistic_fit <- glm( remission ~ Experience + CancerStage,
+         family = binomial(link="logit"),
+         data = cancer)
+
+summary(logistic_fit)
+
+```
+
+- $e^{\beta_1}$: `r round(exp(summary(logistic_fit)$coefficients[2,1]), 4)`
+
+   - 95% CI: (`r round(exp(summary(logistic_fit)$coefficients[2,1] - summary(logistic_fit)$coefficients[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(logistic_fit)$coefficients[2,1] + summary(logistic_fit)$coefficients[2,2]*pnorm(0.975)), 4)`)
+   
+. . .
+
+[Can we trust this estimate?]{.alert}
+
+. . .
+
+- Assumptions: correct structural model; [independence]{.alert}
+
+---
+
+## Example: cancer remission
+
+Now what about a logistic GLMM with random intercepts by physician:
+
+```{r cancer glmm}
+library(MASS)
+glmm_fit <- glmmPQL( remission ~ Experience + CancerStage,
+         random = ~ 1 | doc_ID, family = binomial, data = cancer, 
+         verbose = F )
+summary( glmm_fit )$tTable
+
+```
+
+:::: {.columns}
+
+::: {.column width="40%"}
+Logistic GLMM results:
+
+- $e^{\beta_1}$: `r round(exp(glmm_fit$coefficients$fixed[2]), 4)`
+
+   - 95% CI: (`r round(exp(glmm_fit$coefficients$fixed[2] - summary(glmm_fit)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(glmm_fit$coefficients$fixed[2] + summary(glmm_fit)$tTable[2,2]*pnorm(0.975)), 4)`)
+
+:::
+
+::: {.column width="60%"}
+Compare to what we had with the unclustered logistic model:
+
+- $e^{\beta_1}$: `r round(exp(summary(logistic_fit)$coefficients[2,1]), 4)`
+
+   - 95% CI: (`r round(exp(summary(logistic_fit)$coefficients[2,1] - summary(logistic_fit)$coefficients[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(logistic_fit)$coefficients[2,1] + summary(logistic_fit)$coefficients[2,2]*pnorm(0.975)), 4)`)
+:::
+
+::::
+
+---
+
+## Alternate link functions for binary data
+
+Binary outcomes are special in that there are several alternative link functions you can use
+
+- The logit link is very common
+
+- The probit link is sometimes used in certain fields
+
+- The identity link also gets used
+
+---
+
+## Count outcomes and GLMMs
+
+---
+
 ## Marginal effects in GLMMs
 
 Last time we noted that marginal and conditional effects are *identical* in LMEs
 
-- This is not the case for GLMMs
+- This is not the case for all GLMMs
 
 Take a logistic mixed effects model:
 
@@ -326,20 +492,55 @@ $$\text{logit}(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec
 . . .
 
 - The conditional mean of our outcome is then:
-$$logit(E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}$$
+$$\text{logit}(\mu_i)=\text{logit}(E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}$$
+
+---
+
+## Marginal effects in GLMMs
+
+In order to get the marginal effects, we would need to inverse-transform the outcome (undo the logit function):
+$$E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}$$
 
 . . .
 
-In order to get the marginal effects, we would need to inverse-transform the outcome:
-$$E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}$$
-
 and then take the marginal expectation of that:
-$$\begin{align*}E[\vec{Y}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
+$$\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
 &=E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right]\end{align*}$$
 
 . . .
 
-- Clearly, $E[\vec{Y}_i] \ne \frac{\exp(\boldsymbol{X}_i\vec{\beta})}{1+\exp(\boldsymbol{X}_i\vec{\beta})}$
+- Clearly, $E[\vec{Y}_i|\boldsymbol{X}_i]$ [is not the same as]{.alert} $\frac{\exp(\boldsymbol{X}_i\vec{\beta})}{1+\exp(\boldsymbol{X}_i\vec{\beta})}$
+
+---
+
+## Marginal effects in (identity link) GLMMs
+
+But what if had a GLMM with a binary outcome and an identity link?
+
+$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i$$
+
+. . .
+
+- The conditional mean of our outcome is then:
+$$E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}$$
+
+. . .
+
+- Since $g(\vec{Y}_i) = \vec{Y}_i$, there's no function to "undo" to isolate $E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]$
+
+- So,
+
+$$\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&=E\left[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}\right]\\
+&=\boldsymbol{X}_i\vec{\beta}\end{align*}$$
+
+   - The conditional and marginal effects are identical again!
+
+---
+
+## Example:
+
+
 
 ---
 
@@ -350,9 +551,10 @@ So what happens when we have transformed outcomes and want marginal effects?
 . . .
 
 - You could integrate out the random effects:
-
 $$E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right] = \int_{-\infty}^{\infty}\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})} f(b_{0i})db_{0i}$$
 
+   - where $f(b_{0i})$ is the pdf for the random intercept
+   
 but this generally doesn't end up with a nice formulaic solution...
 
 . . .

@@ -40,15 +40,21 @@ execute:
 
    - Research in correlated data & study design
 
-Logistics
+[Contact]{.alert}
 
 - My office: 701 WARF
 
-- Email: mary.ryan@wisc.edu
+- Email: [mary.ryan@wisc.edu](mailto:mary.ryan@wisc.edu)
 
-- Office hours: xxxxx
+- Office hours:
 
-- Calendly: https://calendly.com/mary-m-ryan/
+   - In-person: Thursdays 10-11a CT
+   
+   - Zoom: Mondays 2-3p CT 
+
+- Calendly: <https://calendly.com/mary-m-ryan/>
+
+   - For scheduling outside meeting time
 
 ---
 
@@ -132,13 +138,19 @@ Logistics
 
 [Instruction times]{.alert}
 
-- Tuesdays/Thursdays 4-5:40p CT
+- Tuesdays/Thursdays 4-5:15p CT
 
 - Location: 726 WARF
 
 - Tuesdays will (mostly) be concepts
 
+   - Some code to be transparent about illustrative examples
+
 - Thursdays will (mostly) be application/coding
+
+   - Some concept review, but intended to be more hands-on
+
+. . .
 
 [Attendance]{.alert}
 
@@ -158,15 +170,15 @@ Logistics
 
 ## How you'll be evaluated
 
-[Weekly homeworks (et al)]{.alert} (35%)
+[Small assignments]{.alert} (35%)
 
-- Assigned Tuesdays at end of class, due following Tuesday at beginning of class
+- Weekly homeworks assigned Tuesdays at end of class, due following Tuesday at beginning of class
 
-- Some small assignments completed over several weeks may also fall in this bucket
+- Some other small assignments to be completed over several weeks
 
 [Midterm]{.alert} (15%)
 
-- Small in-class exam focused on understanding of concepts (not computation)
+- In-class exam focused on understanding of concepts (not computation)
 
 [Final data analysis project]{.alert} (40%)
 

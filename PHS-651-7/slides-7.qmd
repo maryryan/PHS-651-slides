@@ -1,0 +1,297 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+```
+
+<h1>Lecture 7: Modeling the (longitudinal) covariance</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>October 22, 2024</h3>
+
+---
+
+## Longitudinal covariance/correlation structures
+
+Previously we lightly touched on correlation structures for clustered, non-longitudinal data
+
+- Remember: independence, exchangeable, unstructured from Lectures 2 and 4
+
+. . .
+
+With longitudinal data, there are a much wider range of potential structures
+
+- We'll explore some of those today
+
+---
+
+## Unstructured covariance
+
+---
+
+## Covariance Pattern Models
+
+When attempting to impose some structure on the covariance, a subtle balance needs to be struck
+
+- Too little structure means too many parameters means imprecise estimate (large variance)
+
+- Too much structure means more opportunity for mis-specification means inaccurate estimate (large bias)
+
+   - Classic tradeoff between bias and variance
+   
+Covariance pattern models have their basis in models for serial correlation originally developed for time series data
+
+---
+
+## Exchangeable correlation/compound symmetry
+
+[Compound symmetry/exchangeable correlation]{.alert} assumes:
+
+- Correlation is the same across all observations in the cluster
+
+- [We saw this one before in lecture 2 and 4!]{.alert}
+
+$$\begin{bmatrix}
+1 & \alpha & \dots & \alpha\\
+\alpha & \ddots & \dots & \alpha\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha & \dots & \alpha & 1
+\end{bmatrix}$$
+
+You'll always be estimating a single correlation $\alpha$, regardless of $n$
+
+. . .
+
+This pattern has strong assumptions (measurements are exchangeable)
+
+- [This is usually not valid with longitudinal data]{.alert}
+
+---
+
+## Toeplitz correlation
+
+[Toeplitz]{.alert} assumes:
+
+- Correlation is different between each observation
+
+   - The correlation between two observations depends only on the [number of time points]{.alert} separating them
+
+$$\begin{bmatrix}
+1 & \alpha_1 & \dots & \alpha_{n-1}\\
+\alpha_1 & \ddots & \dots & \alpha_{n-2}\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha_{n-1} & \dots & \alpha_1 & 1
+\end{bmatrix}$$
+
+You'll be estimating $(n-1)$ correlations
+
+. . .
+
+[Only appropriate when measurements are (approximately) equally spaced!!]{.alert}
+
+
+---
+
+## Autoregressive correlation
+
+An [autoregressive]{.alert} structure assumes:
+
+- Correlation gradually decreases as the distance between observations grows
+
+$$\begin{bmatrix}
+1 & \alpha^1 & \dots & \alpha^{n-1}\\
+\alpha^1 & \ddots & \dots & \alpha_{n-2}\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha^{n-1} & \dots & \alpha^1 & 1
+\end{bmatrix}$$
+
+You'll always be estimating a single correlation $\alpha$, regardless of $n$
+
+. . .
+
+Means less correlation for measurements taken farther apart; but [only appropriate when the measurements are (approximately) equally spaced]{.alert}
+
+---
+
+## Unevenly timed observations
+
+All the structures we've looked at so far have assumed that our observed times points are approximately equally spaced
+
+- This is appropriate when observations are things like hours, days, weeks, months, years...
+
+. . .
+
+... But it's not uncommon to have observation time points that **aren't** always evenly spaced!
+
+- Think of a study where you start out with weekly observations, then move to monthly, then annual
+
+. . .
+
+How do we handle this?
+
+----
+
+## Exponential correlation
+
+When measurement occasions are not equally-spaced over time, we can the autoregressive model can be generalized
+
+- Let $\{t_{i1}, t_{i2}, \dots, t_{in_i}\}$ denote the observation times for the $i$th individual
+
+. . .
+
+- The correlations are given by:
+$$Corr(Y_{ij}, Y_{ik}) = \alpha^{|t_{ij} - t_{ik}|}$$
+
+   - Instead of looking at the how far apart the observation numbers are (e.g., visit 1 vs visit 2), it [looks at the actual distance between the observation times]{.alert}
+
+This structure is invariant under linear transformation of the time scale
+
+Unlike the Toeplitz and autoregression structures, the exponential structure can easily handle unbalanced data because it is based on [time as a continuum]{.alert}
+
+---
+
+## Banded correlation
+
+All of the previous structures have have required us to estimate some parameter for the off-diagonal matrix elements
+
+- What if we know at some point the correlation between observations will go to 0? [Enter the banded structure!]{.alert .fragment}
+
+. . .
+
+The banded structure assumes correlation is 0 beyond some specified interval
+
+It is possible to apply a banded pattern to any of the correlation pattern models considered so far
+
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
+A banded Toeplitz structure with a band size of 3 looks like:
+
+$$\begin{bmatrix}
+1 & \alpha_1 & \alpha_2 & 0 & \dots & 0\\
+\alpha_1 & 1 & \alpha_1 & \ddots & \dots & 0\\
+\alpha_2 & \alpha_1 & 1 &\ddots & \dots & 0\\
+0 & \alpha_2 & \alpha_1& \ddots & \dots & 0\\
+\vdots && \dots && \ddots & \vdots\\
+0 && \dots &\alpha_2 & \alpha_1 & 1
+\end{bmatrix}$$
+
+:::
+
+::: {.fragment .fade-in-then-out}
+
+A banded autoregression structure with a band size of 4 looks like:
+$$\begin{bmatrix}
+1 & \alpha^1 & \alpha^2 & \alpha^3 & 0 & \dots & 0\\
+\alpha^1 & 1 & \alpha^1 & \alpha^2& \ddots & \dots & 0\\
+\alpha^2 & \alpha^1 & 1 & \alpha^1&\ddots & \dots & 0\\
+\alpha^3 & \alpha^2 & \alpha^1 & 1& \ddots & \dots & 0\\
+\vdots && \dots && \ddots && \vdots\\
+0 && \dots & \alpha^3&\alpha^2 & \alpha^1 & 1
+\end{bmatrix}$$
+
+:::
+
+::: {.fragment .fade-in}
+
+A banded exponential structure with a band size of 4 looks like:
+$$\begin{bmatrix}
+1 & \alpha^{|t_{i1}-t_{i2}|} & \alpha^{|t_{i1}-t_{i3}|} & \alpha^{|t_{i1}-t_{i4}|} & 0 & \dots & 0\\
+\alpha^{|t_{i1}-t_{i2}|} & 1 & \alpha^{|t_{i1}-t_{i2}|} & \alpha^2& \ddots & \dots & 0\\
+\alpha^{|t_{i1}-t_{i3}|} & \alpha^{|t_{i1}-t_{i2}|} & 1 & \alpha^{|t_{i1}-t_{i2}|} &\ddots & \dots & 0\\
+\alpha^{|t_{i1}-t_{i4}|} & \alpha^{|t_{i1}-t_{i3}|} & \alpha^{|t_{i1}-t_{i2}|} & 1& \ddots & \dots & 0\\
+\vdots && \dots && \ddots && \vdots\\
+0 && \dots & \alpha^{|t_{i1}-t_{i4}|}&\alpha^{|t_{i1}-t_{i3}|} & \alpha^{|t_{i1}-t_{i2}|} & 1
+\end{bmatrix}$$
+
+:::
+
+:::
+
+---
+
+## Choices, choices
+
+With way more structures to choose from, it may be more difficult to make a decision than it was with non-longitudinal data
+
+
+---
+
+## Variograms
+
+Variogram plots are one way to assess the how strong the 
+```{r cd4, echo=F}
+cd4 <- read.csv("~/Desktop/teaching/PHS-651/data/Gelman-data/cd4/allvar.csv",header=T)
+
+cd4 <- cd4 %>% 
+   as.data.frame() %>% 
+   dplyr::filter(treatmnt==1) %>% 
+   rename(age_baseline = baseage,
+          age = visage) %>% 
+   mutate(time = age - age_baseline) %>% 
+   select(!(treatmnt))
+
+```
+
+```{r variogram, fig.align='center', fig.height=8.5, fig.width=15}
+library(joineR)
+library(splines)
+
+# fit outcome against time with some splines #
+fit <- lm( sqrt(CD4PCT) ~ ns( time, knots=c(0.5, 1, 1.5)),
+           data=cd4)
+
+# find the residuals #
+resids <- residuals( fit )
+
+# calculate the variogram #
+vario <- variogram( indv = cd4$newpid,
+                    time = cd4$time,
+                    Y = resids )
+
+# only take the complete cases #
+vario$svar <- vario$svar[complete.cases(vario$svar),]
+
+# plot variogram #
+plot( vario$svar[,1], vario$svar[,2], pch=".", ylim=c(0, 1.2*var(resids)),
+      cex=4, cex.axis=2, cex.lab=2)
+
+# smooth line of variogram over time #
+lines( smooth.spline(vario$svar[,1], vario$svar[,2],df=3), lwd=3 )
+
+# show where the total variation is #
+abline(h=var(resids), lty=2, lwd=3)
+
+```
+

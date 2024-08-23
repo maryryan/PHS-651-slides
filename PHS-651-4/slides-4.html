@@ -28,6 +28,71 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #767676;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #767676;  padding-left: 4px; }
+    div.sourceCode
+      { color: #545454; background-color: #fefefe; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #545454; } /* Normal */
+    code span.al { color: #7928a1; } /* Alert */
+    code span.an { color: #696969; } /* Annotation */
+    code span.at { color: #a55a00; } /* Attribute */
+    code span.bn { color: #7928a1; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #d91e18; } /* ControlFlow */
+    code span.ch { color: #008000; } /* Char */
+    code span.cn { color: #d91e18; } /* Constant */
+    code span.co { color: #696969; } /* Comment */
+    code span.cv { color: #696969; font-style: italic; } /* CommentVar */
+    code span.do { color: #696969; font-style: italic; } /* Documentation */
+    code span.dt { color: #7928a1; } /* DataType */
+    code span.dv { color: #7928a1; } /* DecVal */
+    code span.er { color: #7928a1; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #a55a00; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #696969; } /* Information */
+    code span.kw { color: #d91e18; } /* Keyword */
+    code span.op { color: #00769e; } /* Operator */
+    code span.ot { color: #d91e18; } /* Other */
+    code span.pp { color: #7928a1; } /* Preprocessor */
+    code span.sc { color: #00769e; } /* SpecialChar */
+    code span.ss { color: #008000; } /* SpecialString */
+    code span.st { color: #008000; } /* String */
+    code span.va { color: #a55a00; } /* Variable */
+    code span.vs { color: #008000; } /* VerbatimString */
+    code span.wa { color: #696969; font-style: italic; } /* Warning */
   </style>
 <link rel="stylesheet" href="slides-4_files/libs/revealjs/dist/theme/quarto.css">
 <link href="slides-4_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -334,7 +399,7 @@ PHS 651: Advanced regression methods
 </h2>
 <hr>
 <h3>
-Mary Ryan, PhD
+Mary Ryan Baumann, PhD
 </h3>
 <h3>
 October 1, 2024
@@ -362,84 +427,231 @@ October 1, 2024
 </section><section id="marginal-models" class="slide level2"><h2>Marginal models</h2>
 <p>Basic idea: we want to account for clustering of data, but make inference about <span class="alert">population averages</span> (marginal effects)</p>
 <ul>
-<li><p>These are the ones we’re most interested in in public and population health!</p></li>
-<li><p>Mean response is conditional <em>only</em> on the fixed covariates we add to the mean model</p></li>
+<li><p>These are the ones we’re (usually) most interested in in public and population health!</p></li>
+<li><p>Mean response is conditional <em>only</em> on the adjustment covariates we add to the mean model</p></li>
 </ul>
-<p>This means we have to model (estimate) the outcome mean and the outcome covariance <em>explicitly</em></p>
+<div class="fragment">
+<p>This means we have to model (estimate) the outcome mean and the outcome covariance <span class="alert">separately</span></p>
 <ul>
-<li>The random effects in LMEs only <em>induce</em> a covariance structure (Fitzmaurice pg 474)</li>
-</ul></section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
-<p>There are 3 main components of a marginal model</p>
+<li><p>We get these in LMEs via distribution assumptions</p></li>
+<li><p>What if we could <span class="alert">empirically estimate</span> the covariance structure and use that?</p></li>
+</ul>
+</div>
+</section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
+<p>There are 2 main components of a marginal model</p>
 <ol type="1">
-<li>The marginal expectation of the outcome (<span class="math inline">\(E[Y_{ij}| \vec{X}_{ij}] = \mu_{ij}\)</span>) only depends on the covariates in the model: <span class="math display">\[\mu_{ij} = \vec{X}_{ij}\vec{\beta}\]</span>
-</li>
+<li>The <span class="alert">marginal expectation</span> of the outcome <span class="math inline">\(E[Y_{ij}|\vec{X}_{ij}]=\mu_{ij}\)</span>:</li>
 </ol>
 <ul>
-<li>Obviously, our data <span class="math inline">\(\vec{X}_{ij}\)</span> is known, while <span class="math inline">\(\vec{\beta}\)</span> needs to be estimated</li>
+<li>
+<p><span class="math inline">\(\mu_{ij}\)</span> should only depend on the covariates in the model through the link function <span class="math inline">\(g(\cdot)\)</span></p>
+<p><span class="math display">\[g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}\]</span></p>
+</li>
 </ul>
+<div class="fragment">
 <ol start="2" type="1">
-<li>The marginal variance of the outcome depends on the marginal mean through the <span class="alert">variance function <span class="math inline">\(v(\cdot)\)</span></span> and a scale parameter <span class="math inline">\(\varphi\)</span>: <span class="math display">\[Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})\]</span>
+<li>The covariance of the outcome <span class="math inline">\(Cov[Y_{ij}, Y_{ik}|\boldsymbol{X}_i]\)</span>
 </li>
 </ol>
 <ul>
-<li>The variance function is known/assumed, while <span class="math inline">\(\varphi\)</span> may need to be estimated</li>
+<li>
+<p>Can be broken down into 2 more components:</p>
+<ol type="i">
+<li>The <span class="alert">marginal variance</span> of the outcome:</li>
+</ol>
+<p><span class="math display">\[Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})\]</span> - Should depend on the marginal mean through the variance function <span class="math inline">\(v(\cdot)\)</span> and a scale parameter <span class="math inline">\(\varphi\)</span></p>
+</li>
 </ul>
-<ol start="3" type="1">
-<li>The within-cluster association of the outcomes, which depends on the means and a parameter <span class="math inline">\(\alpha\)</span> that also needs to be estimated</li>
-</ol></section><section id="marginal-model-components-cont." class="slide level2"><h2>Marginal model components (cont.)</h2>
-<p>In a model with clustered continuous responses and only one exposure <span class="math inline">\(W\)</span>:</p>
+</div>
+<div class="fragment">
+<ol start="2" type="i">
+<li>The <span class="alert">within-cluster association</span> of the outcomes<br>
+- Should depend on the means and a correlation parameter(s)</li>
+</ol>
+</div>
+</section><section id="marginal-model-components-cont." class="slide level2"><h2>Marginal model components (cont.)</h2>
+<p>In a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(W_{ij}\)</span>, we might have:</p>
 <ol type="1">
-<li>
-<p><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}] = \mu_{ij} = \beta_0 + W_{ij}\beta_1\)</span></p>
+<li><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + W_{ij}\beta_1\)</span></li>
+</ol>
 <ul>
-<li>To account for confounding, we would add additional variables to the right hand side so that we <span class="alert">correctly model the mean</span>
-</li>
+<li><p>We specify this based on our domain knowledge</p></li>
+<li><p>To account for confounding, we would add additional variables to the right hand side so that we <span class="alert">correctly model the mean</span></p></li>
 </ul>
-</li>
-<li>
-<p><span class="math inline">\(Var[Y_{ij}|W_{ij}] = \varphi_{i} = \sigma^2_{i}\)</span></p>
+<div class="fragment">
+<p>2.1. <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}\)</span></p>
 <ul>
 <li>Different variance for each cluster</li>
 </ul>
-</li>
-<li>
-<p><span class="math inline">\(Corr[Y_{ij}, Y_{ik}] = \alpha\)</span></p>
+</div>
+<div class="fragment">
+<p>2.2. <span class="math inline">\(Corr[Y_{ij}, Y_{ik}] = \alpha\)</span></p>
 <ul>
-<li>Outcomes in same cluster have correlation of <span class="math inline">\(\alpha\)</span>
+<li>Outcomes in same cluster are all correlated by <span class="math inline">\(\alpha\)</span>
 </li>
 </ul>
-</li>
-</ol>
-<div class="fragment">
-<p>We build the linear model for 1, and 2 is usually determined by the type of outcome variable we’re using. But 3 has some subjectivity in how we assume observations are related.</p>
 </div>
-</section><section id="examples-of-correlation-structures" class="slide level2"><h2>Examples of correlation structures</h2>
-<p>Are they completely independent from each other?</p>
-<p>Independence</p>
-</section><section id="examples-of-correlation-structures-1" class="slide level2"><h2>Examples of correlation structures</h2>
-<p>Are all observations related to each other to the same degree? Exchangeable</p>
+</section><section id="marginal-model-components-cont.-1" class="slide level2"><h2>Marginal model components (cont.)</h2>
+<p>In a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(W_{ij}\)</span>, we might have:</p>
+<ol type="1">
+<li><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + W_{ij}\beta_1\)</span></li>
+</ol>
+<p>2.1. <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}\)</span></p>
+<p>2.2. <span class="math inline">\(Corr[Y_{ij}, Y_{ik}] = \alpha\)</span></p>
 <ul>
-<li>AKA: compound symmetry</li>
-</ul></section><section id="examples-of-correlation-structures-2" class="slide level2"><h2>Examples of correlation structures</h2>
-<p>Or do you assume all observations are possibly related to each other in different ways? Unstructured</p>
+<li>This means we can assume a <span class="alert">correlation structure</span> for one cluster that looks like:</li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+1 &amp; \alpha &amp; \dots &amp; \alpha \\
+\alpha &amp; \ddots &amp; \dots &amp; \alpha \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\alpha &amp; \dots &amp; \alpha &amp; 1
+\end{bmatrix}\]</span></p>
+</section><section id="marginal-model-components-cont.-2" class="slide level2"><h2>Marginal model components (cont.)</h2>
+<p>If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
+&amp;= \sqrt{\sigma^2_i}~ \alpha ~\sqrt{\sigma^2_i}\\
+&amp;=\alpha \sigma^2_i\end{align*}\]</span></p>
+<div class="fragment">
+<p>which creates us a <span class="alert">covariance matrix</span> for cluster <span class="math inline">\(i\)</span> that looks like:</p>
+<p><span class="math display">\[\begin{bmatrix}
+\sigma^2_i &amp; \alpha &amp; \dots &amp; \alpha \\
+\alpha &amp; \ddots &amp; \dots &amp; \alpha \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\alpha &amp; \dots &amp; \alpha &amp; \sigma^2_i
+\end{bmatrix}\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>Outcomes for individuals in <strong>different</strong> clusters would still have a covariance of 0 though because we’re assuming that <span class="alert">clusters are independent of one another</span>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<p><span class="alert">Can we assume other types of correlation/covariance structures?</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>Yes!</li>
+</ul>
+</div>
+</section><section id="correlation-structures-independence" class="slide level2"><h2>Correlation structures: independence</h2>
+<p>The most basic (and the one we have the most prior experience with) is the <span class="alert">independence</span> correlation structure</p>
+<ul>
+<li>Assumes all observations in a cluster are completely uncorrelated with each other</li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+1 &amp; 0 &amp; \dots &amp; 0 \\
+0 &amp; \ddots &amp; \dots &amp; 0 \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+0 &amp; \dots &amp; 0 &amp; 1
+\end{bmatrix}\]</span></p>
+<ul>
+<li>We don’t have to estimate anything here!</li>
+</ul>
+<div class="fragment">
+<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}\)</span>, creates a covariance matrix that looks like</p>
+<p><span class="math display">\[\begin{bmatrix}
+\sigma^2_i &amp; 0 &amp; \dots &amp; 0 \\
+0 &amp; \ddots &amp; \dots &amp; 0 \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+0 &amp; \dots &amp; 0 &amp; \sigma^2_i
+\end{bmatrix}\]</span></p>
+</div>
+</section><section id="correlation-structures-exchangeable" class="slide level2"><h2>Correlation structures: exchangeable</h2>
+<p>Another type is the <span class="alert">exchangeable</span> correlation structure (AKA: compound symmetry)</p>
+<ul>
+<li>Assumes all observations related to each other to the same degree</li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+1 &amp; \alpha &amp; \dots &amp; \alpha \\
+\alpha &amp; \ddots &amp; \dots &amp; \alpha \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\alpha &amp; \dots &amp; \alpha &amp; 1
+\end{bmatrix}\]</span></p>
+<ul>
+<li>Need to estimate <span class="math inline">\(\alpha\)</span>
+</li>
+</ul>
+<div class="fragment">
+<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}\)</span>, creates a covariance matrix that looks like</p>
+<p><span class="math display">\[\begin{bmatrix}
+\sigma^2_i &amp; \alpha &amp; \dots &amp; \alpha \\
+\alpha &amp; \ddots &amp; \dots &amp; \alpha \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\alpha &amp; \dots &amp; \alpha &amp; \sigma^2_i
+\end{bmatrix}\]</span></p>
+</div>
+</section><section id="correlation-structures-unstructured" class="slide level2"><h2>Correlation structures: unstructured</h2>
+<p>Could you assume all observations are (potentially) related to each other in different ways?</p>
+<ul>
+<li>Known as an <span class="alert">unstructured</span> correlation structure</li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+1 &amp; \alpha_{12} &amp; \dots &amp; \alpha_{1n} \\
+\alpha_{21} &amp; \ddots &amp; \dots &amp; \alpha_{2n} \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\alpha_{n1} &amp; \dots &amp; \alpha_{n(n-1)} &amp; 1
+\end{bmatrix}\]</span></p>
+<div class="fragment">
+<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}\)</span>, creates a covariance matrix that looks like</p>
+<p><span class="math display">\[\begin{bmatrix}
+\sigma^2_i &amp; \alpha_{12} &amp; \dots &amp; \alpha_{1n} \\
+\alpha_{21} &amp; \ddots &amp; \dots &amp; \alpha_{2n} \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\alpha_{n1} &amp; \dots &amp; \alpha_{n(n-1)} &amp; \sigma^2_i
+\end{bmatrix}\]</span></p>
+</div>
+</section><section id="correlation-structures-unstructured-1" class="slide level2"><h2>Correlation structures: unstructured</h2>
+<p>Could you assume all observations are (potentially) related to each other in different ways?</p>
+<ul>
+<li>Known as an <span class="alert">unstructured</span> correlation structure</li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+1 &amp; \alpha_{12} &amp; \dots &amp; \alpha_{1n} \\
+\alpha_{21} &amp; \ddots &amp; \dots &amp; \alpha_{2n} \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\alpha_{n1} &amp; \dots &amp; \alpha_{n(n-1)} &amp; 1
+\end{bmatrix}\]</span></p>
+<ul>
+<li>Offers maximum flexibility because correlations can be the same, very similar, or completely different from each other</li>
+</ul>
+<div class="fragment">
 <ul>
 <li>
-<p>This offers maximum flexibility, but also requires you to estimate every correlation in this matrix separately</p>
+<p>But also requires you to estimate <em>every</em> correlation parameter in this matrix separately</p>
 <ul>
 <li>This can cause computational and efficiency issues</li>
 </ul>
 </li>
-</ul></section><section id="marginal-model-components-1" class="slide level2"><h2>Marginal model components</h2>
-<p>There are 3 main components of a marginal model</p>
-<ol type="1">
-<li><p>The marginal expectation of the outcome <span class="math inline">\(g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}\)</span></p></li>
-<li><p>The marginal variance of the outcome: <span class="math inline">\(Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})\)</span></p></li>
-<li><p>The within-cluster association of the outcomes</p></li>
-</ol>
-<p><span class="alert">How do we take these components and use them to make some sort of equation with which to estimate our regression coefficients?</span></p>
+</ul>
+</div>
 <div class="fragment">
 <ul>
-<li>What if we used the GLM estimating equation?</li>
+<li>Can get away with unstructured correlation in small data sets, but usually easier to assume a simpler structure</li>
+</ul>
+</div>
+</section><section id="marginal-model-components-1" class="slide level2"><h2>Marginal model components</h2>
+<p>So we have the main components of a marginal model</p>
+<ol type="1">
+<li><p>The marginal expectation of the outcome: <span class="math inline">\(g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}\)</span></p></li>
+<li>
+<p>The covariance of the outcome</p>
+<ol type="i">
+<li><p>The marginal variance of the outcome: <span class="math inline">\(Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})\)</span></p></li>
+<li><p>The within-cluster association of the outcomes (correlation structure)</p></li>
+</ol>
+</li>
+</ol>
+<p><span class="alert">But how do we use these components to estimate our regression coefficients?</span></p>
+<div class="fragment">
+<ul>
+<li>With OLS and GLMMs, we had a likelihood-based estimating equation we could use to derive estimates for <span class="math inline">\(\beta\)</span>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>What if we used something like the GLM estimating equation here?</li>
 </ul>
 </div>
 <div class="fragment">
@@ -457,56 +669,545 @@ October 1, 2024
 </section><section id="generalized-estimating-equations" class="slide level2"><h2>Generalized estimating equations</h2>
 <p>Generalized estimating equations (GEEs) find the <span class="math inline">\(\beta\)</span> that solves an estimating equation of the general form: <span class="math display">\[\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0\]</span></p>
 <ul>
-<li><p>Almost exactly the same as the one we saw for GLMs!</p></li>
+<li>Almost exactly the same as the one we saw for GLMs!</li>
+</ul>
+<div class="fragment">
+<ul>
 <li>
 <p>Difference here: <span class="math inline">\(v_i\)</span> is the <span class="alert">working covariance</span> for the outcome</p>
 <ul>
-<li><p>Explicitly accounts for models of outcome variance <em>and</em> within-cluster association (components 2 and 3)</p></li>
+<li>
+<p>Explicitly accounts for models of outcome variance <em>and</em> within-cluster association (components 2.1 and 2.2)</p>
+<p><span class="math display">\[v_i = sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\]</span></p>
+</li>
 <li><p>With GLMMs, our random effects were getting stuck in with <span class="math inline">\(\mu_{ij}(\cdot)\)</span> and the covariance structure was induced as a side product</p></li>
 </ul>
 </li>
 </ul>
-<div class="fragment">
-<p>Since this <span class="alert">only depends on the mean <span class="math inline">\(\mu_{ij}(\cdot)\)</span> and the variance <span class="math inline">\(v_i(\cdot)\)</span> functions</span>, a GEE doesn’t have to actually correspond to a full likelihood/distribution</p>
+</div>
+</section><section id="generalized-estimating-equations-1" class="slide level2"><h2>Generalized estimating equations</h2>
+<p>Generalized estimating equations (GEEs) find the <span class="math inline">\(\beta\)</span> that solves an estimating equation of the general form: <span class="math display">\[\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0\]</span></p>
+<p>Since this estimating equation <span class="alert">only depends on the mean <span class="math inline">\(\mu_{ij}(\cdot)\)</span> and the (co)variance <span class="math inline">\(v_i(\cdot)\)</span> functions</span>, a GEE doesn’t have to correspond to a full likelihood/distribution like a GLMM does</p>
 <ul>
-<li><p>This lets us “mix and match” different forms for the 3 marginal model components into this one estimating equation</p></li>
+<li><p>This means we have <span class="alert">fewer assumptions</span> about how <span class="math inline">\(Y_{ij}\)</span> behaves</p></li>
+<li><p>Also lets us “mix and match” different forms for the marginal model components into this one estimating equation</p></li>
 <li><p>e.g., we don’t need to theoretically derive the covariance - we can just approximate it using the variance and the chosen correlation structure</p></li>
+</ul></section><section id="generalized-estimating-equations-2" class="slide level2"><h2>Generalized estimating equations</h2>
+<p>Generalized estimating equations (GEEs) find the <span class="math inline">\(\beta\)</span> that solves an estimating equation of the general form: <span class="math display">\[\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0\]</span></p>
+<p>Since this estimating equation <span class="alert">only depends on the mean <span class="math inline">\(\mu_{ij}(\cdot)\)</span> and the (co)variance <span class="math inline">\(v_i(\cdot)\)</span> functions</span>, a GEE doesn’t have to correspond to a full likelihood/distribution like a GLMM does</p>
+<p><span class="alert">What’s the effect of this?</span></p>
+<div class="fragment">
+<ul>
+<li>Fewer assumptions means results will be <span class="alert">more robust</span> to incorrect assumptions about the marginal model components (e.g., wrong correlation structure, wrong variance) 🎉</li>
 </ul>
 </div>
-</section><section id="building-the-working-covariance" class="slide level2"><h2>Building the working covariance</h2>
-<p>Based on your outcome variable, you’ll likely know what the variance would be if all your outcome datapoints were <em>independent</em></p>
-<p>We can fill in what the covariance would be by making assumptions about how observations within a cluster are correlated</p>
-</section><section id="building-the-working-covariance-1" class="slide level2"><h2>Building the working covariance</h2>
-<p>If we assume the cluster-specific variance is <span class="math inline">\(\sigma^2_{i}\)</span>, then let <span class="math display">\[S_i(\mu_i) = \begin{bmatrix}
-    \sigma^2_i  &amp; 0 &amp; \dots  &amp; 0 \\
-    0 &amp; \sigma^2_i &amp; \dots &amp; 0\\
-    \vdots &amp; &amp; \ddots &amp; \vdots\\
-    0 &amp;\dots &amp; 0 &amp; \sigma^2_i
-\end{bmatrix}\]</span></p>
-<p>Then assume a correlation structure and call it <span class="math inline">\(R_i(\alpha)\)</span></p>
-<p>Finally, the working covariance matrix will be: <span class="math display">\[S_i(\mu_i)^{1/2}R_i(\alpha)S_i(\mu_i)^{1/2}\]</span></p>
-</section><section id="what-does-this-look-like" class="slide level2"><h2>What does this look like?</h2>
-<p>For exchangeable correlation:</p>
-<p><span class="math display">\[\begin{bmatrix}
-    \sigma^2_i  &amp; \alpha &amp; \dots  &amp; \alpha \\
-    \alpha &amp; \sigma^2_i &amp; \dots &amp; \alpha\\
-    \vdots &amp; &amp; \ddots &amp; \vdots\\
-    \alpha &amp;\dots &amp; \alpha &amp; \sigma^2_i
-\end{bmatrix}\]</span></p>
-</section><section id="gees-and-non-normal-data" class="slide level2"><h2>GEEs and non-Normal data</h2>
-<p>Similarly, we can extend GEEs to non-Normal outcome data</p>
-<p>Recall: GEEs find the <span class="math inline">\(\beta\)</span> that solves an estimating equation of the general form: <span class="math display">\[\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0\]</span></p>
-<p><span class="alert">Why does this work when we transform the outcome with a link function?</span></p>
-</section><section id="gee-limitations" class="slide level2"><h2>GEE limitations</h2>
-<p>Since we’re only specifying mean and covariance structures, though, this means that our GEE won’t behave nicely when we deviate from those structures (more on this later in the semester)</p>
+<div class="fragment">
 <ul>
-<li>By loosening distributional assumptions, we’ve placed more reliance on <em>structure</em>
+<li>Also means we <span class="alert">need more data</span> to run this model 🙁</li>
+</ul>
+<!-- ------------------------------------------------------------------------ --><!-- ## Building the working covariance --><!-- Based on your outcome variable, you'll likely know what the variance --><!-- would be if all your outcome datapoints were *independent* --><!-- We can fill in what the covariance would be by making assumptions about --><!-- how observations within a cluster are correlated -->
+</div>
+</section><section id="inference-for-widehatbeta" class="slide level2"><h2>Inference for <span class="math inline">\(\widehat{\beta}\)</span>
+</h2>
+<p>We also need to be able to get variance estimates for our model parameters in order to perform inference</p>
+<ul>
+<li>The “model-based” covariance matrix for <span class="math inline">\(\widehat{\beta}\)</span> looks like:</li>
+</ul>
+<p><span class="math display">\[Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\left(\frac{\partial \mu_i}{\partial \beta}\right)^T\)</span> deals with the transformation of <span class="math inline">\(Y_{ij}\)</span> to <span class="math inline">\(g(\mu_{ij})\)</span>, and links in the <span class="math inline">\(\beta\)</span>s</p></li>
+<li><p><span class="math inline">\(v_i^{-1}\)</span> incorporates the marginal outcome variance and the outcome correlation</p></li>
+</ul>
+<div class="fragment">
+<p>The individual variances for each <span class="math inline">\(\beta\)</span> will be found along the diagonal of the covariance matrix:</p>
+<ul>
+<li><span class="math inline">\(Var[\widehat{\beta}] = \text{diag}\left(Cov[\widehat{\beta}]\right)\)</span></li>
+</ul>
+</div>
+</section><section id="inference-for-widehatbeta-1" class="slide level2"><h2>Inference for <span class="math inline">\(\widehat{\beta}\)</span>
+</h2>
+<p>We also need to be able to get variance estimates for our model parameters in order to perform inference</p>
+<ul>
+<li>The “model-based” covariance matrix for <span class="math inline">\(\widehat{\beta}\)</span> looks like:</li>
+</ul>
+<p><span class="math display">\[Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\left(\frac{\partial \mu_i}{\partial \beta}\right)^T\)</span> deals with the transformation of <span class="math inline">\(Y_{ij}\)</span> to <span class="math inline">\(g(\mu_{ij})\)</span>, and links in the <span class="math inline">\(\beta\)</span>s</p></li>
+<li><p><span class="math inline">\(v_i^{-1}\)</span> incorporates the marginal outcome variance and the outcome correlation</p></li>
+</ul>
+<p><span class="alert">What would this look like for OLS?</span></p>
+<div class="fragment">
+<p><span class="math display">\[\begin{align*}&amp;\frac{\partial \mu_i}{\partial \beta} = \frac{\partial \boldsymbol{X}\vec{\beta}}{\partial \beta} = \boldsymbol{X}\\
+&amp;v_i = \sigma^2\\
+&amp;Cov[\widehat{\beta}] = [\boldsymbol{X}^T (\sigma^2)^{-1} \boldsymbol{X}]^{-1} = \sigma^2 (\boldsymbol{X}^T\boldsymbol{X})^{-1}\end{align*}\]</span></p>
+</div>
+</section><section id="inference-for-widehatbeta-2" class="slide level2"><h2>Inference for <span class="math inline">\(\widehat{\beta}\)</span>
+</h2>
+<p>We also need to be able to get variance estimates for our model parameters in order to perform inference</p>
+<ul>
+<li>The “model-based” covariance matrix for <span class="math inline">\(\widehat{\beta}\)</span> looks like:</li>
+</ul>
+<p><span class="math display">\[Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\]</span></p>
+<p>The confidence intervals for <span class="math inline">\(\vec{\beta}\)</span> will take the form:</p>
+<p><span class="math display">\[\begin{align*}&amp;\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(\left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\right)\\
+&amp;\rightarrow \widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(Cov[\widehat{\beta}]\right)\end{align*}\]</span></p>
+</section><section id="robust-inference-for-widehatbeta" class="slide level2"><h2>Robust inference for <span class="math inline">\(\widehat{\beta}\)</span>
+</h2>
+<p>We can also use <span class="alert">robust or sandwich variance</span> estimators to perform inference on <span class="math inline">\(\widehat{\beta}\)</span></p>
+<p><span class="math display">\[Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}\]</span> where <span class="math display">\[\begin{align*}&amp;B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
+&amp;A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}\]</span></p>
+<ul>
+<li>
+<span class="math inline">\((Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T\)</span> is the <span class="alert">empirical</span> covariance of the outcome</li>
+</ul>
+<div class="fragment">
+<p>This will give us (approximately) correct variance estimates for <span class="math inline">\(\widehat{\beta}\)</span> if we’re <span class="alert">wrong</span> about the correlation structure or marginal variance (model components 2.1 and 2.2)</p>
+</div>
+</section><section id="robust-inference-for-widehatbeta-1" class="slide level2"><h2>Robust inference for <span class="math inline">\(\widehat{\beta}\)</span>
+</h2>
+<p>We can also use <span class="alert">robust or sandwich variance</span> estimators to perform inference on <span class="math inline">\(\widehat{\beta}\)</span></p>
+<p><span class="math display">\[Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}\]</span> where <span class="math display">\[\begin{align*}&amp;B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
+&amp;A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}\]</span></p>
+<p>If we’re <span class="alert">right</span> about model components 2.1 and 2.2, <span class="math inline">\(A \approx B\)</span> and: <span class="math display">\[\begin{align*}Cov^*[\widehat{\beta}] &amp;= B^{-1} A B^{-1}\\
+&amp;\approx B^{-1} B B^{-1}\\
+&amp; = B^{-1} = Cov[\widehat{\beta}]\end{align*}\]</span> the robust variance is the same as the model-based variance!</p>
+</section><section id="robust-inference-for-widehatbeta-2" class="slide level2"><h2>Robust inference for <span class="math inline">\(\widehat{\beta}\)</span>
+</h2>
+<p>We can also use <span class="alert">robust or sandwich variance</span> estimators to perform inference on <span class="math inline">\(\widehat{\beta}\)</span></p>
+<p><span class="math display">\[Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}\]</span> where <span class="math display">\[\begin{align*}&amp;B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
+&amp;A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}\]</span></p>
+<p>The confidence intervals for <span class="math inline">\(\vec{\beta}\)</span> will take about the same form, just using <span class="math inline">\(Cov^*[\widehat{\beta}]\)</span> instead of <span class="math inline">\(Cov[\widehat{\beta}]\)</span>:</p>
+<p><span class="math display">\[\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(Cov^*[\widehat{\beta}]\right)\]</span></p>
+<div class="fragment">
+<ul>
+<li>Most people will automatically use the sandwich variance estimator over the model-based variance to cover their bases</li>
+</ul>
+</div>
+</section><section id="gees-radon" class="slide level2"><h2>GEEs: radon</h2>
+<p>Let’s see how we’d fit a GEE using our Minnesota radon data</p>
+<ul>
+<li>Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses</li>
+</ul>
+<p>We’re assuming:</p>
+<ul>
+<li><p>Mean model:</p></li>
+<li><p>Variance:</p></li>
+<li><p>Correlation structure:</p></li>
+</ul></section><section id="gees-radon-1" class="slide level2"><h2>GEEs: radon</h2>
+<p>Let’s see how we’d fit a GEE using our Minnesota radon data</p>
+<ul>
+<li>Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses</li>
+</ul>
+<p>We’re assuming:</p>
+<ul>
+<li><p>Mean model: <span class="math inline">\(E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})\)</span><br></p></li>
+<li><p>Variance: <span class="math inline">\(Var[Y_{ij}] = \sigma^2\)</span></p></li>
+<li><p>Correlation structure: exchangeable (just one correlation parameter to estimate)</p></li>
+</ul></section><section id="gees-radon-2" class="slide level2"><h2>GEEs: radon</h2>
+<p>We’re assuming:</p>
+<ul>
+<li><p>Mean model: <span class="math inline">\(E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})\)</span><br></p></li>
+<li><p>Variance: <span class="math inline">\(Var[Y_{ij}] = \sigma^2\)</span></p></li>
+<li><p>Correlation structure: exchangeable</p></li>
+</ul>
+<p>Let’s run it:</p>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(gee)</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># run an LME with random intercepts for county #</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>radon_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( log_radon <span class="sc">~</span> floor,</span>
+<span id="cb1-5"><a href="#cb1-5"></a>                  <span class="at">id=</span>cntyfips, <span class="co"># cluster ID needs to be a number, not names or categories</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>                  <span class="at">data=</span>radon.mn, <span class="at">corstr=</span><span class="st">"exchangeable"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)       floor 
+  1.3624099  -0.5864218 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">summary</span>( radon_gee )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Estimate Naive S.E.   Naive z Robust S.E.  Robust z
+(Intercept)  1.5011024 0.05525251  27.16804  0.05101495 29.424759
+floor       -0.6698925 0.06583761 -10.17492  0.07746389 -8.647803</code></pre>
+</div>
+</div>
+<ul>
+<li>
+<span class="math inline">\(\beta_1\)</span>: -0.6699</li>
+</ul>
+</div>
+</section><section id="gees-radon-3" class="slide level2"><h2>GEEs: radon</h2>
+<p>Let’s run it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(gee)</span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># run an LME with random intercepts for county #</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>radon_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( log_radon <span class="sc">~</span> floor,</span>
+<span id="cb5-5"><a href="#cb5-5"></a>                  <span class="at">id=</span>cntyfips, <span class="co"># cluster ID needs to be a number, not names or categories</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>                  <span class="at">data=</span>radon.mn, <span class="at">corstr=</span><span class="st">"exchangeable"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)       floor 
+  1.3624099  -0.5864218 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">summary</span>( radon_gee )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Estimate Naive S.E.   Naive z Robust S.E.  Robust z
+(Intercept)  1.5011024 0.05525251  27.16804  0.05101495 29.424759
+floor       -0.6698925 0.06583761 -10.17492  0.07746389 -8.647803</code></pre>
+</div>
+</div>
+<ul>
+<li>
+<span class="math inline">\(\beta_1\)</span>: -0.6699</li>
+</ul>
+<div class="fragment">
+<p><span class="alert">What abour our inference?</span></p>
+</div>
+<div class="fragment">
+<p>Two SEs: model-based/naive; robust</p>
+</div>
+<div class="fragment">
+<ul>
+<li>Naive 95% CI: (-0.7249, -0.6149)</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Robust 95% CI: (-0.7346, -0.6052)</li>
+</ul>
+</div>
+</section><section id="gees-and-non-normal-data" class="slide level2"><h2>GEEs and non-Normal data</h2>
+<p>We can also extend GEEs to non-Normal outcome data</p>
+<p>Recall: GEEs find the <span class="math inline">\(\beta\)</span> that solves an estimating equation of the general form: <span class="math display">\[\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0\]</span></p>
+<div class="fragment">
+<p><span class="alert">So what’s different?</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>Since <span class="math inline">\(g(\cdot)\)</span> isn’t the identity function, <span class="math inline">\(\left(\frac{\partial \mu_i}{\partial \beta}\right)^T \ne \boldsymbol{X}\)</span>
 </li>
-</ul></section><section id="lme-vs-gee" class="slide level2"><h2>LME vs GEE</h2>
-<p>We noted that GEEs are <em>marginal</em> models while LMEs are <em>conditional</em> models…</p>
-<p>Let’s see how they compare:</p>
-
-<img src="POPUHEALSMPH_color-flush.png" class="slide-logo r-stretch"><div class="footer footer-default">
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>
+<p>The (co)variance function <span class="math inline">\(v_i(\cdot)\)</span> will likely depend on <span class="math inline">\(\mu_{ij}\)</span></p>
+<ul>
+<li>With Normal data, <span class="math inline">\(v_i(\cdot)\)</span> was independent of <span class="math inline">\(\mu_{ij}\)</span>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section><section id="gees-cancer-remission" class="slide level2"><h2>GEEs: cancer remission</h2>
+<p>Let’s see how this would work with a binary outcome</p>
+<ul>
+<li><p>Recall our cancer remission example</p></li>
+<li><p>Want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment, adjusted for disease stage</p></li>
+</ul>
+<p>We’re assuming:</p>
+<ul>
+<li><p>Mean model:</p></li>
+<li><p>Variance:</p></li>
+<li><p>Correlation structure:</p></li>
+</ul></section><section id="gees-cancer-remission-1" class="slide level2"><h2>GEEs: cancer remission</h2>
+<p>Let’s see how this would work with a binary outcome</p>
+<ul>
+<li><p>Recall our cancer remission example</p></li>
+<li><p>Want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment, adjusted for disease stage</p></li>
+</ul>
+<p>We’re assuming:</p>
+<ul>
+<li><p>Mean model: <span class="math inline">\(logit\left(E[\text{remission}_{ij}|\vec{X}_{ij}]\right) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})\)</span></p></li>
+<li><p>Variance: <span class="math inline">\(Var[Y_{ij}] = E[\text{remission}_{ij}|\vec{X}_{ij}]\left(1-E[\text{remission}_{ij}|\vec{X}_{ij}]\right)\)</span></p></li>
+<li><p>Correlation structure: exchangeable</p></li>
+</ul></section><section id="gees-cancer-remission-2" class="slide level2"><h2>GEEs: cancer remission</h2>
+<p>We’re assuming:</p>
+<ul>
+<li><p>Mean model: <span class="math inline">\(logit\left(E[\text{remission}_{ij}|\vec{X}_{ij}]\right) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})\)</span></p></li>
+<li><p>Variance: <span class="math inline">\(Var[Y_{ij}] = E[\text{remission}_{ij}|\vec{X}_{ij}]\left(1-E[\text{remission}_{ij}|\vec{X}_{ij}]\right)\)</span></p></li>
+<li><p>Correlation structure: exchangeable</p></li>
+</ul>
+<p>Let’s run it:</p>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># run an LME with random intercepts for county #</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>cancer_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
+<span id="cb9-3"><a href="#cb9-3"></a>                  <span class="at">id=</span>doc_ID, <span class="at">data=</span>cancer,</span>
+<span id="cb9-4"><a href="#cb9-4"></a>                  <span class="at">family=</span>binomial,</span>
+<span id="cb9-5"><a href="#cb9-5"></a>                  <span class="at">corstr=</span><span class="st">"exchangeable"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept)     Experience  CancerStageII CancerStageIII  CancerStageIV 
+   -1.97454210     0.08389574    -0.33108865    -0.70970702    -1.72417405 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">summary</span>( cancer_gee )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  Estimate Naive S.E.    Naive z Robust S.E.   Robust z
+(Intercept)    -1.64016603 0.30485487  -5.380154  0.32687681  -5.017689
+Experience      0.06458093 0.01658445   3.894064  0.01771241   3.646083
+CancerStageII  -0.30406192 0.04466871  -6.807045  0.04742526  -6.411392
+CancerStageIII -0.70536894 0.05758453 -12.249279  0.06719548 -10.497268
+CancerStageIV  -1.62205221 0.10058431 -16.126294  0.11781482 -13.767812</code></pre>
+</div>
+</div>
+<ul>
+<li>
+<span class="math inline">\(e^{\beta_1}\)</span>: 1.0667</li>
+</ul>
+</div>
+</section><section id="gees-cancer-remission-3" class="slide level2"><h2>GEEs: cancer remission</h2>
+<p>Let’s run it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># run an LME with random intercepts for county #</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>cancer_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
+<span id="cb13-3"><a href="#cb13-3"></a>                  <span class="at">id=</span>doc_ID, <span class="at">data=</span>cancer,</span>
+<span id="cb13-4"><a href="#cb13-4"></a>                  <span class="at">family=</span>binomial,</span>
+<span id="cb13-5"><a href="#cb13-5"></a>                  <span class="at">corstr=</span><span class="st">"exchangeable"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept)     Experience  CancerStageII CancerStageIII  CancerStageIV 
+   -1.97454210     0.08389574    -0.33108865    -0.70970702    -1.72417405 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">summary</span>( cancer_gee )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  Estimate Naive S.E.    Naive z Robust S.E.   Robust z
+(Intercept)    -1.64016603 0.30485487  -5.380154  0.32687681  -5.017689
+Experience      0.06458093 0.01658445   3.894064  0.01771241   3.646083
+CancerStageII  -0.30406192 0.04466871  -6.807045  0.04742526  -6.411392
+CancerStageIII -0.70536894 0.05758453 -12.249279  0.06719548 -10.497268
+CancerStageIV  -1.62205221 0.10058431 -16.126294  0.11781482 -13.767812</code></pre>
+</div>
+</div>
+<ul>
+<li>
+<span class="math inline">\(e^{\beta_1}\)</span>: 1.0667</li>
+</ul>
+<div class="fragment">
+<ul>
+<li><p>Naive 95% CI: (1.052, 1.0816)</p></li>
+<li><p>Robust 95% CI: (1.051, 1.0826)</p></li>
+</ul>
+<!-- ------------------------------------------------------------------------ --><!-- ## GEE limitations --><!-- Since we're only specifying mean and covariance structures, though, this --><!-- means that our GEE won't behave nicely when we deviate from those --><!-- structures (more on this later in the semester) --><!-- -   By loosening distributional assumptions, we've placed more reliance --><!--     on *structure* -->
+</div>
+</section><section id="glmms-vs-gees" class="slide level2"><h2>GLMMs vs GEEs</h2>
+<p>We noted that GEEs are <em>marginal</em> models while GLMMS are <em>conditional</em> models…</p>
+<table>
+<colgroup>
+<col style="width: 20%">
+<col style="width: 40%">
+<col style="width: 40%">
+</colgroup>
+<thead><tr class="header">
+<th></th>
+<th>GEE</th>
+<th>GLMM</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Interpretation</td>
+<td>Population-level</td>
+<td>Cluster-level</td>
+</tr>
+<tr class="even">
+<td>Accounting for correlation</td>
+<td>Empirical estimation</td>
+<td>Specification of random effects</td>
+</tr>
+<tr class="odd">
+<td>Assumptions</td>
+<td>Weak assumptions; more robust (correlation structure, over-dispersion)</td>
+<td>Strong assumptions; less robust</td>
+</tr>
+<tr class="even">
+<td>Sample size requirements</td>
+<td>Moderately large (<span class="math inline">\(n &gt; 50\)</span>)</td>
+<td>Works with smaller sample sizes provided that the entire model is correctly specified</td>
+</tr>
+<tr class="odd">
+<td>Computational burden</td>
+<td>Light</td>
+<td>Heavy</td>
+</tr>
+<tr class="even">
+<td>Cluster-level prediction?</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table></section><section id="glmms-vs-gees-radon" class="slide level2"><h2>GLMMs vs GEEs: radon</h2>
+<p>With these differences in mind, let’s see how they compare in analyzing our Minnesota radon data</p>
+<ul>
+<li>Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses</li>
+</ul>
+<div class="fragment">
+<p><span class="alert">Do we expect there to be a difference in the estimates given by the LME and GEE?</span></p>
+</div>
+</section><section id="glmms-vs-gees-radon-1" class="slide level2"><h2>GLMMs vs GEEs: radon</h2>
+<p>Let’s fit our LME model: <span class="math display">\[\text{log radon}_{ij} = \beta_0 + \beta_1(\text{floor}_{ij}) + b_{0i} + \epsilon_{ij}\]</span></p>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb17-2"><a href="#cb17-2"></a></span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="co"># run an LME with random intercepts for county #</span></span>
+<span id="cb17-4"><a href="#cb17-4"></a>radon_lme <span class="ot">&lt;-</span> <span class="fu">lmer</span>( log_radon <span class="sc">~</span> floor <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> county), <span class="at">data=</span>radon.mn )</span>
+<span id="cb17-5"><a href="#cb17-5"></a><span class="fu">summary</span>( radon_lme )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Estimate Std. Error   t value
+(Intercept)  1.4923932 0.04955304 30.117088
+floor       -0.6628887 0.06765334 -9.798315</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<ul>
+<li>
+<p>LME <span class="math inline">\(\beta_1\)</span>: -0.6629</p>
+<ul>
+<li>95% CI: (-0.7194, -0.6064)</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<p>Compared to our GEE:</p>
+<ul>
+<li>
+<p>GEE <span class="math inline">\(\beta_1\)</span>: -0.6699</p>
+<ul>
+<li>95% CI: (-0.7249, -0.6149)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p><span class="alert">Not much difference!</span></p>
+</div>
+</div>
+</div>
+</div>
+</section><section id="glmms-vs-gees-cancer-remission" class="slide level2"><h2>GLMMs vs GEEs: cancer remission</h2>
+<p>Now let’s try an analysis with our cancer remission example</p>
+<ul>
+<li>Want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment, adjusted for disease stage</li>
+</ul>
+<div class="fragment">
+<p><span class="alert">Do we expect there to be a difference in the estimates given by the LME and GEE?</span></p>
+</div>
+</section><section id="glmms-vs-gees-cancer-remission-1" class="slide level2"><h2>GLMMs vs GEEs: cancer remission</h2>
+<p>First our LME model:</p>
+<p><span class="math display">\[\text{logit}(\text{remission}_{ij}) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij}) + b_{0i} + \epsilon_{ij}\]</span></p>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb19-2"><a href="#cb19-2"></a>cancer_glmm <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
+<span id="cb19-3"><a href="#cb19-3"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> doc_ID, <span class="at">family =</span> binomial, <span class="at">data =</span> cancer, </span>
+<span id="cb19-4"><a href="#cb19-4"></a>         <span class="at">verbose =</span> F )</span>
+<span id="cb19-5"><a href="#cb19-5"></a><span class="fu">summary</span>( cancer_glmm )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    Value  Std.Error   DF    t-value      p-value
+(Intercept)    -2.6355391 0.44747734 8115  -5.889771 4.021412e-09
+Experience      0.1074656 0.02450726  405   4.385051 1.480059e-05
+CancerStageII  -0.4681372 0.06208941 8115  -7.539727 5.218208e-14
+CancerStageIII -1.0892780 0.07847836 8115 -13.879980 2.612280e-43
+CancerStageIV  -2.4132991 0.12745333 8115 -18.934767 2.823650e-78</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:&quot;50%;">
+<div class="fragment">
+<p>Logistic GLMM results:</p>
+<ul>
+<li>
+<p>GLMM <span class="math inline">\(e^{\beta_1}\)</span>: 1.1135</p>
+<ul>
+<li>95% CI: (1.0909, 1.1365)</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<p>Compared to our GEE:</p>
+<ul>
+<li>
+<p>GEE <span class="math inline">\(e^{\beta_1}\)</span>: 1.0667</p>
+<ul>
+<li>95% CI: (1.052, 1.0816)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p><span class="alert">A pretty big difference!</span></p>
+<ul>
+<li>Went from an effect size of 11.35% higher odds of remission for each extra year of experience in the GLMM to 1.21% higher odds in the GEE</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- IS THIS A BIGGER EFFECT BC THE EXPOSURE IS AT THE CLUSTER LEVEL? -->
+</div>
+</section><section id="gees-and-count-data" class="slide level2"><h2>GEEs and count data</h2>
+<p>GEEs are particularly useful when it comes to modeling <span class="alert">count outcomes</span></p>
+<ul>
+<li><p>This is because GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions</p></li>
+<li><p>Result: GEEs automatically account for over-dispersion</p></li>
+</ul></section><section id="glmms-vs-gees-murder" class="slide level2"><h2>GLMMs vs GEEs: murder</h2>
+<p>Let’s see how GLMMs and GEEs compare with count data</p>
+<ul>
+<li><p>Recall our county murder example</p></li>
+<li><p>Want to see whether the real per capita personal income of a county impacts the number of murders</p></li>
+</ul></section><section id="glmms-vs-gees-murder-1" class="slide level2"><h2>GLMMs vs GEEs: murder</h2>
+<p>First our LME model:</p>
+<p><span class="math display">\[\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i} + \epsilon_{ij}\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>murder_glmm <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( murders <span class="sc">~</span> rpcpersinc,</span>
+<span id="cb21-2"><a href="#cb21-2"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> statefips, <span class="at">family =</span> poisson, <span class="at">data =</span> murder, </span>
+<span id="cb21-3"><a href="#cb21-3"></a>         <span class="at">verbose =</span> F )</span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="fu">summary</span>( murder_glmm )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   Value    Std.Error   DF   t-value      p-value
+(Intercept) -1.045388626 2.787126e-01 2150 -3.750776 1.809501e-04
+rpcpersinc   0.000257099 1.993114e-05 2150 12.899362 1.006960e-36</code></pre>
+</div>
+</div>
+<p>Logistic GLMM results:</p>
+<ul>
+<li>
+<p>GLMM <span class="math inline">\(e^{\beta_1}\)</span>: 1.0003</p>
+<ul>
+<li>95% CI: (1.0002, 1.0003)</li>
+</ul>
+</li>
+</ul></section><section id="glmms-vs-gees-murder-2" class="slide level2"><h2>GLMMs vs GEEs: murder</h2>
+<p>Now let’s fit a GEE:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># run an LME with random intercepts for county #</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>murder_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( murders <span class="sc">~</span> rpcpersinc,</span>
+<span id="cb23-3"><a href="#cb23-3"></a>                  <span class="at">id=</span>statefips, <span class="at">data=</span>murder,</span>
+<span id="cb23-4"><a href="#cb23-4"></a>                  <span class="at">family=</span>poisson,</span>
+<span id="cb23-5"><a href="#cb23-5"></a>                  <span class="at">corstr=</span><span class="st">"exchangeable"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  (Intercept)    rpcpersinc 
+-1.1488404529  0.0002885202 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="fu">summary</span>( murder_gee )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                Estimate   Naive S.E.   Naive z  Robust S.E.  Robust z
+(Intercept) -0.953738051 4.001175e-01 -2.383645 2.612118e-01 -3.651206
+rpcpersinc   0.000274346 2.804078e-05  9.783821 1.786876e-05 15.353391</code></pre>
+</div>
+</div>
+<ul>
+<li>
+<p>GEE <span class="math inline">\(e^{\beta_1}\)</span>: 1.0003</p>
+<ul>
+<li>95% CI: (1.0003, 1.0003)</li>
+</ul>
+</li>
+</ul>
+<p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
+<div class="footer footer-default">
 
 </div>
 </section>

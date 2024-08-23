@@ -516,8 +516,8 @@ September 10, 2024
 <p>In words: <span class="math display">\[\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} = \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\]</span></p>
 </section><section id="clustering-in-data-analysis" class="slide level2"><h2>Clustering in data analysis</h2>
 <p>What is a way to handle clustering in an analysis?</p>
-</section><section id="clustering-in-data-analysis-1" class="slide level2"><h2>Clustering in data analysis</h2>
-<p>What is a way to handle clustering in an analysis?</p>
+</section><section id="clustering-in-individual-level-data-analysis" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
+<p>What is a way to handle clustering in an (individual-level) analysis?</p>
 <p><span class="alert">Could ignore it and perform regular regression/t-test</span></p>
 <p><span class="math display">\[Y_{j} = \beta_0 + \beta_1 W_{j} + \epsilon_{j}\]</span></p>
 <ul>
@@ -527,8 +527,8 @@ September 10, 2024
 <div class="fragment">
 <p>Do we see any issues with this approach?</p>
 </div>
-</section><section id="clustering-in-data-analysis-2" class="slide level2"><h2>Clustering in data analysis</h2>
-<p>What is a way to handle clustering in an analysis?</p>
+</section><section id="clustering-in-individual-level-data-analysis-1" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
+<p>What is a way to handle clustering in an (individual-level) analysis?</p>
 <p><span class="alert">Could perform separate regressions/t-tests for each county</span></p>
 <p><span class="math display">\[Y_{ij} = \beta_0 + \beta_1 W_{ij} + \epsilon_{ij}\]</span></p>
 <ul>
@@ -538,8 +538,8 @@ September 10, 2024
 <div class="fragment">
 <p>Do we see any issues with this approach?</p>
 </div>
-</section><section id="clustering-in-data-analysis-3" class="slide level2"><h2>Clustering in data analysis</h2>
-<p>What is a way to handle clustering in a regression?</p>
+</section><section id="clustering-in-individual-level-data-analysis-2" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
+<p>What is a way to handle clustering in an (individual-level) regression?</p>
 <p><span class="alert">Could add cluster membership as model covariate</span></p>
 <p><span class="math display">\[Y_{ij} = \beta_0 + \beta_1 W_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}\]</span></p>
 <ul>
@@ -551,8 +551,8 @@ September 10, 2024
 <div class="fragment">
 <p>Do we see any issues with this approach?</p>
 </div>
-</section><section id="clustering-in-data-analysis-4" class="slide level2"><h2>Clustering in data analysis</h2>
-<p>What is a way to handle clustering in a regression?</p>
+</section><section id="clustering-in-individual-level-data-analysis-3" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
+<p>What is a way to handle clustering in an (individual-level) regression?</p>
 <p><span class="alert">Could add cluster membership as model covariate (modified)</span></p>
 <p><span class="math display">\[Y_{ij} = \beta_1 W_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}\]</span></p>
 <ul>
@@ -560,6 +560,29 @@ September 10, 2024
 <li><p><span class="math inline">\(W_{ij}\)</span> is exposure for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(C^{(i)}_{ij}\)</span> is whether individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span> is a member of cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(\gamma_i\)</span> is the mean outcome of cluster <span class="math inline">\(i\)</span> for those with exposure <span class="math inline">\(=0\)</span></p></li>
+</ul></section><section id="clustering-in-cluster-level-data-analysis" class="slide level2"><h2>Clustering in cluster-level data analysis</h2>
+<p>Another approach is to conduct the data analysis at the cluster level</p>
+<ul>
+<li>Instead of individual-level outcomes/predictors, roll these up to cluster-level averages</li>
+</ul>
+<p><span class="math display">\[\bar{Y}_{i} = \beta_1 \bar{W}_{i} + \epsilon_{i}\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\bar{Y}_{i}\)</span> is the mean outcome in cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(\bar{W}_{i}\)</span> is mean exposure vin cluster <span class="math inline">\(i\)</span></p></li>
+</ul>
+<div class="fragment">
+<p>Do we see any issues with this approach?</p>
+</div>
+<div class="fragment">
+<ul>
+<li>Downside: removes ability of individual covariates to predict individual outcomes</li>
+</ul>
+</div>
+</section><section id="simpsons-paradox" class="slide level2"><h2>Simpson’s paradox</h2>
+<p>Another issue with cluster-level analyses is the possibility for <span class="alert">Simpson’s paradox</span> (BMLR 8.11)</p>
+<ul>
+<li><p>When trends seen among smaller groups disappear when groups are combined due to differences in group sizes</p></li>
+<li><p>We can’t get a sense of the full picture if we only do an analysis at the cluster level</p></li>
 </ul></section><section id="example-radon-measurements-in-minnesota" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Want to estimate how the floor we measure on affects radon measurements in Minnesota houses</p>
 <ul>
@@ -1441,6 +1464,43 @@ factor(county)HENNEPIN  1.3927949 0.07128800 19.537579 2.860795e-70</code></pre>
 </div>
 <ul>
 <li>Should we put the same level of trust in those county-level estimates?</li>
+</ul></section><section id="example-radon-measurements-in-minnesota-8" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+<p>Now let’s do a county-level analysis</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># find county-level average log radon and floor variables, create new dataset just at the county level #</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a>radon.mn.ctylvl <span class="ot">&lt;-</span> radon.mn <span class="sc">%&gt;%</span> </span>
+<span id="cb17-3"><a href="#cb17-3"></a>   <span class="fu">group_by</span>(county) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-4"><a href="#cb17-4"></a>   <span class="fu">mutate</span>(<span class="at">log_radon_mean =</span> <span class="fu">mean</span>(log_radon, <span class="at">na.rm=</span>T),</span>
+<span id="cb17-5"><a href="#cb17-5"></a>          <span class="at">floor_prop =</span> <span class="fu">mean</span>(floor, <span class="at">na.rm=</span>T)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-6"><a href="#cb17-6"></a>   <span class="fu">select</span>(<span class="fu">c</span>(county, log_radon_mean, floor_prop)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-7"><a href="#cb17-7"></a>   unique</span>
+<span id="cb17-8"><a href="#cb17-8"></a></span>
+<span id="cb17-9"><a href="#cb17-9"></a><span class="co"># run county-level OLS regression #</span></span>
+<span id="cb17-10"><a href="#cb17-10"></a>radon_ctylvl_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_radon_mean <span class="sc">~</span> floor_prop, <span class="at">data=</span>radon.mn.ctylvl)</span>
+<span id="cb17-11"><a href="#cb17-11"></a><span class="fu">summary</span>(radon_ctylvl_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log_radon_mean ~ floor_prop, data = radon.mn.ctylvl)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.01708 -0.32299 -0.03405  0.33096  1.35077 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  1.47622    0.07139  20.677   &lt;2e-16 ***
+floor_prop  -0.44156    0.23326  -1.893   0.0618 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.4618 on 83 degrees of freedom
+Multiple R-squared:  0.04139,   Adjusted R-squared:  0.02984 
+F-statistic: 3.583 on 1 and 83 DF,  p-value: 0.06184</code></pre>
+</div>
+</div>
+<ul>
+<li>How would we interpret these results? How are they different from the results from our other strategies?</li>
 </ul></section><section id="problems" class="slide level2"><h2>Problems</h2>
 <p>What did we find?</p>
 <ul>

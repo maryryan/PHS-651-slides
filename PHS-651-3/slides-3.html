@@ -419,7 +419,7 @@ September 24, 2024
 <div class="fragment">
 <p><span class="alert">We can also extend this model to non-continuous/non-Normal outcome data</span></p>
 </div>
-</section><section id="review-logistic-regression" class="slide level2"><h2>522 review: logistic regression</h2>
+</section><section id="review-logistic-regression" class="slide level2"><h2>552 review: logistic regression</h2>
 <p>If our outcome <span class="math inline">\(Y_{i}\)</span> is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W_i\beta_1 + \epsilon_i\]</span></p>
 <ul>
 <li>
@@ -436,7 +436,11 @@ September 24, 2024
 </li>
 </ul>
 </li>
-<li><p><span class="math inline">\(\beta_1\)</span> tells us about the <span class="alert">log odds</span>:</p></li>
+</ul></section><section id="review-logistic-regression-1" class="slide level2"><h2>522 review: logistic regression</h2>
+<p><span class="math display">\[\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W_i\beta_1 + \epsilon_i\]</span></p>
+<ul>
+<li>
+<span class="math inline">\(\beta_1\)</span> tells us about the <span class="alert">log odds</span>:</li>
 </ul>
 <p><span class="math display">\[\beta_1 = \log\left(\frac{p(w=1)}{1-p(w-1)}\right) - \log\left(\frac{p(w=0)}{1-p(w=0)}\right)\]</span></p>
 <ul>
@@ -444,7 +448,7 @@ September 24, 2024
 <span class="math inline">\(e^{\beta_1}\)</span> tells us about the <span class="alert">odds ratio</span>:</li>
 </ul>
 <p><span class="math display">\[e^{\beta_1} = \frac{\text{odds}(w=1)}{\text{odds}(w=0)}=\frac{\frac{p(w=1)}{1-p(w=1)}}{\frac{p(w=0)}{1-p(w=0)}}\]</span></p>
-</section><section id="review-logistic-regression-1" class="slide level2"><h2>522 review: logistic regression</h2>
+</section><section id="review-logistic-regression-2" class="slide level2"><h2>522 review: logistic regression</h2>
 <p>Logistic regression is solving 2 problems for us:</p>
 <ol type="1">
 <li>
@@ -480,20 +484,28 @@ September 24, 2024
 <p><span class="math display">\[\sum_{i=1}^n\boldsymbol{X}^T\sigma^2[Y_i - \boldsymbol{X}\vec{\beta}]=0 \]</span></p>
 <p>OLS is a type of GLM!</p>
 </div>
-<div class="fragment">
+</section><section id="generalized-linear-models-2" class="slide level2"><h2>Generalized linear models</h2>
+<p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i - \mu_i(\beta)] = 0\]</span></p>
+<ul>
+<li>
 <p>This estimating equation is based on the <span class="alert">likelihood function</span> associated with the distribution we assume the outcome is coming from</p>
 <ul>
 <li>Many types of data distributions have likelihoods with a similar form called the <span class="alert">exponential family form</span> - GLMs exploits this</li>
 </ul>
-</div>
-</section><section id="exponential-family" class="slide level2"><h2>Exponential family</h2>
+</li>
+</ul></section><section id="exponential-family" class="slide level2"><h2>Exponential family</h2>
 <p>Exponential family distributions share some common statistical properties</p>
 <ul>
 <li>
 <p>Variance of <span class="math inline">\(Y_i\)</span> can be expressed in terms of <span class="math display">\[\text{Var}[Y_i] = \phi v(\mu_i),\]</span></p>
 <ul>
 <li><p><span class="math inline">\(\phi\)</span> is a scale parameter <span class="math inline">\(&gt;0\)</span></p></li>
-<li><p><span class="math inline">\(v(\mu_i)\)</span> is the variance function that describes how the outcome variance <span class="math inline">\(\text{Var}[Y_i]\)</span> is related to the mean of the outcome <span class="math inline">\(\mu_i\)</span></p></li>
+<li>
+<p><span class="math inline">\(v(\mu_i)\)</span> is the variance function that describes how the outcome variance <span class="math inline">\(\text{Var}[Y_i]\)</span> is related to the mean of the outcome <span class="math inline">\(\mu_i\)</span></p>
+<ul>
+<li>If the mean and variance are independent, this will be 1</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul></section><section id="exponential-family-and-glms" class="slide level2"><h2>Exponential family and GLMs</h2>
@@ -538,7 +550,13 @@ September 24, 2024
 <p><span class="math display">\[g(E[Y_i]) = \mu_i = \boldsymbol{X}_i\vec{\beta}\]</span></p>
 <p>a standard linear regression model</p>
 <ul>
-<li>Variance is <span class="math inline">\(\text{Var}[Y_i] = \phi\)</span> (independent of mean)</li>
+<li>
+<p>Variance is <span class="math inline">\(\text{Var}[Y_i] = \phi = \sigma^2\)</span></p>
+<ul>
+<li>
+<span class="math inline">\(v(\mu_i) = 1\)</span> (independent of mean)</li>
+</ul>
+</li>
 </ul></section><section id="exponential-family-and-glms-examples-1" class="slide level2"><h2>Exponential family and GLMs: examples</h2>
 <p>Bernoulli distribution</p>
 <ul>
@@ -548,7 +566,13 @@ September 24, 2024
 <p><span class="math display">\[g(E[Y_i]) = \log\left(\frac{\mu_i}{1-\mu_i}\right) = \boldsymbol{X}_i\vec{\beta}\]</span></p>
 <p>a logistic regression model</p>
 <ul>
-<li>Variance is <span class="math inline">\(\text{Var}[Y_i] = \mu_i(1-\mu_i)\)</span> (<em>dependent</em> on mean) <!-- ## Exponential family -->
+<li>
+<p>Variance is <span class="math inline">\(\text{Var}[Y_i] = v(\mu_i) = \mu_i(1-\mu_i)\)</span> (<em>dependent</em> on mean)</p>
+<ul>
+<li>
+<span class="math inline">\(\phi = 1\)</span> <!-- ## Exponential family -->
+</li>
+</ul>
 </li>
 </ul>
 <!-- Many common types of data distributions belong to a family called the [exponential family]{.alert} --><!-- - Called such because their likelihoods can be written in a common form: --><!-- $$f(y_i)= \exp\left\{\frac{[y_i\theta_i - \psi(\theta_i)]}{\varphi} + c(y_i,\varphi)\right\}$$ --><!--    - $\theta_i$ is the natural parameter --><!--    - $\psi(\cdot)$ related $\theta_i$ to $E[Y_i]$ through $E[Y_i]=\partial\psi(\theta_i)/\partial \theta_i$ --><!--    - $\varphi$ is a variance scaling parameter --><!--    - $c(y_i,\varphi)$ is a catch-all for everything else --><!-- --- --><!-- ## Exponential family examples --><!-- Normal: $\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left\{-\frac{(y_i-\mu_i)^2}{2\sigma^2}\right\}=\exp\left\{\frac{y_i\mu_i - 1/2\mu_i^2}{\sigma^2} -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}\right\}$ --><!-- - $\theta_i = \mu_i$ --><!-- - $\psi(\theta_i) = 1/2 \mu_i^2$ --><!-- - $\varphi = \sigma^2$ --><!-- - $c(y_i,\varphi) = -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}$ --><!-- --- --><!-- ## Exponential family examples --><!-- Binomial: ${n_i\choose n_i y_i}\pi_i^{n_i y_i})(1-\pi_i)^{n_i - n_i y_i} = \exp\left\{\frac{y_i \theta_i - \log[1+\exp(\theta_i)]}{1/n_i} + \log\left[{n_i \choose n_i y_i} \right]\right\}$ --><!-- - $\theta_i = \log\left[\frac{\pi_i}{1-\pi_i}\right]$ --><!-- - $\psi(\theta_i) = \log[1+\exp(\theta_i)]$ --><!-- - $\varphi = 1/n_i$ --><!-- - $c(y_i,\theta_i) = \log\left[{n_i \choose n_i y_i} \right]$ --><!-- --- --><!-- ## Exponential family examples --><!-- Poisson: $\frac{\exp\{-\mu_i\}\mu_i^{y_i}}{y_i!} = \exp\{y_i\log(\mu_i) - \mu_i - \log(y_i!)\}$ --><!-- - $\theta_i = \log(\mu_i)$ --><!-- - $psi(\theta_i) = \exp(\theta_i)$ --><!-- - $\varphi = 1$ --><!-- - $c(y_i, \theta_i) = -\log(y_i!)$ --></section><section id="generalized-linear-mixed-models" class="slide level2"><h2>Generalized linear mixed models</h2>
@@ -556,22 +580,12 @@ September 24, 2024
 <ul>
 <li>We call this hybrid a <span class="alert">generalized linear mixed model</span> (GLMMs)</li>
 </ul>
+<div class="fragment">
 <p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <ul>
-<li><p>Assume <span class="math inline">\([\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] \sim \text{exponential family}\)</span></p></li>
-<li><p>Use distribution assumption to pull assume link function <span class="math inline">\(g(\cdot)\)</span> and form of within-cluster variance</p></li>
+<li><p>Assumes <span class="math inline">\([\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\)</span> is distributed as a member of the <span class="math inline">\(\text{exponential family}\)</span></p></li>
+<li><p>Use distribution assumption to assume link function <span class="math inline">\(g(\cdot)\)</span> and the form of within-cluster variance</p></li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb1-2"><a href="#cb1-2"></a></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="do">## fit our GLMM ##</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a>glmm_fit <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( y <span class="sc">~</span> w, </span>
-<span id="cb1-5"><a href="#cb1-5"></a>                     <span class="at">random=</span><span class="sc">~</span><span class="dv">1</span>,</span>
-<span id="cb1-6"><a href="#cb1-6"></a>                     <span class="at">family=</span>binomial,</span>
-<span id="cb1-7"><a href="#cb1-7"></a>                     <span class="at">data=</span>df )</span>
-<span id="cb1-8"><a href="#cb1-8"></a></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="do">## get model summary ##</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="fu">summary</span>(glmm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="some-notes" class="slide level2"><h2>Some notes</h2>
 <p>In order to work out the likelihood function for a GLMM, we usually need to do some approximations</p>
@@ -596,7 +610,7 @@ September 24, 2024
 <p>Others include:</p>
 <ul>
 <li>
-<p><code>glmmML()</code> and <code>glmm()</code> in R</p>
+<p><code>glmmML()</code>, <code>glmm()</code>, and <code>glmer()</code> in R</p>
 <ul>
 <li>Both use method 2 but can’t extend to the longitudinal models we’ll get to later</li>
 </ul>
@@ -610,37 +624,222 @@ September 24, 2024
 </li>
 </ul>
 </div>
+</section><section id="example-cancer-remission" class="slide level2"><h2>Example: cancer remission</h2>
+<!-- https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/ -->
+<p>Say we want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment</p>
+<ul>
+<li><p>simulated dummy data from <a href="https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/">UCLA</a></p></li>
+<li><p>patients clustered by physician</p></li>
+<li><p>adjust for cancer stage as confounding factor (more experienced physicians may get patients with more advanced cancer)</p></li>
+</ul>
+<div class="fragment">
+<p>Our (loose) structural model is then:</p>
+<p><span class="math display">\[\text{logit}(\text{remission}_{ij}) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})\]</span></p>
+</div>
+</section><section id="example-cancer-remission-1" class="slide level2"><h2>Example: cancer remission</h2>
+<p>Let’s get an idea of our data…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>cancer <span class="sc">%&gt;%</span> </span>
+<span id="cb1-2"><a href="#cb1-2"></a>   <span class="fu">group_by</span>(doc_ID) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-3"><a href="#cb1-3"></a>   <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">prop_remission=</span><span class="fu">mean</span>(remission, <span class="at">na.rm=</span>T), <span class="at">mean_exp =</span> <span class="fu">mean</span>(Experience, <span class="at">na.rm=</span>T),</span>
+<span id="cb1-4"><a href="#cb1-4"></a>             <span class="at">prop_stageI =</span> <span class="fu">mean</span>(CancerStage<span class="sc">==</span><span class="st">"I"</span>, <span class="at">na.rm=</span>T), <span class="at">prop_stageII =</span> <span class="fu">mean</span>(CancerStage<span class="sc">==</span><span class="st">"II"</span>, <span class="at">na.rm=</span>T),</span>
+<span id="cb1-5"><a href="#cb1-5"></a>             <span class="at">prop_stageIII =</span> <span class="fu">mean</span>(CancerStage<span class="sc">==</span><span class="st">"III"</span>, <span class="at">na.rm=</span>T), <span class="at">prop_stageIV =</span> <span class="fu">mean</span>(CancerStage<span class="sc">==</span><span class="st">"IV"</span>, <span class="at">na.rm=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 407 × 8
+   doc_ID     n prop_remission mean_exp prop_stageI prop_stageII prop_stageIII
+   &lt;fct&gt;  &lt;int&gt;          &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;         &lt;dbl&gt;
+ 1 1         28         0            25       0.321        0.571        0.0714
+ 2 2         32         0.375        14       0.406        0.344        0.125 
+ 3 3          6         0.667        19       0.667        0            0     
+ 4 4         30         0.267        18       0.3          0.433        0.2   
+ 5 5         18         0            17       0.444        0.444        0.0556
+ 6 6         34         0.0294       14       0.324        0.324        0.294 
+ 7 7         27         0.0370       16       0.259        0.481        0.148 
+ 8 8         32         0            21       0.344        0.375        0.0938
+ 9 9         23         0            14       0.261        0.435        0.174 
+10 10        22         0.273        18       0.455        0.364        0.0455
+# ℹ 397 more rows
+# ℹ 1 more variable: prop_stageIV &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section><section id="example-cancer-remission-2" class="slide level2"><h2>Example: cancer remission</h2>
+<p>Now we should see if there’s any evidence of clustering</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(ICCbin)</span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co"># get ICC for remission outcomes - this function can take a while to run #</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="fu">iccbin</span>( <span class="at">cid =</span> doc_ID, <span class="at">y =</span> remission, <span class="at">data =</span> cancer,</span>
+<span id="cb3-5"><a href="#cb3-5"></a>        <span class="at">method =</span> <span class="st">"rm"</span>, <span class="at">ci.type =</span> <span class="st">"rm"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$estimates
+              Methods       ICC
+1 Resampling Estimate 0.3718346
+
+$ci
+                                  Type   LowerCI   UpperCI
+1 Resampling Based Confidence Interval 0.3357405 0.4079287</code></pre>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>Pretty strong evidence!</li>
+</ul>
+</div>
+</section><section id="example-cancer-remission-3" class="slide level2"><h2>Example: cancer remission</h2>
+<p>Now let’s see what a non-clustered logistic regression would get us:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>logistic_fit <span class="ot">&lt;-</span> <span class="fu">glm</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
+<span id="cb5-2"><a href="#cb5-2"></a>         <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>),</span>
+<span id="cb5-3"><a href="#cb5-3"></a>         <span class="at">data =</span> cancer)</span>
+<span id="cb5-4"><a href="#cb5-4"></a></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="fu">summary</span>(logistic_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = remission ~ Experience + CancerStage, family = binomial(link = "logit"), 
+    data = cancer)
+
+Coefficients:
+                Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)    -1.974542   0.117055 -16.869  &lt; 2e-16 ***
+Experience      0.083896   0.006099  13.755  &lt; 2e-16 ***
+CancerStageII  -0.331089   0.055770  -5.937 2.91e-09 ***
+CancerStageIII -0.709707   0.070848 -10.017  &lt; 2e-16 ***
+CancerStageIV  -1.724174   0.121057 -14.243  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 10352.6  on 8524  degrees of freedom
+Residual deviance:  9850.3  on 8520  degrees of freedom
+AIC: 9860.3
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<ul>
+<li>
+<p><span class="math inline">\(e^{\beta_1}\)</span>: 1.0875</p>
+<ul>
+<li>95% CI: (1.082, 1.0931)</li>
+</ul>
+</li>
+</ul>
+<div class="fragment">
+<p><span class="alert">Can we trust this estimate?</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>Assumptions: correct structural model; <span class="alert">independence</span>
+</li>
+</ul>
+</div>
+</section><section id="example-cancer-remission-4" class="slide level2"><h2>Example: cancer remission</h2>
+<p>Now what about a logistic GLMM with random intercepts by physician:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb7-2"><a href="#cb7-2"></a>glmm_fit <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
+<span id="cb7-3"><a href="#cb7-3"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> doc_ID, <span class="at">family =</span> binomial, <span class="at">data =</span> cancer, </span>
+<span id="cb7-4"><a href="#cb7-4"></a>         <span class="at">verbose =</span> F )</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="fu">summary</span>( glmm_fit )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    Value  Std.Error   DF    t-value      p-value
+(Intercept)    -2.6355391 0.44747734 8115  -5.889771 4.021412e-09
+Experience      0.1074656 0.02450726  405   4.385051 1.480059e-05
+CancerStageII  -0.4681372 0.06208941 8115  -7.539727 5.218208e-14
+CancerStageIII -1.0892780 0.07847836 8115 -13.879980 2.612280e-43
+CancerStageIV  -2.4132991 0.12745333 8115 -18.934767 2.823650e-78</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:40%;">
+<p>Logistic GLMM results:</p>
+<ul>
+<li>
+<p><span class="math inline">\(e^{\beta_1}\)</span>: 1.1135</p>
+<ul>
+<li>95% CI: (1.0909, 1.1365)</li>
+</ul>
+</li>
+</ul>
+</div><div class="column" style="width:60%;">
+<p>Compare to what we had with the unclustered logistic model:</p>
+<ul>
+<li>
+<p><span class="math inline">\(e^{\beta_1}\)</span>: 1.0875</p>
+<ul>
+<li>95% CI: (1.082, 1.0931)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</section><section id="alternate-link-functions-for-binary-data" class="slide level2"><h2>Alternate link functions for binary data</h2>
+<p>Binary outcomes are special in that there are several alternative link functions you can use</p>
+<ul>
+<li><p>The logit link is very common</p></li>
+<li><p>The probit link is sometimes used in certain fields</p></li>
+<li><p>The identity link also gets used</p></li>
+</ul></section><section id="count-outcomes-and-glmms" class="slide level2"><h2>Count outcomes and GLMMs</h2>
 </section><section id="marginal-effects-in-glmms" class="slide level2"><h2>Marginal effects in GLMMs</h2>
 <p>Last time we noted that marginal and conditional effects are <em>identical</em> in LMEs</p>
 <ul>
-<li>This is not the case for GLMMs</li>
+<li>This is not the case for all GLMMs</li>
 </ul>
 <p>Take a logistic mixed effects model:</p>
 <p><span class="math display">\[\text{logit}(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
 <div class="fragment">
 <ul>
-<li>The conditional mean of our outcome is then: <span class="math display">\[logit(E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}\]</span>
-</li>
-</ul>
-</div>
-<div class="fragment">
-<p>In order to get the marginal effects, we would need to inverse-transform the outcome: <span class="math display">\[E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\]</span></p>
-<p>and then take the marginal expectation of that: <span class="math display">\[\begin{align*}E[\vec{Y}_i] &amp;= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
-&amp;=E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right]\end{align*}\]</span></p>
-</div>
-<div class="fragment">
-<ul>
-<li>Clearly, <span class="math inline">\(E[\vec{Y}_i] \ne \frac{\exp(\boldsymbol{X}_i\vec{\beta})}{1+\exp(\boldsymbol{X}_i\vec{\beta})}\)</span>
+<li>The conditional mean of our outcome is then: <span class="math display">\[\text{logit}(\mu_i)=\text{logit}(E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}\]</span>
 </li>
 </ul>
 </div>
 </section><section id="marginal-effects-in-glmms-1" class="slide level2"><h2>Marginal effects in GLMMs</h2>
+<p>In order to get the marginal effects, we would need to inverse-transform the outcome (undo the logit function): <span class="math display">\[E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\]</span></p>
+<div class="fragment">
+<p>and then take the marginal expectation of that: <span class="math display">\[\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &amp;= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&amp;=E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right]\end{align*}\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>Clearly, <span class="math inline">\(E[\vec{Y}_i|\boldsymbol{X}_i]\)</span> <span class="alert">is not the same as</span> <span class="math inline">\(\frac{\exp(\boldsymbol{X}_i\vec{\beta})}{1+\exp(\boldsymbol{X}_i\vec{\beta})}\)</span>
+</li>
+</ul>
+</div>
+</section><section id="marginal-effects-in-identity-link-glmms" class="slide level2"><h2>Marginal effects in (identity link) GLMMs</h2>
+<p>But what if had a GLMM with a binary outcome and an identity link?</p>
+<p><span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
+<div class="fragment">
+<ul>
+<li>The conditional mean of our outcome is then: <span class="math display">\[E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}\]</span>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><p>Since <span class="math inline">\(g(\vec{Y}_i) = \vec{Y}_i\)</span>, there’s no function to “undo” to isolate <span class="math inline">\(E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\)</span></p></li>
+<li><p>So,</p></li>
+</ul>
+<p><span class="math display">\[\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &amp;= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&amp;=E\left[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}\right]\\
+&amp;=\boldsymbol{X}_i\vec{\beta}\end{align*}\]</span></p>
+<ul>
+<li>The conditional and marginal effects are identical again!</li>
+</ul>
+</div>
+</section><section id="example" class="slide level2"><h2>Example:</h2>
+</section><section id="marginal-effects-in-glmms-2" class="slide level2"><h2>Marginal effects in GLMMs</h2>
 <p>So what happens when we have transformed outcomes and want marginal effects?</p>
 <div class="fragment">
 <ul>
-<li>You could integrate out the random effects:</li>
+<li>
+<p>You could integrate out the random effects: <span class="math display">\[E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right] = \int_{-\infty}^{\infty}\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})} f(b_{0i})db_{0i}\]</span></p>
+<ul>
+<li>where <span class="math inline">\(f(b_{0i})\)</span> is the pdf for the random intercept</li>
 </ul>
-<p><span class="math display">\[E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right] = \int_{-\infty}^{\infty}\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})} f(b_{0i})db_{0i}\]</span></p>
+</li>
+</ul>
 <p>but this generally doesn’t end up with a nice formulaic solution…</p>
 </div>
 <div class="fragment">

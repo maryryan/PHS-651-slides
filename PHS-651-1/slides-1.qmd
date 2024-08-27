@@ -23,6 +23,7 @@ library(tidyverse)
 library(ggdag)
 library(dagitty)
 library(gridExtra)
+library(qrcode)
 ```
 <h1> Lecture 1: Correlated data </h1>
 
@@ -34,13 +35,46 @@ library(gridExtra)
 
 <h3> September 10, 2024 </h3>
 
+::: {.absolute bottom=-100 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-1/slides-1>
+
+:::
+
+::: {.absolute bottom=-150 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-1/slides-1"))
+```
+:::
+
+---
+
+## Zoom recording disclaimer
+
+<br>
+
+This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.
+
+<br>
+
+If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.
+
+<br>
+
+The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.
+
 ---
 
 ## What is correlated data?
 
+Informal definitions 
+
 - [Independent data]{.underline}: data where each observation of a variable are not meaningfully correlated with other observations of the same variable
 
-- [Correlated data]{.underline}: data where each observation of a variable is not entirely independent of other observations of the same variable
+- [Correlated data]{.underline}: data where each observation of a variable has some kind of relationship to another set of observations of that variable
+
+   - "...we might reasonably expect that measurements on units within a cluster are more similar than measurements on units in different clusters." (ALA pg. 4)
+   
    - AKA: multilevel/hierarchical data
 
 ---
@@ -69,27 +103,7 @@ library(gridExtra)
 
 ## How does clustering affect outcomes?
 
-Cluster membership could be completely unrelated to exposure or outcome
-
-- Just a data structure (how data are collected/organized)
-
-```{r cluster DAG1, echo=F, fig.align="center"}
-dagify(
-  O ~ E,
-  C ~ C,
-  coords = list(x = c(E = 1, O = 2, C=2.5), y = c(E = 1, O = 1, C=0.5))
-) %>%
-  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
-  geom_dag_point(size=20) +
-  geom_dag_text(size=10) +
-  theme_dag() +
-  ylim(-0.5, 2) +
-  geom_dag_edges_diagonal()
-
-#grid.arrange(precision, unrelated, ncol=2)
-```
-
-Or could impact distribution of outcome
+"Clustered data" usually has cluster membership that could impact just the distribution of outcome, ...
 
 ```{r cluster DAG1.5, echo=F, fig.align='center'}
 dagify(
@@ -105,11 +119,9 @@ dagify(
   geom_dag_edges_diagonal()
 ```
 
----
+. . .
 
-## How does clustering affect outcomes?
-
-It could wholly dictate who receives exposure
+... wholly dictate who receives exposure, ...
 
 ```{r cluster DAG2, echo=F, fig.align="center"}
 dagify(
@@ -127,9 +139,11 @@ dagify(
 
 ```
 
-. . .
+---
 
-Clustering could also potentially a [confounding variable]{.alert}
+## How does clustering affect outcomes?
+
+... or potentially be a [confounding variable]{.alert} (affects both exposure and outcome distributions)
 
 ```{r cluster DAG3, echo=F, fig.align="center"}
 dagify(
@@ -148,6 +162,26 @@ dagify(
 
 #grid.arrange(straight, med, ncol=2)
 
+```
+
+. . .
+
+If observations belong to a group but that doesn't affect the distribution of the outcome in any way, it's usually not "clustered data"
+
+```{r cluster DAG1, echo=F, fig.align="center"}
+dagify(
+  O ~ E,
+  C ~ C,
+  coords = list(x = c(E = 1, O = 2, C=2.5), y = c(E = 1, O = 1, C=0.5))
+) %>%
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_point(size=20) +
+  geom_dag_text(size=10) +
+  theme_dag() +
+  ylim(-0.5, 2) +
+  geom_dag_edges_diagonal()
+
+#grid.arrange(precision, unrelated, ncol=2)
 ```
 
 <!-- Seaman S, Pavlou M, Copas A. Review of methods for handling confounding by cluster and informative cluster size in clustered data. Stat Med. 2014 Dec 30;33(30):5371-87. doi: 10.1002/sim.6277. Epub 2014 Aug 4. PMID: 25087978; PMCID: PMC4320764. -->
@@ -170,13 +204,25 @@ Even if clustering has no impact on exposure:
 
       - Recall PHS 552!
 
-Also reduces the amount of [information]{.alert} we get from each individual data point
+Clustering also reduces the amount of [information]{.alert} we get from each individual data point
 
 - Means that we will need more data to draw conclusion with same level of precision
 
 ---
 
 ## Measuring "clustered-ness"
+
+How can we tell if data are clustered?
+
+. . .
+
+- Regular Pearson correlation only looks at variances between variables
+
+   - Doesn't account for group means in any way
+
+- Another metric we can use?
+
+. . .
 
 [Intracluster correlation coefficient]{.underline} (ICC): measure of within- vs. between-cluster variation
 
@@ -188,6 +234,8 @@ Also reduces the amount of [information]{.alert} we get from each individual dat
    
 - ICC: $\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}$
 
+. . .
+
 In words:
 $$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} = \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}$$
 
@@ -195,7 +243,7 @@ $$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} 
 
 ## Clustering in data analysis
 
-What is a way to handle clustering in an analysis?
+What are ways to handle clustering in an analysis?
 
 
 ---
@@ -222,7 +270,7 @@ Do we see any issues with this approach?
 
 What is a way to handle clustering in an (individual-level) analysis?
 
-[Could perform separate regressions/t-tests for each county]{.alert}
+[Could perform separate regressions/t-tests for each cluster]{.alert}
 
 $$Y_{ij} = \beta_0 + \beta_1 W_{ij} + \epsilon_{ij}$$
 
@@ -300,7 +348,7 @@ Do we see any issues with this approach?
 
 ## Simpson's paradox
 
-Another issue with cluster-level analyses is the possibility for [Simpson's paradox]{.alert} (BMLR 8.11)
+Another issue with cluster-level analyses is the possibility for [Simpson's paradox]{.alert} ([BMLR 8.11](https://bookdown.org/roback/bookdown-BeyondMLR/ch-multilevelintro.html#multinecessary))
 
 - When trends seen among smaller groups disappear when groups are combined due to differences in group sizes
 
@@ -310,9 +358,15 @@ Another issue with cluster-level analyses is the possibility for [Simpson's para
 
 ## Example: radon measurements in Minnesota
 
-Want to estimate how the floor we measure on affects radon measurements in Minnesota houses
+Let's see how these approaches differ with some actual data
+
+. . .
+
+Say we're taking radon measurements in Minnesota houses and want to estimate whether the floor we measure on affects our readings
 
 - Basement measurements coded as `floor=0`; 1st floor measurements coded as `floor=1`
+
+- Individual houses can be grouped in a number of ways, including by county
 ```{r radon cleaning, echo=F}
 radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
 
@@ -338,7 +392,7 @@ radon.mn %>%
 
 ## Example: radon measurements in Minnesota
 
-- Let's look at the observations for a random sample of counties
+Let's look at the observations for a random sample of counties
 
 ```{r radon plot, fig.align='center', fig.height=10, fig.width=50}
 # pick 8 random counties #
@@ -350,8 +404,6 @@ radon.mn %>%
     ggplot()+
    geom_point(aes(y=log_radon,x=factor(floor)),
               size=5)+
-   # geom_density(aes(log_radon,
-   #              fill=factor(floor)), alpha=0.75)+
    facet_grid(cols=vars(county))+
    theme(text=element_text(size=30))
 ```
@@ -364,15 +416,19 @@ radon.mn %>%
 
 Let's see if we have any clustering...
 
+:::: {.columns}
+
+::: {.column width="50%"}
 ```{r radon ICC}
 library(ICC)
 
 # find ICC of log_radon by county #
 ICCest(county,log_radon, data=radon.mn)
 ```
+:::
 
-. . .
-
+::: {.column width="50%"}
+::: {.fragment}
 Breaking the output down:
 
 - Variation in cluster means: `r round(ICCest(county,log_radon, data=radon.mn)$vara,4)`
@@ -386,11 +442,17 @@ Breaking the output down:
 - 95% confidence interval: (`r round(ICCest(county,log_radon, data=radon.mn)$LowerCI,4)`, `r round(ICCest(county,log_radon, data=radon.mn)$Upper,4)`)
 
    - Not insignificant...
+:::
+:::
+
+::::
 
 ---
 
 ## Example: radon measurements in Minnesota
+:::: {.columns}
 
+::: {.column width="60%"}
 We'll first fit without accounting for counties ("complete pooling" of data)
 ```{r radon no cluster}
 # run OLS regression #
@@ -399,13 +461,21 @@ radon_lm <- lm(log_radon ~ floor, data=radon.mn)
 #get regression summary #
 summary(radon_lm)
 ```
+:::
 
+::: {.column width="40%"}
 - How would we interpret this result?
+:::
+
+::::
 
 ---
 
 ## Example: radon measurements in Minnesota
 
+:::: {.columns}
+
+::: {.column width="60%"}
 Next we'll fit a separate regression for each county 
 ```{r radon stratified}
 
@@ -423,8 +493,13 @@ lapply(radon_seg_lm, function(x){
 })
 
 ```
+:::
 
+::: {.column width="40%"}
 - Is this helpful for us?
+:::
+
+::::
 
 ---
 
@@ -503,7 +578,7 @@ summary(radon_ctylvl_lm)
 
 What did we find?
 
-- Radon data clearly clustered by county, affecting distribution of log(radon) measurements and proportion of houses with/without basements
+- Radon data clearly clustered by county, affecting distribution of log(radon) measurements, proportion of houses with/without basements, and number of observations
 
 - Effect of measurement floor changes depending on whether and how accounting for clustering
 

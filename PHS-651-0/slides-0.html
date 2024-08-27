@@ -7,16 +7,16 @@
 <link href="slides-0_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="slides-0_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="slides-0_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="slides-0_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.3.353">
-
-  <title>slides-0</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="slides-0_files/libs/revealjs/dist/reset.css">
-  <link rel="stylesheet" href="slides-0_files/libs/revealjs/dist/reveal.css">
-  <style>
+<link href="slides-0_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+<title>slides-0</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+<link rel="stylesheet" href="slides-0_files/libs/revealjs/dist/reset.css">
+<link rel="stylesheet" href="slides-0_files/libs/revealjs/dist/reveal.css">
+<style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -29,14 +29,14 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="slides-0_files/libs/revealjs/dist/theme/quarto.css">
-  <link href="slides-0_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-  <link href="slides-0_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-  <link href="slides-0_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-  <link href="slides-0_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-  <link href="slides-0_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-  <link href="slides-0_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
-  <style type="text/css">
+<link rel="stylesheet" href="slides-0_files/libs/revealjs/dist/theme/quarto.css">
+<link href="slides-0_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+<link href="slides-0_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+<link href="slides-0_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+<link href="slides-0_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+<link href="slides-0_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+<link href="slides-0_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+<style type="text/css">
 
   .callout {
     margin-top: 1em;
@@ -233,7 +233,7 @@
   }
 
   </style>
-  <style type="text/css">
+<style type="text/css">
     .reveal div.sourceCode {
       margin: 0;
       overflow: auto;
@@ -326,9 +326,7 @@
     <div class="slides">
 
 
-<section class="slide level2">
-
-<h1>
+<section class="slide level2"><h1>
 PHS 651: Advanced regression methods
 </h1>
 <h2>
@@ -341,157 +339,252 @@ Mary Ryan Baumann, PhD
 <h3>
 September 5, 2024
 </h3>
-</section>
-<section id="howdy" class="slide level2">
-<h2>Howdy! 🤠</h2>
+<div class="absolute" style="left: 260px; bottom: -100px; width: 1500px; ">
+<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/PHS-651-0/slides-0" class="uri">https://maryryan.github.io/PHS-651-slides/PHS-651-0/slides-0</a></p>
+</div>
+<div class="absolute" style="left: 100px; bottom: -150px; width: 150px; ">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="slides-0_files/figure-revealjs/qr%20code-1.png" width="192"></p>
+</div>
+</div>
+</div>
+</section><section id="zoom-recording-disclaimer" class="slide level2"><h2>Zoom recording disclaimer</h2>
+<p><br></p>
+<p>This class is being conducted in person, as well as over <span class="alert">Zoom</span>. As the instructor, I will be <span class="alert">recording</span> this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.</p>
+<p><br></p>
+<p>If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.</p>
+<p><br></p>
+<p>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</p>
+</section><section id="howdy" class="slide level2"><h2>Howdy! 🤠</h2>
+<div class="columns">
+<div class="column" style="width:65%;">
 <p><span class="alert">Instructor</span>: Mary Ryan Baumann (she/her)</p>
 <ul>
-<li><p>Assistant Professor - Population Health Sciences; Biostatistics &amp; Medical Informatics</p>
+<li>
+<p>Assistant Professor - Population Health Sciences; Biostatistics &amp; Medical Informatics</p>
 <ul>
-<li><p>Biostatistician by training &amp; practice</p></li>
+<li><p>Statistician by training; biostatistician by practice</p></li>
 <li><p>Research in correlated data &amp; study design</p></li>
-</ul></li>
 </ul>
+</li>
+</ul>
+</div><div class="column" style="width:30%;">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="mary-ryan-class.png" style="width:75.0%"></p>
+<figcaption><em>Me and my husband in Bruges, Belgium</em></figcaption></figure>
+</div>
+</div>
+</div>
+<div class="absolute" style="bottom: 50px; ">
 <p><span class="alert">Contact</span></p>
 <ul>
 <li><p>My office: 701 WARF</p></li>
 <li><p>Email: <a href="mailto:mary.ryan@wisc.edu">mary.ryan@wisc.edu</a></p></li>
-<li><p>Office hours:</p>
+<li>
+<p>Office hours:</p>
 <ul>
 <li><p>In-person: Thursdays 10-11a CT</p></li>
 <li><p>Zoom: Mondays 2-3p CT</p></li>
-</ul></li>
-<li><p>Calendly: <a href="https://calendly.com/mary-m-ryan/" class="uri">https://calendly.com/mary-m-ryan/</a></p>
+</ul>
+</li>
+<li>
+<p>Calendly: <a href="https://calendly.com/mary-m-ryan/" class="uri">https://calendly.com/mary-m-ryan/</a></p>
 <ul>
 <li>For scheduling outside meeting time</li>
-</ul></li>
 </ul>
-</section>
-<section id="introduction" class="slide level2">
-<h2>Introduction</h2>
-<ul>
-<li>What you covered in PHS 552
-<ul>
-<li>What is regression</li>
-<li>How to build a mean model</li>
-<li>Models for different types of outcomes (normal, logistic, Poisson, etc)</li>
-<li>What happens when constant variance breaks?</li>
-</ul></li>
-</ul>
-<div class="fragment">
-<ul>
-<li>What we’ll focus on here:
-<ul>
-<li>Same foundations, different style: what happens when observations <span class="alert">are not independent</span> <!-- - Clustered data --> <!-- - Longitudinal/repeated measures data --> <!-- - Time-to-event/survival data --></li>
-</ul></li>
+</li>
 </ul>
 </div>
-</section>
-<section id="our-focus" class="slide level2">
-<h2>Our focus</h2>
+</section><section id="howdy-1" class="slide level2"><h2>Howdy! 🤠</h2>
+<p><span class="alert">Teaching assistant</span>: Emma Svenson (she/her)</p>
 <ul>
-<li>We’ve previously assumed all observations are <span class="alert">independent</span>
-<ul>
-<li>Can be a reasonable assumption in certain settings (certain cross-sectional studies)</li>
-<li>When not reasonable, methods from PHS 552 can still be useful if other tools aren’t available
-<ul>
-<li>We’ll explore the boundaries of this</li>
-</ul></li>
-</ul></li>
-<li>Here, we’ll be <span class="alert">expanding our statistical toolbox</span>
-<ul>
-<li>Allows us to be <span class="alert">more precise</span> when independence isn’t reasonable</li>
-<li>Lets us ask a <span class="alert">wider variety</span> of questions</li>
-</ul></li>
+<li>about</li>
 </ul>
-<div class="fragment">
+<p><span class="alert">Contact</span></p>
 <ul>
-<li>When might independence not be reasonable?
-<ul>
-<li>Group membership makes in-group outcome variability different from between-group variability
-<ul>
-<li>i.e., health outcomes correlated by neighborhood, occular outcomes correlated by individual</li>
-</ul></li>
-<li>We’re observing the same individuals repeatedly (longitudinal data)</li>
-</ul></li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li>Non-independence we <span class="alert">won’t</span> be getting into
-<ul>
-<li>Time series modeling</li>
-<li>Spatial statistical modeling</li>
-</ul></li>
-</ul>
-</div>
-</section>
-<section id="examples" class="slide level2">
-<h2>Examples!</h2>
-</section>
-<section id="course-outline" class="slide level2">
-<h2>Course outline</h2>
-<ul>
-<li>Review of generalized linear models, weighted least squares</li>
-<li>Cross-sectional clustered data</li>
-<li>Conditional modeling: linear mixed effect models (LMEs), generalized linear mixed models (GLMMs)</li>
-<li>Marginal modeling : generalized estimationg equations (GEEs)</li>
-<li>Modeling repeated measures: multi-period cross-sectional data, longitudinal data</li>
-<li>Multilevel modeling</li>
-<li>Longitudinal smoothing</li>
-<li>Time-to-event/survival analysis</li>
-</ul>
-</section>
-<section id="what-im-assuming-youre-coming-in-with" class="slide level2">
-<h2>What I’m assuming you’re coming in with</h2>
-<ul>
-<li>Familiarity with basic statistical inference concepts (i.e., estimation, hypothesis testing, confidence intervals)</li>
-<li>Basic regression/ANOVA</li>
-<li>(Generally) how to build a mean model (i.e., confounding and precision variables)</li>
-<li>Some familiarity with matrix notation
-<ul>
-<li>Should be familiar with matrix addition/subtraction/multiplication/inversion</li>
-<li>We’ll review and I’ll post resources</li>
-</ul></li>
-<li>Basic SAS/R coding knowledge
-<ul>
-<li>I’ll use both in teaching</li>
-<li>My primary software is R</li>
-<li>You can use whatever software you want for your assignments, just know there are softwares I may be less good at providing support in</li>
-</ul></li>
-</ul>
-</section>
-<section id="course-logistics" class="slide level2">
-<h2>Course logistics</h2>
+<li><p>Email: <a href="mailto:svenson@wisc.edu">svenson@wisc.edu</a></p></li>
+<li><p>Office hours:</p></li>
+</ul></section><section id="course-logistics" class="slide level2"><h2>Course logistics</h2>
 <p><span class="alert">Instruction times</span></p>
 <ul>
 <li><p>Tuesdays/Thursdays 4-5:15p CT</p></li>
 <li><p>Location: 726 WARF</p></li>
-<li><p>Tuesdays will (mostly) be concepts</p>
+<li>
+<p>Tuesdays will (mostly) be concepts</p>
 <ul>
 <li>Some code to be transparent about illustrative examples</li>
-</ul></li>
-<li><p>Thursdays will (mostly) be application/coding</p>
+</ul>
+</li>
+<li>
+<p>Thursdays will (mostly) be application/coding</p>
 <ul>
-<li>Some concept review, but intended to be more hands-on</li>
-</ul></li>
+<li><p>Some concept review, but intended to be more hands-on</p></li>
+<li><p>Hope to reserve the last 20 min of each for working on final projects</p></li>
+</ul>
+</li>
 </ul>
 <div class="fragment">
 <p><span class="alert">Attendance</span></p>
 <ul>
 <li><p>I don’t take it</p></li>
-<li><p>All in-person lectures will also have a synchronous Zoom-in option &amp; will be recorded</p>
+<li>
+<p>All in-person lectures will also have a synchronous Zoom-in option &amp; will be recorded</p>
 <ul>
 <li><p>Plan A: attend in person</p></li>
 <li><p>Plan B: attend synchronously on Zoom</p></li>
 <li><p>Plan C: watch lecture recording on Canvas</p></li>
-</ul></li>
+</ul>
+</li>
 <li><p>Please don’t make me lecture to an empty room</p></li>
 </ul>
 </div>
-</section>
-<section id="how-youll-be-evaluated" class="slide level2">
-<h2>How you’ll be evaluated</h2>
+</section><section id="course-logistics-1" class="slide level2"><h2>Course logistics</h2>
+<p><span class="alert">Communications policy</span> 📨</p>
+<ul>
+<li><p>I’ll send an email on Friday evenings with an overview of following week’s activities/topics</p></li>
+<li>
+<p>I’ll be available via email M – F 8a-6p CT</p>
+<ul>
+<li><p>You can expect a response within 24 hours, excluding weekends and holidays</p></li>
+<li><p>I may be checking my email or reply outside of these hours, but that should not be the expectation</p></li>
+</ul>
+</li>
+<li>
+<p>I have an open-door policy - drop by any time my door is open to discuss class or not-class topics</p>
+<ul>
+<li>But email/schedule if you want to guarantee time (outside OH)</li>
+</ul>
+</li>
+</ul></section><section id="course-logistics-2" class="slide level2"><h2>Course logistics</h2>
+<p><span class="alert">Canvas site</span>: <a href="https://canvas.wisc.edu/courses/426488" class="uri">https://canvas.wisc.edu/courses/426488</a></p>
+<ul>
+<li>
+<p>Where you’ll find basically all documents associated with this course</p>
+<ul>
+<li>Syllabus, assignments, readings, lecture recordings, Zoom link, lecture slides, etc</li>
+</ul>
+</li>
+</ul>
+<p><span class="alert">Lecture slides</span></p>
+<ul>
+<li><p>PDF copies of lecture slides found on Canvas</p></li>
+<li>
+<p>HTML versions (load in web browser) hosted on Github</p>
+<ul>
+<li>
+<p>I use a generic format for the web address:<br><span class="alert">https://maryryan.github.io/PHS-651-slides/PHS-651-LectureNumber/slides-LectureNumber</span></p>
+<ul>
+<li>Fill in “LectureNumber” with the lecture/week number for the slide deck you want</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul></section><section id="phs-552-vs-651" class="slide level2"><h2>PHS 552 vs 651</h2>
+<p>What you covered in PHS 552</p>
+<ul>
+<li><p>What is regression</p></li>
+<li><p>How to build a mean model</p></li>
+<li><p>Regression models for different types of outcomes (normal, binary, Poisson, etc)</p></li>
+<li><p>Assumed constant variance, but also looked at what happens when that assumption breaks</p></li>
+<li><p>Assumed observations are <span class="alert">always independent</span></p></li>
+</ul>
+<div class="fragment">
+<p>What we’ll focus on here:</p>
+<ul>
+<li>
+<p>Same foundations, different style</p>
+<ul>
+<li>What happens when observations <span class="alert">are not independent</span> <!-- - Clustered data --> <!-- - Longitudinal/repeated measures data --> <!-- - Time-to-event/survival data -->
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section><section id="our-focus" class="slide level2 smaller"><h2>Our focus</h2>
+<p>We’ve previously assumed all observations are <span class="alert">independent</span></p>
+<ul>
+<li><p>Can be a reasonable assumption in certain settings (certain cross-sectional studies)</p></li>
+<li>
+<p>When not reasonable, methods from PHS 552 can still be useful if other tools aren’t available</p>
+<ul>
+<li>We’ll explore the boundaries of this</li>
+</ul>
+</li>
+</ul>
+<p>Here, we’ll be <span class="alert">expanding our statistical toolbox</span></p>
+<ul>
+<li><p>Allows us to be <span class="alert">more precise</span> when independence assumption isn’t reasonable</p></li>
+<li><p>Lets us ask a <span class="alert">wider variety</span> of questions</p></li>
+</ul>
+<div class="r-stack">
+<div class="fragment fade-in-then-out">
+<p>When might independence not be reasonable?</p>
+<ul>
+<li>
+<p>Group membership makes in-group outcome variability different from between-group variability</p>
+<ul>
+<li>i.e., health outcomes correlated by neighborhood, occular outcomes correlated by individual</li>
+</ul>
+</li>
+<li><p>We’re observing the same individuals repeatedly (longitudinal data)</p></li>
+</ul>
+</div>
+<div class="fragment">
+<p>Non-independence we <span class="alert">won’t</span> be getting into</p>
+<ul>
+<li><p>Time series modeling</p></li>
+<li><p>Spatial statistical modeling</p></li>
+</ul>
+</div>
+</div>
+</section><section id="learning-objectives" class="slide level2"><h2>Learning objectives</h2>
+<p>Upon successful completion of the course, students will be able to:</p>
+<ol type="1">
+<li><p>Extend the knowledge of regression analysis beyond ordinary linear and logistic regression models</p></li>
+<li><p>Understand the features of correlated data, their role in epidemiologic study, and their implications in drawing inference</p></li>
+<li><p>State the assumptions underlying linear mixed effect, generalized linear mixed effect, generalized estimating equation, and survival regression models, recognize and address violations of those assumptions, and estimate and interpret regression models to answer epidemiologic and public health research questions in correlated and longitudinal data settings</p></li>
+<li><p>Implement the inference procedures to solve real-world problems using statistical packages such as SAS and R</p></li>
+<li><p>Interpret and present the analytic results to answer substantive questions</p></li>
+</ol></section><section id="course-outline" class="slide level2"><h2>Course outline</h2>
+<ul>
+<li><p>Review of ordinary linear regression, logistic regression weighted least squares</p></li>
+<li><p>Cross-sectional clustered data</p></li>
+<li><p>Conditional modeling: linear mixed effect models (LMEs), generalized linear mixed models (GLMMs)</p></li>
+<li><p>Marginal modeling : generalized estimationg equations (GEEs)</p></li>
+<li><p>Modeling repeated measures: longitudinal data, multi-period cross-sectional data (panel data)</p></li>
+<li><p>Multilevel modeling (hopefully)</p></li>
+<li><p>Time-to-event/survival analysis</p></li>
+</ul></section><section id="what-im-assuming-youre-coming-in-with" class="slide level2 smaller"><h2>What I’m assuming you’re coming in with</h2>
+<ul>
+<li><p>Familiarity with basic statistical inference concepts (i.e., estimation, hypothesis testing, confidence intervals)</p></li>
+<li><p>Basic regression/ANOVA</p></li>
+<li><p>(Generally) how to build a mean model (i.e., confounding and precision variables)</p></li>
+</ul>
+<div class="fragment">
+<ul>
+<li>
+<p>Some familiarity with matrix notation</p>
+<ul>
+<li><p>Should be familiar with matrix addition/subtraction/multiplication/inversion</p></li>
+<li><p>We’ll review and I’ll post resources</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>
+<p>Basic SAS/R coding knowledge</p>
+<ul>
+<li><p>I’ll use both in teaching</p></li>
+<li><p>My primary software is R</p></li>
+<li><p>You can use whatever software you want for your assignments, just know there are softwares I may be less good at providing support in</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</section><section id="how-youll-be-evaluated" class="slide level2"><h2>How you’ll be evaluated</h2>
 <p><span class="alert">Small assignments</span> (35%)</p>
 <ul>
 <li><p>Weekly homeworks assigned Tuesdays at end of class, due following Tuesday at beginning of class</p></li>
@@ -499,17 +592,33 @@ September 5, 2024
 </ul>
 <p><span class="alert">Midterm</span> (15%)</p>
 <ul>
-<li>In-class exam focused on understanding of concepts (not computation)</li>
+<li>In-class exam focused on understanding of concepts</li>
 </ul>
 <p><span class="alert">Final data analysis project</span> (40%)</p>
 <ul>
 <li><p>Intermediate milestone assignments (5% / 40%)</p></li>
 <li><p>10-15 minute oral presentation (10% / 40%)</p></li>
 <li><p>Final written report (25% / 40%)</p></li>
+</ul></section><section id="textbooksreadings" class="slide level2"><h2>Textbooks/Readings</h2>
+<p>There’s no single textbook for this course</p>
+<ul>
+<li><p>I’ll be pulling from several books for different topics</p></li>
+<li><p>Any time there’s a suggested reading, I’ll put a copy of the corresponding sections in the module</p></li>
 </ul>
-</section>
-<section id="resources-for-you" class="slide level2">
-<h2>Resources for you</h2>
+<p>I’ve made the follow full e-books available on the Canvas site:</p>
+<ul>
+<li><p><span class="alert">Foundations of Liner and Generalized Linear Models</span>. 2015. Agresti A. John Wiley &amp; Sons: Hoboken, New Jersey. ISBN: 978-1-118-73030-0</p></li>
+<li><p><a href="https://bookdown.org/roback/bookdown-BeyondMLR/">Beyond Multiple Linear Regression: Applied Generalized Linear Models and Multilevel Models in R</a> (online textbook)</p></li>
+<li><p><span class="alert">Applied Longitudinal Analysis</span>. 2011. Fitzmaurice GM, Laird NM, and Ware JH. John Wiley &amp; Sons: Hoboken, New Jersey. ISBN: 9780470380277</p></li>
+</ul>
+<p>I’ve also scanned several chapters from books I could not find electronic copies of:</p>
+<ul>
+<li>
+<span class="alert">Analysis of Longitudinal Data</span>, 2nd edition. 2002. Diggle PJ, Heagerty P, Liang K, and Zeger SL. Oxford University Press: Oxford. ISBN: 9780198524847</li>
+</ul></section><section id="course-rhythms" class="slide level2"><h2>Course rhythms</h2>
+<p>We’ll roughly follow this weekly workflow:</p>
+
+<img data-src="course-rhythms.png" style="width:25.0%" class="r-stretch"></section><section id="other-resources-for-you" class="slide level2"><h2>Other resources for you</h2>
 <p><span class="alert">Piazza</span></p>
 <ul>
 <li><p>This is our main forum for questions</p></li>
@@ -518,143 +627,277 @@ September 5, 2024
 <p><span class="alert">Peer feedback groups</span></p>
 <ul>
 <li><p>Randomly assigned groups of 3-4</p></li>
-<li><p>Guarantees everyone with some continuing level of informal brainstorming/feedback through the semester</p></li>
-<li><p>Will use for final project feedback, but also feel free to use as study groups</p></li>
+<li>
+<p>Guarantees everyone with some continuing level of informal brainstorming/feedback through the semester</p>
+<ul>
+<li>Last 20 minutes of Thursday classes will be reserved for this</li>
 </ul>
-</section>
-<section>
-<section id="lets-go" class="title-slide slide level1 center">
-<h1>Let’s go!</h1>
+</li>
+<li><p>Also feel free to use as study/question groups</p></li>
+</ul></section><section><section id="lets-go" class="title-slide slide level1 center"><h1>Let’s go!</h1>
 
-</section>
-<section id="review-ordinary-linear-regression" class="slide level2">
-<h2>Review: ordinary linear regression</h2>
+</section><section id="review-ordinary-linear-regression" class="slide level2 smaller"><h2>Review: ordinary linear regression</h2>
 <p>AKA: ordinary least squares</p>
-<p><span class="math display">\[Y_i = \beta_0 + \beta_1 W_i + \epsilon_i\]</span></p>
+<p><span class="math display">\[Y_i = \beta_0 + \beta_1 U_i + \epsilon_i\]</span></p>
 <ul>
-<li><span class="math inline">\(Y_i\)</span>: (continuous) outcome/dependent variable for some individual <span class="math inline">\(i\)</span></li>
-<li><span class="math inline">\(W_i\)</span>: treatment/exposure/independent variable for individual <span class="math inline">\(i\)</span></li>
-<li><span class="math inline">\(\beta_0\)</span>: model intercept
-<ul>
-<li>Interpretation: <br> <br> <br> <br></li>
-</ul></li>
-<li><span class="math inline">\(\beta_1\)</span>: model slope
-<ul>
-<li>Interpretation: <br> <br> <br> <br></li>
-</ul></li>
-<li><span class="math inline">\(\epsilon_i\)</span>: error term</li>
+<li><p><span class="math inline">\(Y_i\)</span>: (continuous) outcome/response/dependent variable for some individual <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(U_i\)</span>: treatment/exposure/independent variable for individual <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(\epsilon_i\)</span>: error term</p></li>
+<li><p><span class="math inline">\(\beta_0\)</span>: model intercept</p></li>
 </ul>
-</section>
-<section id="review-ordinary-linear-regression-1" class="slide level2">
-<h2>Review: ordinary linear regression</h2>
-<p>We can write this in matrix notation: <span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon},\]</span> where</p>
+<div class="fragment">
+<ul>
+<li>
+<span class="alert">Interpretation</span>: <br><br><br><br>
+</li>
+</ul>
+</div>
+<ul>
+<li>
+<span class="math inline">\(\beta_1\)</span>: model slope</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>
+<span class="alert">Interpretation</span>: <br><br><br><br>
+</li>
+</ul>
+</div>
+</section><section id="review-ordinary-linear-regression-1" class="slide level2"><h2>Review: ordinary linear regression</h2>
+<p>We can write this in matrix notation: <span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon},\]</span></p>
+<div class="r-stack">
+<div class="fragment fade-in-then-out" data-fragment-index="1">
+<p>where</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li><p><span class="math inline">\(\vec{Y} = \begin{bmatrix}  y_1\\  y_2\\  \vdots\\  y_n \end{bmatrix}\)</span> is a <span class="alert">vector</span> of responses</p></li>
-<li><p><span class="math inline">\(\boldsymbol{X} = \begin{bmatrix}  1 &amp; w_1\\  1 &amp; w_2\\  \vdots &amp; \vdots\\  1 &amp; w_n \end{bmatrix}\)</span> is the <span class="alert">design matrix</span></p></li>
+<li><p><span class="math inline">\(\vec{Y} = \begin{bmatrix}  y_1\\  y_2\\  \vdots\\  y_n \end{bmatrix}\)</span> is a (<span class="math inline">\(n\)</span> x <span class="math inline">\(1\)</span>) <span class="alert">vector</span> of responses</p></li>
+<li><p><span class="math inline">\(\boldsymbol{X} = \begin{bmatrix}  1 &amp; u_1\\  1 &amp; u_2\\  \vdots &amp; \vdots\\  1 &amp; u_n \end{bmatrix}\)</span> is the (<span class="math inline">\(n\)</span> x <span class="math inline">\(2\)</span>) <span class="alert">design matrix</span></p></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <p><br></p>
 <ul>
-<li><p><span class="math inline">\(\vec{\beta} = \begin{bmatrix}  \beta_0\\  \beta_1 \end{bmatrix}\)</span> is a vector of coefficients</p></li>
-<li><p><span class="math inline">\(\vec{\epsilon} =\begin{bmatrix}  \epsilon_1\\  \epsilon_2\\  \vdots\\  \epsilon_n \end{bmatrix}\)</span> a vector of residuals</p></li>
+<li><p><span class="math inline">\(\vec{\beta} = \begin{bmatrix}  \beta_0\\  \beta_1 \end{bmatrix}\)</span> is a (<span class="math inline">\(2\)</span> x <span class="math inline">\(1\)</span>) vector of coefficients</p></li>
+<li><p><span class="math inline">\(\vec{\epsilon} =\begin{bmatrix}  \epsilon_1\\  \epsilon_2\\  \vdots\\  \epsilon_n \end{bmatrix}\)</span> a (<span class="math inline">\(n\)</span> x <span class="math inline">\(1\)</span>) vector of residuals</p></li>
 </ul>
 </div>
 </div>
-<div class="fragment">
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="2">
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>
+<span class="math inline">\(\boldsymbol{X} = \begin{bmatrix}  1 &amp; u_1\\  1 &amp; u_2\\  \vdots &amp; \vdots\\  1 &amp; u_n \end{bmatrix}\)</span> is the <span class="alert">design matrix</span>
+</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><br></p>
+<ul>
+<li>
+<span class="math inline">\(\vec{\beta} = \begin{bmatrix}  \beta_0\\  \beta_1 \end{bmatrix}\)</span> is a vector of coefficients</li>
+</ul>
+</div>
+</div>
+<p><span class="math inline">\(\boldsymbol{X}\vec{\beta}\)</span> is an example of <span class="alert">matrix multiplication</span></p>
+<ul>
+<li>Results in a <span class="math inline">\(n\)</span>-row by 1 column vector</li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+1\beta_0 + u_1\beta_1\\
+1\beta_0 + u_2\beta_1\\
+\vdots\\
+1\beta_0 + u_n\beta_1
+\end{bmatrix}\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="3">
+<p><span class="math inline">\(\boldsymbol{X}\vec{\beta} + \vec{\epsilon}\)</span> is an example of <span class="alert">matrix addition</span></p>
+<ul>
+<li>Results in a <span class="math inline">\(n\)</span>-row by 1 column vector</li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+(1\beta_0 + u_1\beta_1) + \epsilon_1\\
+(1\beta_0 + u_2\beta_1) + \epsilon_2\\
+\vdots\\
+(1\beta_0 + u_n\beta_1) + \epsilon_n
+\end{bmatrix}\]</span></p>
+</div>
+<div class="fragment" data-fragment-index="4">
 <p><span class="math inline">\(\vec{Y}\)</span> and <span class="math inline">\(\boldsymbol{X}\)</span> are <span class="alert">data</span>, while <span class="math inline">\(\vec{\beta}\)</span> and <span class="math inline">\(\vec{\epsilon}\)</span> are <span class="alert">model parameters</span></p>
 </div>
-</section>
-<section id="review-ordinary-linear-regression-2" class="slide level2">
-<h2>Review: ordinary linear regression</h2>
+</div>
+</section><section id="review-ordinary-linear-regression-2" class="slide level2"><h2>Review: ordinary linear regression</h2>
 <p><span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon}\]</span> We like to think of splitting our model into 2 parts:</p>
 <div class="fragment">
 <ol type="1">
-<li>the <span class="alert">mean model</span> <span class="math display">\[E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}\]</span></li>
+<li>the <span class="alert">mean model</span> <span class="math display">\[E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}\]</span>
+</li>
 </ol>
 </div>
 <div class="fragment">
 <ol start="2" type="1">
-<li><p>and the model of the <span class="alert">covariance</span> <span class="math display">\[Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\epsilon}\]</span></p>
+<li>
+<p>and the model of the <span class="alert">covariance</span> <span class="math display">\[Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\epsilon}\]</span></p>
 <ul>
-<li>In OLS we usually assume <span class="math inline">\(\vec{\epsilon} \sim N(0, \sigma^2)\)</span>
+<li>
+<p>In OLS we usually assume these errors are:</p>
 <ul>
-<li>Common variance across all observations, observations are completely independent (covariance of 0)</li>
-<li><span class="alert">Homoskedasticity</span></li>
-</ul></li>
-</ul></li>
+<li><p>Normally distributed <span class="math inline">\(\vec{\epsilon} \sim N(0, \sigma^2)\)</span></p></li>
+<li><p>Have a common variance across all observations (<span class="alert">homoskedasticity</span> assumption)</p></li>
+<li><p>And that observations are completely independent (covariance of 0)</p></li>
+</ul>
+</li>
+</ul>
+</li>
 </ol>
 </div>
-</section>
-<section id="review-ols-estimation" class="slide level2">
-<h2>Review: OLS estimation</h2>
-<ul>
-<li>Model parameters are the “true” relationship between our independent variables and our response (given how we’re modeling the relationship…)
+</section><section id="review-ols-estimation" class="slide level2"><h2>Review: OLS estimation</h2>
+<p>Model parameters are the “true” relationship between our independent variables and our response (given how we’re modeling the relationship…)</p>
 <ul>
 <li>We try to estimate what that particular relationship might be using data</li>
-</ul></li>
-<li>We can estimate a <span class="alert">point estimate</span> for <span class="math inline">\(\beta\)</span> using the data: <span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\vec{Y}\]</span>
+</ul>
+<div class="fragment">
+<p>We can get a <span class="alert">point estimate</span> for <span class="math inline">\(\beta\)</span> using the data: <span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\vec{Y}\]</span></p>
 <ul>
 <li>This is our single best guess for what <span class="math inline">\(\beta\)</span> is 🎯</li>
-</ul></li>
 </ul>
-</section>
-<section id="review-ols-inference" class="slide level2">
-<h2>Review: OLS inference</h2>
-<p>Because our data is only a <span class="alert">sample</span> from the entire <span class="alert">population of interest</span>, we always have uncertainty in that estimate…</p>
+<div class="r-stack">
+<div class="fragment fade-in-then-out">
+<p><span class="math inline">\(\boldsymbol{X}^T\)</span> is an example of <span class="alert">transposing a matrix</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>It turns a <span class="math inline">\(n\)</span> x 2 matrix <span class="math display">\[\boldsymbol{X} = \begin{bmatrix}
+    1 &amp; u_1\\
+    1 &amp; u_2\\
+    \vdots &amp; \vdots\\
+    1 &amp; u_n
+\end{bmatrix}\]</span></p>
+</div><div class="column" style="width:50%;">
+<p>into a 2 x <span class="math inline">\(n\)</span> matrix <span class="math display">\[\boldsymbol{X}^T = \begin{bmatrix}
+    1  &amp; 1 &amp; \dots &amp; 1\\
+    u_n &amp; u_2 &amp; \dots &amp; u_n
+\end{bmatrix}\]</span></p>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p><span class="math inline">\((\boldsymbol{X}^T\boldsymbol{X})^{-1}\)</span> is an example of <span class="alert">matrix inversion</span></p>
 <ul>
-<li><p>The <span class="alert">covariance</span> for <span class="math inline">\(\beta\)</span> is <span class="math display">\[V = \sigma^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\]</span></p>
-<ul>
-<li>which we estimate with <span class="math display">\[\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\]</span></li>
-</ul></li>
-<li><p>We then assume our estimate <span class="math inline">\(\widehat{\beta}\)</span> has a distribution: <span class="math display">\[\widehat{\beta} \sim N(\beta, V)\]</span></p></li>
-<li><p>And then we can create a <span class="math inline">\((100-\alpha/2)\)</span>% <span class="alert">confidence interval</span> for <span class="math inline">\(\widehat{beta}\)</span>: <span class="math display">\[\widehat{\beta} \pm Z_{1-\alpha/2}\sqrt{\widehat{V}}\]</span><br>
-</p></li>
+<li>Think of it like you’re dividing <span class="math inline">\(\boldsymbol{X}^T\vec{Y}\)</span> by <span class="math inline">\((\boldsymbol{X}^T\boldsymbol{X})\)</span>: <span class="math inline">\(\frac{\boldsymbol{X}^T\vec{Y}}{(\boldsymbol{X}^T\boldsymbol{X})}\)</span>
+</li>
 </ul>
+</div>
+</div>
+</div>
+</section><section id="review-ols-inference" class="slide level2 smaller"><h2>Review: OLS inference</h2>
+<p>Because our data is only a <span class="alert">sample</span> from the entire <span class="alert">population of interest</span>, we always have uncertainty in that estimate… We need to incorporate varaince of our parameter to quantify that uncertainty</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<ul>
+<li>The <span class="alert">covariance matrix</span> for <span class="math inline">\(\beta\)</span> is <span class="math display">\[V = \sigma^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\]</span>
+</li>
+</ul>
+<p>which we estimate with <span class="math display">\[\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>We assume our estimate <span class="math inline">\(\widehat{\beta}\)</span> has a distribution: <span class="math display">\[\widehat{\beta} \sim N(\beta, V)\]</span>
+</li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<ul>
+<li>Then we can create a <span class="math inline">\((100-\alpha/2)\)</span>% <span class="alert">confidence interval</span> for <span class="math inline">\(\widehat{\beta}\)</span>: <span class="math display">\[\widehat{\beta} \pm Z_{1-\alpha/2}\sqrt{\widehat{V}}\]</span>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>
 <p>We call this statistical <span class="alert">inference</span></p>
 <ul>
-<li>It’s a way of providing context for our point estimate</li>
+<li><p>It’s a way of providing context for our point estimate</p></li>
+<li><p>If a confidence interval is <span class="alert">wide</span> it tells us there’s a lot of variation around our point estimate</p></li>
+<li><p>if a confidence interval is <span class="alert">narrow</span> it tells us our there’s little variation around our point estimate</p></li>
 </ul>
-</section>
-<section id="review-weighted-least-squares" class="slide level2">
-<h2>Review: weighted least squares</h2>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</section><section id="review-weighted-least-squares" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
 <p>What happens when <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}]\)</span> is <span class="alert">NOT the same</span> across all of <span class="math inline">\(\vec{Y}\)</span>?</p>
+<div class="fragment">
 <ul>
 <li>Estimate of <span class="math inline">\(\beta\)</span> will be fine, but <span class="alert">inference</span> will be incorrect</li>
 </ul>
-<p>We can fixed this with <span class="alert">weighted least squares</span></p>
+</div>
+<div class="fragment">
+<p>We can fixed this with <span class="alert">weighted least squares</span> (WLS)</p>
 <p><span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}\]</span></p>
+<div class="r-stack">
+<div class="fragment fade-in-then-out">
 <ul>
-<li><p><span class="math inline">\(\boldsymbol{W}\)</span> is a diagonal matrix of weights</p></li>
-<li><p>Which gives us an estimated variance for <span class="math inline">\(\widehat{\beta}\)</span> of</p></li>
+<li>
+<span class="math inline">\(\boldsymbol{W}\)</span> is a diagonal matrix of weights</li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+w_1 &amp; 0 &amp; \dots &amp; 0\\
+0 &amp; w_2 &amp; \dots &amp; 0\\
+\vdots&amp; &amp;\ddots &amp;\vdots\\
+0 &amp; 0 &amp; \dots &amp; w_n\\
+\end{bmatrix}\]</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>Assumes variance of the outcomes is</li>
+</ul>
+<p><span class="math display">\[Var[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{W}^{-1}\]</span></p>
+<ul>
+<li>Which gives us an estimated variance for <span class="math inline">\(\widehat{\beta}\)</span> of</li>
 </ul>
 <p><span class="math display">\[\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
-<ul>
-<li>Lots of choices for <span class="math inline">\(\boldsymbol{W}\)</span></li>
-</ul>
-</section>
-<section id="review-robust-variance" class="slide level2">
-<h2>Review: robust variance</h2>
+</div>
+</div>
+</div>
+</section><section id="review-robust-variance" class="slide level2"><h2>Review: robust variance</h2>
 <p>WLS can help if our assumptions are correct, but what if <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}] \ne \sigma^2\boldsymbol{W}^{-1}\)</span>?</p>
-<ul>
-<li><p>Then true variance of <span class="math inline">\(\widehat{\beta}\)</span> is <span class="math display">\[(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{\Sigma}\boldsymbol{W}\boldsymbol{X})(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
-<ul>
-<li><span class="math inline">\(\boldsymbol{\Sigma}\)</span> is the true variance of <span class="math inline">\(\vec{Y}\)</span></li>
-</ul></li>
-<li><p>If the WLS variance is correct (<span class="math inline">\(\boldsymbol{V} = \sigma^2\boldsymbol{W}^{-1}\)</span>) then this simplifies back to <span class="math inline">\(\sigma^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\)</span></p>
-<ul>
-<li><p>That’s why it’s called a <span class="alert">robust variance</span> estimate – it doesn’t penalize us if our assumptions about <span class="math inline">\(\boldsymbol{W}\)</span> are correct, but helps fix it if they’re wrong</p></li>
-<li><p>Also known as <span class="alert">sandwich variance</span> because it looks a bit like meat (<span class="math inline">\(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{\Sigma}\boldsymbol{W}\boldsymbol{X}\)</span>) between 2 slices of bread (<span class="math inline">\(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X}\)</span>)</p></li>
-</ul></li>
-</ul>
 <div class="fragment">
+<ul>
+<li>
+<p>Then true variance of <span class="math inline">\(\widehat{\beta}\)</span> is <span class="math display">\[(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{\Sigma}\boldsymbol{W}\boldsymbol{X})(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
+<ul>
+<li>
+<span class="math inline">\(\boldsymbol{\Sigma}\)</span> is the true variance of <span class="math inline">\(\vec{Y}\)</span>
+</li>
+</ul>
+<p><!-- - We empirically estimate $\boldsymbol{\Sigma}$ with $\widehat{\Sigma}=(Y_i - \vec{X}_i\widehat{\vec{\beta}})(Y_i - \vec{X}_i\widehat{\vec{\beta}})^T$ --></p>
+<ul>
+<li>We call this a <span class="alert">robust variance</span> estimate</li>
+</ul>
+</li>
+</ul>
+<div class="r-stack">
+<div class="fragment fade-in-then-out">
+<ul>
+<li>
+<p>If the WLS variance is correct (<span class="math inline">\(\boldsymbol{V} = \sigma^2\boldsymbol{W}^{-1}\)</span>) then this simplifies back to <span class="math inline">\(\sigma^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\)</span></p>
+<ul>
+<li><p>That’s why we call it “robust” – it doesn’t penalize us if our assumptions about <span class="math inline">\(\boldsymbol{W}\)</span> are correct, but helps fix it if they’re wrong</p></li>
+<li><p>Also known as <span class="alert">sandwich variance</span> because it looks a bit like meat (<span class="math inline">\(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{\Sigma}\boldsymbol{W}\boldsymbol{X}\)</span>) between 2 slices of bread (<span class="math inline">\(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X}\)</span>)</p></li>
+</ul>
+</li>
+</ul>
 <p>We can estimate each element of <span class="math inline">\(\boldsymbol{\Sigma}\)</span> with the squared residual of our model: <span class="math inline">\(e_i^2 = (Y_i - \hat{Y}_i)^2\)</span></p>
 <ul>
-<li><p>In 552, we assumed <span class="math inline">\(\boldsymbol{\Sigma}\)</span> was a diagonal matrix (because assume 0 covariance)</p>
+<li>
+<p>In 552, we assumed <span class="math inline">\(\boldsymbol{\Sigma}\)</span> was a diagonal matrix (because assume 0 covariance)</p>
 <ul>
 <li>We’ll break that assumption in this class</li>
-</ul></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="fragment">
@@ -663,61 +906,78 @@ September 5, 2024
 <li>Note that if <span class="math inline">\(\boldsymbol{W} = \boldsymbol{1}\)</span>, then we’re just applying the robust variance correction to OLS!</li>
 </ul>
 </div>
-</section>
-<section id="review-logistic-regression" class="slide level2">
-<h2>Review: logistic regression</h2>
+</div>
+</div>
+</section><section id="review-logistic-regression" class="slide level2"><h2>Review: logistic regression</h2>
 <p>Now what happens if <span class="math inline">\(\vec{Y}\)</span> is binary?</p>
+<div class="r-stack">
+<div class="fragment fade-in-then-out">
 <ul>
-<li>We could still try to model <span class="math inline">\(\vec{Y}\)</span> with <span class="math display">\[E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}\]</span>
+<li>
+<p>We could still try to model <span class="math inline">\(\vec{Y}\)</span> with <span class="math display">\[E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}\]</span> and use WLS to deal with non-constant variance (since <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}] = E[\vec{Y}|\boldsymbol{X}]\left(1 - E[\vec{Y}|\boldsymbol{X}]\right)\)</span>)</p>
 <ul>
 <li>What do the interpretations of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> then become?</li>
-</ul></li>
-<li>But this gets squirrel-y as your probability of an “event” drifts toward 0 or 1</li>
 </ul>
+</li>
+<li><p>But this gets squirrel-y as your probability of an “event” drifts toward 0 or 1</p></li>
+</ul>
+</div>
 <div class="fragment">
 <p>An alternative model is <span class="alert">logistic regression</span></p>
 <p><span class="math display">\[\log\left(\frac{E[\vec{Y}|\boldsymbol{X}]}{1-E[\vec{Y}|\boldsymbol{X}]}\right) = \boldsymbol{X}\vec{\beta}\]</span></p>
 <ul>
-<li><p>Interpretation of <span class="math inline">\(e^{\beta_1}\)</span>: the relative difference in the <span class="alert">odds</span> of ‘success’ comparing two populations differing by 1 unit in <span class="math inline">\(\boldsymbol{X}\)</span></p>
+<li>
+<p>Interpretation of <span class="math inline">\(e^{\beta_1}\)</span>: the relative difference in the <span class="alert">odds</span> of ‘success’ comparing two populations differing by 1 unit in <span class="math inline">\(\boldsymbol{X}\)</span></p>
 <ul>
-<li>The above regression is modeling the <span class="alert">odds ratio</span></li>
-</ul></li>
-<li><p>We call the function <span class="math inline">\(ln\left(\frac{x}{1-x}\right)\)</span> the <span class="alert">logit</span></p>
+<li>The above regression is modeling the <span class="alert">odds ratio</span>
+</li>
+</ul>
+</li>
+<li>
+<p>We call the function <span class="math inline">\(\log\left(\frac{x}{1-x}\right)\)</span> the <span class="alert">logit</span></p>
 <ul>
 <li><p>That makes this type of regression a <span class="alert">logistic regression</span></p></li>
 <li><p>In PHS 552, you derived why we use that transformation based on the binomial likelihood</p></li>
-</ul></li>
 </ul>
+</li>
+</ul>
+<div class="fragment">
+<p>We’ll dig into logistic regression more in a few classes</p>
 </div>
-</section>
-<section id="review-link-functions" class="slide level2">
-<h2>Review: link functions</h2>
+</div>
+</div>
+</section><section id="review-poisson-regression" class="slide level2"><h2>Review: Poisson regression</h2>
+<p>Now what happens if <span class="math inline">\(\vec{Y}\)</span> is a count of something?</p>
+<div class="fragment">
+<p>We model <span class="math inline">\(Y_i\)</span> a Poisson random variable with mean <span class="math inline">\(\lambda_i T_i\)</span></p>
+<ul>
+<li><p><span class="math inline">\(\lambda_i\)</span> is the rate of events per unit of time</p></li>
+<li><p><span class="math inline">\(T_i\)</span> is the interval of observation</p></li>
+</ul>
+<p>We don’t like modeling this via OLS because count/Poisson variables break the constant variance assumption</p>
+</div>
+<div class="fragment">
+<p>An alternate model is the d a <span class="alert">log-linear regression</span> model <span class="math display">\[\log\left(\lambda(\vec{x}_i)\right) = \vec{X}_i\vec{\beta}\]</span> where we assume that <span class="math inline">\(\lambda_i\)</span> depends on the covariate(s) through the log link function</p>
+</div>
+<div class="fragment">
+<ul>
+<li>In practice, the linear predictor is usually specified in terms of the mean <span class="math inline">\(\lambda(u_i) T_i\)</span> rather than the rate <span class="math inline">\(\lambda_i\)</span>
+</li>
+</ul>
+<p><span class="math display">\[\log\left(\lambda(u_i)\right) + \log(T_i) = \vec{X}_i\vec{\beta} + \log(T_i)\]</span></p>
+<ul>
+<li>This makes <span class="math inline">\(\log(T_i)\)</span> an offset, a predictor variable (covariate) with a known coefficient (<span class="math inline">\(\beta\)</span>) of 1</li>
+</ul>
+<p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
+<div class="footer footer-default">
 
-<img src="POPUHEALSMPH_color-flush.png" class="slide-logo r-stretch"><div class="footer footer-default">
-
+</div>
 </div>
 </section></section>
-    </div>
+</div>
   </div>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script>
-  <script src="slides-0_files/libs/revealjs/dist/reveal.js"></script>
-  <!-- reveal.js plugins -->
-  <script src="slides-0_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
-  <script src="slides-0_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
-  <script src="slides-0_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
-  <script src="slides-0_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
-  <script src="slides-0_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
-  <script src="slides-0_files/libs/revealjs/plugin/quarto-support/support.js"></script>
-  
-
-  <script src="slides-0_files/libs/revealjs/plugin/notes/notes.js"></script>
-  <script src="slides-0_files/libs/revealjs/plugin/search/search.js"></script>
-  <script src="slides-0_files/libs/revealjs/plugin/zoom/zoom.js"></script>
-  <script src="slides-0_files/libs/revealjs/plugin/math/math.js"></script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
-
-  <script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="slides-0_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="slides-0_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="slides-0_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="slides-0_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="slides-0_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="slides-0_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="slides-0_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="slides-0_files/libs/revealjs/plugin/notes/notes.js"></script><script src="slides-0_files/libs/revealjs/plugin/search/search.js"></script><script src="slides-0_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="slides-0_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
 
       // Full list of configuration options available at:
       // https://revealjs.com/config/
@@ -909,8 +1169,42 @@ September 5, 2024
           RevealZoom
         ]
       });
-    </script>
-    <script id="quarto-html-after-body" type="application/javascript">
+    </script><script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script><script id="quarto-html-after-body" type="application/javascript">
     window.document.addEventListener("DOMContentLoaded", function (event) {
       const toggleBodyColorMode = (bsSheetEl) => {
         const mode = bsSheetEl.getAttribute("data-mode");
@@ -1056,6 +1350,6 @@ September 5, 2024
       }
     });
     </script>
-    
+
 
 </body></html>

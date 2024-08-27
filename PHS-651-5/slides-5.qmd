@@ -28,6 +28,7 @@ library(tidyverse)
 library(ggdag)
 library(dagitty)
 library(gridExtra)
+library(qrcode)
 ```
 
 <h1>Lecture 5: Diagnostics & corrections</h1>
@@ -39,6 +40,34 @@ library(gridExtra)
 <h3>Mary Ryan Baumann, PhD</h3>
 
 <h3>October 8, 2024</h3>
+
+::: {.absolute bottom=-100 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-5/slides-5>
+
+:::
+
+::: {.absolute bottom=-150 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-5/slides-5"))
+```
+:::
+
+---
+
+## Zoom recording disclaimer
+
+<br>
+
+This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.
+
+<br>
+
+If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.
+
+<br>
+
+The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.
 
 ---
 

@@ -73,20 +73,24 @@ Informal definitions
 
 - [Correlated data]{.underline}: data where each observation of a variable has some kind of relationship to another set of observations of that variable
 
-   - "...we might reasonably expect that measurements on units within a cluster are more similar than measurements on units in different clusters." (ALA pg. 4)
+   - "...we might reasonably expect that measurements on units within a cluster are more similar than measurements on units in different clusters." (Applied Longitudinal Analysis pg. 4)
    
-   - AKA: multilevel/hierarchical data
+   - AKA: clustered/nested/multilevel/hierarchical data
 
 ---
 
 ## Why is data correlated?
+
+Several potential reasons
 
 - Natural group membership
 
    - Observations belonging to one group more similar than observations belonging to another group
    
    - e.g., Household members, classroom students, eyes in a person's head
-   
+
+. . .
+
 - Clustered by design
    
    - Exposure applied to entire group based on single characteristic
@@ -107,9 +111,9 @@ Informal definitions
 
 ```{r cluster DAG1.5, echo=F, fig.align='center'}
 dagify(
-  O ~ E,
+  O ~ U,
   O ~ C,
-  coords = list(x = c(E = 1, O = 2, C=2.5), y = c(E = 1, O = 1, C=0.5))
+  coords = list(x = c(U = 1, O = 2, C=2.5), y = c(U = 1, O = 1, C=0.5))
 ) %>%
   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_dag_point(size=20) +
@@ -125,9 +129,9 @@ dagify(
 
 ```{r cluster DAG2, echo=F, fig.align="center"}
 dagify(
-  E ~ C,
-  O ~ E,
-  coords = list(x = c(C = 1, E = 2, O = 3), y = c(C = 1, E = 1, O = 1))
+  U ~ C,
+  O ~ U,
+  coords = list(x = c(C = 1, U = 2, O = 3), y = c(C = 1, U = 1, O = 1))
 ) %>%
   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_dag_point(size=20) +
@@ -148,9 +152,9 @@ dagify(
 ```{r cluster DAG3, echo=F, fig.align="center"}
 dagify(
   O ~ C,
-  E ~ C,
-  O ~ E,
-  coords = list(x = c(C = 1, E = 2, O = 3), y = c(C = 1, E = 1, O = 1))
+  U ~ C,
+  O ~ U,
+  coords = list(x = c(C = 1, U = 2, O = 3), y = c(C = 1, U = 1, O = 1))
 ) %>%
   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_dag_point(size=20) +
@@ -170,9 +174,9 @@ If observations belong to a group but that doesn't affect the distribution of th
 
 ```{r cluster DAG1, echo=F, fig.align="center"}
 dagify(
-  O ~ E,
+  O ~ U,
   C ~ C,
-  coords = list(x = c(E = 1, O = 2, C=2.5), y = c(E = 1, O = 1, C=0.5))
+  coords = list(x = c(U = 1, O = 2, C=2.5), y = c(U = 1, O = 1, C=0.5))
 ) %>%
   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_dag_point(size=20) +
@@ -190,7 +194,7 @@ dagify(
 
 ## Other issues from correlated data
 
-Even if clustering has no impact on exposure:
+Even if clustering has no impact on outcome or exposure averages:
 
 - Groups/clusters may not be the same size
 
@@ -210,7 +214,7 @@ Clustering also reduces the amount of [information]{.alert} we get from each ind
 
 ---
 
-## Measuring "clustered-ness"
+## Measuring "clustered-ness" {.smaller}
 
 How can we tell if data are clustered?
 
@@ -232,7 +236,7 @@ How can we tell if data are clustered?
    
 - Individual-level variation: $\sigma^2 = \text{var}(y_{ij})$
    
-- ICC: $\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}$
+- ICC: $$\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}$$
 
 . . .
 
@@ -243,7 +247,7 @@ $$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} 
 
 ## Clustering in data analysis
 
-What are ways to handle clustering in an analysis?
+What are some ideas about how we could handle clustering in an analysis?
 
 
 ---
@@ -254,11 +258,11 @@ What is a way to handle clustering in an (individual-level) analysis?
 
 [Could ignore it and perform regular regression/t-test]{.alert}
 
-$$Y_{j} = \beta_0 + \beta_1 W_{j} + \epsilon_{j}$$
+$$Y_{j} = \beta_0 + \beta_1 U_{j} + \epsilon_{j}$$
 
    - $Y_{j}$ is outcome for individual $j$
    
-   - $W_{j}$ is exposure for individual $j$
+   - $U_{j}$ is exposure for individual $j$
    
 . . .
 
@@ -272,11 +276,11 @@ What is a way to handle clustering in an (individual-level) analysis?
 
 [Could perform separate regressions/t-tests for each cluster]{.alert}
 
-$$Y_{ij} = \beta_0 + \beta_1 W_{ij} + \epsilon_{ij}$$
+$$Y_{ij} = \beta_{0i} + \beta_{1i} U_{ij} + \epsilon_{ij}$$
 
    - $Y_{ij}$ is outcome for individual $j$ in cluster $i$
    
-   - $W_{ij}$ is exposure for individual $j$ in cluster $i$
+   - $U_{ij}$ is exposure for individual $j$ in cluster $i$
    
 . . .
 
@@ -290,11 +294,11 @@ What is a way to handle clustering in an (individual-level) regression?
 
 [Could add cluster membership as model covariate]{.alert}
 
-$$Y_{ij} = \beta_0 + \beta_1 W_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
+$$Y_{ij} = \beta_0 + \beta_1 U_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
 
    - $Y_{ij}$ is outcome for individual $j$ in cluster $i$
    
-   - $W_{ij}$ is exposure for individual $j$ in cluster $i$
+   - $U_{ij}$ is exposure for individual $j$ in cluster $i$
    
    - $C^{(i)}_{ij}$ is whether individual $j$ in cluster $i$ is a member of cluster $i$
    
@@ -312,11 +316,11 @@ What is a way to handle clustering in an (individual-level) regression?
 
 [Could add cluster membership as model covariate (modified)]{.alert}
 
-$$Y_{ij} = \beta_1 W_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
+$$Y_{ij} = \beta_1 U_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
 
    - $Y_{ij}$ is outcome for individual $j$ in cluster $i$
    
-   - $W_{ij}$ is exposure for individual $j$ in cluster $i$
+   - $U_{ij}$ is exposure for individual $j$ in cluster $i$
    
    - $C^{(i)}_{ij}$ is whether individual $j$ in cluster $i$ is a member of cluster $i$
    
@@ -330,11 +334,11 @@ Another approach is to conduct the data analysis at the cluster level
 
 - Instead of individual-level outcomes/predictors, roll these up to cluster-level averages
 
-$$\bar{Y}_{i} = \beta_1 \bar{W}_{i} + \epsilon_{i}$$
+$$\bar{Y}_{i} = \beta_1 \bar{U}_{i} + \epsilon_{i}$$
 
    - $\bar{Y}_{i}$ is the mean outcome in cluster $i$
    
-   - $\bar{W}_{i}$ is mean exposure vin cluster $i$
+   - $\bar{U}_{i}$ is mean exposure in cluster $i$
 
 . . .
 
@@ -353,6 +357,8 @@ Another issue with cluster-level analyses is the possibility for [Simpson's para
 - When trends seen among smaller groups disappear when groups are combined due to differences in group sizes
 
 - We can't get a sense of the full picture if we only do an analysis at the cluster level
+
+[![*Illustration of Simpson's paradox, via Wikipedia*](Simpson's_paradox_continuous.svg){width="30%"}](https://en.wikipedia.org/wiki/File:Simpson%27s_paradox_continuous.svg)
 
 ---
 
@@ -453,7 +459,9 @@ Breaking the output down:
 :::: {.columns}
 
 ::: {.column width="60%"}
-We'll first fit without accounting for counties ("complete pooling" of data)
+We'll first fit without accounting for counties
+
+- AKA: "complete pooling" of data
 ```{r radon no cluster}
 # run OLS regression #
 radon_lm <- lm(log_radon ~ floor, data=radon.mn)
@@ -519,7 +527,9 @@ summary(radon_cty_int_lm)
 
 ## Example: radon measurements in Minnesota
 
-Finally we'll fit with counties, and without an intercept ("no pooling" of data)
+Finally we'll fit with counties, and without an intercept
+
+- AKA: "no pooling" of data
 ```{r radon cluster2}
 # run OLS regression with county as covariate and removing global intercept #
 radon_cty_lm <- lm(log_radon ~ floor + factor(county) - 1, data=radon.mn)

@@ -404,6 +404,23 @@ Mary Ryan Baumann, PhD
 <h3>
 September 17, 2024
 </h3>
+<div class="absolute" style="left: 260px; bottom: -100px; width: 1500px; ">
+<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/PHS-651-2/slides-2" class="uri">https://maryryan.github.io/PHS-651-slides/PHS-651-2/slides-2</a></p>
+</div>
+<div class="absolute" style="left: 100px; bottom: -150px; width: 150px; ">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="slides-2_files/figure-revealjs/qr%20code-1.png" width="192"></p>
+</div>
+</div>
+</div>
+</section><section id="zoom-recording-disclaimer" class="slide level2"><h2>Zoom recording disclaimer</h2>
+<p><br></p>
+<p>This class is being conducted in person, as well as over <span class="alert">Zoom</span>. As the instructor, I will be <span class="alert">recording</span> this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.</p>
+<p><br></p>
+<p>If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.</p>
+<p><br></p>
+<p>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</p>
 </section><section id="recap-correlatedclustered-data" class="slide level2"><h2>Recap: correlated/clustered data</h2>
 <p>What do we mean by correlated data or data that is clustered?</p>
 <ul>
@@ -424,6 +441,7 @@ September 17, 2024
 <ul>
 <li><p>Groups/clusters may not be the same size</p></li>
 <li><p>May affect variance/break the homoskedasticity assumption of OLS</p></li>
+<li><p>May impact average outcome/exposure</p></li>
 <li><p>Reduces the amount of information we get from each individual data point</p></li>
 </ul>
 <p><span class="alert">How do we account for this clustering in analysis?</span></p>
@@ -436,7 +454,7 @@ September 17, 2024
 </ul>
 </div>
 <div class="fragment">
-<p>Two “classes” of modeling approaches:</p>
+<p>Two main “classes” of modeling approaches:</p>
 <ul>
 <li><p>“Conditional” models (today’s focus)</p></li>
 <li><p>“Marginal” models (we’ll get to these later)</p></li>
@@ -454,7 +472,7 @@ September 17, 2024
 </li>
 </ul>
 <div class="fragment">
-<p>Model is <span class="alert">conditional</span> because the interpretation of <span class="math inline">\(\beta_1\)</span> assumes we’re comparing individuals <em>in the same cluster</em> (conditional on group membership)</p>
+<p>Model is <span class="alert">conditional</span> because the interpretation of <span class="math inline">\(\beta_1\)</span> assumes we’re comparing individuals <em>in the same cluster</em> (conditional on group membership/that cluster-specific bump)</p>
 <ul>
 <li><p>Just like how interpretation of <span class="math inline">\(\beta_1\)</span> assumes we’re comparing individuals who have the same value for all other covariates</p></li>
 <li><p>We’ll dig into this more later</p></li>
@@ -465,16 +483,24 @@ September 17, 2024
 </div>
 </section><section id="the-linear-mixed-effects-model" class="slide level2"><h2>The linear mixed effects model</h2>
 <p>The linear mixed effects (LME) model takes the form:</p>
+<p><span class="math display">\[Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}\]</span></p>
+<ul>
+<li><p><span class="math inline">\(Z_i\)</span> is the random effects indicator for cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(b_{0i}\)</span> is the <span class="alert">random intercept</span> for cluster <span class="math inline">\(i\)</span> (dimensions: <span class="math inline">\(1\times 1\)</span>)</p></li>
+</ul>
+<div class="fragment">
+<p>Or in matrix/vector notation:</p>
 <p><span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <ul>
 <li><p><span class="math inline">\(\vec{Y}_i\)</span> is the response vector for cluster <span class="math inline">\(i\)</span> (dimensions: <span class="math inline">\(n_i \text{ individuals} \times 1 \text{ variable}\)</span>)</p></li>
 <li><p><span class="math inline">\(\boldsymbol{X}_i\)</span> is the <span class="alert">fixed effects</span> design matrix for cluster <span class="math inline">\(i\)</span> (dimensions: <span class="math inline">\(n_i \times p\)</span>)</p></li>
 <li><p><span class="math inline">\(\vec{\beta}\)</span> is the fixed effects parameter vector (dimensions: <span class="math inline">\(p \times 1\)</span>)</p></li>
 <li><p><span class="math inline">\(\vec{Z}_i\)</span> is the random effects vector for cluster <span class="math inline">\(i\)</span> (dimensions: <span class="math inline">\(n_i \times 1\)</span>)</p></li>
-<li><p><span class="math inline">\(b_{0i}\)</span> is the <span class="alert">random intercept</span> for cluster <span class="math inline">\(i\)</span> (dimensions: <span class="math inline">\(1\times 1\)</span>)</p></li>
 <li><p><span class="math inline">\(\vec{\epsilon}_i\)</span> is the vector of error terms (dimensions: <span class="math inline">\(n_i \times 1\)</span>)</p></li>
-</ul></section><section id="interpreting-lmes" class="slide level2"><h2>Interpreting LMEs</h2>
-<p>Consider a simple LME with 1 exposure variable <span class="math inline">\(W\)</span>: <span class="math display">\[\vec{Y}_i = \beta_0 + \beta_1 \vec{W}_{i} + b_{0i} + \vec{\epsilon}_i\]</span></p>
+</ul>
+</div>
+</section><section id="interpreting-lmes" class="slide level2"><h2>Interpreting LMEs</h2>
+<p>Consider a simple LME with 1 exposure variable <span class="math inline">\(W\)</span>: <span class="math display">\[\vec{Y}_i = \beta_0 + \beta_1 \vec{U}_{i} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
 <ul>
 <li><p><span class="math inline">\(\beta_0\)</span>: the (sample) population-level mean in <span class="math inline">\(Y\)</span> when <span class="math inline">\(w=0\)</span></p></li>
 <li><p><span class="math inline">\(\beta_0 + b_{0i}\)</span>: the mean in <span class="math inline">\(Y\)</span> for cluster <span class="math inline">\(i\)</span> when <span class="math inline">\(w=0\)</span></p></li>
@@ -520,6 +546,7 @@ September 17, 2024
 <p><span class="math display">\[\vec{\xi}_i = \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <p>We typically assume <span class="math display">\[b_{0i} \sim N(0, \sigma^2_b)\]</span> <span class="math display">\[\vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i)\]</span></p>
 <ul>
+<li><p><span class="math inline">\(\boldsymbol{R}_i\)</span> is the covariance matrix of the individual-level errors: <span class="math inline">\(Cov[\epsilon_{ij}, \epsilon_{ik}] = \boldsymbol{R}_i\)</span></p></li>
 <li>
 <p>Also assume <span class="math inline">\(b_{0i}\)</span> and <span class="math inline">\(\vec{\epsilon}_i\)</span> are <em>independent</em> (<span class="math inline">\(b_{0i}\perp \vec{\epsilon}_i\)</span>)</p>
 <ul>
@@ -536,7 +563,8 @@ September 17, 2024
 <div class="fragment">
 <p>How is this different from adding groups as covariates?</p>
 <ul>
-<li>Allows groups with fewer observations to be more influenced by the rest of the data, and groups with more observations to be less</li>
+<li><p>Allows groups with fewer observations to be more influenced by the rest of the data, and groups with more observations to be less</p></li>
+<li><p>“… we can learn about one cluster’s coefficients by understanding the variability in coefficients across the population. <span class="alert">When there is little variability, we should rely on the population average coefficients to estimate those for a cluster When there’s substantial variation, we must rely more heavily on the data from each cluster in estimating its own coefficients</span>.” (Analysis of Longitudinal Data, pg. 173)</p></li>
 </ul>
 <!-- What's "conditional" about this model? --><!-- - Because the mean of the outcome variable is [conditional]{.alert} on both the fixed effects (always true in regressions) *and* the random effects: --><!-- $$E[\vec{Y}_i|\boldsymbol{X}_i,\vec{b}_{0i}] = \boldsymbol{X}_i\vec{\beta}$$ -->
 </div>
@@ -547,7 +575,7 @@ September 17, 2024
 <li><p>The typical cluster-to-cluster deviation in the overall level of the response is <span class="math inline">\(\sqrt{\sigma^2_b}\)</span></p></li>
 </ul>
 <div class="fragment">
-<p>Within-cluster variation: <span class="math display">\[\vec{\epsilon} \sim N(0, \boldsymbol{R}_i)\]</span></p>
+<p>Within-cluster variation: <span class="math display">\[\vec{\epsilon}_i \sim N(0, \boldsymbol{R}_i)\]</span></p>
 <ul>
 <li>Assumes that <span class="alert">cluster members</span> are <em>randomly</em> varying around the cluster-specific mean response: <span class="math inline">\(E[\vec{\epsilon}_i]=0\)</span>
 </li>
@@ -581,7 +609,7 @@ September 17, 2024
 <p><span class="alert">In 552, we were used to seeing <span class="math inline">\(Cov[Y_{ij}, Y_{ik}]=0\)</span>!</span></p>
 </div>
 </section><section id="what-does-this-covariance-matrix-look-like" class="slide level2"><h2>What does this covariance matrix look like?</h2>
-<p><span class="math display">\[\begin{align*}Var[\vec{Y}_i] &amp;= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \boldsymbol{R}_i\\
+<p><span class="math display">\[\begin{align*}Cov[\vec{Y}_i] &amp;= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \boldsymbol{R}_i\\
 &amp;= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
 &amp;=\begin{bmatrix}
 \sigma^2_b &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
@@ -605,6 +633,48 @@ September 17, 2024
 </li>
 </ul></section><section id="inference-for-widehatbeta" class="slide level2"><h2>Inference for <span class="math inline">\(\widehat{\beta}\)</span>
 </h2>
+<p>Estimation of <span class="math inline">\(\beta\)</span> is done by (restricted) maximum likelihood estimation – the formula looks a lot like it did for weighted least squares (WLS)</p>
+<p><span class="math display">\[\widehat{\beta} = \left(\sum_{i=1}^n \boldsymbol{X}^T \left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i\right)^{-1}\sum_{i=1}^n \boldsymbol{X}^T \left\{Cov[\vec{Y}_i]\right\}^{-1}\vec{Y}_i\]</span></p>
+<div class="r-stack">
+<div class="fragment fade-in-then-out">
+<ul>
+<li><p>In OLS and WLS, we used <span class="alert">maximum likelihood</span> to estimate <span class="math inline">\(\beta\)</span>’s and variance components</p></li>
+<li><p>In LMEs, we use <span class="alert">restricted maximum likelihood (REML)</span> estimation because MLE gives us biased estimates of the covariance components in small samples</p></li>
+<li>
+<p>This means that we <span class="alert">cannot</span> perform likelihood ratio test-based inference for <span class="math inline">\(\vec{\beta}\)</span> when using REML!</p>
+<ul>
+<li>Wald-based inference (z/t-tests and confidence intervals) are still fine, though</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<p>The “model-based” covariance matrix for <span class="math inline">\(\widehat{\beta}\)</span> is <span class="math display">\[Cov[\widehat{\beta}]=\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}\]</span></p>
+</div>
+</div>
+<div class="fragment">
+<p>The confidence intervals for <span class="math inline">\(\vec{\beta}\)</span> will take the form:</p>
+<p><span class="math display">\[\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}\]</span></p>
+</div>
+</section><section id="robust-inference-for-widehatbeta" class="slide level2"><h2>Robust inference for <span class="math inline">\(\widehat{\beta}\)</span>
+</h2>
+<p>We can also use <span class="alert">robust or sandwich variance</span> estimators to perform inference on <span class="math inline">\(\widehat{\beta}\)</span></p>
+<p><span class="math display">\[Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}\]</span></p>
+<p>where <span class="math display">\[\begin{align*}&amp;B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \boldsymbol{X}_i^T \left\{Cov[\vec{Y}_i]\right\}^{-1} \boldsymbol{X}_i\right]^{-1}\\
+&amp;A = \left[\sum_{i=1}^n \boldsymbol{X}_i^T \left\{Cov[\vec{Y}_i]\right\}^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T \left\{Cov[\vec{Y}_i]\right\}^{-1} \boldsymbol{X}_i\right]\end{align*}\]</span></p>
+<div class="r-stack">
+<div class="fragment fade-in-then-out">
+<p>This will give us (approximately) correct variance estimates for <span class="math inline">\(\widehat{\beta}\)</span> if we’re <span class="alert">wrong</span> about the random effects or the variance of <span class="math inline">\(Y\)</span></p>
+</div>
+<div class="fragment">
+<p>If our random intercepts <span class="alert">correctly</span> model the covariance between observations, <span class="math inline">\(A \approx B\)</span> and: <span class="math display">\[\begin{align*}Cov^*[\widehat{\beta}] &amp;= B^{-1} A B^{-1}\\
+&amp;\approx B^{-1} B B^{-1}\\
+&amp; = B^{-1} = Cov[\widehat{\beta}]\end{align*}\]</span> the robust variance is the same as the model-based variance!</p>
+</div>
+<div class="fragment">
+<p><img data-src="clustering-SE-meme.png" class="absolute" style="top: 150px; right: 100px; width: 20%; "></p>
+</div>
+</div>
 </section><section id="icc-in-lmes" class="slide level2"><h2>ICC in LMEs</h2>
 <p>It is also very intuitive to calculate the ICC from an LME: <span class="math display">\[\begin{align*}\text{ICC} &amp;= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\\
 &amp;= \frac{\sigma^2_b}{\sigma^2_b + \sigma^2_{\epsilon}}\end{align*}\]</span></p>
@@ -656,15 +726,60 @@ floor -0.288</code></pre>
 <li>
 <p>LME <span class="math inline">\(\beta_1\)</span>: -0.6629</p>
 <ul>
-<li><p>95% CI: (-0.7194, -0.6064)</p></li>
+<li><p>Model-based 95% CI: (-0.7194, -0.6064)</p></li>
 <li><p>How would we interpret this?</p></li>
 </ul>
 </li>
 </ul></section><section id="example-radon-measurements-in-minnesota-2" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
-<p>Let’s compare this to adding county as a regression coefficient</p>
+<p>Let’s compare the model-based confidence intervals</p>
+<ul>
+<li>Model-based 95% CI: (-0.7194, -0.6064)</li>
+</ul>
+<p>to the robust CIs:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>radon_cty_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_radon <span class="sc">~</span> floor <span class="sc">+</span> <span class="fu">factor</span>(county) <span class="sc">-</span> <span class="dv">1</span>, <span class="at">data=</span>radon.mn)</span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="fu">summary</span>(radon_cty_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(clubSandwich)</span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co"># get the sandwich-based covariance matrix #</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>var_sand <span class="ot">&lt;-</span> <span class="fu">vcovCR</span>(radon_lme, <span class="at">type=</span><span class="st">"CR0"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5"></a></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="fu">paste0</span>( <span class="st">"("</span>,<span class="fu">round</span>(<span class="fu">summary</span>(radon_lme)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>] <span class="sc">-</span> <span class="fu">sqrt</span>(var_sand[<span class="dv">2</span>,<span class="dv">2</span>])<span class="sc">*</span><span class="fu">pnorm</span>(<span class="fl">0.975</span>), <span class="dv">4</span>), <span class="st">", "</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>        , <span class="fu">round</span>(<span class="fu">summary</span>(radon_lme)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">sqrt</span>(var_sand[<span class="dv">2</span>,<span class="dv">2</span>])<span class="sc">*</span><span class="fu">pnorm</span>(<span class="fl">0.975</span>), <span class="dv">4</span>),<span class="st">")"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "(-0.7267, -0.5991)"</code></pre>
+</div>
+</div>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Model-based SEs:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">summary</span>(radon_lme)<span class="sc">$</span>coef[,<span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)       floor 
+ 0.04955304  0.06765334 </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p>Robust SEs:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">sqrt</span>(<span class="fu">diag</span>(var_sand))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)       floor 
+ 0.05106402  0.07640840 </code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p><img data-src="clustering-SE-meme.png" class="absolute" style="bottom: -150px; right: 800px; width: 20%; "></p>
+</div>
+</div>
+</section><section id="example-radon-measurements-in-minnesota-3" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+<p>Let’s compare the LME results to adding county as a regression coefficient</p>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>radon_cty_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_radon <span class="sc">~</span> floor <span class="sc">+</span> <span class="fu">factor</span>(county) <span class="sc">-</span> <span class="dv">1</span>, <span class="at">data=</span>radon.mn)</span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="fu">summary</span>(radon_cty_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -778,47 +893,67 @@ F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 </ul>
 </li>
 </ul>
+</div>
 <div class="fragment">
+<div class="columns">
+<div class="column" style="width:60%;">
 <p>What differences can you see compared to the previous LME?</p>
 <ul>
 <li>
 <p>LME <span class="math inline">\(\beta_1\)</span>: -0.6629</p>
 <ul>
-<li>95% CI: (-0.7194, -0.6064)</li>
+<li><p>Model-based 95% CI: (-0.7194, -0.6064)</p></li>
+<li><p>Robust 95% CI: (-0.7267, -0.5991)</p></li>
 </ul>
 </li>
 </ul>
+</div><div class="column" style="width:40%;">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="slides-2_files/figure-revealjs/radon%20CI%20plot-1.png" width="960"></p>
 </div>
-<div class="fragment">
-<p><img data-src="clustering-SE-meme.png" class="absolute" style="bottom: 0px; right: 100px; "></p>
+</div>
+</div>
+</div>
 </div>
 </section><section id="marginal-effects-in-lmes" class="slide level2"><h2>Marginal effects in LMEs</h2>
 <p>The default interpretation of LMEs is <span class="alert">conditional</span>… but we can sometimes extract <span class="alert">marginal</span> effects out of them</p>
+<div class="fragment">
 <ul>
-<li>For continuous outcomes, or outcomes that we <strong>do not</strong> transform, <span class="alert">the conditional and marginal effects will be identical</span>
+<li>For continuous outcomes (like we’ve been talking about), or outcomes that we <strong>do not</strong> transform, <span class="alert">the conditional and marginal effects will be identical</span>
 </li>
 </ul>
 <p><span class="math display">\[\begin{align*}E[\vec{Y}_i] &amp;= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
 &amp;=E[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_i b_{0i}]\\
 &amp;=\boldsymbol{X}_i\vec{\beta} + \vec{Z}_i E[b_{0i}]\\
 &amp;=\boldsymbol{X}_i\vec{\beta}\end{align*}\]</span></p>
+</div>
+<div class="fragment">
 <ul>
-<li>For non-continuous outcomes or outcomes we do need to transform, the above will not hold and the marginal and conditional effects with be different (more on this next week)</li>
-</ul></section><section id="inference" class="slide level2"><h2>Inference</h2>
-<p>A note:</p>
-<ul>
-<li><p>In OLS and WLS, we used <span class="alert">maximum likelihood</span> to estimate <span class="math inline">\(\beta\)</span>’s and variance components</p></li>
-<li><p>In LMEs, we use <span class="alert">restricted maximum likelihood (REML)</span> estimation because MLE gives us biased estimates of the covariance components in small samples</p></li>
-<li>
-<p>This means that we <span class="alert">cannot</span> perform likelihood ratio test-based inference for <span class="math inline">\(\vec{\beta}\)</span> when using REML!</p>
-<ul>
-<li>Wald-based inference (z/t-tests and confidence intervals) are still fine, though</li>
+<li>For non-continuous outcomes or outcomes we do need to transform, the above will not hold and the marginal and conditional effects with be different… more on this next week</li>
 </ul>
-</li>
+</div>
+</section><section id="a-note-on-terminology" class="slide level2"><h2>A note on terminology</h2>
+<p>Throughout this lecture we’ve referred to <span class="math inline">\(\vec{\beta}\)</span> as “fixed effects” and <span class="math inline">\(b_{0i}\)</span> as “random effects”</p>
+<ul>
+<li>This is standard terminology within statistics</li>
+</ul>
+<div class="fragment">
+<p>In parts of the social sciences (*cough* economics *cough*), “fixed effects” refer to adjusting for cluster membership as covariates (think back to the last lecture)</p>
+<ul>
+<li><p>These types of models are referred to in econ as “fixed effect models”</p></li>
+<li><p>This is done to adjust for the (potentially) confounding effect of cluster membership, not so much to deal with correlated data</p></li>
+</ul>
+</div>
+<div class="fragment">
+<p>This terminology has lead to many an argument between researchers until everyone realizes there was a miscommunication</p>
+<ul>
+<li>Just an FYI in case you’re ever reading about random/fixed effects online</li>
 </ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
+</div>
 </div>
 </section>
 </div>

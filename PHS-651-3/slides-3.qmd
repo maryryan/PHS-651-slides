@@ -91,7 +91,7 @@ Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they ar
 ## 552 review: logistic regression
 
 If our outcome $Y_{i}$ is [binary]{.alert}, we can model it using a logistic regression:
-$$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W_i\beta_1 + \epsilon_i$$
+$$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_i\beta_1 + \epsilon_i$$
 
 - We assume $Y_i \sim \text{Binomial}(p_i)$
 
@@ -99,21 +99,21 @@ $$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W
    
 - The logit function $\log\left(\frac{x}{1-x}\right)$ acts as the [link]{.alert} between $E[Y_i]$ and the linear model $\boldsymbol{X}_i\vec{\beta}$
 
-   - $\left(\frac{p_i}{1-p_i}\right)$ are known as the [odds]{.alert} of $w=1$ compared to $w=0$
+   - $\left(\frac{p_i}{1-p_i}\right)$ are known as the [odds]{.alert} of $u=1$ compared to $u=0$
 
 ---
 
 ## 522 review: logistic regression
 
-$$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W_i\beta_1 + \epsilon_i$$
+$$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_i\beta_1 + \epsilon_i$$
 
 - $\beta_1$ tells us about the [log odds]{.alert}:
 
-$$\beta_1 = \log\left(\frac{p(w=1)}{1-p(w-1)}\right) - \log\left(\frac{p(w=0)}{1-p(w=0)}\right)$$
+$$\beta_1 = \log\left(\frac{p(u=1)}{1-p(w-1)}\right) - \log\left(\frac{p(u=0)}{1-p(u=0)}\right)$$
 
 - $e^{\beta_1}$ tells us about the [odds ratio]{.alert}:
 
-$$e^{\beta_1} = \frac{\text{odds}(w=1)}{\text{odds}(w=0)}=\frac{\frac{p(w=1)}{1-p(w=1)}}{\frac{p(w=0)}{1-p(w=0)}}$$
+$$e^{\beta_1} = \frac{\text{odds}(u=1)}{\text{odds}(u=0)}=\frac{\left(\frac{p(u=1)}{1-p(u=1)}\right)}{\left(\frac{p(u=0)}{1-p(u=0)}\right)}$$
 
 ---
 
@@ -125,7 +125,7 @@ Logistic regression is solving 2 problems for us:
 
    - Remember, variance of binary data is a function of its mean!
 
-2. Transforms the outcome so we don't have to worry about predictions going above 1 or below 0
+2. Transforms the outcome so we don't have to worry about predictions going beyond the range of binary data (above 1 or below 0)
 
 . . .
 
@@ -153,19 +153,35 @@ $$g(Y_i) = \boldsymbol{X}_i\vec{\beta} + \epsilon_i$$
 In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
 $$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i - \mu_i(\beta)] = 0$$
 
-- $E[Y_i]=\mu_i(\beta) = \boldsymbol{X}\vec{\beta}$
+::: {.r-stack text-align="left"}
 
-- $Var[Y_i] = v_i = \sigma^2$
+::: {.fragment .fade-out fragment-index=2}
+where
 
+- The mean of the outocme $E[Y_i]=\mu_i(\beta)$ is a function of $\beta$
+
+- The variance of the outcome $Var[Y_i] = v_i$ is some function $v_i$
+
+::: {.fragment fragment-index=1}
 - The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ (AKA: the score $\partial f(y_i)/\partial \beta$)
+:::
+:::
 
-. . .
-   
+::: {.fragment fragment-index=2}
 Look similar?
 
 $$\sum_{i=1}^n\boldsymbol{X}^T\sigma^2[Y_i - \boldsymbol{X}\vec{\beta}]=0 $$
 
 OLS is a type of GLM!
+
+- $E[Y_i] = \mu_i(\beta) = \boldsymbol{X}\vec{\beta}$
+
+   - $\left(\frac{\partial \mu_i}{\partial \beta}\right) = \boldsymbol{X}$
+
+- $Var[Y_i] = v_i = \sigma^2$
+:::
+
+:::
 
 ---
 
@@ -415,7 +431,7 @@ cancer %>%
 
 Now we should see if there's any evidence of clustering
 
-```{r cancer icc, cache: true}
+```{r cancer icc, cache=TRUE}
 library(ICCbin)
 
 # get ICC for remission outcomes - this function can take a while to run #

@@ -404,6 +404,23 @@ Mary Ryan Baumann, PhD
 <h3>
 September 24, 2024
 </h3>
+<div class="absolute" style="left: 260px; bottom: -100px; width: 1500px; ">
+<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/PHS-651-3/slides-3" class="uri">https://maryryan.github.io/PHS-651-slides/PHS-651-3/slides-3</a></p>
+</div>
+<div class="absolute" style="left: 100px; bottom: -150px; width: 150px; ">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="slides-3_files/figure-revealjs/qr%20code-1.png" width="192"></p>
+</div>
+</div>
+</div>
+</section><section id="zoom-recording-disclaimer" class="slide level2"><h2>Zoom recording disclaimer</h2>
+<p><br></p>
+<p>This class is being conducted in person, as well as over <span class="alert">Zoom</span>. As the instructor, I will be <span class="alert">recording</span> this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.</p>
+<p><br></p>
+<p>If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.</p>
+<p><br></p>
+<p>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</p>
 </section><section id="recap-linear-mixed-effect-models" class="slide level2"><h2>Recap: linear mixed effect models</h2>
 <p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <ul>
@@ -420,7 +437,7 @@ September 24, 2024
 <p><span class="alert">We can also extend this model to non-continuous/non-Normal outcome data</span></p>
 </div>
 </section><section id="review-logistic-regression" class="slide level2"><h2>552 review: logistic regression</h2>
-<p>If our outcome <span class="math inline">\(Y_{i}\)</span> is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W_i\beta_1 + \epsilon_i\]</span></p>
+<p>If our outcome <span class="math inline">\(Y_{i}\)</span> is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_i\beta_1 + \epsilon_i\]</span></p>
 <ul>
 <li>
 <p>We assume <span class="math inline">\(Y_i \sim \text{Binomial}(p_i)\)</span></p>
@@ -432,22 +449,22 @@ September 24, 2024
 <p>The logit function <span class="math inline">\(\log\left(\frac{x}{1-x}\right)\)</span> acts as the <span class="alert">link</span> between <span class="math inline">\(E[Y_i]\)</span> and the linear model <span class="math inline">\(\boldsymbol{X}_i\vec{\beta}\)</span></p>
 <ul>
 <li>
-<span class="math inline">\(\left(\frac{p_i}{1-p_i}\right)\)</span> are known as the <span class="alert">odds</span> of <span class="math inline">\(w=1\)</span> compared to <span class="math inline">\(w=0\)</span>
+<span class="math inline">\(\left(\frac{p_i}{1-p_i}\right)\)</span> are known as the <span class="alert">odds</span> of <span class="math inline">\(u=1\)</span> compared to <span class="math inline">\(u=0\)</span>
 </li>
 </ul>
 </li>
 </ul></section><section id="review-logistic-regression-1" class="slide level2"><h2>522 review: logistic regression</h2>
-<p><span class="math display">\[\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + W_i\beta_1 + \epsilon_i\]</span></p>
+<p><span class="math display">\[\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_i\beta_1 + \epsilon_i\]</span></p>
 <ul>
 <li>
 <span class="math inline">\(\beta_1\)</span> tells us about the <span class="alert">log odds</span>:</li>
 </ul>
-<p><span class="math display">\[\beta_1 = \log\left(\frac{p(w=1)}{1-p(w-1)}\right) - \log\left(\frac{p(w=0)}{1-p(w=0)}\right)\]</span></p>
+<p><span class="math display">\[\beta_1 = \log\left(\frac{p(u=1)}{1-p(w-1)}\right) - \log\left(\frac{p(u=0)}{1-p(u=0)}\right)\]</span></p>
 <ul>
 <li>
 <span class="math inline">\(e^{\beta_1}\)</span> tells us about the <span class="alert">odds ratio</span>:</li>
 </ul>
-<p><span class="math display">\[e^{\beta_1} = \frac{\text{odds}(w=1)}{\text{odds}(w=0)}=\frac{\frac{p(w=1)}{1-p(w=1)}}{\frac{p(w=0)}{1-p(w=0)}}\]</span></p>
+<p><span class="math display">\[e^{\beta_1} = \frac{\text{odds}(u=1)}{\text{odds}(u=0)}=\frac{\left(\frac{p(u=1)}{1-p(u=1)}\right)}{\left(\frac{p(u=0)}{1-p(u=0)}\right)}\]</span></p>
 </section><section id="review-logistic-regression-2" class="slide level2"><h2>522 review: logistic regression</h2>
 <p>Logistic regression is solving 2 problems for us:</p>
 <ol type="1">
@@ -457,7 +474,7 @@ September 24, 2024
 <li>Remember, variance of binary data is a function of its mean!</li>
 </ul>
 </li>
-<li><p>Transforms the outcome so we don’t have to worry about predictions going above 1 or below 0</p></li>
+<li><p>Transforms the outcome so we don’t have to worry about predictions going beyond the range of binary data (above 1 or below 0)</p></li>
 </ol>
 <div class="fragment">
 <p>These are common problems when analyzing many types of non-Normal data</p>
@@ -474,15 +491,33 @@ September 24, 2024
 <li><p><span class="math inline">\(\epsilon_i\)</span> will still be Normally distributed, but its variance <span class="math inline">\(\sigma^2_{\epsilon}\)</span> will match the distribution of <span class="math inline">\(Y_i\)</span></p></li>
 </ul></section><section id="generalized-linear-models-1" class="slide level2"><h2>Generalized linear models</h2>
 <p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i - \mu_i(\beta)] = 0\]</span></p>
+<div class="r-stack" data-text-align="left">
+<div class="fragment fade-out" data-fragment-index="2">
+<p>where</p>
 <ul>
-<li><p><span class="math inline">\(E[Y_i]=\mu_i(\beta) = \boldsymbol{X}\vec{\beta}\)</span></p></li>
-<li><p><span class="math inline">\(Var[Y_i] = v_i = \sigma^2\)</span></p></li>
-<li><p>The estimating equation is actually just the derivative of the likelihood with respect to regression parameters <span class="math inline">\(\beta\)</span> (AKA: the score <span class="math inline">\(\partial f(y_i)/\partial \beta\)</span>)</p></li>
+<li><p>The mean of the outocme <span class="math inline">\(E[Y_i]=\mu_i(\beta)\)</span> is a function of <span class="math inline">\(\beta\)</span></p></li>
+<li><p>The variance of the outcome <span class="math inline">\(Var[Y_i] = v_i\)</span> is some function <span class="math inline">\(v_i\)</span></p></li>
 </ul>
-<div class="fragment">
+<div class="fragment" data-fragment-index="1">
+<ul>
+<li>The estimating equation is actually just the derivative of the likelihood with respect to regression parameters <span class="math inline">\(\beta\)</span> (AKA: the score <span class="math inline">\(\partial f(y_i)/\partial \beta\)</span>)</li>
+</ul>
+</div>
+</div>
+<div class="fragment" data-fragment-index="2">
 <p>Look similar?</p>
 <p><span class="math display">\[\sum_{i=1}^n\boldsymbol{X}^T\sigma^2[Y_i - \boldsymbol{X}\vec{\beta}]=0 \]</span></p>
 <p>OLS is a type of GLM!</p>
+<ul>
+<li>
+<p><span class="math inline">\(E[Y_i] = \mu_i(\beta) = \boldsymbol{X}\vec{\beta}\)</span></p>
+<ul>
+<li><span class="math inline">\(\left(\frac{\partial \mu_i}{\partial \beta}\right) = \boldsymbol{X}\)</span></li>
+</ul>
+</li>
+<li><p><span class="math inline">\(Var[Y_i] = v_i = \sigma^2\)</span></p></li>
+</ul>
+</div>
 </div>
 </section><section id="generalized-linear-models-2" class="slide level2"><h2>Generalized linear models</h2>
 <p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i - \mu_i(\beta)] = 0\]</span></p>
@@ -664,7 +699,7 @@ September 24, 2024
 </div>
 </section><section id="example-cancer-remission-2" class="slide level2"><h2>Example: cancer remission</h2>
 <p>Now we should see if there’s any evidence of clustering</p>
-<div class="cell">
+<div class="cell" data-hash="slides-3_cache/revealjs/cancer icc_778742e50e393fca59b0219432863f16">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(ICCbin)</span>
 <span id="cb3-2"><a href="#cb3-2"></a></span>
 <span id="cb3-3"><a href="#cb3-3"></a><span class="co"># get ICC for remission outcomes - this function can take a while to run #</span></span>

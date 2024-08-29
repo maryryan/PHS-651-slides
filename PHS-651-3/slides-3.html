@@ -428,11 +428,13 @@ September 24, 2024
 <li><p><span class="math inline">\(\vec{Z}_ib_{0i}\)</span> are the <span class="alert">random effects</span> accounting for random between-cluster variation</p></li>
 <li><p><span class="math inline">\(\vec{\epsilon}_i\)</span> is the regular between-individual variation</p></li>
 </ul>
+<div class="fragment">
 <p>The <span class="alert">fixed effects</span> are shared across everyone in the sample, while the <span class="alert">random effects</span> are unique to a particular cluster</p>
 <p>Interpretations of <span class="math inline">\(\beta_1\)</span> in an LME are <span class="alert">conditional</span> because they are comparing 2 individuals with the same cluster membership</p>
 <ul>
 <li>Often referred to as having individual-specific or cluster-specific interpretation</li>
 </ul>
+</div>
 <div class="fragment">
 <p><span class="alert">We can also extend this model to non-continuous/non-Normal outcome data</span></p>
 </div>
@@ -454,7 +456,7 @@ September 24, 2024
 </ul>
 </li>
 </ul></section><section id="review-logistic-regression-1" class="slide level2"><h2>522 review: logistic regression</h2>
-<p><span class="math display">\[\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_i\beta_1 + \epsilon_i\]</span></p>
+<p>If our outcome <span class="math inline">\(Y_{i}\)</span> is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_i\beta_1 + \epsilon_i\]</span></p>
 <ul>
 <li>
 <span class="math inline">\(\beta_1\)</span> tells us about the <span class="alert">log odds</span>:</li>
@@ -490,23 +492,22 @@ September 24, 2024
 <li><p><span class="math inline">\(g(\cdot)\)</span> is known as the <span class="alert">link function</span> because it <em>links</em> a linear model on the righthand side to the outcome on the lefthand side</p></li>
 <li><p><span class="math inline">\(\epsilon_i\)</span> will still be Normally distributed, but its variance <span class="math inline">\(\sigma^2_{\epsilon}\)</span> will match the distribution of <span class="math inline">\(Y_i\)</span></p></li>
 </ul></section><section id="generalized-linear-models-1" class="slide level2"><h2>Generalized linear models</h2>
-<p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i - \mu_i(\beta)] = 0\]</span></p>
-<div class="r-stack" data-text-align="left">
-<div class="fragment fade-out" data-fragment-index="2">
+<p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T v_i^{-1}[Y_i - \mu_i(\vec{\beta})] = 0\]</span></p>
 <p>where</p>
 <ul>
-<li><p>The mean of the outocme <span class="math inline">\(E[Y_i]=\mu_i(\beta)\)</span> is a function of <span class="math inline">\(\beta\)</span></p></li>
+<li><p>The mean of the outcome <span class="math inline">\(E[Y_i]=\mu_i(\vec{\beta})\)</span> is a function of <span class="math inline">\(\vec{\beta}\)</span></p></li>
 <li><p>The variance of the outcome <span class="math inline">\(Var[Y_i] = v_i\)</span> is some function <span class="math inline">\(v_i\)</span></p></li>
 </ul>
-<div class="fragment" data-fragment-index="1">
+<div class="fragment">
 <ul>
 <li>The estimating equation is actually just the derivative of the likelihood with respect to regression parameters <span class="math inline">\(\beta\)</span> (AKA: the score <span class="math inline">\(\partial f(y_i)/\partial \beta\)</span>)</li>
 </ul>
 </div>
-</div>
-<div class="fragment" data-fragment-index="2">
+</section><section id="generalized-linear-models-2" class="slide level2"><h2>Generalized linear models</h2>
+<p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T v_i^{-1}[Y_i - \mu_i(\vec{\beta})] = 0\]</span></p>
 <p>Look similar?</p>
 <p><span class="math display">\[\sum_{i=1}^n\boldsymbol{X}^T\sigma^2[Y_i - \boldsymbol{X}\vec{\beta}]=0 \]</span></p>
+<div class="fragment">
 <p>OLS is a type of GLM!</p>
 <ul>
 <li>
@@ -518,19 +519,25 @@ September 24, 2024
 <li><p><span class="math inline">\(Var[Y_i] = v_i = \sigma^2\)</span></p></li>
 </ul>
 </div>
-</div>
-</section><section id="generalized-linear-models-2" class="slide level2"><h2>Generalized linear models</h2>
+</section><section id="generalized-linear-models-3" class="slide level2"><h2>Generalized linear models</h2>
 <p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i - \mu_i(\beta)] = 0\]</span></p>
 <ul>
 <li>
 <p>This estimating equation is based on the <span class="alert">likelihood function</span> associated with the distribution we assume the outcome is coming from</p>
 <ul>
-<li>Many types of data distributions have likelihoods with a similar form called the <span class="alert">exponential family form</span> - GLMs exploits this</li>
+<li><p>Many types of data distributions have likelihoods with a similar form called the <span class="alert">exponential family form</span> - GLMs exploits this</p></li>
+<li><p>This is how we get types of regression models such as OLS, logistic, and log-linear (Poisson)</p></li>
 </ul>
 </li>
 </ul></section><section id="exponential-family" class="slide level2"><h2>Exponential family</h2>
 <p>Exponential family distributions share some common statistical properties</p>
 <ul>
+<li>
+<p>The expectation of <span class="math inline">\(Y_i\)</span>, <span class="math inline">\(E[Y_i] = \mu_i(\beta)\)</span> can be transformed by a link function <span class="math inline">\(g(\cdot)\)</span> so that it is <em>linearly</em> related to the covariates <span class="math display">\[g(\mu_i) = \boldsymbol{X}\vec{\beta}\]</span></p>
+<ul>
+<li>Some types of exponential family distributions may have multiple link functions associated with it (i.e., Bernoulli)</li>
+</ul>
+</li>
 <li>
 <p>Variance of <span class="math inline">\(Y_i\)</span> can be expressed in terms of <span class="math display">\[\text{Var}[Y_i] = \phi v(\mu_i),\]</span></p>
 <ul>
@@ -610,7 +617,7 @@ September 24, 2024
 </ul>
 </li>
 </ul>
-<!-- Many common types of data distributions belong to a family called the [exponential family]{.alert} --><!-- - Called such because their likelihoods can be written in a common form: --><!-- $$f(y_i)= \exp\left\{\frac{[y_i\theta_i - \psi(\theta_i)]}{\varphi} + c(y_i,\varphi)\right\}$$ --><!--    - $\theta_i$ is the natural parameter --><!--    - $\psi(\cdot)$ related $\theta_i$ to $E[Y_i]$ through $E[Y_i]=\partial\psi(\theta_i)/\partial \theta_i$ --><!--    - $\varphi$ is a variance scaling parameter --><!--    - $c(y_i,\varphi)$ is a catch-all for everything else --><!-- --- --><!-- ## Exponential family examples --><!-- Normal: $\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left\{-\frac{(y_i-\mu_i)^2}{2\sigma^2}\right\}=\exp\left\{\frac{y_i\mu_i - 1/2\mu_i^2}{\sigma^2} -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}\right\}$ --><!-- - $\theta_i = \mu_i$ --><!-- - $\psi(\theta_i) = 1/2 \mu_i^2$ --><!-- - $\varphi = \sigma^2$ --><!-- - $c(y_i,\varphi) = -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}$ --><!-- --- --><!-- ## Exponential family examples --><!-- Binomial: ${n_i\choose n_i y_i}\pi_i^{n_i y_i})(1-\pi_i)^{n_i - n_i y_i} = \exp\left\{\frac{y_i \theta_i - \log[1+\exp(\theta_i)]}{1/n_i} + \log\left[{n_i \choose n_i y_i} \right]\right\}$ --><!-- - $\theta_i = \log\left[\frac{\pi_i}{1-\pi_i}\right]$ --><!-- - $\psi(\theta_i) = \log[1+\exp(\theta_i)]$ --><!-- - $\varphi = 1/n_i$ --><!-- - $c(y_i,\theta_i) = \log\left[{n_i \choose n_i y_i} \right]$ --><!-- --- --><!-- ## Exponential family examples --><!-- Poisson: $\frac{\exp\{-\mu_i\}\mu_i^{y_i}}{y_i!} = \exp\{y_i\log(\mu_i) - \mu_i - \log(y_i!)\}$ --><!-- - $\theta_i = \log(\mu_i)$ --><!-- - $psi(\theta_i) = \exp(\theta_i)$ --><!-- - $\varphi = 1$ --><!-- - $c(y_i, \theta_i) = -\log(y_i!)$ --></section><section id="generalized-linear-mixed-models" class="slide level2"><h2>Generalized linear mixed models</h2>
+<!-- Many common types of data distributions belong to a family called the [exponential family]{.alert} --><!-- - Called such because their likelihoods can be written in a common form: --><!-- $$f(y_i)= \exp\left\{\frac{[y_i\theta_i - \psi(\theta_i)]}{\varphi} + c(y_i,\varphi)\right\}$$ --><!--    - $\theta_i$ is the natural parameter --><!--    - $\psi(\cdot)$ related $\theta_i$ to $E[Y_i]$ through $E[Y_i]=\partial\psi(\theta_i)/\partial \theta_i$ --><!--    - $\varphi$ is a variance scaling parameter --><!--    - $c(y_i,\varphi)$ is a catch-all for everything else --><!-- --- --><!-- ## Exponential family examples --><!-- Normal: $\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left\{-\frac{(y_i-\mu_i)^2}{2\sigma^2}\right\}=\exp\left\{\frac{y_i\mu_i - 1/2\mu_i^2}{\sigma^2} -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}\right\}$ --><!-- - $\theta_i = \mu_i$ --><!-- - $\psi(\theta_i) = 1/2 \mu_i^2$ --><!-- - $\varphi = \sigma^2$ --><!-- - $c(y_i,\varphi) = -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}$ --><!-- --- --><!-- ## Exponential family examples --><!-- Binomial: ${n_i\choose n_i y_i}\pi_i^{n_i y_i})(1-\pi_i)^{n_i - n_i y_i} = \exp\left\{\frac{y_i \theta_i - \log[1+\exp(\theta_i)]}{1/n_i} + \log\left[{n_i \choose n_i y_i} \right]\right\}$ --><!-- - $\theta_i = \log\left[\frac{\pi_i}{1-\pi_i}\right]$ --><!-- - $\psi(\theta_i) = \log[1+\exp(\theta_i)]$ --><!-- - $\varphi = 1/n_i$ --><!-- - $c(y_i,\theta_i) = \log\left[{n_i \choose n_i y_i} \right]$ --><!-- --- --><!-- ## Exponential family examples --><!-- Poisson: $\frac{\exp\{-\mu_i\}\mu_i^{y_i}}{y_i!} = \exp\{y_i\log(\mu_i) - \mu_i - \log(y_i!)\}$ --><!-- - $\theta_i = \log(\mu_i)$ --><!-- - $psi(\theta_i) = \exp(\theta_i)$ --><!-- - $\varphi = 1$ --><!-- - $c(y_i, \theta_i) = -\log(y_i!)$ --></section><section id="generalized-linear-mixed-models" class="slide level2 smaller"><h2>Generalized linear mixed models</h2>
 <p>We can also use the idea of GLMs in LMEs to model data that is both <em>clustered</em> and <em>non-Normal</em></p>
 <ul>
 <li>We call this hybrid a <span class="alert">generalized linear mixed model</span> (GLMMs)</li>
@@ -618,12 +625,46 @@ September 24, 2024
 <div class="fragment">
 <p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <ul>
-<li><p>Assumes <span class="math inline">\([\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\)</span> is distributed as a member of the <span class="math inline">\(\text{exponential family}\)</span></p></li>
-<li><p>Use distribution assumption to assume link function <span class="math inline">\(g(\cdot)\)</span> and the form of within-cluster variance</p></li>
+<li><p>Assumes <span class="math inline">\([\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\)</span> is distributed as a member of the exponential family</p></li>
+<li><p>We’ll use a distribution assumption to assume link function <span class="math inline">\(g(\cdot)\)</span> and the form of within-cluster variance <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}_i,b_{0i}]\)</span></p></li>
 </ul>
 </div>
+</section><section id="generalized-linear-mixed-models-1" class="slide level2 smaller"><h2>Generalized linear mixed models</h2>
+<p>We can also use the idea of GLMs in LMEs to model data that is both <em>clustered</em> and <em>non-Normal</em></p>
+<ul>
+<li>We call this hybrid a <span class="alert">generalized linear mixed model</span> (GLMMs)</li>
+</ul>
+<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<ul>
+<li>Just as with Normally-distributed outcomes, the random intercepts will still give us an exchangeable covariance structure</li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}\]</span></p>
+<ul>
+<li>The difference is that the form of <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}_i,b_{0i}] = Var[\epsilon_{ij}] = \sigma^2_\epsilon\)</span> will depend on the distribution of <span class="math inline">\(Y_{ij}\)</span>
+</li>
+</ul></section><section id="logistic-linear-mixed-models" class="slide level2"><h2>Logistic linear mixed models</h2>
+<p>Let’s be more specific</p>
+<ul>
+<li><p>Say we have <span class="math inline">\(\vec{Y}_i\)</span> that is distributed Bernoulli with probability of success <span class="math inline">\(p_i\)</span></p></li>
+<li><p>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(\vec{Y}_i\)</span></p></li>
+</ul>
+<p><span class="alert">What would our model look like?</span></p>
+</section><section id="logistic-linear-mixed-models-1" class="slide level2"><h2>Logistic linear mixed models</h2>
+<p>Let’s be more specific</p>
+<ul>
+<li><p>Say we have <span class="math inline">\(\vec{Y}_i\)</span> that is distributed Bernoulli with probability of success <span class="math inline">\(p_{ij}\)</span></p></li>
+<li><p>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(\vec{Y}_i\)</span></p></li>
+</ul>
+<p><span class="alert">What would our model look like?</span></p>
+<p><span class="math display">\[\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \epsilon_{ij}\]</span></p>
+<p>where <span class="math inline">\(b_{0i} \sim N(0, \sigma^2_b)\)</span> and <span class="math inline">\(\epsilon_{ij} \sim \left(0, p_{ij}(1-p_{ij})\right)\)</span></p>
 </section><section id="some-notes" class="slide level2"><h2>Some notes</h2>
-<p>In order to work out the likelihood function for a GLMM, we usually need to do some approximations</p>
+<p>In order to estimate regression coefficients from the likelihood function for a GLMM, we usually need to do some approximations</p>
 <ul>
 <li>
 <p>There are 2 ways to do this:</p>
@@ -634,6 +675,8 @@ September 24, 2024
 </li>
 </ul>
 <p>So you might see multiple functions online for running GLMMs in R and SAS</p>
+<div class="columns">
+<div class="column" style="width:50%;">
 <div class="fragment">
 <p><span class="alert">We will use</span></p>
 <ul>
@@ -641,6 +684,7 @@ September 24, 2024
 <li><p>These both use method 1 above, and can be used with longitudinal models developed later in this course</p></li>
 </ul>
 </div>
+</div><div class="column" style="width:50%;">
 <div class="fragment">
 <p>Others include:</p>
 <ul>
@@ -659,6 +703,8 @@ September 24, 2024
 </li>
 </ul>
 </div>
+</div>
+</div>
 </section><section id="example-cancer-remission" class="slide level2"><h2>Example: cancer remission</h2>
 <!-- https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/ -->
 <p>Say we want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment</p>
@@ -669,7 +715,7 @@ September 24, 2024
 </ul>
 <div class="fragment">
 <p>Our (loose) structural model is then:</p>
-<p><span class="math display">\[\text{logit}(\text{remission}_{ij}) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})\]</span></p>
+<p><span class="math display">\[\text{logit}(E[\text{remission}_{ij}]) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})\]</span></p>
 </div>
 </section><section id="example-cancer-remission-1" class="slide level2"><h2>Example: cancer remission</h2>
 <p>Let’s get an idea of our data…</p>
@@ -766,8 +812,7 @@ Number of Fisher Scoring iterations: 4</code></pre>
 </div>
 <div class="fragment">
 <ul>
-<li>Assumptions: correct structural model; <span class="alert">independence</span>
-</li>
+<li>Assumptions: correct structural model; <span class="alert">independent</span> observations</li>
 </ul>
 </div>
 </section><section id="example-cancer-remission-4" class="slide level2"><h2>Example: cancer remission</h2>
@@ -816,9 +861,130 @@ CancerStageIV  -2.4132991 0.12745333 8115 -18.934767 2.823650e-78</code></pre>
 <li><p>The logit link is very common</p></li>
 <li><p>The probit link is sometimes used in certain fields</p></li>
 <li><p>The identity link also gets used</p></li>
-</ul></section><section id="count-outcomes-and-glmms" class="slide level2"><h2>Count outcomes and GLMMs</h2>
-</section><section id="marginal-effects-in-glmms" class="slide level2"><h2>Marginal effects in GLMMs</h2>
-<p>Last time we noted that marginal and conditional effects are <em>identical</em> in LMEs</p>
+</ul></section><section id="count-outcomes-and-glmms-poisson" class="slide level2"><h2>Count outcomes and GLMMs (poisson)</h2>
+<p>We’ve focused a lot on binary outcomes up until now, but count data (Poisson-distributed) can also be modeled using a GLMM</p>
+<ul>
+<li>
+<p>If we have <span class="math inline">\(\vec{Y}_i\)</span> that is distributed Poisson with event rate <span class="math inline">\(\lambda_{ij}\)</span> (# events per unit of time)</p>
+<ul>
+<li>Thus the mean for <span class="math inline">\(Y_{ij}\)</span>, <span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \mu_{ij}\)</span>, is the average count for a given unit of time, which is <span class="math inline">\(\mu_{ij}= \lambda_{ij}T_{ij}\)</span>
+</li>
+</ul>
+</li>
+<li><p>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(\vec{Y}_i\)</span></p></li>
+</ul>
+<p><span class="alert">What would our model look like?</span></p>
+<p><span class="math display">\[\text{log}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})\]</span></p>
+<p>where <span class="math inline">\(b_{0i} \sim N(0, \sigma^2_b)\)</span></p>
+<div class="fragment">
+<p><span class="alert">Note the lack of <span class="math inline">\(\epsilon_{ij}\)</span>!</span></p>
+<ul>
+<li>
+<p>This is because the Poisson distribution assumes <span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = Var[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \mu_{ij}\)</span></p>
+<ul>
+<li><p>However, this assumption is rarely true in real life (health) applications</p></li>
+<li><p>Often, <span class="math inline">\(Var[Y|\boldsymbol{X}_i, b_{0i}]&gt;E[Y|\boldsymbol{X}_i, b_{0i}]\)</span>, known as <span class="alert">over-dispersion</span></p></li>
+</ul>
+</li>
+</ul>
+</div>
+</section><section id="count-outcomes-and-glmms-negative-binomial" class="slide level2"><h2>Count outcomes and GLMMs (negative binomial)</h2>
+<p>When count data are over-dispersed, we can use a <span class="alert">negative-binomial</span> regression model</p>
+<p><span class="math display">\[\text{log}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij}) + \epsilon_{ij}\]</span></p>
+<p>where <span class="math inline">\(b_{0i}\sim N(0,\sigma^2_b)\)</span> and <span class="math inline">\(\exp(\epsilon_{ij}) \sim \text{Gamma}(1,\theta)\)</span></p>
+<div class="fragment">
+<ul>
+<li><p>This means <span class="math inline">\(Var(Y_{ij}|\boldsymbol{X}_i, b_{0i}) = E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] + \theta\left(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]\right)^2 = \mu_{ij} + \theta \mu_{ij}^2\)</span></p></li>
+<li><p>Our covariance structure then looks like</p></li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+\sigma^2_b + \mu_{ij} + \theta \mu_{ij}^2 &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \mu_{ij} + \theta \mu_{ij}^2
+\end{bmatrix}\]</span></p>
+</div>
+</section><section id="example-murders-and-income" class="slide level2"><h2>Example: murders and income</h2>
+<p>Let’s say we want to see whether the real per capita personal income of a county impacts its number of murders</p>
+<ul>
+<li><p>Data from 1980</p></li>
+<li><p>Assume clustering by state</p></li>
+</ul></section><section id="example-murders-and-income-1" class="slide level2"><h2>Example: murders and income</h2>
+<p>Let’s get an idea of our data…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>murder <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2"></a>   <span class="fu">group_by</span>(statefips) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3"></a>   <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">mean_murders=</span><span class="fu">mean</span>(murders, <span class="at">na.rm=</span>T), <span class="at">mean_capita =</span> <span class="fu">mean</span>(rpcpersinc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 46 × 4
+   statefips     n mean_murders mean_capita
+       &lt;int&gt; &lt;int&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+ 1         1    62        6.65        8083.
+ 2         2     7        2.57       16705.
+ 3         5    73        2.81        8080.
+ 4         6    58       58.7        12820.
+ 5         8    55        2.91       11577.
+ 6         9     8       17.9        13732.
+ 7        10     3       14          11025.
+ 8        11     1      200          15197.
+ 9        15     3        6.33       11926.
+10        16    41        0.707       9913.
+# ℹ 36 more rows</code></pre>
+</div>
+</div>
+</section><section id="example-murders-and-income-2" class="slide level2"><h2>Example: murders and income</h2>
+<p>First our Poisson mixed effects model:</p>
+<p><span class="math display">\[\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i}\]</span></p>
+<ul>
+<li>All data is on the per-year scale so <span class="math inline">\(T_{ij}=1\)</span>, and <span class="math inline">\(\log(T_{ij})=0\)</span>, so no need to add the time offset term</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>murder_glmm <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( murders <span class="sc">~</span> rpcpersinc,</span>
+<span id="cb11-2"><a href="#cb11-2"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> statefips, <span class="at">family =</span> <span class="fu">quasipoisson</span>(<span class="at">link=</span><span class="st">"log"</span>), <span class="at">data =</span> murder, </span>
+<span id="cb11-3"><a href="#cb11-3"></a>         <span class="at">verbose =</span> F )</span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="fu">summary</span>( murder_glmm )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   Value    Std.Error   DF   t-value      p-value
+(Intercept) -1.045388626 2.787126e-01 2150 -3.750776 1.809501e-04
+rpcpersinc   0.000257099 1.993114e-05 2150 12.899362 1.006960e-36</code></pre>
+</div>
+</div>
+<p>Poisson GLMM results:</p>
+<ul>
+<li>
+<p>Poisson <span class="math inline">\(e^{\beta_1}\)</span>: 1.0003</p>
+<ul>
+<li>95% CI: (1.0002, 1.0003)</li>
+</ul>
+</li>
+</ul></section><section id="example-murders-and-income-3" class="slide level2"><h2>Example: murders and income</h2>
+<p>Now our negative binomial mixed effects model:</p>
+<p><span class="math display">\[\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i} + \epsilon_{ij}\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># find theta #</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>murder_theta <span class="ot">&lt;-</span> <span class="fu">glm.nb</span>(murders <span class="sc">~</span> rpcpersinc, <span class="at">data=</span>murder)<span class="sc">$</span>call<span class="sc">$</span>init.theta</span>
+<span id="cb13-3"><a href="#cb13-3"></a></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="co"># fit model #</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>murder_glmmnb <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( murders <span class="sc">~</span> rpcpersinc,</span>
+<span id="cb13-6"><a href="#cb13-6"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> statefips, <span class="at">family =</span> <span class="fu">negative.binomial</span>(<span class="at">theta =</span> murder_theta), <span class="at">data =</span> murder, </span>
+<span id="cb13-7"><a href="#cb13-7"></a>         <span class="at">verbose =</span> F )</span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="fu">summary</span>( murder_glmmnb )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    Value    Std.Error   DF   t-value      p-value
+(Intercept) -3.3458066494 3.479936e-01 2150 -9.614563 1.862156e-21
+rpcpersinc   0.0004354949 2.892331e-05 2150 15.056884 8.730031e-49</code></pre>
+</div>
+</div>
+<p>Negative Binomial GLMM results:</p>
+<ul>
+<li>
+<p>NB <span class="math inline">\(e^{\beta_1}\)</span>: 1.0004</p>
+<ul>
+<li>95% CI: (1.0004, 1.0005)</li>
+</ul>
+</li>
+</ul></section><section id="marginal-effects-in-glmms" class="slide level2"><h2>Marginal effects in GLMMs</h2>
+<p>Last week we noted that marginal and conditional effects are <em>identical</em> in LMEs</p>
 <ul>
 <li>This is not the case for all GLMMs</li>
 </ul>
@@ -842,6 +1008,9 @@ CancerStageIV  -2.4132991 0.12745333 8115 -18.934767 2.823650e-78</code></pre>
 </li>
 </ul>
 </div>
+<div class="fragment">
+<p>This phenomenon is known as <span class="alert">non-collapsibility</span></p>
+</div>
 </section><section id="marginal-effects-in-identity-link-glmms" class="slide level2"><h2>Marginal effects in (identity link) GLMMs</h2>
 <p>But what if had a GLMM with a binary outcome and an identity link?</p>
 <p><span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
@@ -863,7 +1032,6 @@ CancerStageIV  -2.4132991 0.12745333 8115 -18.934767 2.823650e-78</code></pre>
 <li>The conditional and marginal effects are identical again!</li>
 </ul>
 </div>
-</section><section id="example" class="slide level2"><h2>Example:</h2>
 </section><section id="marginal-effects-in-glmms-2" class="slide level2"><h2>Marginal effects in GLMMs</h2>
 <p>So what happens when we have transformed outcomes and want marginal effects?</p>
 <div class="fragment">

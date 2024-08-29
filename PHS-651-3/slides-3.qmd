@@ -76,6 +76,8 @@ $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
 - $\vec{\epsilon}_i$ is the regular between-individual variation
 
+. . .
+
 The [fixed effects]{.alert} are shared across everyone in the sample, while the [random effects]{.alert} are unique to a particular cluster
 
 Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they are comparing 2 individuals with the same cluster membership
@@ -105,6 +107,7 @@ $$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U
 
 ## 522 review: logistic regression
 
+If our outcome $Y_{i}$ is [binary]{.alert}, we can model it using a logistic regression:
 $$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_i\beta_1 + \epsilon_i$$
 
 - $\beta_1$ tells us about the [log odds]{.alert}:
@@ -151,26 +154,31 @@ $$g(Y_i) = \boldsymbol{X}_i\vec{\beta} + \epsilon_i$$
 ## Generalized linear models
 
 In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
-$$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i - \mu_i(\beta)] = 0$$
+$$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T v_i^{-1}[Y_i - \mu_i(\vec{\beta})] = 0$$
 
-::: {.r-stack text-align="left"}
 
-::: {.fragment .fade-out fragment-index=2}
 where
 
-- The mean of the outocme $E[Y_i]=\mu_i(\beta)$ is a function of $\beta$
+- The mean of the outcome $E[Y_i]=\mu_i(\vec{\beta})$ is a function of $\vec{\beta}$
 
 - The variance of the outcome $Var[Y_i] = v_i$ is some function $v_i$
 
-::: {.fragment fragment-index=1}
-- The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ (AKA: the score $\partial f(y_i)/\partial \beta$)
-:::
-:::
+. . .
 
-::: {.fragment fragment-index=2}
+- The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ (AKA: the score $\partial f(y_i)/\partial \beta$)
+
+---
+
+## Generalized linear models
+
+In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
+$$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T v_i^{-1}[Y_i - \mu_i(\vec{\beta})] = 0$$
+
 Look similar?
 
 $$\sum_{i=1}^n\boldsymbol{X}^T\sigma^2[Y_i - \boldsymbol{X}\vec{\beta}]=0 $$
+
+. . .
 
 OLS is a type of GLM!
 
@@ -179,9 +187,6 @@ OLS is a type of GLM!
    - $\left(\frac{\partial \mu_i}{\partial \beta}\right) = \boldsymbol{X}$
 
 - $Var[Y_i] = v_i = \sigma^2$
-:::
-
-:::
 
 ---
 
@@ -193,12 +198,19 @@ $$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i
 - This estimating equation is based on the [likelihood function]{.alert} associated with the distribution we assume the outcome is coming from
 
    - Many types of data distributions have likelihoods with a similar form called the [exponential family form]{.alert} - GLMs exploits this
+   
+   - This is how we get types of regression models such as OLS, logistic, and log-linear (Poisson)
 
 ---
 
 ## Exponential family
 
 Exponential family distributions share some common statistical properties
+
+- The expectation of $Y_i$, $E[Y_i] = \mu_i(\beta)$ can be transformed by a link function $g(\cdot)$ so that it is *linearly* related to the covariates
+$$g(\mu_i) = \boldsymbol{X}\vec{\beta}$$
+
+   - Some types of exponential family distributions may have multiple link functions associated with it (i.e., Bernoulli)
 
 - Variance of $Y_i$ can be expressed in terms of
 $$\text{Var}[Y_i] = \phi v(\mu_i),$$
@@ -313,7 +325,7 @@ a logistic regression model
    
 ---
 
-## Generalized linear mixed models
+## Generalized linear mixed models {.smaller}
 
 We can also use the idea of GLMs in LMEs to model data that is both *clustered* and *non-Normal*
 
@@ -323,9 +335,30 @@ We can also use the idea of GLMs in LMEs to model data that is both *clustered* 
 
 $$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
-   - Assumes $[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]$ is distributed as a member of the $\text{exponential family}$
+- Assumes $[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]$ is distributed as a member of the exponential family
    
-   - Use distribution assumption to assume link function $g(\cdot)$ and the form of within-cluster variance
+- We'll use a distribution assumption to assume link function $g(\cdot)$ and the form of within-cluster variance $Var[Y_{ij}|\boldsymbol{X}_i,b_{0i}]$
+
+---
+
+## Generalized linear mixed models {.smaller}
+
+We can also use the idea of GLMs in LMEs to model data that is both *clustered* and *non-Normal*
+
+- We call this hybrid a [generalized linear mixed model]{.alert} (GLMMs)
+
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+- Just as with Normally-distributed outcomes, the random intercepts will still give us an exchangeable covariance structure
+
+$$\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}$$
+
+   - The difference is that the form of $Var[Y_{ij}|\boldsymbol{X}_i,b_{0i}] = Var[\epsilon_{ij}] = \sigma^2_\epsilon$ will depend on the distribution of $Y_{ij}$
 
 ```{r, eval=F, echo=F}
 library(MASS)
@@ -342,9 +375,37 @@ summary(glmm_fit)
 
 ---
 
+## Logistic linear mixed models
+
+Let's be more specific
+
+- Say we have $\vec{Y}_i$ that is distributed Bernoulli with probability of success $p_i$
+
+- We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
+
+[What would our model look like?]{.alert}
+
+---
+
+## Logistic linear mixed models
+
+Let's be more specific
+
+- Say we have $\vec{Y}_i$ that is distributed Bernoulli with probability of success $p_{ij}$
+
+- We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
+
+[What would our model look like?]{.alert}
+
+$$\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \epsilon_{ij}$$
+
+where $b_{0i} \sim N(0, \sigma^2_b)$ and $\epsilon_{ij} \sim \left(0, p_{ij}(1-p_{ij})\right)$
+
+---
+
 ## Some notes
 
-In order to work out the likelihood function for a GLMM, we usually need to do some approximations
+In order to estimate regression coefficients from the likelihood function for a GLMM, we usually need to do some approximations
 
 - There are 2 ways to do this:
 
@@ -354,16 +415,21 @@ In order to work out the likelihood function for a GLMM, we usually need to do s
 
 So you might see multiple functions online for running GLMMs in R and SAS
 
-. . .
 
+:::: {.columns}
+
+::: {.column width="50%"}
+::: {.fragment}
 [We will use]{.alert}
 
 - `glmmPQL()` in R and `PROC GLIMMIX` in SAS
 
 - These both use method 1 above, and can be used with longitudinal models developed later in this course
+:::
+:::
 
-. . .
-
+::: {.column width="50%"}
+::: {.fragment}
 Others include:
 
 - `glmmML()`, `glmm()`, and `glmer()` in R
@@ -375,7 +441,11 @@ Others include:
    - Uses method 2
    
    - Can extend to longitudinal models, but can take a while to run
-   
+:::
+:::
+
+::::
+
 ---
 
 ## Example: cancer remission
@@ -394,7 +464,7 @@ Say we want to see whether years of physician experience impacts whether a patie
 
 Our (loose) structural model is then:
 
-$$\text{logit}(\text{remission}_{ij}) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})$$
+$$\text{logit}(E[\text{remission}_{ij}]) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})$$
 
 ---
 
@@ -468,7 +538,7 @@ summary(logistic_fit)
 
 . . .
 
-- Assumptions: correct structural model; [independence]{.alert}
+- Assumptions: correct structural model; [independent]{.alert} observations
 
 ---
 
@@ -520,13 +590,150 @@ Binary outcomes are special in that there are several alternative link functions
 
 ---
 
-## Count outcomes and GLMMs
+## Count outcomes and GLMMs (poisson)
+
+We've focused a lot on binary outcomes up until now, but count data (Poisson-distributed) can also be modeled using a GLMM
+
+- If we have $\vec{Y}_i$ that is distributed Poisson with event rate $\lambda_{ij}$ (# events per unit of time)
+
+   - Thus the mean for $Y_{ij}$, $E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \mu_{ij}$, is the average count for a given unit of time, which is $\mu_{ij}= \lambda_{ij}T_{ij}$
+
+- We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
+
+[What would our model look like?]{.alert}
+
+$$\text{log}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})$$
+
+where $b_{0i} \sim N(0, \sigma^2_b)$
+
+. . .
+
+[Note the lack of $\epsilon_{ij}$!]{.alert}
+
+- This is because the Poisson distribution assumes $E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = Var[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \mu_{ij}$
+
+   - However, this assumption is rarely true in real life (health) applications
+
+   - Often, $Var[Y|\boldsymbol{X}_i, b_{0i}]>E[Y|\boldsymbol{X}_i, b_{0i}]$, known as [over-dispersion]{.alert}
+
+```{r glmm poisson, eval=F, echo=F}
+glmmPQL( y ~ u,
+         random = ~ 1 | cluster, family = quasipoisson(link="log"),
+         data=data)
+```
+
+---
+
+## Count outcomes and GLMMs (negative binomial)
+
+When count data are over-dispersed, we can use a [negative-binomial]{.alert} regression model
+
+$$\text{log}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij}) + \epsilon_{ij}$$
+
+where $b_{0i}\sim N(0,\sigma^2_b)$ and $\exp(\epsilon_{ij}) \sim \text{Gamma}(1,\theta)$
+
+. . .
+
+- This means $Var(Y_{ij}|\boldsymbol{X}_i, b_{0i}) = E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] + \theta\left(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]\right)^2 = \mu_{ij} + \theta \mu_{ij}^2$ 
+
+- Our covariance structure then looks like 
+
+$$\begin{bmatrix}
+\sigma^2_b + \mu_{ij} + \theta \mu_{ij}^2 & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \mu_{ij} + \theta \mu_{ij}^2
+\end{bmatrix}$$
+```{r glmm neg bin, eval=F, echo=F}
+glmmPQL( y ~ u,
+         random = ~ 1 | cluster, family = negative.binomial(theta = 1),
+         data=data)
+```
+
+---
+
+## Example: murders and income
+
+Let's say we want to see whether the real per capita personal income of a county impacts its number of murders
+
+- Data from 1980
+
+- Assume clustering by state
+
+```{r murder cleaning, echo=F}
+library(wooldridge)
+
+murder <- countymurders %>% 
+   dplyr::filter(year==1980)
+```
+
+---
+
+## Example: murders and income
+
+Let's get an idea of our data...
+
+```{r murder table 1}
+murder %>% 
+   group_by(statefips) %>% 
+   summarize(n=n(), mean_murders=mean(murders, na.rm=T), mean_capita = mean(rpcpersinc))
+```
+
+---
+
+## Example: murders and income
+
+First our Poisson mixed effects model:
+
+$$\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i}$$
+
+- All data is on the per-year scale so $T_{ij}=1$, and $\log(T_{ij})=0$, so no need to add the time offset term
+
+```{r murder glmm}
+murder_glmm <- glmmPQL( murders ~ rpcpersinc,
+         random = ~ 1 | statefips, family = quasipoisson(link="log"), data = murder, 
+         verbose = F )
+summary( murder_glmm )$tTable
+
+```
+
+Poisson GLMM results:
+
+- Poisson $e^{\beta_1}$: `r round(exp(murder_glmm$coefficients$fixed[2]), 4)`
+
+   - 95% CI: (`r round(exp(murder_glmm$coefficients$fixed[2] - summary(murder_glmm)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(murder_glmm$coefficients$fixed[2] + summary(murder_glmm)$tTable[2,2]*pnorm(0.975)), 4)`)
+   
+---
+
+## Example: murders and income
+
+Now our negative binomial mixed effects model:
+
+$$\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i} + \epsilon_{ij}$$
+
+```{r murder glmmnb}
+# find theta #
+murder_theta <- glm.nb(murders ~ rpcpersinc, data=murder)$call$init.theta
+
+# fit model #
+murder_glmmnb <- glmmPQL( murders ~ rpcpersinc,
+         random = ~ 1 | statefips, family = negative.binomial(theta = murder_theta), data = murder, 
+         verbose = F )
+summary( murder_glmmnb )$tTable
+
+```
+
+Negative Binomial GLMM results:
+
+- NB $e^{\beta_1}$: `r round(exp(murder_glmmnb$coefficients$fixed[2]), 4)`
+
+   - 95% CI: (`r round(exp(murder_glmmnb$coefficients$fixed[2] - summary(murder_glmmnb)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(murder_glmmnb$coefficients$fixed[2] + summary(murder_glmmnb)$tTable[2,2]*pnorm(0.975)), 4)`)
 
 ---
 
 ## Marginal effects in GLMMs
 
-Last time we noted that marginal and conditional effects are *identical* in LMEs
+Last week we noted that marginal and conditional effects are *identical* in LMEs
 
 - This is not the case for all GLMMs
 
@@ -556,6 +763,10 @@ $$\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol
 
 - Clearly, $E[\vec{Y}_i|\boldsymbol{X}_i]$ [is not the same as]{.alert} $\frac{\exp(\boldsymbol{X}_i\vec{\beta})}{1+\exp(\boldsymbol{X}_i\vec{\beta})}$
 
+. . .
+
+This phenomenon is known as [non-collapsibility]{.alert}
+
 ---
 
 ## Marginal effects in (identity link) GLMMs
@@ -580,12 +791,6 @@ $$\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol
 &=\boldsymbol{X}_i\vec{\beta}\end{align*}$$
 
    - The conditional and marginal effects are identical again!
-
----
-
-## Example:
-
-
 
 ---
 

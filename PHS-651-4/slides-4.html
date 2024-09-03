@@ -404,6 +404,23 @@ Mary Ryan Baumann, PhD
 <h3>
 October 1, 2024
 </h3>
+<div class="absolute" style="left: 260px; bottom: -100px; width: 1500px; ">
+<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/PHS-651-4/slides-4" class="uri">https://maryryan.github.io/PHS-651-slides/PHS-651-4/slides-4</a></p>
+</div>
+<div class="absolute" style="left: 100px; bottom: -150px; width: 150px; ">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="slides-4_files/figure-revealjs/qr%20code-1.png" width="192"></p>
+</div>
+</div>
+</div>
+</section><section id="zoom-recording-disclaimer" class="slide level2"><h2>Zoom recording disclaimer</h2>
+<p><br></p>
+<p>This class is being conducted in person, as well as over <span class="alert">Zoom</span>. As the instructor, I will be <span class="alert">recording</span> this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.</p>
+<p><br></p>
+<p>If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.</p>
+<p><br></p>
+<p>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</p>
 </section><section id="recap-linear-mixed-effect-models" class="slide level2"><h2>Recap: linear mixed effect models</h2>
 <p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <ul>
@@ -427,14 +444,20 @@ October 1, 2024
 </section><section id="marginal-models" class="slide level2"><h2>Marginal models</h2>
 <p>Basic idea: we want to account for clustering of data, but make inference about <span class="alert">population averages</span> (marginal effects)</p>
 <ul>
-<li><p>These are the ones we’re (usually) most interested in in public and population health!</p></li>
+<li><p>We’re often very interested in these in public and population health!</p></li>
 <li><p>Mean response is conditional <em>only</em> on the adjustment covariates we add to the mean model</p></li>
+<li><p>Want to do this with fewer distributional assumptions than GLMMs</p></li>
 </ul>
 <div class="fragment">
 <p>This means we have to model (estimate) the outcome mean and the outcome covariance <span class="alert">separately</span></p>
 <ul>
-<li><p>We get these in LMEs via distribution assumptions</p></li>
-<li><p>What if we could <span class="alert">empirically estimate</span> the covariance structure and use that?</p></li>
+<li><p>In GLMMs, we get these via distribution assumptions on the outcome and random effects</p></li>
+<li>
+<p>How do we do this without the rigidity of distribution assumptions?</p>
+<ul>
+<li>What if we could <span class="alert">empirically estimate</span> the covariance structure and use that?</li>
+</ul>
+</li>
 </ul>
 </div>
 </section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
@@ -468,11 +491,14 @@ October 1, 2024
 <li>The <span class="alert">within-cluster association</span> of the outcomes<br>
 - Should depend on the means and a correlation parameter(s)</li>
 </ol>
+<div class="fragment absolute" style="bottom: 400px; right: 100px; ">
+<p><span class="alert">Kind of like systematic variation in GLMMs!</span></p>
+</div>
 </div>
 </section><section id="marginal-model-components-cont." class="slide level2"><h2>Marginal model components (cont.)</h2>
-<p>In a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(W_{ij}\)</span>, we might have:</p>
+<p>In a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(U_{ij}\)</span>, we might have:</p>
 <ol type="1">
-<li><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + W_{ij}\beta_1\)</span></li>
+<li><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1\)</span></li>
 </ol>
 <ul>
 <li><p>We specify this based on our domain knowledge</p></li>
@@ -492,9 +518,9 @@ October 1, 2024
 </ul>
 </div>
 </section><section id="marginal-model-components-cont.-1" class="slide level2"><h2>Marginal model components (cont.)</h2>
-<p>In a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(W_{ij}\)</span>, we might have:</p>
+<p>In a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(U_{ij}\)</span>, we might have:</p>
 <ol type="1">
-<li><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + W_{ij}\beta_1\)</span></li>
+<li><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1\)</span></li>
 </ol>
 <p>2.1. <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}\)</span></p>
 <p>2.2. <span class="math inline">\(Corr[Y_{ij}, Y_{ik}] = \alpha\)</span></p>
@@ -815,7 +841,7 @@ October 1, 2024
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(gee)</span>
 <span id="cb1-2"><a href="#cb1-2"></a></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># run an LME with random intercepts for county #</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># run a GEE with exchangeable correlation clustered on counties #</span></span>
 <span id="cb1-4"><a href="#cb1-4"></a>radon_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( log_radon <span class="sc">~</span> floor,</span>
 <span id="cb1-5"><a href="#cb1-5"></a>                  <span class="at">id=</span>cntyfips, <span class="co"># cluster ID needs to be a number, not names or categories</span></span>
 <span id="cb1-6"><a href="#cb1-6"></a>                  <span class="at">data=</span>radon.mn, <span class="at">corstr=</span><span class="st">"exchangeable"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -840,7 +866,7 @@ floor       -0.6698925 0.06583761 -10.17492  0.07746389 -8.647803</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(gee)</span>
 <span id="cb5-2"><a href="#cb5-2"></a></span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># run an LME with random intercepts for county #</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># run a GEE with exchangeable correlation clustered on counties #</span></span>
 <span id="cb5-4"><a href="#cb5-4"></a>radon_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( log_radon <span class="sc">~</span> floor,</span>
 <span id="cb5-5"><a href="#cb5-5"></a>                  <span class="at">id=</span>cntyfips, <span class="co"># cluster ID needs to be a number, not names or categories</span></span>
 <span id="cb5-6"><a href="#cb5-6"></a>                  <span class="at">data=</span>radon.mn, <span class="at">corstr=</span><span class="st">"exchangeable"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -930,7 +956,7 @@ floor       -0.6698925 0.06583761 -10.17492  0.07746389 -8.647803</code></pre>
 <p>Let’s run it:</p>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># run an LME with random intercepts for county #</span></span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># run a GEE with exchangeable correlation clustered on clinicians #</span></span>
 <span id="cb9-2"><a href="#cb9-2"></a>cancer_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
 <span id="cb9-3"><a href="#cb9-3"></a>                  <span class="at">id=</span>doc_ID, <span class="at">data=</span>cancer,</span>
 <span id="cb9-4"><a href="#cb9-4"></a>                  <span class="at">family=</span>binomial,</span>
@@ -957,7 +983,7 @@ CancerStageIV  -1.62205221 0.10058431 -16.126294  0.11781482 -13.767812</code></
 </section><section id="gees-cancer-remission-3" class="slide level2"><h2>GEEs: cancer remission</h2>
 <p>Let’s run it:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># run an LME with random intercepts for county #</span></span>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># run a GEE with random intercepts for county #</span></span>
 <span id="cb13-2"><a href="#cb13-2"></a>cancer_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
 <span id="cb13-3"><a href="#cb13-3"></a>                  <span class="at">id=</span>doc_ID, <span class="at">data=</span>cancer,</span>
 <span id="cb13-4"><a href="#cb13-4"></a>                  <span class="at">family=</span>binomial,</span>
@@ -989,6 +1015,10 @@ CancerStageIV  -1.62205221 0.10058431 -16.126294  0.11781482 -13.767812</code></
 </div>
 </section><section id="glmms-vs-gees" class="slide level2"><h2>GLMMs vs GEEs</h2>
 <p>We noted that GEEs are <em>marginal</em> models while GLMMS are <em>conditional</em> models…</p>
+<div class="fragment">
+<p><span class="alert">What are some other differences between GEEs and GLMMs?</span></p>
+</div>
+<div class="fragment">
 <table>
 <colgroup>
 <col style="width: 20%">
@@ -1032,7 +1062,9 @@ CancerStageIV  -1.62205221 0.10058431 -16.126294  0.11781482 -13.767812</code></
 <td>Yes</td>
 </tr>
 </tbody>
-</table></section><section id="glmms-vs-gees-radon" class="slide level2"><h2>GLMMs vs GEEs: radon</h2>
+</table>
+</div>
+</section><section id="glmms-vs-gees-radon" class="slide level2"><h2>GLMMs vs GEEs: radon</h2>
 <p>With these differences in mind, let’s see how they compare in analyzing our Minnesota radon data</p>
 <ul>
 <li>Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses</li>
@@ -1205,6 +1237,15 @@ rpcpersinc   0.000274346 2.804078e-05  9.783821 1.786876e-05 15.353391</code></p
 <li>95% CI: (1.0003, 1.0003)</li>
 </ul>
 </li>
+</ul></section><section id="a-note-on-population-level-interpretation" class="slide level2"><h2>A note on “population”-level interpretation</h2>
+<p>GEEs are often touted as having “population”-level interpretations as opposed to GLMMs cluster-level ones</p>
+<ul>
+<li>This is usually easier to think about than marginal vs conditional effects</li>
+</ul>
+<p>Our estimates (and our interpretations!) are only as good as our data, though</p>
+<ul>
+<li><p>If the data we’re using to build a GEE isn’t <span class="alert">representative of the population</span> we’re interested in, it’s not going to magically give us results generalizable to the population</p></li>
+<li><p>A more accurate description would be that GEEs give us sample-population-level interpretations while GLMMs give us sample-cluster-level interpretations</p></li>
 </ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">

@@ -113,21 +113,23 @@ all clusters?]{.alert}
 Basic idea: we want to account for clustering of data, but make
 inference about [population averages]{.alert} (marginal effects)
 
--   These are the ones we're (usually) most interested in in public and
-    population health!
+-   We're often very interested in these in public and population health!
 
 -   Mean response is conditional *only* on the adjustment covariates we add
     to the mean model
+    
+- Want to do this with fewer distributional assumptions than GLMMs
 
 . . .
 
 This means we have to model (estimate) the outcome mean and the outcome
 covariance [separately]{.alert}
 
--   We get these in LMEs via distribution assumptions
+- In GLMMs, we get these via distribution assumptions on the outcome and random effects
 
--   What if we could [empirically estimate]{.alert} the covariance
-    structure and use that?
+- How do we do this without the rigidity of distribution assumptions?
+
+   - What if we could [empirically estimate]{.alert} the covariance structure and use that?
 
 ------------------------------------------------------------------------
 
@@ -158,15 +160,19 @@ There are 2 main components of a marginal model
 
    ii. The [within-cluster association]{.alert} of the outcomes\
       - Should depend on the means and a correlation parameter(s)
+      
+::: {.fragment .absolute bottom=400 right=100}
+[Kind of like systematic variation in GLMMs!]{.alert}
+:::
 
 ---
 
 ## Marginal model components (cont.)
 
 In a model with clustered continuous responses $Y_{ij}$ and only one exposure
-$W_{ij}$, we might have:
+$U_{ij}$, we might have:
 
-1.  $E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + W_{ij}\beta_1$
+1.  $E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1$
 
 - We specify this based on our domain knowledge
     
@@ -189,9 +195,9 @@ $W_{ij}$, we might have:
 ## Marginal model components (cont.)
 
 In a model with clustered continuous responses $Y_{ij}$ and only one exposure
-$W_{ij}$, we might have:
+$U_{ij}$, we might have:
 
-1.  $E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + W_{ij}\beta_1$
+1.  $E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1$
 
 2.1.  $Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}$
 
@@ -643,7 +649,7 @@ Let's run it:
 ```{r radon gee}
 library(gee)
 
-# run an LME with random intercepts for county #
+# run a GEE with exchangeable correlation clustered on counties #
 radon_gee <- gee( log_radon ~ floor,
                   id=cntyfips, # cluster ID needs to be a number, not names or categories
                   data=radon.mn, corstr="exchangeable" )
@@ -660,7 +666,7 @@ Let's run it:
 ```{r radon gee2}
 library(gee)
 
-# run an LME with random intercepts for county #
+# run a GEE with exchangeable correlation clustered on counties #
 radon_gee <- gee( log_radon ~ floor,
                   id=cntyfips, # cluster ID needs to be a number, not names or categories
                   data=radon.mn, corstr="exchangeable" )
@@ -777,7 +783,7 @@ Let's run it:
 . . .
 
 ```{r cancer gee}
-# run an LME with random intercepts for county #
+# run a GEE with exchangeable correlation clustered on clinicians #
 cancer_gee <- gee( remission ~ Experience + CancerStage,
                   id=doc_ID, data=cancer,
                   family=binomial,
@@ -794,7 +800,7 @@ summary( cancer_gee )$coef
 Let's run it:
 
 ```{r cancer gee2}
-# run an LME with random intercepts for county #
+# run a GEE with random intercepts for county #
 cancer_gee <- gee( remission ~ Experience + CancerStage,
                   id=doc_ID, data=cancer,
                   family=binomial,
@@ -827,6 +833,12 @@ summary( cancer_gee )$coef
 
 We noted that GEEs are *marginal* models while GLMMS are *conditional*
 models...
+
+. . .
+
+[What are some other differences between GEEs and GLMMs?]{.alert}
+
+. . .
 
 |                            | GEE                                                                    | GLMM |
 |----------------------------|------------------------------------------------------------------------|----------------------------------------------|
@@ -1043,3 +1055,17 @@ summary( murder_gee )$coef
 - GEE $e^{\beta_1}$: `r round(exp(summary(murder_gee)$coef[2,1]),4)`
 
    - 95% CI: (`r round(exp(summary(murder_gee)$coef[2,1] - summary(murder_gee)$coef[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(murder_gee)$coef[2,1] + summary(murder_gee)$coef[2,2]*pnorm(0.975)), 4)`)
+
+---
+
+## A note on "population"-level interpretation
+
+GEEs are often touted as having "population"-level interpretations as opposed to GLMMs cluster-level ones
+
+- This is usually easier to think about than marginal vs conditional effects
+
+Our estimates (and our interpretations!) are only as good as our data, though
+
+- If the data we're using to build a GEE isn't [representative of the population]{.alert} we're interested in, it's not going to magically give us results generalizable to the population
+
+- A more accurate description would be that GEEs give us sample-population-level interpretations while GLMMs give us sample-cluster-level interpretations

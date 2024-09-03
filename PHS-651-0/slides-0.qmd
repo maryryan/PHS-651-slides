@@ -365,6 +365,8 @@ I've also scanned several chapters from books I could not find electronic copies
 
 - [Analysis of Longitudinal Data]{.alert}, 2nd edition. 2002. Diggle PJ, Heagerty P, Liang K, and Zeger SL. Oxford University Press: Oxford. ISBN: 9780198524847
 
+- [Data Analysis Using Regression and Multilevel/Hierarchical Models]{.alert}. 2007. Gelman A and Hill J. Cambridge University Press: New York. ISBN: 9780521686891
+
 ---
 
 ## Course rhythms
@@ -372,6 +374,30 @@ I've also scanned several chapters from books I could not find electronic copies
 We'll roughly follow this weekly workflow:
 
 ![](course-rhythms.png){width="25%"}
+
+---
+
+## AI policy
+
+Official stance of this course is that I don't condone the use of AI tools for assignments
+
+[Why?]{.alert}
+
+- I want to know how *you* think, not how an LLM thinks
+
+- Validity of responses is not guaranteed
+
+- Often gives the look of intellectualism without the substance
+
+- Training data ethics are debatable
+
+- Policy follows the guidelines of most academic journals
+
+[I don't use AI detection software]{.alert}
+
+- Mostly because it's bad
+
+- Subpar answers will receive subpar grades, regardless of who/what generated it
 
 ---
 

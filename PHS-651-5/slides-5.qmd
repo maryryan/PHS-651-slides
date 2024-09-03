@@ -91,6 +91,14 @@ There are some analyses/diagnostics we can perform to explore this
    
    - Use these as a temperature check for whether the model needs to be adjusted, how much confidence can be placed in estimates, and whether estimates need to be presented with caveats
 
+. . .
+
+Also, in the non-longitudinal clustered data settings, there are not many diagnostic checks for GEE models
+
+- This is because we aren't *assuming* much for GEEs - we're estimating most of the covariance matrix
+
+- So we'll mostly be focusing on mixed models in this session
+
 ---
 
 ## Residual analysis
@@ -162,6 +170,9 @@ $$\widehat{\Sigma}_i = L_i L_i^T$$
 
 The transformed residuals are then:
 $$r^*_i = L_i^{-1}r_i$$
+
+We would then plot the Cholesky-transformed residuals agains the Cholesky-transformed predicted response
+
 ---  
 
 ## Cholesky decomposition: Minnesota radon
@@ -180,23 +191,35 @@ radon.mn <- radon %>%
    dplyr::filter(state == "MN")
 ```
 
-CHECK THE CODE BELOW!!!
 
-```{r radon lme, eval=F}
-library(lme4)
+```{r radon nlme}
+library(nlme)
+library(mgcv)
 
 # run an LME with random intercepts for county #
-radon_lme <- lmer( log_radon ~ floor + (1 | county), data=radon.mn )
+radon_nlme <- lme( log_radon ~ floor,
+                   random = ~ 1 | county, data=radon.mn )
 
 # get the residuals #
-resid_lme <- residuals( radon_lme, level=0 )
+raw.residuals <- residuals(radon_nlme, level=0)
 
-# get the Li matrix #
-Li <- getME( radon_lme, "Lambdat" )
+# Cholesky residuals
+est.cov <- extract.lme.cov(radon_nlme, radon) # We extract the blocked covariance function of the residuals
+Li <- t(chol(est.cov)) # We find the Cholesky transformation of the residuals. (The transform is to get the lower trangular matrix.)
+cholesky.residuals <- solve(Li) %*% raw.residuals # We then calculate the transformed residuals.
 
-# transform residuals #
-resid_chol <- solve(li) %*% resid_lme
+hist(cholesky.residuals) # We plot the residuals
+
+cholesky.fitted <- solve(Li) %*% fitted( radon_nlme)
+
+plot(cholesky.fitted, cholesky.residuals)
 ```
+
+---
+
+## Cholesky decomposition
+
+Unfortunately it's not easy to do this for GLMMs with non-Normal outcomes
 
 ---
 
@@ -212,9 +235,42 @@ Similar scatter plots of the de-correlated residuals against a particular covari
 
 ---
 
-## Informative cluster size
+## Diagnostics for GEEs
+
+While we don't do a lot of model testing for GEEs, we can compare the empirical estimates of the covariance structure to the model-based estimates
+
+- If there is a large discrepancy, our robust variance estimator is probably doing the heavy lifting of correcting this for us
+
+- In this setting (non-longitudinal clustered data) though, we aren't likely to see much discrepancy
 
 ---
 
 ## Small n corrections
 
+Where we can focus on GEE is in the variance corrections department
+
+- The sandwich variance estimator can help us out with misspecification, but it doesn't perform well when we don't have many (<50) clusters
+
+   - Since sandwich estimators are more often used with GEEs and GLMMs, this "small n" issue is usually more common in GEE analyses
+
+- There are several choices of correction you can implement in either SAS or R:
+
+   - Mancl & DeRoun
+   
+   - Kauermann & Carroll
+   
+   - Fay & Graubard
+
+- Which one you pick isn't so important (comparative benefits of each are relatively small)
+
+- R: `geesmv` package: https://cran.r-project.org/web/packages/geesmv/geesmv.pdf
+
+   - has all the regular corrections (KC, MR, FG)
+
+- SAS: GLIMMIX has KC (EMPIRICAL=HC2), FG (EMPIRICAL=FIROEEQ), MR (EMPIRICAL=HC3)
+
+   - nothing for GENMOND
+
+---
+
+## Informative cluster size

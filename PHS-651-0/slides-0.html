@@ -536,8 +536,7 @@ September 5, 2024
 <li><p>Allows us to be <span class="alert">more precise</span> when independence assumption isn’t reasonable</p></li>
 <li><p>Lets us ask a <span class="alert">wider variety</span> of questions</p></li>
 </ul>
-<div class="r-stack">
-<div class="fragment fade-in-then-out">
+<div class="fragment">
 <p>When might independence not be reasonable?</p>
 <ul>
 <li>
@@ -549,15 +548,27 @@ September 5, 2024
 <li><p>We’re observing the same individuals repeatedly (longitudinal data)</p></li>
 </ul>
 </div>
-<div class="fragment">
+</section><section id="our-focus-1" class="slide level2 smaller"><h2>Our focus</h2>
+<p>We’ve previously assumed all observations are <span class="alert">independent</span></p>
+<ul>
+<li><p>Can be a reasonable assumption in certain settings (certain cross-sectional studies)</p></li>
+<li>
+<p>When not reasonable, methods from PHS 552 can still be useful if other tools aren’t available</p>
+<ul>
+<li>We’ll explore the boundaries of this</li>
+</ul>
+</li>
+</ul>
+<p>Here, we’ll be <span class="alert">expanding our statistical toolbox</span></p>
+<ul>
+<li><p>Allows us to be <span class="alert">more precise</span> when independence assumption isn’t reasonable</p></li>
+<li><p>Lets us ask a <span class="alert">wider variety</span> of questions</p></li>
+</ul>
 <p>Non-independence we <span class="alert">won’t</span> be getting into</p>
 <ul>
 <li><p>Time series modeling</p></li>
 <li><p>Spatial statistical modeling</p></li>
-</ul>
-</div>
-</div>
-</section><section id="learning-objectives" class="slide level2"><h2>Learning objectives</h2>
+</ul></section><section id="learning-objectives" class="slide level2"><h2>Learning objectives</h2>
 <p>Upon successful completion of the course, students will be able to:</p>
 <ol type="1">
 <li><p>Extend the knowledge of regression analysis beyond ordinary linear and logistic regression models</p></li>
@@ -681,7 +692,7 @@ September 5, 2024
 <div class="fragment">
 <ul>
 <li>
-<span class="alert">Interpretation</span>: <br><br><br><br>
+<span class="alert">Interpretation</span>: <br><br>
 </li>
 </ul>
 </div>
@@ -692,14 +703,12 @@ September 5, 2024
 <div class="fragment">
 <ul>
 <li>
-<span class="alert">Interpretation</span>: <br><br><br><br>
+<span class="alert">Interpretation</span>: <br><br>
 </li>
 </ul>
 </div>
 </section><section id="review-ordinary-linear-regression-1" class="slide level2"><h2>Review: ordinary linear regression</h2>
 <p>We can write this in matrix notation: <span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon},\]</span></p>
-<div class="r-stack">
-<div class="fragment fade-in-then-out" data-fragment-index="1">
 <p>where</p>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -715,8 +724,8 @@ September 5, 2024
 </ul>
 </div>
 </div>
-</div>
-<div class="fragment fade-in-then-out" data-fragment-index="2">
+</section><section id="review-ordinary-linear-regression-2" class="slide level2"><h2>Review: ordinary linear regression</h2>
+<p>We can write this in matrix notation: <span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon},\]</span></p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
@@ -742,8 +751,8 @@ September 5, 2024
 \vdots\\
 1\beta_0 + u_n\beta_1
 \end{bmatrix}\]</span></p>
-</div>
-<div class="fragment fade-in-then-out" data-fragment-index="3">
+</section><section id="review-ordinary-linear-regression-3" class="slide level2"><h2>Review: ordinary linear regression</h2>
+<p>We can write this in matrix notation: <span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon},\]</span></p>
 <p><span class="math inline">\(\boldsymbol{X}\vec{\beta} + \vec{\epsilon}\)</span> is an example of <span class="alert">matrix addition</span></p>
 <ul>
 <li>Results in a <span class="math inline">\(n\)</span>-row by 1 column vector</li>
@@ -754,12 +763,10 @@ September 5, 2024
 \vdots\\
 (1\beta_0 + u_n\beta_1) + \epsilon_n
 \end{bmatrix}\]</span></p>
-</div>
-<div class="fragment" data-fragment-index="4">
+<div class="fragment">
 <p><span class="math inline">\(\vec{Y}\)</span> and <span class="math inline">\(\boldsymbol{X}\)</span> are <span class="alert">data</span>, while <span class="math inline">\(\vec{\beta}\)</span> and <span class="math inline">\(\vec{\epsilon}\)</span> are <span class="alert">model parameters</span></p>
 </div>
-</div>
-</section><section id="review-ordinary-linear-regression-2" class="slide level2"><h2>Review: ordinary linear regression</h2>
+</section><section id="review-ordinary-linear-regression-4" class="slide level2"><h2>Review: ordinary linear regression</h2>
 <p><span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon}\]</span> We like to think of splitting our model into 2 parts:</p>
 <div class="fragment">
 <ol type="1">
@@ -794,8 +801,8 @@ September 5, 2024
 <ul>
 <li>This is our single best guess for what <span class="math inline">\(\beta\)</span> is 🎯</li>
 </ul>
-<div class="r-stack">
-<div class="fragment fade-in-then-out">
+</div>
+<div class="fragment">
 <p><span class="math inline">\(\boldsymbol{X}^T\)</span> is an example of <span class="alert">transposing a matrix</span></p>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -813,16 +820,20 @@ September 5, 2024
 </div>
 </div>
 </div>
-<div class="fragment">
+</section><section id="review-ols-estimation-1" class="slide level2"><h2>Review: OLS estimation</h2>
+<p>Model parameters are the “true” relationship between our independent variables and our response (given how we’re modeling the relationship…)</p>
+<ul>
+<li>We try to estimate what that particular relationship might be using data</li>
+</ul>
+<p>We can get a <span class="alert">point estimate</span> for <span class="math inline">\(\beta\)</span> using the data: <span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\vec{Y}\]</span></p>
+<ul>
+<li>This is our single best guess for what <span class="math inline">\(\beta\)</span> is 🎯</li>
+</ul>
 <p><span class="math inline">\((\boldsymbol{X}^T\boldsymbol{X})^{-1}\)</span> is an example of <span class="alert">matrix inversion</span></p>
 <ul>
 <li>Think of it like you’re dividing <span class="math inline">\(\boldsymbol{X}^T\vec{Y}\)</span> by <span class="math inline">\((\boldsymbol{X}^T\boldsymbol{X})\)</span>: <span class="math inline">\(\frac{\boldsymbol{X}^T\vec{Y}}{(\boldsymbol{X}^T\boldsymbol{X})}\)</span>
 </li>
-</ul>
-</div>
-</div>
-</div>
-</section><section id="review-ols-inference" class="slide level2 smaller"><h2>Review: OLS inference</h2>
+</ul></section><section id="review-ols-inference" class="slide level2 smaller"><h2>Review: OLS inference</h2>
 <p>Because our data is only a <span class="alert">sample</span> from the entire <span class="alert">population of interest</span>, we always have uncertainty in that estimate… We need to incorporate varaince of our parameter to quantify that uncertainty</p>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -870,8 +881,8 @@ September 5, 2024
 <div class="fragment">
 <p>We can fixed this with <span class="alert">weighted least squares</span> (WLS)</p>
 <p><span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}\]</span></p>
-<div class="r-stack">
-<div class="fragment fade-in-then-out">
+</div>
+<div class="fragment">
 <ul>
 <li>
 <span class="math inline">\(\boldsymbol{W}\)</span> is a diagonal matrix of weights</li>
@@ -883,7 +894,13 @@ w_1 &amp; 0 &amp; \dots &amp; 0\\
 0 &amp; 0 &amp; \dots &amp; w_n\\
 \end{bmatrix}\]</span></p>
 </div>
-<div class="fragment">
+</section><section id="review-weighted-least-squares-1" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
+<p>What happens when <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}]\)</span> is <span class="alert">NOT the same</span> across all of <span class="math inline">\(\vec{Y}\)</span>?</p>
+<ul>
+<li>Estimate of <span class="math inline">\(\beta\)</span> will be fine, but <span class="alert">inference</span> will be incorrect</li>
+</ul>
+<p>We can fixed this with <span class="alert">weighted least squares</span> (WLS)</p>
+<p><span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}\]</span></p>
 <ul>
 <li>Assumes variance of the outcomes is</li>
 </ul>
@@ -892,9 +909,6 @@ w_1 &amp; 0 &amp; \dots &amp; 0\\
 <li>Which gives us an estimated variance for <span class="math inline">\(\widehat{\beta}\)</span> of</li>
 </ul>
 <p><span class="math display">\[\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
-</div>
-</div>
-</div>
 </section><section id="review-robust-variance" class="slide level2"><h2>Review: robust variance</h2>
 <p>WLS can help if our assumptions are correct, but what if <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}] \ne \sigma^2\boldsymbol{W}^{-1}\)</span>?</p>
 <div class="fragment">
@@ -912,8 +926,8 @@ w_1 &amp; 0 &amp; \dots &amp; 0\\
 </ul>
 </li>
 </ul>
-<div class="r-stack">
-<div class="fragment fade-in-then-out">
+</div>
+<div class="fragment">
 <ul>
 <li>
 <p>If the WLS variance is correct (<span class="math inline">\(\boldsymbol{V} = \sigma^2\boldsymbol{W}^{-1}\)</span>) then this simplifies back to <span class="math inline">\(\sigma^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\)</span></p>
@@ -933,18 +947,28 @@ w_1 &amp; 0 &amp; \dots &amp; 0\\
 </li>
 </ul>
 </div>
-<div class="fragment">
+</section><section id="review-robust-variance-1" class="slide level2"><h2>Review: robust variance</h2>
+<p>WLS can help if our assumptions are correct, but what if <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}] \ne \sigma^2\boldsymbol{W}^{-1}\)</span>?</p>
+<ul>
+<li>
+<p>Then true variance of <span class="math inline">\(\widehat{\beta}\)</span> is <span class="math display">\[(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{\Sigma}\boldsymbol{W}\boldsymbol{X})(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
+<ul>
+<li>
+<span class="math inline">\(\boldsymbol{\Sigma}\)</span> is the true variance of <span class="math inline">\(\vec{Y}\)</span>
+</li>
+</ul>
+<p><!-- - We empirically estimate $\boldsymbol{\Sigma}$ with $\widehat{\Sigma}=(Y_i - \vec{X}_i\widehat{\vec{\beta}})(Y_i - \vec{X}_i\widehat{\vec{\beta}})^T$ --></p>
+<ul>
+<li>We call this a <span class="alert">robust variance</span> estimate</li>
+</ul>
+</li>
+</ul>
 <p>Robust variance is known as a <span class="alert">post hoc</span> correction because it only affects inference of <span class="math inline">\(\widehat{\beta}\)</span>, not how we construct the mean model</p>
 <ul>
 <li>Note that if <span class="math inline">\(\boldsymbol{W} = \boldsymbol{1}\)</span>, then we’re just applying the robust variance correction to OLS!</li>
-</ul>
-</div>
-</div>
-</div>
-</section><section id="review-logistic-regression" class="slide level2"><h2>Review: logistic regression</h2>
+</ul></section><section id="review-logistic-regression" class="slide level2"><h2>Review: logistic regression</h2>
 <p>Now what happens if <span class="math inline">\(\vec{Y}\)</span> is binary?</p>
-<div class="r-stack">
-<div class="fragment fade-in-then-out">
+<div class="fragment">
 <ul>
 <li>
 <p>We could still try to model <span class="math inline">\(\vec{Y}\)</span> with <span class="math display">\[E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}\]</span> and use WLS to deal with non-constant variance (since <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}] = E[\vec{Y}|\boldsymbol{X}]\left(1 - E[\vec{Y}|\boldsymbol{X}]\right)\)</span>)</p>
@@ -955,7 +979,8 @@ w_1 &amp; 0 &amp; \dots &amp; 0\\
 <li><p>But this gets squirrel-y as your probability of an “event” drifts toward 0 or 1</p></li>
 </ul>
 </div>
-<div class="fragment">
+</section><section id="review-logistic-regression-1" class="slide level2"><h2>Review: logistic regression</h2>
+<p>Now what happens if <span class="math inline">\(\vec{Y}\)</span> is binary?</p>
 <p>An alternative model is <span class="alert">logistic regression</span></p>
 <p><span class="math display">\[\log\left(\frac{E[\vec{Y}|\boldsymbol{X}]}{1-E[\vec{Y}|\boldsymbol{X}]}\right) = \boldsymbol{X}\vec{\beta}\]</span></p>
 <ul>
@@ -974,11 +999,8 @@ w_1 &amp; 0 &amp; \dots &amp; 0\\
 </ul>
 </li>
 </ul>
-<div class="fragment">
+<p>. .</p>
 <p>We’ll dig into logistic regression more in a few classes</p>
-</div>
-</div>
-</div>
 </section><section id="review-poisson-regression" class="slide level2"><h2>Review: Poisson regression</h2>
 <p>Now what happens if <span class="math inline">\(\vec{Y}\)</span> is a count of something?</p>
 <div class="fragment">
@@ -994,12 +1016,39 @@ w_1 &amp; 0 &amp; \dots &amp; 0\\
 </div>
 <div class="fragment">
 <ul>
-<li>In practice, the linear predictor is usually specified in terms of the mean <span class="math inline">\(\lambda(u_i) T_i\)</span> rather than the rate <span class="math inline">\(\lambda_i\)</span>
+<li>In practice, the linear predictor is usually specified in terms of the mean events per observed time <span class="math inline">\(\lambda(u_i) T_i\)</span> rather than the rate <span class="math inline">\(\lambda_i\)</span>
 </li>
 </ul>
-<p><span class="math display">\[\log\left(\lambda(u_i)\right) + \log(T_i) = \vec{X}_i\vec{\beta} + \log(T_i)\]</span></p>
+<p><span class="math display">\[\log(\mu_i)=\log\left(\lambda(u_i)\right) + \log(T_i) = \vec{X}_i\vec{\beta} + \log(T_i)\]</span></p>
 <ul>
 <li>This makes <span class="math inline">\(\log(T_i)\)</span> an offset, a predictor variable (covariate) with a known coefficient (<span class="math inline">\(\beta\)</span>) of 1</li>
+</ul>
+</div>
+</section><section id="review-poisson-vs-negative-binomial-regression" class="slide level2"><h2>Review: Poisson vs negative binomial regression</h2>
+<p>An issue with Poisson regression is that it assumes <span class="math inline">\(Var[Y_i|\vec{X}_i] = E[Y_i|\vec{X}_i] = \mu_i\)</span></p>
+<ul>
+<li>
+<p>In our data, we usually end up finding <span class="math inline">\(Var[Y_i|\vec{X}_i] &gt; E[Y_i|\vec{X}_i]\)</span></p>
+<ul>
+<li>This causes <span class="alert">overdispersion</span>
+</li>
+</ul>
+</li>
+</ul>
+<div class="fragment">
+<p>One way to combat this is by assuming our count outcome <span class="math inline">\(\vec{Y}\)</span> actually follows a negative binomial distribution that allows <span class="math inline">\(Var[Y_i|\vec{X}_i] &gt; E[Y_i|\vec{X}_i]\)</span></p>
+<ul>
+<li>
+<p>We still use a log transformation on the outcome, so the model is written the same as before – the difference is on the variance</p>
+<ul>
+<li>As the mean number of events in observed time:</li>
+</ul>
+<p><span class="math display">\[\log(\mu_i)=\log\left(\lambda(u_i)\right) + \log(T_i) = \vec{X}_i\vec{\beta} + \log(T_i)\]</span></p>
+<ul>
+<li>Or as the rate of events given a standard length of time:</li>
+</ul>
+<p><span class="math display">\[\log\left(\lambda(\vec{x}_i)\right) = \vec{X}_i\vec{\beta}\]</span></p>
+</li>
 </ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">

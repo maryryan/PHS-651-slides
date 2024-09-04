@@ -253,9 +253,8 @@ Here, we'll be [expanding our statistical toolbox]{.alert}
 
 - Lets us ask a [wider variety]{.alert} of questions
 
-::: {.r-stack}
+. . .
 
-::: {.fragment .fade-in-then-out}
 When might independence not be reasonable?
 
 - Group membership makes in-group outcome variability different from between-group variability
@@ -263,17 +262,30 @@ When might independence not be reasonable?
    - i.e., health outcomes correlated by neighborhood, occular outcomes correlated by individual
 
 - We're observing the same individuals repeatedly (longitudinal data)
-:::
 
-::: {.fragment}
+---
+
+## Our focus {.smaller}
+
+We've previously assumed all observations are [independent]{.alert}
+
+- Can be a reasonable assumption in certain settings (certain cross-sectional studies)
+
+- When not reasonable, methods from PHS 552 can still be useful if other tools aren't available
+
+   - We'll explore the boundaries of this
+   
+Here, we'll be [expanding our statistical toolbox]{.alert}
+
+- Allows us to be [more precise]{.alert} when independence assumption isn't reasonable
+
+- Lets us ask a [wider variety]{.alert} of questions
+
 Non-independence we [won't]{.alert} be getting into
 
 - Time series modeling
 
 - Spatial statistical modeling
-:::
-
-:::
 
 ---
 
@@ -460,16 +472,12 @@ $$Y_i = \beta_0 + \beta_1 U_i + \epsilon_i$$
    - [Interpretation]{.alert}:
    <br>
    <br>
-   <br>
-   <br>
 :::
    
 - $\beta_1$: model slope
 
 ::: {.fragment}
    - [Interpretation]{.alert}:
-   <br>
-   <br>
    <br>
    <br>
 :::
@@ -481,8 +489,6 @@ $$Y_i = \beta_0 + \beta_1 U_i + \epsilon_i$$
 We can write this in matrix notation: 
 $$\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon},$$
 
-::: {.r-stack}
-::: {.fragment .fade-in-then-out fragment-index=1}
 where
 
 ::: {.columns}
@@ -520,11 +526,14 @@ where
 :::
 :::
 
-:::
+---
 
-::: {.fragment .fade-in-then-out fragment-index=2}
+## Review: ordinary linear regression
 
-::: {.columns}
+We can write this in matrix notation: 
+$$\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon},$$
+
+:::: {.columns}
 
 ::: {.column width="50%"}
 - $\boldsymbol{X} = \begin{bmatrix}
@@ -543,7 +552,7 @@ where
     \beta_1
 \end{bmatrix}$ is a vector of coefficients
 :::
-:::
+::::
 
 $\boldsymbol{X}\vec{\beta}$ is an example of [matrix multiplication]{.alert}
 
@@ -555,9 +564,13 @@ $$\begin{bmatrix}
 \vdots\\
 1\beta_0 + u_n\beta_1
 \end{bmatrix}$$
-:::
 
-::: {.fragment .fade-in-then-out fragment-index=3}
+---
+
+## Review: ordinary linear regression
+
+We can write this in matrix notation: 
+$$\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon},$$
 
 $\boldsymbol{X}\vec{\beta} + \vec{\epsilon}$ is an example of [matrix addition]{.alert}
 
@@ -569,13 +582,10 @@ $$\begin{bmatrix}
 \vdots\\
 (1\beta_0 + u_n\beta_1) + \epsilon_n
 \end{bmatrix}$$
-:::
 
-::: {.fragment fragment-index=4}
+. . .
+
 $\vec{Y}$ and $\boldsymbol{X}$ are [data]{.alert}, while $\vec{\beta}$ and $\vec{\epsilon}$ are [model parameters]{.alert}
-:::
-
-:::
 
 ---
 
@@ -617,9 +627,8 @@ $$\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbo
 
 - This is our single best guess for what $\beta$ is 🎯
 
-::: {.r-stack}
+. . .
 
-::: {.fragment .fade-in-then-out}
 $\boldsymbol{X}^T$ is an example of [transposing a matrix]{.alert}
 
 :::: {.columns}
@@ -644,15 +653,22 @@ $$\boldsymbol{X}^T = \begin{bmatrix}
 
 ::::
 
-:::
+---
 
-::: {.fragment}
+## Review: OLS estimation
+
+Model parameters are the "true" relationship between our independent variables and our response (given how we're modeling the relationship...)
+
+- We try to estimate what that particular relationship might be using data
+
+We can get a [point estimate]{.alert} for $\beta$ using the data:
+$$\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\vec{Y}$$
+
+- This is our single best guess for what $\beta$ is 🎯
+
 $(\boldsymbol{X}^T\boldsymbol{X})^{-1}$ is an example of [matrix inversion]{.alert}
 
 - Think of it like you're dividing $\boldsymbol{X}^T\vec{Y}$ by $(\boldsymbol{X}^T\boldsymbol{X})$: $\frac{\boldsymbol{X}^T\vec{Y}}{(\boldsymbol{X}^T\boldsymbol{X})}$
-:::
-   
-::: 
 
 ---
 
@@ -713,9 +729,8 @@ We can fixed this with [weighted least squares]{.alert} (WLS)
 
 $$\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}$$
 
-::: {.r-stack}
+. . .
 
-::: {.fragment .fade-in-then-out}
 - $\boldsymbol{W}$ is a diagonal matrix of weights
 
 $$\begin{bmatrix}
@@ -724,9 +739,19 @@ w_1 & 0 & \dots & 0\\
 \vdots& &\ddots &\vdots\\
 0 & 0 & \dots & w_n\\
 \end{bmatrix}$$
-:::
 
-::: {.fragment}
+---
+
+## Review: weighted least squares {.smaller}
+
+What happens when $Var[\vec{Y}|\boldsymbol{X}]$ is [NOT the same]{.alert} across all of $\vec{Y}$?
+
+- Estimate of $\beta$ will be fine, but [inference]{.alert} will be incorrect
+
+We can fixed this with [weighted least squares]{.alert} (WLS)
+
+$$\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}$$
+
 - Assumes variance of the outcomes is
 
 $$Var[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{W}^{-1}$$
@@ -734,9 +759,6 @@ $$Var[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{W}^{-1}$$
 - Which gives us an estimated variance for $\widehat{\beta}$ of
 
 $$\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}$$
-:::
-
-:::
 
 ---
 
@@ -755,9 +777,8 @@ $$(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}(\boldsymbol{X}^T\boldsymbo
    
    - We call this a [robust variance]{.alert} estimate
 
-::: {.r-stack}
-   
-::: {.fragment .fade-in-then-out}
+. . .
+
 - If the WLS variance is correct ($\boldsymbol{V} = \sigma^2\boldsymbol{W}^{-1}$) then this simplifies back to $\sigma^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}$
 
    - That's why we call it "robust" -- it doesn't penalize us if our assumptions about $\boldsymbol{W}$ are correct, but helps fix it if they're wrong
@@ -769,15 +790,25 @@ We can estimate each element of $\boldsymbol{\Sigma}$ with the squared residual 
 - In 552, we assumed $\boldsymbol{\Sigma}$ was a diagonal matrix (because assume 0 covariance)
 
    - We'll break that assumption in this class
-:::
 
-::: {.fragment}
+---
+
+## Review: robust variance
+
+WLS can help if our assumptions are correct, but what if $Var[\vec{Y}|\boldsymbol{X}] \ne \sigma^2\boldsymbol{W}^{-1}$?
+
+- Then true variance of $\widehat{\beta}$ is
+$$(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{\Sigma}\boldsymbol{W}\boldsymbol{X})(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}$$
+
+   - $\boldsymbol{\Sigma}$ is the true variance of $\vec{Y}$
+   
+   <!-- - We empirically estimate $\boldsymbol{\Sigma}$ with $\widehat{\Sigma}=(Y_i - \vec{X}_i\widehat{\vec{\beta}})(Y_i - \vec{X}_i\widehat{\vec{\beta}})^T$ -->
+   
+   - We call this a [robust variance]{.alert} estimate
+   
 Robust variance is known as a [post hoc]{.alert} correction because it only affects inference of $\widehat{\beta}$, not how we construct the mean model
 
 - Note that if $\boldsymbol{W} = \boldsymbol{1}$, then we're just applying the robust variance correction to OLS!
-:::
-
-:::
 
 ---
 
@@ -785,9 +816,8 @@ Robust variance is known as a [post hoc]{.alert} correction because it only affe
 
 Now what happens if $\vec{Y}$ is binary?
 
-::: {.r-stack}
+. . .
 
-::: {.fragment .fade-in-then-out}
 - We could still try to model $\vec{Y}$ with
 $$E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}$$
 and use WLS to deal with non-constant variance (since $Var[\vec{Y}|\boldsymbol{X}] = E[\vec{Y}|\boldsymbol{X}]\left(1 - E[\vec{Y}|\boldsymbol{X}]\right)$)
@@ -795,9 +825,13 @@ and use WLS to deal with non-constant variance (since $Var[\vec{Y}|\boldsymbol{X
    - What do the interpretations of $\beta_0$ and $\beta_1$ then become?
    
 - But this gets squirrel-y as your probability of an "event" drifts toward 0 or 1
-:::
 
-::: {.fragment}
+---
+
+## Review: logistic regression
+
+Now what happens if $\vec{Y}$ is binary?
+
 An alternative model is [logistic regression]{.alert}
 
 $$\log\left(\frac{E[\vec{Y}|\boldsymbol{X}]}{1-E[\vec{Y}|\boldsymbol{X}]}\right) = \boldsymbol{X}\vec{\beta}$$
@@ -812,14 +846,9 @@ $$\log\left(\frac{E[\vec{Y}|\boldsymbol{X}]}{1-E[\vec{Y}|\boldsymbol{X}]}\right)
 
    - In PHS 552, you derived why we use that transformation based on the binomial likelihood
 
-::: {.fragment}
+. . 
 
 We'll dig into logistic regression more in a few classes
-
-:::
-:::
-
-:::
 
 ---
 
@@ -846,8 +875,32 @@ where we assume that $\lambda_i$ depends on the covariate(s) through the log lin
 
 . . .
 
-- In practice, the linear predictor is usually specified in terms of the mean $\lambda(u_i) T_i$ rather than the rate $\lambda_i$
+- In practice, the linear predictor is usually specified in terms of the mean events per observed time $\lambda(u_i) T_i$ rather than the rate $\lambda_i$
 
-$$\log\left(\lambda(u_i)\right) + \log(T_i) = \vec{X}_i\vec{\beta} + \log(T_i)$$
+$$\log(\mu_i)=\log\left(\lambda(u_i)\right) + \log(T_i) = \vec{X}_i\vec{\beta} + \log(T_i)$$
    
    - This makes $\log(T_i)$ an offset, a predictor variable (covariate) with a known coefficient ($\beta$) of 1
+   
+---
+
+## Review: Poisson vs negative binomial regression
+
+An issue with Poisson regression is that it assumes $Var[Y_i|\vec{X}_i] = E[Y_i|\vec{X}_i] = \mu_i$
+
+- In our data, we usually end up finding $Var[Y_i|\vec{X}_i] > E[Y_i|\vec{X}_i]$
+
+   - This causes [overdispersion]{.alert}
+
+. . .
+
+One way to combat this is by assuming our count outcome $\vec{Y}$ actually follows a negative binomial distribution that allows $Var[Y_i|\vec{X}_i] > E[Y_i|\vec{X}_i]$
+
+- We still use a log transformation on the outcome, so the model is written the same as before -- the difference is on the variance
+
+   - As the mean number of events in observed time:
+
+   $$\log(\mu_i)=\log\left(\lambda(u_i)\right) + \log(T_i) = \vec{X}_i\vec{\beta} + \log(T_i)$$
+
+   - Or as the rate of events given a standard length of time:
+
+   $$\log\left(\lambda(\vec{x}_i)\right) = \vec{X}_i\vec{\beta}$$

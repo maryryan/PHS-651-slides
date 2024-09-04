@@ -106,15 +106,32 @@ The chat box is always open for discussion and questions to the entire class. Yo
 
 ## Howdy! 🤠
 
+:::: {.columns}
+
+::: {.column width="65%"}
 [Teaching assistant]{.alert}: Emma Svenson (she/her)
 
-- about
+- Veterinarian
 
+- 4th year PhD student, Epidemiology
+:::
+
+::: {.column width="30%"}
+![*Emma *](emma.jpg){width="75%"}
+:::
+::::
+
+::: {.absolute bottom=350}
 [Contact]{.alert}
 
 - Email: [svenson@wisc.edu](mailto:svenson@wisc.edu)
 
-- Office hours:
+- Office hours: scheduled weekly (Doodle poll) & by appointment
+
+   - Unavailable Sept 15-23
+   
+   - Limited availability Oct 12-23
+:::
 
 ---
 

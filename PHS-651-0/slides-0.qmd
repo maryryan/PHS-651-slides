@@ -35,13 +35,13 @@ library(qrcode)
 
 <h3> September 5, 2024 </h3>
 
-::: {.absolute bottom=-100 left=260 width=1500}
+::: {.absolute bottom=0 left=260 width=1500}
 
 Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-0/slides-0>
 
 :::
 
-::: {.absolute bottom=-150 left=100 width=150}
+::: {.absolute bottom=-50 left=100 width=150}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-0/slides-0"))
 ```
@@ -137,6 +137,9 @@ The chat box is always open for discussion and questions to the entire class. Yo
 
 ## Course logistics
 
+:::: {.columns}
+
+::: {.column width="50%}
 [Instruction times]{.alert}
 
 - Tuesdays/Thursdays 4-5:15p CT
@@ -152,9 +155,10 @@ The chat box is always open for discussion and questions to the entire class. Yo
    - Some concept review, but intended to be more hands-on
    
    - Hope to reserve the last 20 min of each for working on final projects
+:::
 
-. . .
-
+::: {.column width="50%"}
+::: {.fragment}
 [Attendance]{.alert}
 
 - I don't take it
@@ -168,6 +172,10 @@ The chat box is always open for discussion and questions to the entire class. Yo
    - Plan C: watch lecture recording on Canvas
    
 - Please don't make me lecture to an empty room
+:::
+:::
+
+::::
 
 ---
 
@@ -382,6 +390,8 @@ There's no single textbook for this course
 
 - Any time there's a suggested reading, I'll put a copy of the corresponding sections in the module
 
+:::: {.columns}
+::: {.column width="50%"}
 I've made the follow full e-books available on the Canvas site:
 
 - [Foundations of Liner and Generalized Linear Models]{.alert}. 2015. Agresti A. John Wiley & Sons: Hoboken, New Jersey. ISBN: 978-1-118-73030-0
@@ -389,12 +399,16 @@ I've made the follow full e-books available on the Canvas site:
 - [Beyond Multiple Linear Regression: Applied Generalized Linear Models and Multilevel Models in R](https://bookdown.org/roback/bookdown-BeyondMLR/) (online textbook)
 
 - [Applied Longitudinal Analysis]{.alert}. 2011. Fitzmaurice GM, Laird NM, and Ware JH. John Wiley & Sons: Hoboken, New Jersey. ISBN: 9780470380277
+:::
 
+::: {.column width="50%"}
 I've also scanned several chapters from books I could not find electronic copies of:
 
 - [Analysis of Longitudinal Data]{.alert}, 2nd edition. 2002. Diggle PJ, Heagerty P, Liang K, and Zeger SL. Oxford University Press: Oxford. ISBN: 9780198524847
 
 - [Data Analysis Using Regression and Multilevel/Hierarchical Models]{.alert}. 2007. Gelman A and Hill J. Cambridge University Press: New York. ISBN: 9780521686891
+:::
+::::
 
 ---
 
@@ -846,7 +860,7 @@ $$\log\left(\frac{E[\vec{Y}|\boldsymbol{X}]}{1-E[\vec{Y}|\boldsymbol{X}]}\right)
 
    - In PHS 552, you derived why we use that transformation based on the binomial likelihood
 
-. . 
+. . .
 
 We'll dig into logistic regression more in a few classes
 

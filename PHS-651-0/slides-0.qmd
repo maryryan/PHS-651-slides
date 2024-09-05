@@ -149,8 +149,6 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-0/slides-0"))
 - Thursdays will (mostly) be application/coding
 
    - Some concept review, but intended to be more hands-on
-   
-   - Hope to reserve the last 20 min of each for working on final projects
 :::
 
 ::: {.column width="50%"}
@@ -222,7 +220,7 @@ What you covered in PHS 552
 
 - How to build a mean model
 
-- Regression models for different types of outcomes (normal, binary, Poisson, etc)
+- Regression models for different types of outcomes (normal, binary, count, etc)
 
 - Assumed constant variance, but also looked at what happens when that assumption breaks
 
@@ -367,6 +365,10 @@ violations of those assumptions, and estimate and interpret regression models to
 [Midterm]{.alert} (15%)
 
 - In-class exam focused on understanding of concepts
+
+- Scheduled for Th 10/17
+
+   - If you have scheduling issues with this date, email me ASAP
 
 [Final data analysis project]{.alert} (45%)
 
@@ -599,7 +601,7 @@ $\vec{Y}$ and $\boldsymbol{X}$ are [data]{.alert}, while $\vec{\beta}$ and $\vec
 
 ---
 
-## Review: ordinary linear regression
+## Review: ordinary linear regression {.smaller}
 
 $$\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon}$$
 We like to think of splitting our model into 2 parts:
@@ -611,16 +613,33 @@ $$E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}$$
 
 . . .
 
-2. and the model of the [covariance]{.alert} 
-$$Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\epsilon}$$
+:::: {.columns}
 
-   - In OLS we usually assume these errors are:
+::: {.column width="70%"}
+2. and the model of the [covariance]{.alert}
+$$Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\Sigma}$$
+
+- In OLS we usually assume these errors are:
+
+   - Normally distributed $\vec{\epsilon} \sim N(0, \sigma^2)$
    
-      - Normally distributed $\vec{\epsilon} \sim N(0, \sigma^2)$
-      
-      - Have a common variance across all observations ([homoskedasticity]{.alert} assumption)
-      
-      - And that observations are completely independent (covariance of 0)
+   - Have a constant variance across all observations ([homoskedasticity]{.alert} assumption)
+   
+   - And that observations are completely independent (covariance of 0)
+:::
+
+::: {.column width="30%"}
+::: {.fragment}
+So $\boldsymbol{\Sigma}$ ends up being assumed to look like:
+
+$$\boldsymbol{\Sigma} = \begin{bmatrix}\sigma^2 & 0 & \dots & 0 \\
+0 & \ddots & \dots & 0 \\
+\vdots & \dots & \ddots & \vdots\\
+0 & \dots & 0 & \sigma^2\end{bmatrix}$$
+:::
+:::
+
+::::
    
 ---
 
@@ -727,7 +746,7 @@ which we estimate with
 
 ## Review: weighted least squares {.smaller}
 
-What happens when $Var[\vec{Y}|\boldsymbol{X}]$ is [NOT the same]{.alert} across all of $\vec{Y}$?
+What happens when $Var[\vec{Y}|\boldsymbol{X}]$ is [NOT the same]{.alert} across all observations? What if it varies by $u_i$?
 
 . . .
 

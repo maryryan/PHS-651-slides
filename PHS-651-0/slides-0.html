@@ -440,8 +440,7 @@ September 5, 2024
 <li>
 <p>Thursdays will (mostly) be application/coding</p>
 <ul>
-<li><p>Some concept review, but intended to be more hands-on</p></li>
-<li><p>Hope to reserve the last 20 min of each for working on final projects</p></li>
+<li>Some concept review, but intended to be more hands-on</li>
 </ul>
 </li>
 </ul>
@@ -509,7 +508,7 @@ September 5, 2024
 <ul>
 <li><p>What is regression</p></li>
 <li><p>How to build a mean model</p></li>
-<li><p>Regression models for different types of outcomes (normal, binary, Poisson, etc)</p></li>
+<li><p>Regression models for different types of outcomes (normal, binary, count, etc)</p></li>
 <li><p>Assumed constant variance, but also looked at what happens when that assumption breaks</p></li>
 <li><p>Assumed observations are <span class="alert">always independent</span></p></li>
 </ul>
@@ -627,7 +626,13 @@ September 5, 2024
 </ul>
 <p><span class="alert">Midterm</span> (15%)</p>
 <ul>
-<li>In-class exam focused on understanding of concepts</li>
+<li><p>In-class exam focused on understanding of concepts</p></li>
+<li>
+<p>Scheduled for Th 10/17</p>
+<ul>
+<li>If you have scheduling issues with this date, email me ASAP</li>
+</ul>
+</li>
 </ul>
 <p><span class="alert">Final data analysis project</span> (45%)</p>
 <ul>
@@ -777,7 +782,7 @@ September 5, 2024
 <div class="fragment">
 <p><span class="math inline">\(\vec{Y}\)</span> and <span class="math inline">\(\boldsymbol{X}\)</span> are <span class="alert">data</span>, while <span class="math inline">\(\vec{\beta}\)</span> and <span class="math inline">\(\vec{\epsilon}\)</span> are <span class="alert">model parameters</span></p>
 </div>
-</section><section id="review-ordinary-linear-regression-4" class="slide level2"><h2>Review: ordinary linear regression</h2>
+</section><section id="review-ordinary-linear-regression-4" class="slide level2 smaller"><h2>Review: ordinary linear regression</h2>
 <p><span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon}\]</span> We like to think of splitting our model into 2 parts:</p>
 <div class="fragment">
 <ol type="1">
@@ -786,21 +791,32 @@ September 5, 2024
 </ol>
 </div>
 <div class="fragment">
+<div class="columns">
+<div class="column" style="width:70%;">
 <ol start="2" type="1">
-<li>
-<p>and the model of the <span class="alert">covariance</span> <span class="math display">\[Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\epsilon}\]</span></p>
+<li>and the model of the <span class="alert">covariance</span> <span class="math display">\[Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\Sigma}\]</span>
+</li>
+</ol>
 <ul>
 <li>
 <p>In OLS we usually assume these errors are:</p>
 <ul>
 <li><p>Normally distributed <span class="math inline">\(\vec{\epsilon} \sim N(0, \sigma^2)\)</span></p></li>
-<li><p>Have a common variance across all observations (<span class="alert">homoskedasticity</span> assumption)</p></li>
+<li><p>Have a constant variance across all observations (<span class="alert">homoskedasticity</span> assumption)</p></li>
 <li><p>And that observations are completely independent (covariance of 0)</p></li>
 </ul>
 </li>
 </ul>
-</li>
-</ol>
+</div><div class="column" style="width:30%;">
+<div class="fragment">
+<p>So <span class="math inline">\(\boldsymbol{\Sigma}\)</span> ends up being assumed to look like:</p>
+<p><span class="math display">\[\boldsymbol{\Sigma} = \begin{bmatrix}\sigma^2 &amp; 0 &amp; \dots &amp; 0 \\
+0 &amp; \ddots &amp; \dots &amp; 0 \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+0 &amp; \dots &amp; 0 &amp; \sigma^2\end{bmatrix}\]</span></p>
+</div>
+</div>
+</div>
 </div>
 </section><section id="review-ols-estimation" class="slide level2"><h2>Review: OLS estimation</h2>
 <p>Model parameters are the “true” relationship between our independent variables and our response (given how we’re modeling the relationship…)</p>
@@ -883,7 +899,7 @@ September 5, 2024
 </div>
 </div>
 </section><section id="review-weighted-least-squares" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
-<p>What happens when <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}]\)</span> is <span class="alert">NOT the same</span> across all of <span class="math inline">\(\vec{Y}\)</span>?</p>
+<p>What happens when <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}]\)</span> is <span class="alert">NOT the same</span> across all observations? What if it varies by <span class="math inline">\(u_i\)</span>?</p>
 <div class="fragment">
 <ul>
 <li>Estimate of <span class="math inline">\(\beta\)</span> will be fine, but <span class="alert">inference</span> will be incorrect</li>

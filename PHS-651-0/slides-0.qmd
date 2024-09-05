@@ -362,7 +362,7 @@ violations of those assumptions, and estimate and interpret regression models to
 
 ## How you'll be evaluated
 
-[Small assignments]{.alert} (35%)
+[Small assignments]{.alert} (40%)
 
 - Weekly homeworks assigned Tuesdays at end of class, due following Tuesday at beginning of class
 
@@ -372,9 +372,9 @@ violations of those assumptions, and estimate and interpret regression models to
 
 - In-class exam focused on understanding of concepts
 
-[Final data analysis project]{.alert} (40%)
+[Final data analysis project]{.alert} (45%)
 
-- Intermediate milestone assignments (5% / 40%)
+- Intermediate milestone assignments (10% / 40%)
 
 - 10-15 minute oral presentation (10% / 40%)
 

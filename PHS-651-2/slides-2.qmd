@@ -35,33 +35,29 @@ library(qrcode)
 
 <h3> September 17, 2024 </h3>
 
-::: {.absolute bottom=0 left=260 width=1500}
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=50 left=260 width=1500}
 
 Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-2/slides-2>
 
 :::
 
-::: {.absolute bottom=-50 left=100 width=150}
+::: {.absolute bottom=0 left=100 width=150}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-2/slides-2"))
 ```
 :::
-
----
-
-## Zoom recording disclaimer
-
-<br>
-
-This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.
-
-<br>
-
-If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.
-
-<br>
-
-The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.
 
 ---
 

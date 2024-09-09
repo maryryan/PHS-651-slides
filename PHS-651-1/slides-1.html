@@ -421,18 +421,19 @@ September 10, 2024
 </div>
 </div>
 </div>
-</section><section id="what-is-correlated-data" class="slide level2"><h2>What is correlated data?</h2>
+</section><section id="what-is-clusteredcorrelated-data" class="slide level2"><h2>What is clustered/correlated data?</h2>
 <p>Informal definitions</p>
 <ul>
 <li><p><u>Independent data</u>: data where each observation of a variable are not meaningfully correlated with other observations of the same variable</p></li>
 <li>
-<p><u>Correlated data</u>: data where each observation of a variable has some kind of relationship to another set of observations of that variable</p>
+<p><u>Clustered/Correlated data</u>: data where each observation of a variable has some kind of relationship to another set of observations of that variable</p>
 <ul>
+<li><p>“Clustered data arise when the data from the whole study can be classified into a number of different groups, referred to as clusters. Each cluster contains multiple observations, giving the data a “nested” or “hierarchical” structure, with individual observations nested within the cluster.” (Galbraith et al, 2010, <a href="https://doi.org/10.1523/JNEUROSCI.0362-10.2010">“A Study of Clustered Data and Approaches to Its Analysis”</a>)</p></li>
 <li><p>“…we might reasonably expect that measurements on units within a cluster are more similar than measurements on units in different clusters.” (Applied Longitudinal Analysis pg. 4)</p></li>
 <li><p>AKA: clustered/nested/multilevel/hierarchical data</p></li>
 </ul>
 </li>
-</ul></section><section id="why-is-data-correlated" class="slide level2"><h2>Why is data correlated?</h2>
+</ul></section><section id="why-is-data-clusteredcorrelated" class="slide level2"><h2>Why is data clustered/correlated?</h2>
 <p>Several potential reasons</p>
 <ul>
 <li>
@@ -475,7 +476,7 @@ September 10, 2024
 </div>
 </div>
 </div>
-<div class="fragment">
+</section><section id="how-does-clustering-affect-outcomes-1" class="slide level2"><h2>How does clustering affect outcomes?</h2>
 <p>… wholly dictate who receives exposure, …</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -485,8 +486,7 @@ September 10, 2024
 </div>
 </div>
 </div>
-</div>
-</section><section id="how-does-clustering-affect-outcomes-1" class="slide level2"><h2>How does clustering affect outcomes?</h2>
+</section><section id="how-does-clustering-affect-outcomes-2" class="slide level2"><h2>How does clustering affect outcomes?</h2>
 <p>… or potentially be a <span class="alert">confounding variable</span> (affects both exposure and outcome distributions)</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -496,8 +496,8 @@ September 10, 2024
 </div>
 </div>
 </div>
-<div class="fragment">
-<p>If observations belong to a group but that doesn’t affect the distribution of the outcome in any way, it’s usually not “clustered data”</p>
+</section><section id="how-does-clustering-affect-outcomes-3" class="slide level2"><h2>How does clustering affect outcomes?</h2>
+<p>If observations belong to a group but that doesn’t affect the distribution of the outcome in any way, it’s usually not “clustered data” with respect to that outcome</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -507,16 +507,15 @@ September 10, 2024
 </div>
 </div>
 <!-- Seaman S, Pavlou M, Copas A. Review of methods for handling confounding by cluster and informative cluster size in clustered data. Stat Med. 2014 Dec 30;33(30):5371-87. doi: 10.1002/sim.6277. Epub 2014 Aug 4. PMID: 25087978; PMCID: PMC4320764. -->
-</div>
 </section><section id="other-issues-from-correlated-data" class="slide level2"><h2>Other issues from correlated data</h2>
-<p>Even if clustering has no impact on outcome or exposure averages:</p>
+<p>Even if clustering has no impact on the overall outcome or exposure averages:</p>
 <ul>
-<li><p>Groups/clusters may not be the same size</p></li>
+<li><p>Groups/clusters may not be the same size (informative cluster size)</p></li>
 <li>
 <p>“Clustering” of data may also affect variance</p>
 <ul>
 <li><p>Some groups have higher/lower variation than others</p></li>
-<li><p>Some groups may have higher/lower measurement errror than others</p></li>
+<li><p>Some groups may have higher/lower measurement error than others</p></li>
 <li>
 <p>This all breaks the <u>homoskedasticity</u> assumption of OLS</p>
 <ul>
@@ -529,7 +528,7 @@ September 10, 2024
 <p>Clustering also reduces the amount of <span class="alert">information</span> we get from each individual data point</p>
 <ul>
 <li>Means that we will need more data to draw conclusion with same level of precision</li>
-</ul></section><section id="measuring-clustered-ness" class="slide level2 smaller"><h2>Measuring “clustered-ness”</h2>
+</ul></section><section id="measuring-clustered-ness" class="slide level2"><h2>Measuring “clustered-ness”</h2>
 <p>How can we tell if data are clustered?</p>
 <div class="fragment">
 <ul>
@@ -551,9 +550,15 @@ September 10, 2024
 <li><p>ICC: <span class="math display">\[\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}\]</span></p></li>
 </ul>
 </div>
-<div class="fragment">
-<p>In words: <span class="math display">\[\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} = \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\]</span></p>
-</div>
+</section><section id="measuring-clustered-ness-1" class="slide level2"><h2>Measuring “clustered-ness”</h2>
+<p><u>Intracluster correlation coefficient</u> (ICC): measure of within- vs.&nbsp;between-cluster variation</p>
+<ul>
+<li><p>Cluster-specific mean: <span class="math inline">\(\bar{y}_i = \frac{1}{n_i} \sum_{j=1}^{n_i} y_{ij}\)</span></p></li>
+<li><p>Variation in cluster means: <span class="math inline">\(\gamma^2 = \text{var}(\bar{y}_i)\)</span></p></li>
+<li><p>Individual-level variation: <span class="math inline">\(\sigma^2 = \text{var}(y_{ij})\)</span></p></li>
+<li><p>ICC: <span class="math display">\[\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}\]</span></p></li>
+</ul>
+<p>In words: <span class="math display">\[\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}}= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\]</span></p>
 </section><section id="clustering-in-data-analysis" class="slide level2"><h2>Clustering in data analysis</h2>
 <p>What are some ideas about how we could handle clustering in an analysis?</p>
 </section><section id="clustering-in-individual-level-data-analysis" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
@@ -603,7 +608,8 @@ September 10, 2024
 </ul></section><section id="clustering-in-cluster-level-data-analysis" class="slide level2"><h2>Clustering in cluster-level data analysis</h2>
 <p>Another approach is to conduct the data analysis at the cluster level</p>
 <ul>
-<li>Instead of individual-level outcomes/predictors, roll these up to cluster-level averages</li>
+<li>Instead of individual-level outcomes/predictors, roll these up to <span class="alert">cluster-level averages</span>
+</li>
 </ul>
 <p><span class="math display">\[\bar{Y}_{i} = \beta_1 \bar{U}_{i} + \epsilon_{i}\]</span></p>
 <ul>
@@ -631,11 +637,13 @@ September 10, 2024
 </section><section id="example-radon-measurements-in-minnesota" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Let’s see how these approaches differ with some actual data</p>
 <div class="fragment">
-<p>Say we’re taking radon measurements in Minnesota houses and want to estimate whether the floor we measure on affects our readings</p>
+<p>Say we’re taking radon measurements in Minnesota houses and want to estimate whether the lowest floor we can measure on affects our readings</p>
 <ul>
 <li><p>Basement measurements coded as <code>floor=0</code>; 1st floor measurements coded as <code>floor=1</code></p></li>
-<li><p>Individual houses can be grouped in a number of ways, including by county</p></li>
+<li><p>Individual houses can be grouped in a number of ways, including <span class="alert">by county</span></p></li>
 </ul>
+</div>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># find number of observations, mean/sd log_radon, and proportion without basements by county #</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a>radon.mn <span class="sc">%&gt;%</span> </span>
@@ -794,14 +802,14 @@ $vara
 <div class="fragment">
 <p>Breaking the output down:</p>
 <ul>
-<li><p>Variation in cluster means: 0.0878</p></li>
-<li><p>Individual-level (within-cluster) variation: 0.5875</p></li>
+<li><p>Variation in cluster means (<code>vara</code>): 0.0878</p></li>
+<li><p>Individual-level (within-cluster) variation (<code>varw</code>): 0.5875</p></li>
 <li><p>Total variation: 0.6753</p></li>
 <li><p>ICC = cluster mean variation/total variation: 0.130029</p></li>
 <li>
 <p>95% confidence interval: (0.0794, 0.1992)</p>
 <ul>
-<li>Not insignificant…</li>
+<li>Not trivial…</li>
 </ul>
 </li>
 </ul>
@@ -815,6 +823,7 @@ $vara
 <ul>
 <li>AKA: “complete pooling” of data</li>
 </ul>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># run OLS regression #</span></span>
 <span id="cb6-2"><a href="#cb6-2"></a>radon_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_radon <span class="sc">~</span> floor, <span class="at">data=</span>radon.mn)</span>
@@ -842,16 +851,20 @@ Multiple R-squared:  0.07116,   Adjusted R-squared:  0.07015
 F-statistic: 70.25 on 1 and 917 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
+</div>
 </div><div class="column" style="width:40%;">
+<div class="fragment">
 <ul>
 <li>How would we interpret this result?</li>
 </ul>
+</div>
 </div>
 </div>
 </section><section id="example-radon-measurements-in-minnesota-4" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
 <p>Next we’ll fit a separate regression for each county</p>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># stratify dataset by county #</span></span>
 <span id="cb8-2"><a href="#cb8-2"></a>radon.cty <span class="ot">&lt;-</span> <span class="fu">split</span>(radon.mn, radon.mn<span class="sc">$</span>county)</span>
@@ -1267,14 +1280,33 @@ $`YELLOW MEDICINE`
 (Intercept) 1.216807  0.1181944 10.29496 0.0616446</code></pre>
 </div>
 </div>
+</div>
 </div><div class="column" style="width:40%;">
+<div class="fragment">
 <ul>
 <li>Is this helpful for us?</li>
 </ul>
 </div>
 </div>
+</div>
 </section><section id="example-radon-measurements-in-minnesota-5" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+<p>Let’s visualize the point estimates and confidence intervals from all these models…</p>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="slides-1_files/figure-revealjs/radon%20forest%20plot-1.png" width="1920"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section><section id="example-radon-measurements-in-minnesota-6" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Now we’ll look at fitting with counties, but without removing the intercept</p>
+<ul>
+<li>AKA: “no pooling” of data</li>
+</ul>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># run OLS regression with county as covariate #</span></span>
 <span id="cb10-2"><a href="#cb10-2"></a>radon_cty_int_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_radon <span class="sc">~</span> floor <span class="sc">+</span> <span class="fu">factor</span>(county), <span class="at">data=</span>radon.mn)</span>
@@ -1386,11 +1418,14 @@ F-statistic: 3.936 on 85 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <ul>
 <li>What changed from the last regression? The first regression?</li>
-</ul></section><section id="example-radon-measurements-in-minnesota-6" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</ul>
+</div>
+</section><section id="example-radon-measurements-in-minnesota-7" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Finally we’ll fit with counties, and without an intercept</p>
 <ul>
-<li>AKA: “no pooling” of data</li>
+<li>Another example of a “no pooling” analysis</li>
 </ul>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># run OLS regression with county as covariate and removing global intercept #</span></span>
 <span id="cb12-2"><a href="#cb12-2"></a>radon_cty_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_radon <span class="sc">~</span> floor <span class="sc">+</span> <span class="fu">factor</span>(county) <span class="sc">-</span> <span class="dv">1</span>, <span class="at">data=</span>radon.mn)</span>
@@ -1502,8 +1537,11 @@ F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <ul>
 <li>What changed from the last regression?</li>
-</ul></section><section id="example-radon-measurements-in-minnesota-7" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</ul>
+</div>
+</section><section id="example-radon-measurements-in-minnesota-8" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Let’s look at the estimated effects for Cook (very insignificant county effect) and Hennepin (Minneapolis) counties</p>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># get regression summary just for effects of floor, Cook county, and Hennepin county #</span></span>
 <span id="cb14-2"><a href="#cb14-2"></a><span class="fu">summary</span>(radon_cty_lm)<span class="sc">$</span>coeff[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">17</span>,<span class="dv">27</span>),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1514,25 +1552,32 @@ factor(county)COOK      0.7175423 0.51374155  1.396699 1.628761e-01
 factor(county)HENNEPIN  1.3927949 0.07128800 19.537579 2.860795e-70</code></pre>
 </div>
 </div>
-<div class="cell" data-layout-align="center">
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># create density plot of log radon for Cook and Hennepin counties by floor #</span></span>
 <span id="cb16-2"><a href="#cb16-2"></a>radon.mn <span class="sc">%&gt;%</span> </span>
-<span id="cb16-3"><a href="#cb16-3"></a>   dplyr<span class="sc">::</span><span class="fu">filter</span>( county <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"COOK"</span>,<span class="st">"HENNEPIN"</span>) ) <span class="sc">%&gt;%</span> </span>
-<span id="cb16-4"><a href="#cb16-4"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>floor,<span class="at">y=</span>log_radon))<span class="sc">+</span></span>
-<span id="cb16-5"><a href="#cb16-5"></a>   <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>)<span class="sc">+</span></span>
-<span id="cb16-6"><a href="#cb16-6"></a>   <span class="fu">facet_grid</span>(<span class="at">cols=</span><span class="fu">vars</span>(county))<span class="sc">+</span></span>
-<span id="cb16-7"><a href="#cb16-7"></a>   <span class="fu">theme</span>(<span class="at">text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-3"><a href="#cb16-3"></a>   dplyr<span class="sc">::</span><span class="fu">filter</span>( county <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"COOK"</span>,</span>
+<span id="cb16-4"><a href="#cb16-4"></a>                                <span class="st">"HENNEPIN"</span>) ) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-5"><a href="#cb16-5"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>floor,<span class="at">y=</span>log_radon))<span class="sc">+</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>   <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>)<span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7"></a>   <span class="fu">facet_grid</span>(<span class="at">cols=</span><span class="fu">vars</span>(county))<span class="sc">+</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a>   <span class="fu">theme</span>(<span class="at">text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="slides-1_files/figure-revealjs/radon%20cook%20plots-1.png" style="width:60.0%"></p>
+<figure><p><img data-src="slides-1_files/figure-revealjs/radon%20cook%20plots-1.png" width="960"></p>
 </figure>
 </div>
 </div>
 </div>
+</div>
 <ul>
-<li>Should we put the same level of trust in those county-level estimates?</li>
-</ul></section><section id="example-radon-measurements-in-minnesota-8" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+<li>Should we put the same level of trust in those county-specific effects?</li>
+</ul>
+</div>
+</section><section id="example-radon-measurements-in-minnesota-9" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Now let’s do a county-level analysis</p>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># find county-level average log radon and floor variables, create new dataset just at the county level #</span></span>
 <span id="cb17-2"><a href="#cb17-2"></a>radon.mn.ctylvl <span class="ot">&lt;-</span> radon.mn <span class="sc">%&gt;%</span> </span>
@@ -1568,28 +1613,48 @@ F-statistic: 3.583 on 1 and 83 DF,  p-value: 0.06184</code></pre>
 </div>
 <ul>
 <li>How would we interpret these results? How are they different from the results from our other strategies?</li>
-</ul></section><section id="problems" class="slide level2"><h2>Problems</h2>
+</ul>
+</div>
+</section><section id="problems" class="slide level2"><h2>Problems</h2>
 <p>What did we find?</p>
 <ul>
 <li><p>Radon data clearly clustered by county, affecting distribution of log(radon) measurements, proportion of houses with/without basements, and number of observations</p></li>
 <li><p>Effect of measurement floor changes depending on whether and how accounting for clustering</p></li>
-<li>
-<p>Adding county as covariate to regression seems like best solution…</p>
+</ul>
+<div class="fragment">
 <ul>
-<li><p>… or not</p></li>
+<li>Adding county as covariate to regression (“no pooling” analysis) seems like best solution… <span class="fragment">or not…</span>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
 <li>
 <p>Violates a regression assumption that the number of parameters shouldn’t be growing with the amount of data</p>
 <ul>
-<li>Big issue when cluster sizes are small</li>
+<li>Big issue when cluster sizes are small with respect to number of clusters</li>
 </ul>
 </li>
-<li><p>May need a different solution…</p></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>
+<p>Each county-specific intercept estimated only using data from that count</p>
+<ul>
+<li>Even if that county has very few observations</li>
 </ul>
 </li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>May need a different solution…</li>
 </ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
+</div>
 </div>
 </section>
 </div>

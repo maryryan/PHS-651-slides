@@ -61,21 +61,23 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-1/slides-1"))
 
 ---
 
-## What is correlated data?
+## What is clustered/correlated data?
 
 Informal definitions 
 
 - [Independent data]{.underline}: data where each observation of a variable are not meaningfully correlated with other observations of the same variable
 
-- [Correlated data]{.underline}: data where each observation of a variable has some kind of relationship to another set of observations of that variable
+- [Clustered/Correlated data]{.underline}: data where each observation of a variable has some kind of relationship to another set of observations of that variable
 
+   - "Clustered data arise when the data from the whole study can be classified into a number of different groups, referred to as clusters. Each cluster contains multiple observations, giving the data a “nested” or “hierarchical” structure, with individual observations nested within the cluster." (Galbraith et al, 2010, ["A Study of Clustered Data and Approaches to Its Analysis"](https://doi.org/10.1523/JNEUROSCI.0362-10.2010))
+   
    - "...we might reasonably expect that measurements on units within a cluster are more similar than measurements on units in different clusters." (Applied Longitudinal Analysis pg. 4)
    
    - AKA: clustered/nested/multilevel/hierarchical data
 
 ---
 
-## Why is data correlated?
+## Why is data clustered/correlated?
 
 Several potential reasons
 
@@ -119,7 +121,9 @@ dagify(
   geom_dag_edges_diagonal()
 ```
 
-. . .
+---
+
+## How does clustering affect outcomes?
 
 ... wholly dictate who receives exposure, ...
 
@@ -157,16 +161,18 @@ dagify(
   geom_dag_text(size=10) +
   theme_dag() +
   ylim(0, 2) +
-  geom_dag_edges_arc(curvature = c(0,0.5, 0))
+  geom_dag_edges_arc(curvature = c(0.5,0, 0))
 
 
 #grid.arrange(straight, med, ncol=2)
 
 ```
 
-. . .
+---
 
-If observations belong to a group but that doesn't affect the distribution of the outcome in any way, it's usually not "clustered data"
+## How does clustering affect outcomes?
+
+If observations belong to a group but that doesn't affect the distribution of the outcome in any way, it's usually not "clustered data" with respect to that outcome
 
 ```{r cluster DAG1, echo=F, fig.align="center"}
 dagify(
@@ -190,15 +196,15 @@ dagify(
 
 ## Other issues from correlated data
 
-Even if clustering has no impact on outcome or exposure averages:
+Even if clustering has no impact on the overall outcome or exposure averages:
 
-- Groups/clusters may not be the same size
+- Groups/clusters may not be the same size (informative cluster size)
 
 - "Clustering" of data may also affect variance
 
    - Some groups have higher/lower variation than others
    
-   - Some groups may have higher/lower measurement errror than others
+   - Some groups may have higher/lower measurement error than others
 
    - This all breaks the [homoskedasticity]{.underline} assumption of OLS
 
@@ -210,7 +216,7 @@ Clustering also reduces the amount of [information]{.alert} we get from each ind
 
 ---
 
-## Measuring "clustered-ness" {.smaller}
+## Measuring "clustered-ness"
 
 How can we tell if data are clustered?
 
@@ -234,10 +240,22 @@ How can we tell if data are clustered?
    
 - ICC: $$\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}$$
 
-. . .
+---
+
+## Measuring "clustered-ness"
+
+[Intracluster correlation coefficient]{.underline} (ICC): measure of within- vs. between-cluster variation
+
+- Cluster-specific mean: $\bar{y}_i = \frac{1}{n_i} \sum_{j=1}^{n_i} y_{ij}$
+   
+- Variation in cluster means: $\gamma^2 = \text{var}(\bar{y}_i)$
+   
+- Individual-level variation: $\sigma^2 = \text{var}(y_{ij})$
+   
+- ICC: $$\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}$$
 
 In words:
-$$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} = \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}$$
+$$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}}= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}$$
 
 ---
 
@@ -328,7 +346,7 @@ $$Y_{ij} = \beta_1 U_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
 
 Another approach is to conduct the data analysis at the cluster level
 
-- Instead of individual-level outcomes/predictors, roll these up to cluster-level averages
+- Instead of individual-level outcomes/predictors, roll these up to [cluster-level averages]{.alert}
 
 $$\bar{Y}_{i} = \beta_1 \bar{U}_{i} + \epsilon_{i}$$
 
@@ -364,11 +382,14 @@ Let's see how these approaches differ with some actual data
 
 . . .
 
-Say we're taking radon measurements in Minnesota houses and want to estimate whether the floor we measure on affects our readings
+Say we're taking radon measurements in Minnesota houses and want to estimate whether the lowest floor we can measure on affects our readings
 
 - Basement measurements coded as `floor=0`; 1st floor measurements coded as `floor=1`
 
-- Individual houses can be grouped in a number of ways, including by county
+- Individual houses can be grouped in a number of ways, including [by county]{.alert}
+
+. . .
+
 ```{r radon cleaning, echo=F}
 radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
 
@@ -433,9 +454,9 @@ ICCest(county,log_radon, data=radon.mn)
 ::: {.fragment}
 Breaking the output down:
 
-- Variation in cluster means: `r round(ICCest(county,log_radon, data=radon.mn)$vara,4)`
+- Variation in cluster means (`vara`): `r round(ICCest(county,log_radon, data=radon.mn)$vara,4)`
 
-- Individual-level (within-cluster) variation: `r round(ICCest(county,log_radon, data=radon.mn)$varw, 4)`
+- Individual-level (within-cluster) variation (`varw`): `r round(ICCest(county,log_radon, data=radon.mn)$varw, 4)`
 
 - Total variation: `r round((ICCest(county,log_radon, data=radon.mn)$varw+ICCest(county,log_radon, data=radon.mn)$vara),4)`
 
@@ -443,7 +464,7 @@ Breaking the output down:
 
 - 95% confidence interval: (`r round(ICCest(county,log_radon, data=radon.mn)$LowerCI,4)`, `r round(ICCest(county,log_radon, data=radon.mn)$Upper,4)`)
 
-   - Not insignificant...
+   - Not trivial...
 :::
 :::
 
@@ -458,6 +479,8 @@ Breaking the output down:
 We'll first fit without accounting for counties
 
 - AKA: "complete pooling" of data
+
+::: {.fragment}
 ```{r radon no cluster}
 # run OLS regression #
 radon_lm <- lm(log_radon ~ floor, data=radon.mn)
@@ -466,9 +489,12 @@ radon_lm <- lm(log_radon ~ floor, data=radon.mn)
 summary(radon_lm)
 ```
 :::
+:::
 
 ::: {.column width="40%"}
+::: {.fragment}
 - How would we interpret this result?
+:::
 :::
 
 ::::
@@ -481,6 +507,8 @@ summary(radon_lm)
 
 ::: {.column width="60%"}
 Next we'll fit a separate regression for each county 
+
+::: {.fragment}
 ```{r radon stratified}
 
 # stratify dataset by county #
@@ -498,9 +526,12 @@ lapply(radon_seg_lm, function(x){
 
 ```
 :::
+:::
 
 ::: {.column width="40%"}
+::: {.fragment}
 - Is this helpful for us?
+:::
 :::
 
 ::::
@@ -509,7 +540,63 @@ lapply(radon_seg_lm, function(x){
 
 ## Example: radon measurements in Minnesota
 
+Let's visualize the point estimates and confidence intervals from all these models...
+
+. . .
+
+```{r radon forest plot, echo=F, fig.align='center', fig.height=10, fig.width=20}
+
+# get regression summary from each counties #
+radon_seg_est <- lapply(radon_seg_lm, function(x){
+   if(length(summary(x)$coef[,1]) > 1){
+      summary(x)$coef[2,1]
+   }else{
+      NA
+   }
+})
+
+radon_seg_se <- lapply(radon_seg_lm, function(x){
+   if(length(summary(x)$coef[,1]) > 1){
+      summary(x)$coef[2,2]
+   }else{
+      NA
+   }
+})
+
+radon_seg_n <- lapply(radon_seg_lm, function(x){
+   x$df.residual
+})
+
+radon_seg_cil <- unlist(radon_seg_est) - unlist(radon_seg_se)*qt(0.0975, df=unlist(radon_seg_n))
+radon_seg_ciu <- unlist(radon_seg_est) + unlist(radon_seg_se)*qt(0.0975, df=unlist(radon_seg_n))
+
+radon_seg_data <- cbind(seq(85), unlist(radon_seg_est), radon_seg_cil, radon_seg_ciu)
+colnames(radon_seg_data) <- c("cid", "est", "cil", "ciu")
+
+radon_seg_data %>% 
+   as.data.frame() %>%
+   ggplot(aes(x=est,y=cid))+
+   geom_point(size=3)+
+   geom_vline(xintercept=0, col="red", size=1)+
+   geom_segment(aes(x=cil, y=cid, xend=ciu, yend=cid), size=1.2)+
+   xlab("Point estimate for floor slope")+
+   theme(axis.text.y=element_blank(),
+         axis.ticks.y=element_blank(),
+         axis.title.y=element_blank(),
+         text=element_text(size=30))
+
+```
+
+---
+
+## Example: radon measurements in Minnesota
+
 Now we'll look at fitting with counties, but without removing the intercept
+
+- AKA: "no pooling" of data
+
+. . .
+
 ```{r radon cluster}
 # run OLS regression with county as covariate #
 radon_cty_int_lm <- lm(log_radon ~ floor + factor(county), data=radon.mn)
@@ -525,7 +612,10 @@ summary(radon_cty_int_lm)
 
 Finally we'll fit with counties, and without an intercept
 
-- AKA: "no pooling" of data
+- Another example of a "no pooling" analysis
+
+. . .
+
 ```{r radon cluster2}
 # run OLS regression with county as covariate and removing global intercept #
 radon_cty_lm <- lm(log_radon ~ floor + factor(county) - 1, data=radon.mn)
@@ -540,28 +630,35 @@ summary(radon_cty_lm)
 
 Let's look at the estimated effects for Cook (very insignificant county effect) and Hennepin (Minneapolis) counties
 
+. . .
+
 ```{r radon cook hennepin}
 # get regression summary just for effects of floor, Cook county, and Hennepin county #
 summary(radon_cty_lm)$coeff[c(1,17,27),]
 ```
 
-```{r radon cook plots, fig.align='center', out.width="60%"}
+```{r radon cook plots, fig.align='center'}
+#| output-location: column
 # create density plot of log radon for Cook and Hennepin counties by floor #
 radon.mn %>% 
-   dplyr::filter( county %in% c("COOK","HENNEPIN") ) %>% 
+   dplyr::filter( county %in% c("COOK",
+                                "HENNEPIN") ) %>% 
    ggplot(aes(x=floor,y=log_radon))+
    geom_point(size=3)+
    facet_grid(cols=vars(county))+
    theme(text=element_text(size=30))
 ```
 
-- Should we put the same level of trust in those county-level estimates?
+- Should we put the same level of trust in those county-specific effects?
 
 ---
 
 ## Example: radon measurements in Minnesota
 
 Now let's do a county-level analysis
+
+. . .
+
 ```{r radon ctylevel}
 # find county-level average log radon and floor variables, create new dataset just at the county level #
 radon.mn.ctylvl <- radon.mn %>% 
@@ -588,12 +685,22 @@ What did we find?
 
 - Effect of measurement floor changes depending on whether and how accounting for clustering
 
-- Adding county as covariate to regression seems like best solution...
+. . .
 
-   - ... or not
+- Adding county as covariate to regression ("no pooling" analysis) seems like best solution... [or not...]{.fragment}
+   
+. . .
    
    - Violates a regression assumption that the number of parameters shouldn't be growing with the amount of data
    
-      - Big issue when cluster sizes are small
+      - Big issue when cluster sizes are small with respect to number of clusters
+
+. . .
+      
+   - Each county-specific intercept estimated only using data from that count
+   
+      - Even if that county has very few observations
+
+. . .
    
    - May need a different solution...

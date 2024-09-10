@@ -69,11 +69,15 @@ Informal definitions
 
 - [Clustered/Correlated data]{.underline}: data where each observation of a variable has some kind of relationship to another set of observations of that variable
 
-   - "Clustered data arise when the data from the whole study can be classified into a number of different groups, referred to as clusters. Each cluster contains multiple observations, giving the data a “nested” or “hierarchical” structure, with individual observations nested within the cluster." (Galbraith et al, 2010, ["A Study of Clustered Data and Approaches to Its Analysis"](https://doi.org/10.1523/JNEUROSCI.0362-10.2010))
+. . .
+
+"Clustered data arise when the data from the whole study [can be classified]{.alert} into a number of different groups, referred to as clusters. [Each cluster contains multiple observations, giving the data a “nested” or “hierarchical” structure]{.alert}, with individual observations nested within the cluster." (Galbraith et al, 2010, ["A Study of Clustered Data and Approaches to Its Analysis"](https://doi.org/10.1523/JNEUROSCI.0362-10.2010))
+
+. . .
    
-   - "...we might reasonably expect that measurements on units within a cluster are more similar than measurements on units in different clusters." (Applied Longitudinal Analysis pg. 4)
+"...we might reasonably expect that measurements on [units within a cluster are more similar]{.alert} than measurements on units in different clusters." (Applied Longitudinal Analysis pg. 4)
    
-   - AKA: clustered/nested/multilevel/hierarchical data
+- AKA: nested/multilevel/hierarchical data
 
 ---
 
@@ -82,10 +86,12 @@ Informal definitions
 Several potential reasons
 
 - Natural group membership
-
-   - Observations belonging to one group more similar than observations belonging to another group
+   
+   - Physical/structural grouping
    
    - e.g., Household members, classroom students, eyes in a person's head
+   
+   - Things may be "done similarly" within each natural group
 
 . . .
 
@@ -386,6 +392,18 @@ Say we're taking radon measurements in Minnesota houses and want to estimate whe
 
 - Basement measurements coded as `floor=0`; 1st floor measurements coded as `floor=1`
 
+[Can we think of some ways in which this data might be clustered?]{.alert}
+
+---
+
+## Example: radon measurements in Minnesota
+
+Let's see how these approaches differ with some actual data
+
+Say we're taking radon measurements in Minnesota houses and want to estimate whether the lowest floor we can measure on affects our readings
+
+- Basement measurements coded as `floor=0`; 1st floor measurements coded as `floor=1`
+
 - Individual houses can be grouped in a number of ways, including [by county]{.alert}
 
 . . .
@@ -407,9 +425,11 @@ radon.mn <- radon %>%
 radon.mn %>% 
    group_by(county) %>% 
    summarize(n=n(), mean_log_radon=mean(log_radon, na.rm=T),
-             sd_log_radon=sd(log_radon, na.rm=T), pct_no_basement = mean(floor, na.rm=T)) %>% 
+             sd_log_radon=sd(log_radon, na.rm=T), 
+             pct_no_basement = mean(floor, na.rm=T)) %>% 
    print(n=85)
 ```
+
 
 ---
 

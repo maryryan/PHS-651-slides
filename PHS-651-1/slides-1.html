@@ -425,22 +425,26 @@ September 10, 2024
 <p>Informal definitions</p>
 <ul>
 <li><p><u>Independent data</u>: data where each observation of a variable are not meaningfully correlated with other observations of the same variable</p></li>
-<li>
-<p><u>Clustered/Correlated data</u>: data where each observation of a variable has some kind of relationship to another set of observations of that variable</p>
-<ul>
-<li><p>“Clustered data arise when the data from the whole study can be classified into a number of different groups, referred to as clusters. Each cluster contains multiple observations, giving the data a “nested” or “hierarchical” structure, with individual observations nested within the cluster.” (Galbraith et al, 2010, <a href="https://doi.org/10.1523/JNEUROSCI.0362-10.2010">“A Study of Clustered Data and Approaches to Its Analysis”</a>)</p></li>
-<li><p>“…we might reasonably expect that measurements on units within a cluster are more similar than measurements on units in different clusters.” (Applied Longitudinal Analysis pg. 4)</p></li>
-<li><p>AKA: clustered/nested/multilevel/hierarchical data</p></li>
+<li><p><u>Clustered/Correlated data</u>: data where each observation of a variable has some kind of relationship to another set of observations of that variable</p></li>
 </ul>
-</li>
-</ul></section><section id="why-is-data-clusteredcorrelated" class="slide level2"><h2>Why is data clustered/correlated?</h2>
+<div class="fragment">
+<p>“Clustered data arise when the data from the whole study <span class="alert">can be classified</span> into a number of different groups, referred to as clusters. <span class="alert">Each cluster contains multiple observations, giving the data a “nested” or “hierarchical” structure</span>, with individual observations nested within the cluster.” (Galbraith et al, 2010, <a href="https://doi.org/10.1523/JNEUROSCI.0362-10.2010">“A Study of Clustered Data and Approaches to Its Analysis”</a>)</p>
+</div>
+<div class="fragment">
+<p>“…we might reasonably expect that measurements on <span class="alert">units within a cluster are more similar</span> than measurements on units in different clusters.” (Applied Longitudinal Analysis pg. 4)</p>
+<ul>
+<li>AKA: nested/multilevel/hierarchical data</li>
+</ul>
+</div>
+</section><section id="why-is-data-clusteredcorrelated" class="slide level2"><h2>Why is data clustered/correlated?</h2>
 <p>Several potential reasons</p>
 <ul>
 <li>
 <p>Natural group membership</p>
 <ul>
-<li><p>Observations belonging to one group more similar than observations belonging to another group</p></li>
+<li><p>Physical/structural grouping</p></li>
 <li><p>e.g., Household members, classroom students, eyes in a person’s head</p></li>
+<li><p>Things may be “done similarly” within each natural group</p></li>
 </ul>
 </li>
 </ul>
@@ -639,18 +643,27 @@ September 10, 2024
 <div class="fragment">
 <p>Say we’re taking radon measurements in Minnesota houses and want to estimate whether the lowest floor we can measure on affects our readings</p>
 <ul>
+<li>Basement measurements coded as <code>floor=0</code>; 1st floor measurements coded as <code>floor=1</code>
+</li>
+</ul>
+<p><span class="alert">Can we think of some ways in which this data might be clustered?</span></p>
+</div>
+</section><section id="example-radon-measurements-in-minnesota-1" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+<p>Let’s see how these approaches differ with some actual data</p>
+<p>Say we’re taking radon measurements in Minnesota houses and want to estimate whether the lowest floor we can measure on affects our readings</p>
+<ul>
 <li><p>Basement measurements coded as <code>floor=0</code>; 1st floor measurements coded as <code>floor=1</code></p></li>
 <li><p>Individual houses can be grouped in a number of ways, including <span class="alert">by county</span></p></li>
 </ul>
-</div>
 <div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># find number of observations, mean/sd log_radon, and proportion without basements by county #</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a>radon.mn <span class="sc">%&gt;%</span> </span>
 <span id="cb1-3"><a href="#cb1-3"></a>   <span class="fu">group_by</span>(county) <span class="sc">%&gt;%</span> </span>
 <span id="cb1-4"><a href="#cb1-4"></a>   <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">mean_log_radon=</span><span class="fu">mean</span>(log_radon, <span class="at">na.rm=</span>T),</span>
-<span id="cb1-5"><a href="#cb1-5"></a>             <span class="at">sd_log_radon=</span><span class="fu">sd</span>(log_radon, <span class="at">na.rm=</span>T), <span class="at">pct_no_basement =</span> <span class="fu">mean</span>(floor, <span class="at">na.rm=</span>T)) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-6"><a href="#cb1-6"></a>   <span class="fu">print</span>(<span class="at">n=</span><span class="dv">85</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5"></a>             <span class="at">sd_log_radon=</span><span class="fu">sd</span>(log_radon, <span class="at">na.rm=</span>T), </span>
+<span id="cb1-6"><a href="#cb1-6"></a>             <span class="at">pct_no_basement =</span> <span class="fu">mean</span>(floor, <span class="at">na.rm=</span>T)) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-7"><a href="#cb1-7"></a>   <span class="fu">print</span>(<span class="at">n=</span><span class="dv">85</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 85 × 5
    county                n mean_log_radon sd_log_radon pct_no_basement
@@ -743,7 +756,7 @@ September 10, 2024
 </div>
 </div>
 </div>
-</section><section id="example-radon-measurements-in-minnesota-1" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</section><section id="example-radon-measurements-in-minnesota-2" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Let’s look at the observations for a random sample of counties</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># pick 8 random counties #</span></span>
@@ -766,7 +779,7 @@ September 10, 2024
 </div>
 <ul>
 <li>How do we think county membership might affect analysis of our question of interest?</li>
-</ul></section><section id="example-radon-measurements-in-minnesota-2" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</ul></section><section id="example-radon-measurements-in-minnesota-3" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Let’s see if we have any clustering…</p>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -816,7 +829,7 @@ $vara
 </div>
 </div>
 </div>
-</section><section id="example-radon-measurements-in-minnesota-3" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</section><section id="example-radon-measurements-in-minnesota-4" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
 <p>We’ll first fit without accounting for counties</p>
@@ -860,7 +873,7 @@ F-statistic: 70.25 on 1 and 917 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div>
-</section><section id="example-radon-measurements-in-minnesota-4" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</section><section id="example-radon-measurements-in-minnesota-5" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
 <p>Next we’ll fit a separate regression for each county</p>
@@ -1289,7 +1302,7 @@ $`YELLOW MEDICINE`
 </div>
 </div>
 </div>
-</section><section id="example-radon-measurements-in-minnesota-5" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</section><section id="example-radon-measurements-in-minnesota-6" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Let’s visualize the point estimates and confidence intervals from all these models…</p>
 <div class="fragment">
 <div class="cell" data-layout-align="center">
@@ -1301,7 +1314,7 @@ $`YELLOW MEDICINE`
 </div>
 </div>
 </div>
-</section><section id="example-radon-measurements-in-minnesota-6" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</section><section id="example-radon-measurements-in-minnesota-7" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Now we’ll look at fitting with counties, but without removing the intercept</p>
 <ul>
 <li>AKA: “no pooling” of data</li>
@@ -1420,7 +1433,7 @@ F-statistic: 3.936 on 85 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 <li>What changed from the last regression? The first regression?</li>
 </ul>
 </div>
-</section><section id="example-radon-measurements-in-minnesota-7" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</section><section id="example-radon-measurements-in-minnesota-8" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Finally we’ll fit with counties, and without an intercept</p>
 <ul>
 <li>Another example of a “no pooling” analysis</li>
@@ -1539,7 +1552,7 @@ F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 <li>What changed from the last regression?</li>
 </ul>
 </div>
-</section><section id="example-radon-measurements-in-minnesota-8" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</section><section id="example-radon-measurements-in-minnesota-9" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Let’s look at the estimated effects for Cook (very insignificant county effect) and Hennepin (Minneapolis) counties</p>
 <div class="fragment">
 <div class="cell">
@@ -1575,7 +1588,7 @@ factor(county)HENNEPIN  1.3927949 0.07128800 19.537579 2.860795e-70</code></pre>
 <li>Should we put the same level of trust in those county-specific effects?</li>
 </ul>
 </div>
-</section><section id="example-radon-measurements-in-minnesota-9" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</section><section id="example-radon-measurements-in-minnesota-10" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Now let’s do a county-level analysis</p>
 <div class="fragment">
 <div class="cell">

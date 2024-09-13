@@ -90,10 +90,14 @@ Clustering may impact analysis in several ways
 
 - Reduces the amount of information we get from each individual data point
 
+:::: {.columns}
+
+::: {.column width="70%"}
+::: {.fragment}
 [How do we account for this clustering in analysis?]{.alert}
+:::
 
-. . .
-
+::: {.fragment}
 - Could fit separate regressions for each group... no "global" estimate of exposure effect
 
 - Could add group as covariate in model... violates parameters vs data size assumptions
@@ -101,14 +105,22 @@ Clustering may impact analysis in several ways
 - Could do cluster-level model... we lose a lot of individual-level information
 
 - ... Something else?
+:::
+:::
 
-. . .
+::: {.column width="30%"}
+::: {.fragment}
+[Some new approaches]{.alert}
 
-Two main "classes" of modeling approaches:
+Two main "classes":
 
 - "Conditional" models (today's focus)
 
 - "Marginal" models (we'll get to these later)
+:::
+:::
+
+::::
 
 ---
 
@@ -132,7 +144,13 @@ Model is [conditional]{.alert} because the interpretation of $\beta_1$ assumes w
 
 . . .
 
-We can put this into practice with a [linear mixed effects]{.alert} model
+We tried this (somewhat informally) last week by adding cluster membership as a covariate
+
+- Ran into issues around # parameters increaseing with data size
+
+. . .
+
+We can fix some of those issues by using a [linear mixed effects]{.alert} model framework
 
 ---
 
@@ -169,23 +187,37 @@ $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 Consider a simple LME with 1 exposure variable $W$:
 $$\vec{Y}_i = \beta_0 + \beta_1 \vec{U}_{i} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i$$
 
-- $\beta_0$: the (sample) population-level mean in $Y$ when $w=0$
+- $\beta_0$: the (sample) population-level mean in $Y$ when $u=0$
 
-- $\beta_0 + b_{0i}$: the mean in $Y$ for cluster $i$ when $w=0$
+- $\beta_0 + b_{0i}$: the mean in $Y$ for cluster $i$ when $u=0$
 
-- $\beta_1$: the change in $Y$ for increasing $W$ by one unit, comparing 2 individuals *in the same cluster*
+- $\beta_1$: the change in $Y$ for increasing $U$ by one unit, comparing 2 individuals [in the same cluster]{.alert}
 
 . . .
 
+We can get (potentially) 2 types of interpretations out of this model
+
+:::: {.columns}
+
+::: {.column width="50%"}
+::: {.fragment}
 Conditional mean:
 $$E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + b_{0i}$$
 
 - Mean outcome for an individual cluster
+:::
+:::
 
+::: {.column width="50%"}
+::: {.fragment}
 Marginal mean:
 $$E[Y_{ij}|\boldsymbol{X}_i] = \boldsymbol{X}_i\vec{\beta}$$
 
 - Mean outcome averaged over the entire sample
+:::
+:::
+
+::::
 
 ---
 
@@ -197,10 +229,18 @@ $$\vec{Y}_i = \color{green}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{\xi
 
 - Allows us to break down an LME into 2 main components:
 
+:::: {.columns}
+
+::: {.column width="50%"}
+::: {.fragment}
    1. Mean response (as function of [fixed]{.alert} covariates)
    
    $$\color{green}{\boldsymbol{X}_i\vec{\beta}}$$
-   
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
    2. Systematic variation (of the response/outcome)
    $$\color{blue}{\vec{\xi}_i} = \color{red}{\vec{Z}_ib_{0i}}+\color{purple}{\vec{\epsilon}_i}$$
    made up of:
@@ -209,10 +249,14 @@ $$\vec{Y}_i = \color{green}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{\xi
             - Random between-cluster variation: $\color{red}{\vec{Z}_i b_{0i}}$
             
          ii. Within-cluster variation: $\color{purple}{\vec{\epsilon}_i}$
+:::
+:::
+
+::::
 
 ---
 
-## The linear mixed effects model (cont.)
+## Systematic variation
 
 <!-- $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$ -->
 
@@ -223,6 +267,8 @@ $$b_{0i} \sim N(0, \sigma^2_b)$$
 $$\vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i)$$
 
 - $\boldsymbol{R}_i$ is the covariance matrix of the individual-level errors: $Cov[\epsilon_{ij}, \epsilon_{ik}] = \boldsymbol{R}_i$
+
+- Instead of estimating all the cluster-level effects separately, we assume they come from a common distribution and borrow information between clusters to come up with variance estimates
 
 - Also assume $b_{0i}$ and $\vec{\epsilon}_i$ are *independent* ($b_{0i}\perp \vec{\epsilon}_i$)
    
@@ -242,9 +288,11 @@ $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
 How is this different from adding groups as covariates?
 
-- Allows groups with fewer observations to be more influenced by the rest of the data, and groups with more observations to be less
+- Allows clusters with fewer observations to be more influenced by the rest of the data ("borrow" information), and clusters with more observations to be less influenced
 
-- "... we can learn about one cluster's coefficients by understanding the variability in coefficients across the population. [When there is little variability, we should rely on the population average coefficients to estimate those for a cluster When there's substantial variation, we must rely more heavily on the data from each cluster in estimating its own coefficients]{.alert}." (Analysis of Longitudinal Data, pg. 173)
+. . .
+
+- "... we can learn about one cluster's coefficients by understanding the variability in coefficients across the population. [When there is little variability, we should rely on the population average coefficients to estimate those for a cluster. When there's substantial variation, we must rely more heavily on the data from each cluster in estimating its own coefficients]{.alert}." (Analysis of Longitudinal Data [Diggle et al] pg. 173)
 
 <!-- What's "conditional" about this model? -->
 
@@ -253,7 +301,7 @@ How is this different from adding groups as covariates?
 
 ---
 
-## Breaking down systematic variation
+## Breaking down systematic variation {.smaller}
 
 Random effects:
 $$b_{0i} \sim N(0, \sigma^2_b)$$
@@ -268,6 +316,9 @@ Within-cluster variation:
 $$\vec{\epsilon}_i \sim N(0, \boldsymbol{R}_i)$$
 
 - Assumes that [cluster members]{.alert} are *randomly* varying around the cluster-specific mean response: $E[\vec{\epsilon}_i]=0$
+
+. . .
+
 - For now, assume $\boldsymbol{R}_i = \sigma^2_\epsilon \boldsymbol{I}$
    - Assumes all observations in cluster $i$ are *conditionally independent* given $b_{0i}$
       - Given cluster membership, all members of cluster are independent
@@ -283,7 +334,11 @@ $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 Then the variance of a single outcome measure is:
 $$\begin{align*}Var[Y_{ij}] &= Var[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\epsilon_{ij}]\\
 &= Var[\vec{Z}_ib_{0i}+\epsilon_{ij}]\\
-&= \sigma^2_b + \sigma^2_{\epsilon}\end{align*}$$
+&= \sigma^2_b + \sigma^2_{\epsilon}\end{align*}$$ 
+
+::: {.alert .fragment .absolute top=450 right=450}
+(total variation!)
+:::
 
 . . .
 
@@ -294,9 +349,9 @@ $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= Cov[\boldsymbol{X}_i\vec{\beta} + \vec{Z}
 &= \sigma^2_b + 0 + 0 + 0\\
 &= \sigma^2_b\end{align*}$$
 
-. . .
-
-[In 552, we were used to seeing $Cov[Y_{ij}, Y_{ik}]=0$!]{.alert}
+::: {.alert .fragment .absolute bottom=75 left=650}
+In 552, we were used to seeing $Cov[Y_{ij}, Y_{ik}]=0$!
+:::
 
 ---
 
@@ -332,9 +387,7 @@ Estimation of $\beta$ is done by (restricted) maximum likelihood estimation -- t
 
 $$\widehat{\beta} = \left(\sum_{i=1}^n \boldsymbol{X}^T \left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i\right)^{-1}\sum_{i=1}^n \boldsymbol{X}^T \left\{Cov[\vec{Y}_i]\right\}^{-1}\vec{Y}_i$$
 
-::: {.r-stack}
-
-::: {.fragment .fade-in-then-out}
+::: {.fragment}
 - In OLS and WLS, we used [maximum likelihood]{.alert} to estimate $\beta$'s and variance components 
    
 - In LMEs, we use [restricted maximum likelihood (REML)]{.alert} estimation because MLE gives us biased estimates of the covariance components in small samples
@@ -344,12 +397,16 @@ $$\widehat{\beta} = \left(\sum_{i=1}^n \boldsymbol{X}^T \left\{Cov[\vec{Y}_i]\ri
    - Wald-based inference (z/t-tests and confidence intervals) are still fine, though
 :::
 
-::: {.fragment}
+---
+
+## Inference for $\widehat{\beta}$
+
+Estimation of $\beta$ is done by (restricted) maximum likelihood estimation -- the formula looks a lot like it did for weighted least squares (WLS)
+
+$$\widehat{\beta} = \left(\sum_{i=1}^n \boldsymbol{X}^T \left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i\right)^{-1}\sum_{i=1}^n \boldsymbol{X}^T \left\{Cov[\vec{Y}_i]\right\}^{-1}\vec{Y}_i$$
+
 The "model-based" covariance matrix for $\widehat{\beta}$ is
 $$Cov[\widehat{\beta}]=\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}$$
-:::
-
-:::
 
 ::: {.fragment}
 The confidence intervals for $\vec{\beta}$ will take the form:
@@ -369,31 +426,37 @@ where
 $$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \boldsymbol{X}_i^T \left\{Cov[\vec{Y}_i]\right\}^{-1} \boldsymbol{X}_i\right]^{-1}\\
 &A = \left[\sum_{i=1}^n \boldsymbol{X}_i^T \left\{Cov[\vec{Y}_i]\right\}^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T \left\{Cov[\vec{Y}_i]\right\}^{-1} \boldsymbol{X}_i\right]\end{align*}$$
 
-::: {.r-stack}
-
-::: {.fragment .fade-in-then-out}
+::: {.fragment}
 This will give us (approximately) correct variance estimates for $\widehat{\beta}$ if we're [wrong]{.alert} about the random effects or the variance of $Y$
 :::
 
-::: {.fragment}
+---
+
+## Robust inference for $\widehat{\beta}$
+
+We can also use [robust or sandwich variance]{.alert} estimators to perform inference on $\widehat{\beta}$
+
+$$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
+
+where
+$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \boldsymbol{X}_i^T \left\{Cov[\vec{Y}_i]\right\}^{-1} \boldsymbol{X}_i\right]^{-1}\\
+&A = \left[\sum_{i=1}^n \boldsymbol{X}_i^T \left\{Cov[\vec{Y}_i]\right\}^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T \left\{Cov[\vec{Y}_i]\right\}^{-1} \boldsymbol{X}_i\right]\end{align*}$$
+
 If our random intercepts [correctly]{.alert} model the covariance between observations, $A \approx B$ and:
 $$\begin{align*}Cov^*[\widehat{\beta}] &= B^{-1} A B^{-1}\\
 &\approx B^{-1} B B^{-1}\\
 & = B^{-1} = Cov[\widehat{\beta}]\end{align*}$$
 the robust variance is the same as the model-based variance!
-:::
 
 ::: {.fragment}
-![](clustering-SE-meme){.absolute top=150 right=100 width="20%"}
-:::
-
+![](clustering-SE-meme){.absolute top=150 right=75 width="20%"}
 :::
 
 ---
 
 ## ICC in LMEs
 
-It is also very intuitive to calculate the ICC from an LME:
+LMEs also make it very intuitive to calculate the ICC:
 $$\begin{align*}\text{ICC} &= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\\
 &= \frac{\sigma^2_b}{\sigma^2_b + \sigma^2_{\epsilon}}\end{align*}$$
 
@@ -408,6 +471,9 @@ $$\begin{align*}\text{ICC} &= \frac{\text{variation in cluster means}}{\text{var
 ## Example: radon measurements in Minnesota
 
 Let's fit an LME model for our Minnesota log-radon measurements:
+
+. . .
+
 $$Y_{ij} = \beta_0 + \beta_1 (\text{floor}_{ij}) + b_{0i} + \epsilon_{ij}$$
 
    - $Y_{ij}$ is the log radon for house $j$ in county $i$
@@ -420,7 +486,7 @@ $$Y_{ij} = \beta_0 + \beta_1 (\text{floor}_{ij}) + b_{0i} + \epsilon_{ij}$$
 
 ## Example: radon measurements in Minnesota
 
-Let's fit an LME model for our Minnesota log-radon measurements:
+What would the output/estiamtes of this model look like?
 ```{r radon cleaning, echo=F}
 radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
 
@@ -488,7 +554,7 @@ sqrt(diag(var_sand))
 ::::
 
 ::: {.fragment}
-![](clustering-SE-meme){.absolute bottom=-150 right=800 width="20%"}
+![](clustering-SE-meme){.absolute top=50 right=200 width="20%"}
 :::
 
 ---
@@ -504,15 +570,17 @@ radon_cty_lm <- lm(log_radon ~ floor + factor(county) - 1, data=radon.mn)
 summary(radon_cty_lm)
 ```
 
-- OLS $\beta_1$: `r round(summary(radon_cty_lm)$coef[1,1],4)`
-
-   - 95% CI: (`r round(summary(radon_cty_lm)$coef[1,1] - summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)`, `r round(summary(radon_cty_lm)$coef[1,1] + summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)`)
-   
-. . .
-
 :::: {.columns}
 
 ::: {.column width="60%"}
+
+::: {.fragment}
+- OLS $\beta_1$: `r round(summary(radon_cty_lm)$coef[1,1],4)`
+
+   - 95% CI: (`r round(summary(radon_cty_lm)$coef[1,1] - summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)`, `r round(summary(radon_cty_lm)$coef[1,1] + summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)`)
+:::
+
+::: {.fragment}
 What differences can you see compared to the previous LME?
 
 - LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
@@ -521,8 +589,10 @@ What differences can you see compared to the previous LME?
    
    - Robust 95% CI: (`r round(summary(radon_lme)$coef[2,1] - sqrt(var_sand[2,2])*pnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + sqrt(var_sand[2,2])*pnorm(0.975), 4)`)
 :::
+:::
 
 ::: {.column width="40%"}
+::: {.fragment}
 ```{r radon CI plot, echo=F}
 ci_ols <- rbind(c(2, round(summary(radon_cty_lm)$coef[1,1] - summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)), c(2,round(summary(radon_cty_lm)$coef[1,1] + summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)))
 
@@ -530,14 +600,15 @@ ci_lme <- rbind(c(1.5, round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$c
 
 ci_robust <- rbind(c(1,round(summary(radon_lme)$coef[2,1] - sqrt(var_sand[2,2])*pnorm(0.975), 4)), c(1,round(summary(radon_lme)$coef[2,1] + sqrt(var_sand[2,2])*pnorm(0.975), 4)))
 
-plot(NA, xlim=c(-0.8,-0.45), ylim=c(0.5,2.2), xlab="", ylab="", yaxt='n')
+plot(NA, xlim=c(-0.8,-0.45), ylim=c(0.5,2.2), xlab="", ylab="", yaxt='n', cex.axis=1.5)
 segments(ci_ols[1,2], ci_ols[1,1],ci_ols[2,2], ci_ols[2,1], col="red", lwd=2)
-text(ci_ols[2,2]+0.03, 2, "OLS CI", col="red")
+text(ci_ols[2,2]+0.03, 2, "OLS CI", col="red", cex=1.5)
 segments(ci_lme[1,2], ci_lme[1,1],ci_lme[2,2], ci_lme[2,1], col="purple", lwd=2)
-text(ci_lme[2,2]+0.05, 1.5, "LME model-based CI", col="purple")
+text(ci_lme[2,2]+0.07, 1.5, "LME model-based CI", col="purple", cex=1.5)
 segments(ci_robust[1,2], ci_robust[1,1],ci_robust[2,2], ci_robust[2,1], col="blue", lwd=2)
-text(ci_robust[2,2]+0.03, 1, "LME robust CI", col="blue")
+text(ci_robust[2,2]+0.05, 1, "LME robust CI", col="blue", cex=1.5)
 ```
+:::
 :::
 
 ::::

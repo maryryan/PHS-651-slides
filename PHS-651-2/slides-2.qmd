@@ -621,8 +621,8 @@ library(clubSandwich)
 var_sand <- vcovCR(radon_lme, type="CR0")
 
 # get the sandwich-based confidence interval #
-paste0( "(",round(conf_int(radon_lme, vcov="CR0")$CI_L, 4), ", "
-        , round(conf_int(radon_lme, vcov="CR0")$CI_U, 4),")")
+paste0( "(",round(conf_int(radon_lme, vcov="CR0")$CI_L[2], 4), ", "
+        , round(conf_int(radon_lme, vcov="CR0")$CI_U[2], 4),")")
 ```
 
 . . .
@@ -679,7 +679,7 @@ What differences can you see compared to the previous LME?
 
    - Model-based 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`)
    
-   - Robust 95% CI: (`r round(conf_int(radon_lme, vcov="CR0")$CI_L, 4)`, `r round(conf_int(radon_lme, vcov="CR0")$CI_U, 4)`)
+   - Robust 95% CI: (`r round(conf_int(radon_lme, vcov="CR0")$CI_L[2], 4)`, `r round(conf_int(radon_lme, vcov="CR0")$CI_U[2], 4)`)
 :::
 :::
 
@@ -690,7 +690,7 @@ ci_ols <- rbind(c(2, round(summary(radon_cty_lm)$coef[1,1] - summary(radon_cty_l
 
 ci_lme <- rbind(c(1.5, round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)), c(1.5,round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)))
 
-ci_robust <- rbind(c(1,round(conf_int(radon_lme, vcov="CR0")$CI_L, 4)), c(1,round(conf_int(radon_lme, vcov="CR0")$CI_U, 4)))
+ci_robust <- rbind(c(1,round(conf_int(radon_lme, vcov="CR0")$CI_L[2], 4)), c(1,round(conf_int(radon_lme, vcov="CR0")$CI_U[2], 4)))
 
 plot(NA, xlim=c(-0.9,-0.35), ylim=c(0.5,2.2), xlab="", ylab="", yaxt='n', cex.axis=1.5)
 segments(ci_ols[1,2], ci_ols[1,1],ci_ols[2,2], ci_ols[2,1], col="red", lwd=2)

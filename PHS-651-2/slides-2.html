@@ -854,10 +854,11 @@ floor -0.288</code></pre>
 <span id="cb3-3"><a href="#cb3-3"></a><span class="co"># get the sandwich-based covariance matrix #</span></span>
 <span id="cb3-4"><a href="#cb3-4"></a>var_sand <span class="ot">&lt;-</span> <span class="fu">vcovCR</span>(radon_lme, <span class="at">type=</span><span class="st">"CR0"</span>)</span>
 <span id="cb3-5"><a href="#cb3-5"></a></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="fu">paste0</span>( <span class="st">"("</span>,<span class="fu">round</span>(<span class="fu">summary</span>(radon_lme)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>] <span class="sc">-</span> <span class="fu">sqrt</span>(var_sand[<span class="dv">2</span>,<span class="dv">2</span>])<span class="sc">*</span><span class="fu">qnorm</span>(<span class="fl">0.975</span>), <span class="dv">4</span>), <span class="st">", "</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a>        , <span class="fu">round</span>(<span class="fu">summary</span>(radon_lme)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">sqrt</span>(var_sand[<span class="dv">2</span>,<span class="dv">2</span>])<span class="sc">*</span><span class="fu">qnorm</span>(<span class="fl">0.975</span>), <span class="dv">4</span>),<span class="st">")"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co"># get the sandwich-based confidence interval #</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="fu">paste0</span>( <span class="st">"("</span>,<span class="fu">round</span>(<span class="fu">conf_int</span>(radon_lme, <span class="at">vcov=</span><span class="st">"CR0"</span>)<span class="sc">$</span>CI_L, <span class="dv">4</span>), <span class="st">", "</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>        , <span class="fu">round</span>(<span class="fu">conf_int</span>(radon_lme, <span class="at">vcov=</span><span class="st">"CR0"</span>)<span class="sc">$</span>CI_U, <span class="dv">4</span>),<span class="st">")"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "(-0.8126, -0.5131)"</code></pre>
+<pre><code>[1] "(1.3905, 1.5943)"   "(-0.8191, -0.5066)"</code></pre>
 </div>
 </div>
 <div class="fragment">
@@ -1016,7 +1017,7 @@ F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>LME <span class="math inline">\(\beta_1\)</span>: -0.6629</p>
 <ul>
 <li><p>Model-based 95% CI: (-0.7955, -0.5303)</p></li>
-<li><p>Robust 95% CI: (-0.8126, -0.5131)</p></li>
+<li><p>Robust 95% CI: (1.3905, -0.8191, 1.5943, -0.5066)</p></li>
 </ul>
 </li>
 </ul>

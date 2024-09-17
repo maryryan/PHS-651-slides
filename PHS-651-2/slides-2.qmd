@@ -600,7 +600,7 @@ summary(radon_lme)
 
 - LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
 
-   - Model-based 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`)
+   - Model-based 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`)
 
    - How would we interpret this?
 
@@ -610,7 +610,7 @@ summary(radon_lme)
 
 Let's compare the model-based confidence intervals
 
- - Model-based 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`)
+ - Model-based 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`)
 
 to the robust CIs:
 
@@ -620,8 +620,8 @@ library(clubSandwich)
 # get the sandwich-based covariance matrix #
 var_sand <- vcovCR(radon_lme, type="CR0")
 
-paste0( "(",round(summary(radon_lme)$coef[2,1] - sqrt(var_sand[2,2])*pnorm(0.975), 4), ", "
-        , round(summary(radon_lme)$coef[2,1] + sqrt(var_sand[2,2])*pnorm(0.975), 4),")")
+paste0( "(",round(summary(radon_lme)$coef[2,1] - sqrt(var_sand[2,2])*qnorm(0.975), 4), ", "
+        , round(summary(radon_lme)$coef[2,1] + sqrt(var_sand[2,2])*qnorm(0.975), 4),")")
 ```
 
 . . .
@@ -668,7 +668,7 @@ summary(radon_cty_lm)
 ::: {.fragment}
 - OLS $\beta_1$: `r round(summary(radon_cty_lm)$coef[1,1],4)`
 
-   - 95% CI: (`r round(summary(radon_cty_lm)$coef[1,1] - summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)`, `r round(summary(radon_cty_lm)$coef[1,1] + summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)`)
+   - 95% CI: (`r round(summary(radon_cty_lm)$coef[1,1] - summary(radon_cty_lm)$coef[1,2]*qnorm(0.975), 4)`, `r round(summary(radon_cty_lm)$coef[1,1] + summary(radon_cty_lm)$coef[1,2]*qnorm(0.975), 4)`)
 :::
 
 ::: {.fragment}
@@ -676,28 +676,28 @@ What differences can you see compared to the previous LME?
 
 - LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
 
-   - Model-based 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`)
+   - Model-based 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`)
    
-   - Robust 95% CI: (`r round(summary(radon_lme)$coef[2,1] - sqrt(var_sand[2,2])*pnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + sqrt(var_sand[2,2])*pnorm(0.975), 4)`)
+   - Robust 95% CI: (`r round(summary(radon_lme)$coef[2,1] - sqrt(var_sand[2,2])*qnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + sqrt(var_sand[2,2])*qnorm(0.975), 4)`)
 :::
 :::
 
 ::: {.column width="40%"}
 ::: {.fragment}
 ```{r radon CI plot, echo=F}
-ci_ols <- rbind(c(2, round(summary(radon_cty_lm)$coef[1,1] - summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)), c(2,round(summary(radon_cty_lm)$coef[1,1] + summary(radon_cty_lm)$coef[1,2]*pnorm(0.975), 4)))
+ci_ols <- rbind(c(2, round(summary(radon_cty_lm)$coef[1,1] - summary(radon_cty_lm)$coef[1,2]*qnorm(0.975), 4)), c(2,round(summary(radon_cty_lm)$coef[1,1] + summary(radon_cty_lm)$coef[1,2]*qnorm(0.975), 4)))
 
-ci_lme <- rbind(c(1.5, round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)), c(1.5,round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)))
+ci_lme <- rbind(c(1.5, round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)), c(1.5,round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)))
 
-ci_robust <- rbind(c(1,round(summary(radon_lme)$coef[2,1] - sqrt(var_sand[2,2])*pnorm(0.975), 4)), c(1,round(summary(radon_lme)$coef[2,1] + sqrt(var_sand[2,2])*pnorm(0.975), 4)))
+ci_robust <- rbind(c(1,round(summary(radon_lme)$coef[2,1] - sqrt(var_sand[2,2])*qnorm(0.975), 4)), c(1,round(summary(radon_lme)$coef[2,1] + sqrt(var_sand[2,2])*qnorm(0.975), 4)))
 
-plot(NA, xlim=c(-0.8,-0.45), ylim=c(0.5,2.2), xlab="", ylab="", yaxt='n', cex.axis=1.5)
+plot(NA, xlim=c(-0.9,-0.35), ylim=c(0.5,2.2), xlab="", ylab="", yaxt='n', cex.axis=1.5)
 segments(ci_ols[1,2], ci_ols[1,1],ci_ols[2,2], ci_ols[2,1], col="red", lwd=2)
 text(ci_ols[2,2]+0.03, 2, "OLS CI", col="red", cex=1.5)
 segments(ci_lme[1,2], ci_lme[1,1],ci_lme[2,2], ci_lme[2,1], col="purple", lwd=2)
-text(ci_lme[2,2]+0.07, 1.5, "LME model-based CI", col="purple", cex=1.5)
+text(ci_lme[2,2]+0.08, 1.5, "LME model-based CI", col="purple", cex=1.5)
 segments(ci_robust[1,2], ci_robust[1,1],ci_robust[2,2], ci_robust[2,1], col="blue", lwd=2)
-text(ci_robust[2,2]+0.05, 1, "LME robust CI", col="blue", cex=1.5)
+text(ci_robust[2,2]+0.06, 1, "LME robust CI", col="blue", cex=1.5)
 ```
 :::
 :::

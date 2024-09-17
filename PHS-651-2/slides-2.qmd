@@ -67,9 +67,29 @@ What do we mean by correlated data or data that is clustered?
 
 - [Independent data]{.underline}: data where each observation of a variable are not meaningfully correlated with other observations of the same variable
 
-- [Correlated data]{.underline}: data where each observation of a variable is not entirely independent of other observations of the same variable
-   - AKA: multilevel/hierarchical data
+- [Clustered/Correlated data]{.underline}: data where each observation of a variable has some kind of relationship to another set of observations of that variable
+
+   - AKA: nested/multilevel/hierarchical data
    
+   - Might expect measurements on [units within a cluster are more similar]{.alert} than measurements on units in different clusters
+
+---
+
+## Recap: correlated/clustered data
+
+
+[Is it a clustering variable or is it an exposure variable?]{.alert}
+
+- Clusters tend to be physical/structural (geography, time, a body/being, etc) or hierarchical (social/family hierarchy, institutional hierarchy, etc)
+
+   - Often no obvious reference group for cluster
+
+   - Often many, many clusters in population (though we may not have data on all of them)
+
+- Exposure variables tend to have a [limited]{.alert} number of groups
+
+   - e.g., diagnosis groups
+
 . . .
 
 The ICC is a way to measure the "clustered-ness" of the outcome
@@ -98,11 +118,11 @@ Clustering may impact analysis in several ways
 :::
 
 ::: {.fragment}
-- Could fit separate regressions for each group... no "global" estimate of exposure effect
+- Could fit [separate regressions]{.alert} for each group... no "global" estimate of exposure effect
 
-- Could add group as covariate in model... violates parameters vs data size assumptions
+- Could [add group as covariate]{.alert} in model... violates parameters vs data size assumptions
 
-- Could do cluster-level model... we lose a lot of individual-level information
+- Could do [cluster-level model]{.alert}... we lose a lot of individual-level information
 
 - ... Something else?
 :::
@@ -146,7 +166,7 @@ Model is [conditional]{.alert} because the interpretation of $\beta_1$ assumes w
 
 We tried this (somewhat informally) last week by adding cluster membership as a covariate
 
-- Ran into issues around # parameters increaseing with data size
+- Ran into issues around # parameters increasing with data size
 
 . . .
 
@@ -156,16 +176,34 @@ We can fix some of those issues by using a [linear mixed effects]{.alert} model 
 
 ## The linear mixed effects model
 
+Say we have $m$ clusters that each have $n_i$ individuals, which can vary from cluster to cluster
+
+. . .
+
+:::: {.columns}
+
+::: {.column width="55%"}
 The linear mixed effects (LME) model takes the form:
 
 $$Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}$$
 
+- $Y_{ij}$ is the response/outcome observation for individual $j$ in cluster $i$
+
+- $\beta_0$ is the population-level ([fixed effect]{.alert}) intercept
+
+- $U_{ij}$ is the exposure variable for individual $j$ in cluster $i$
+
+- $\beta_1$ is the population-averaged (fixed) effect of exposure on the outcome
+
 - $Z_i$ is the random effects indicator for cluster $i$
 
-- $b_{0i}$ is the [random intercept]{.alert} for cluster $i$ (dimensions: $1\times 1$)
+- $b_{0i}$ is the [random intercept]{.alert} for cluster $i$
 
-. . .
+- $\epsilon_{ij}$ is the random error term for individual $j$ in cluster $i$
+:::
 
+::: {.column width="45%"}
+::: {.fragment}
 Or in matrix/vector notation:
 
 $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
@@ -179,13 +217,17 @@ $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 - $\vec{Z}_i$ is the random effects vector for cluster $i$ (dimensions: $n_i \times 1$)
 
 - $\vec{\epsilon}_i$ is the vector of error terms (dimensions: $n_i \times 1$)
+:::
+:::
+
+::::
 
 ---
 
 ## Interpreting LMEs
 
-Consider a simple LME with 1 exposure variable $W$:
-$$\vec{Y}_i = \beta_0 + \beta_1 \vec{U}_{i} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i$$
+Consider a simple LME with 1 exposure variable $U$:
+$$Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}$$
 
 - $\beta_0$: the (sample) population-level mean in $Y$ when $u=0$
 
@@ -236,19 +278,21 @@ $$\vec{Y}_i = \color{green}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{\xi
    1. Mean response (as function of [fixed]{.alert} covariates)
    
    $$\color{green}{\boldsymbol{X}_i\vec{\beta}}$$
+   
+   - Think of this as a function of the variables we need to isolate the causal effect of our exposure of interest
 :::
 :::
 
 ::: {.column width="50%"}
 ::: {.fragment}
    2. Systematic variation (of the response/outcome)
-   $$\color{blue}{\vec{\xi}_i} = \color{red}{\vec{Z}_ib_{0i}}+\color{purple}{\vec{\epsilon}_i}$$
+   $$\color{blue}{\vec{\xi}_i} = \color{red}{\vec{Z}_ib_{0i}}+\color{orchid}{\vec{\epsilon}_i}$$
    made up of:
          i. Random effects
          
             - Random between-cluster variation: $\color{red}{\vec{Z}_i b_{0i}}$
             
-         ii. Within-cluster variation: $\color{purple}{\vec{\epsilon}_i}$
+         ii. Within-cluster variation: $\color{orchid}{\vec{\epsilon}_i}$
 :::
 :::
 
@@ -256,23 +300,46 @@ $$\vec{Y}_i = \color{green}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{\xi
 
 ---
 
-## Systematic variation
+## Systematic variation {.smaller}
 
 <!-- $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$ -->
 
 $$\vec{\xi}_i = \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
-We typically assume
-$$b_{0i} \sim N(0, \sigma^2_b)$$
-$$\vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i)$$
+:::: {.columns}
 
-- $\boldsymbol{R}_i$ is the covariance matrix of the individual-level errors: $Cov[\epsilon_{ij}, \epsilon_{ik}] = \boldsymbol{R}_i$
+::: {.column width="50%"}
+We typically assume random intercepts follow a distribution with a common variance:
+
+$$b_{0i} \sim N(0, \sigma^2_b)$$
 
 - Instead of estimating all the cluster-level effects separately, we assume they come from a common distribution and borrow information between clusters to come up with variance estimates
+:::
 
-- Also assume $b_{0i}$ and $\vec{\epsilon}_i$ are *independent* ($b_{0i}\perp \vec{\epsilon}_i$)
+::: {.column width="50%"}
+::: {.fragment}
+This is similar to how we've assumed individual-level errors follow a distribution:
+
+$$\vec{\epsilon}_i \sim N(\vec{0}, \sigma^2_\epsilon \boldsymbol{I})$$
+
+- $\sigma^2_\epsilon \boldsymbol{I}$ is the covariance matrix of the individual-level errors: $Cov[\epsilon_{ij}, \epsilon_{ik}] = \sigma^2_\epsilon \boldsymbol{I}$
+
+   - Assumes all observations in cluster $i$ are *conditionally independent* given $b_{0i}$
    
-   - What happens when this is violated? Stay tuned for later this semester :grinning:
+      - Given cluster membership, all members of cluster are independent
+      
+   - Also known as an [independence model]{.alert} of within-cluster variation
+
+   - Let's call this $\boldsymbol{R}_i$ $\rightarrow$ we'll look at other forms of $\boldsymbol{R}_i$ later in the term
+   
+:::
+:::
+
+::::
+
+::: {.fragment .absolute top=50 right=100 width="30%"}
+Also assume (for now) that $b_{0i}$ and $\vec{\epsilon}_i$ are *independent* ($b_{0i}\perp \vec{\epsilon}_i$)
+:::
 
 ---
 
@@ -317,12 +384,6 @@ $$\vec{\epsilon}_i \sim N(0, \boldsymbol{R}_i)$$
 
 - Assumes that [cluster members]{.alert} are *randomly* varying around the cluster-specific mean response: $E[\vec{\epsilon}_i]=0$
 
-. . .
-
-- For now, assume $\boldsymbol{R}_i = \sigma^2_\epsilon \boldsymbol{I}$
-   - Assumes all observations in cluster $i$ are *conditionally independent* given $b_{0i}$
-      - Given cluster membership, all members of cluster are independent
-   - Also known as an [independence model]{.alert} of within-cluster variation
 -  The typical member-to-member deviation in the cluster-specific level of the response is $\sqrt{\sigma^2_\epsilon}$
 
 ---
@@ -357,7 +418,7 @@ In 552, we were used to seeing $Cov[Y_{ij}, Y_{ik}]=0$!
 
 ## What does this covariance matrix look like?
 
-$$\begin{align*}Cov[\vec{Y}_i] &= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \boldsymbol{R}_i\\
+$$\begin{align*}Cov[\vec{Y}_i] &= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \sigma^2_\epsilon \boldsymbol{I}\\
 &= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
 &=\begin{bmatrix}
 \sigma^2_b & \sigma^2_b & \dots & \sigma^2_b\\
@@ -449,14 +510,21 @@ $$\begin{align*}Cov^*[\widehat{\beta}] &= B^{-1} A B^{-1}\\
 the robust variance is the same as the model-based variance!
 
 ::: {.fragment}
-![](clustering-SE-meme){.absolute top=150 right=75 width="20%"}
+![](clustering-SE-meme){.absolute top=75 right=-50 width="25%"}
 :::
 
 ---
 
 ## ICC in LMEs
 
-LMEs also make it very intuitive to calculate the ICC:
+LMEs also make it very intuitive to calculate the ICC
+
+$$\vec{\xi}_i = \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+$$b_{i0} \sim N(0, \sigma^2_b)$$
+
+$$\epsilon_{ij} \sim N(0, \sigma^2_\epsilon)$$
+
 $$\begin{align*}\text{ICC} &= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\\
 &= \frac{\sigma^2_b}{\sigma^2_b + \sigma^2_{\epsilon}}\end{align*}$$
 
@@ -468,9 +536,29 @@ $$\begin{align*}\text{ICC} &= \frac{\text{variation in cluster means}}{\text{var
 
 ---
 
+## Confounding by cluster membership in LMEs
+
+The chief purpose of LMEs is to account for correlations between observations
+
+- They assume cluster membership adds an additional level of variation to the outcome that isn't accounted for by OLS modeling strategies
+
+. . .
+
+Also assumes the random effects are independent of the fixed effect variables
+
+- i.e., Cluster membership is affecting the outcome distribution, but not (meaningfully) impacting the exposure distribution
+
+. . .
+
+This means that [adding random intercepts does not account for confounding by cluster membership]{.alert}
+
+- To account for confounding, we need to add additional (cluster-level) fixed effect variables to the mean model
+
+---
+
 ## Example: radon measurements in Minnesota
 
-Let's fit an LME model for our Minnesota log-radon measurements:
+Let's fit an LME model for the effect of measurement floor on log-radon measurements in Minnesota houses. What would our model equation look like?
 
 . . .
 
@@ -486,7 +574,10 @@ $$Y_{ij} = \beta_0 + \beta_1 (\text{floor}_{ij}) + b_{0i} + \epsilon_{ij}$$
 
 ## Example: radon measurements in Minnesota
 
-What would the output/estiamtes of this model look like?
+What would the output/estimates of this model look like?
+
+. . .
+
 ```{r radon cleaning, echo=F}
 radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
 
@@ -554,7 +645,7 @@ sqrt(diag(var_sand))
 ::::
 
 ::: {.fragment}
-![](clustering-SE-meme){.absolute top=50 right=200 width="20%"}
+![](clustering-SE-meme){.absolute top=0 right=100 width="25%"}
 :::
 
 ---
@@ -613,6 +704,10 @@ text(ci_robust[2,2]+0.05, 1, "LME robust CI", col="blue", cex=1.5)
 
 ::::
 
+::: {.fragment .absolute top=400 right=50 width="30%"}
+[If county affects both % houses with basements and radon levels, what variables could we include to control for this confounding?]{.alert}
+:::
+
 ---
 
 ## Marginal effects in LMEs
@@ -642,7 +737,7 @@ Throughout this lecture we've referred to $\vec{\beta}$ as "fixed effects" and $
 
 . . .
 
-In parts of the social sciences (\*cough\* economics \*cough\*), "fixed effects" refer to adjusting for cluster membership as covariates (think back to the last lecture)
+In parts of the social sciences (\*cough\* economics \*cough\*), "fixed effects" refer to adjusting for cluster membership as covariates
 
 - These types of models are referred to in econ as "fixed effect models"
 

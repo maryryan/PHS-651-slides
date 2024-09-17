@@ -426,9 +426,26 @@ September 17, 2024
 <ul>
 <li><p><u>Independent data</u>: data where each observation of a variable are not meaningfully correlated with other observations of the same variable</p></li>
 <li>
-<p><u>Correlated data</u>: data where each observation of a variable is not entirely independent of other observations of the same variable</p>
+<p><u>Clustered/Correlated data</u>: data where each observation of a variable has some kind of relationship to another set of observations of that variable</p>
 <ul>
-<li>AKA: multilevel/hierarchical data</li>
+<li><p>AKA: nested/multilevel/hierarchical data</p></li>
+<li><p>Might expect measurements on <span class="alert">units within a cluster are more similar</span> than measurements on units in different clusters</p></li>
+</ul>
+</li>
+</ul></section><section id="recap-correlatedclustered-data-1" class="slide level2"><h2>Recap: correlated/clustered data</h2>
+<p><span class="alert">Is it a clustering variable or is it an exposure variable?</span></p>
+<ul>
+<li>
+<p>Clusters tend to be physical/structural (geography, time, a body/being, etc) or hierarchical (social/family hierarchy, institutional hierarchy, etc)</p>
+<ul>
+<li><p>Often no obvious reference group for cluster</p></li>
+<li><p>Often many, many clusters in population (though we may not have data on all of them)</p></li>
+</ul>
+</li>
+<li>
+<p>Exposure variables tend to have a <span class="alert">limited</span> number of groups</p>
+<ul>
+<li>e.g., diagnosis groups</li>
 </ul>
 </li>
 </ul>
@@ -436,7 +453,7 @@ September 17, 2024
 <p>The ICC is a way to measure the “clustered-ness” of the outcome</p>
 <p><span class="math display">\[\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} = \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\]</span></p>
 </div>
-</section><section id="recap-correlatedclustered-data-1" class="slide level2"><h2>Recap: correlated/clustered data</h2>
+</section><section id="recap-correlatedclustered-data-2" class="slide level2"><h2>Recap: correlated/clustered data</h2>
 <p>Clustering may impact analysis in several ways</p>
 <ul>
 <li><p>Groups/clusters may not be the same size</p></li>
@@ -451,9 +468,9 @@ September 17, 2024
 </div>
 <div class="fragment">
 <ul>
-<li><p>Could fit separate regressions for each group… no “global” estimate of exposure effect</p></li>
-<li><p>Could add group as covariate in model… violates parameters vs data size assumptions</p></li>
-<li><p>Could do cluster-level model… we lose a lot of individual-level information</p></li>
+<li><p>Could fit <span class="alert">separate regressions</span> for each group… no “global” estimate of exposure effect</p></li>
+<li><p>Could <span class="alert">add group as covariate</span> in model… violates parameters vs data size assumptions</p></li>
+<li><p>Could do <span class="alert">cluster-level model</span>… we lose a lot of individual-level information</p></li>
 <li><p>… Something else?</p></li>
 </ul>
 </div>
@@ -489,19 +506,29 @@ September 17, 2024
 <div class="fragment">
 <p>We tried this (somewhat informally) last week by adding cluster membership as a covariate</p>
 <ul>
-<li>Ran into issues around # parameters increaseing with data size</li>
+<li>Ran into issues around # parameters increasing with data size</li>
 </ul>
 </div>
 <div class="fragment">
 <p>We can fix some of those issues by using a <span class="alert">linear mixed effects</span> model framework</p>
 </div>
 </section><section id="the-linear-mixed-effects-model" class="slide level2"><h2>The linear mixed effects model</h2>
+<p>Say we have <span class="math inline">\(m\)</span> clusters that each have <span class="math inline">\(n_i\)</span> individuals, which can vary from cluster to cluster</p>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:55%;">
 <p>The linear mixed effects (LME) model takes the form:</p>
 <p><span class="math display">\[Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}\]</span></p>
 <ul>
+<li><p><span class="math inline">\(Y_{ij}\)</span> is the response/outcome observation for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(\beta_0\)</span> is the population-level (<span class="alert">fixed effect</span>) intercept</p></li>
+<li><p><span class="math inline">\(U_{ij}\)</span> is the exposure variable for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> is the population-averaged (fixed) effect of exposure on the outcome</p></li>
 <li><p><span class="math inline">\(Z_i\)</span> is the random effects indicator for cluster <span class="math inline">\(i\)</span></p></li>
-<li><p><span class="math inline">\(b_{0i}\)</span> is the <span class="alert">random intercept</span> for cluster <span class="math inline">\(i\)</span> (dimensions: <span class="math inline">\(1\times 1\)</span>)</p></li>
+<li><p><span class="math inline">\(b_{0i}\)</span> is the <span class="alert">random intercept</span> for cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(\epsilon_{ij}\)</span> is the random error term for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 </ul>
+</div><div class="column" style="width:45%;">
 <div class="fragment">
 <p>Or in matrix/vector notation:</p>
 <p><span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
@@ -513,8 +540,11 @@ September 17, 2024
 <li><p><span class="math inline">\(\vec{\epsilon}_i\)</span> is the vector of error terms (dimensions: <span class="math inline">\(n_i \times 1\)</span>)</p></li>
 </ul>
 </div>
+</div>
+</div>
+</div>
 </section><section id="interpreting-lmes" class="slide level2"><h2>Interpreting LMEs</h2>
-<p>Consider a simple LME with 1 exposure variable <span class="math inline">\(W\)</span>: <span class="math display">\[\vec{Y}_i = \beta_0 + \beta_1 \vec{U}_{i} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
+<p>Consider a simple LME with 1 exposure variable <span class="math inline">\(U\)</span>: <span class="math display">\[Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}\]</span></p>
 <ul>
 <li><p><span class="math inline">\(\beta_0\)</span>: the (sample) population-level mean in <span class="math inline">\(Y\)</span> when <span class="math inline">\(u=0\)</span></p></li>
 <li><p><span class="math inline">\(\beta_0 + b_{0i}\)</span>: the mean in <span class="math inline">\(Y\)</span> for cluster <span class="math inline">\(i\)</span> when <span class="math inline">\(u=0\)</span></p></li>
@@ -553,11 +583,14 @@ September 17, 2024
 <li>Mean response (as function of <span class="alert">fixed</span> covariates)</li>
 </ol>
 <p><span class="math display">\[\color{green}{\boldsymbol{X}_i\vec{\beta}}\]</span></p>
+<ul>
+<li>Think of this as a function of the variables we need to isolate the causal effect of our exposure of interest</li>
+</ul>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <ol start="2" type="1">
-<li>Systematic variation (of the response/outcome) <span class="math display">\[\color{blue}{\vec{\xi}_i} = \color{red}{\vec{Z}_ib_{0i}}+\color{purple}{\vec{\epsilon}_i}\]</span> made up of:
+<li>Systematic variation (of the response/outcome) <span class="math display">\[\color{blue}{\vec{\xi}_i} = \color{red}{\vec{Z}_ib_{0i}}+\color{orchid}{\vec{\epsilon}_i}\]</span> made up of:
 <ol type="i">
 <li>
 <p>Random effects</p>
@@ -566,28 +599,49 @@ September 17, 2024
 </li>
 </ul>
 </li>
-<li><p>Within-cluster variation: <span class="math inline">\(\color{purple}{\vec{\epsilon}_i}\)</span></p></li>
+<li><p>Within-cluster variation: <span class="math inline">\(\color{orchid}{\vec{\epsilon}_i}\)</span></p></li>
 </ol>
 </li>
 </ol>
 </div>
 </div>
 </div>
-</section><section id="systematic-variation" class="slide level2"><h2>Systematic variation</h2>
+</section><section id="systematic-variation" class="slide level2 smaller"><h2>Systematic variation</h2>
 <!-- $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$ -->
 <p><span class="math display">\[\vec{\xi}_i = \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
-<p>We typically assume <span class="math display">\[b_{0i} \sim N(0, \sigma^2_b)\]</span> <span class="math display">\[\vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i)\]</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>We typically assume random intercepts follow a distribution with a common variance:</p>
+<p><span class="math display">\[b_{0i} \sim N(0, \sigma^2_b)\]</span></p>
 <ul>
-<li><p><span class="math inline">\(\boldsymbol{R}_i\)</span> is the covariance matrix of the individual-level errors: <span class="math inline">\(Cov[\epsilon_{ij}, \epsilon_{ik}] = \boldsymbol{R}_i\)</span></p></li>
-<li><p>Instead of estimating all the cluster-level effects separately, we assume they come from a common distribution and borrow information between clusters to come up with variance estimates</p></li>
+<li>Instead of estimating all the cluster-level effects separately, we assume they come from a common distribution and borrow information between clusters to come up with variance estimates</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p>This is similar to how we’ve assumed individual-level errors follow a distribution:</p>
+<p><span class="math display">\[\vec{\epsilon}_i \sim N(\vec{0}, \sigma^2_\epsilon \boldsymbol{I})\]</span></p>
+<ul>
 <li>
-<p>Also assume <span class="math inline">\(b_{0i}\)</span> and <span class="math inline">\(\vec{\epsilon}_i\)</span> are <em>independent</em> (<span class="math inline">\(b_{0i}\perp \vec{\epsilon}_i\)</span>)</p>
+<p><span class="math inline">\(\sigma^2_\epsilon \boldsymbol{I}\)</span> is the covariance matrix of the individual-level errors: <span class="math inline">\(Cov[\epsilon_{ij}, \epsilon_{ik}] = \sigma^2_\epsilon \boldsymbol{I}\)</span></p>
 <ul>
-<li>What happens when this is violated? Stay tuned for later this semester <span class="emoji" data-emoji="grinning">😀</span>
-</li>
+<li>
+<p>Assumes all observations in cluster <span class="math inline">\(i\)</span> are <em>conditionally independent</em> given <span class="math inline">\(b_{0i}\)</span></p>
+<ul>
+<li>Given cluster membership, all members of cluster are independent</li>
 </ul>
 </li>
-</ul></section><section id="the-linear-mixed-effects-model-cont." class="slide level2"><h2>The linear mixed effects model (cont.)</h2>
+<li><p>Also known as an <span class="alert">independence model</span> of within-cluster variation</p></li>
+<li><p>Let’s call this <span class="math inline">\(\boldsymbol{R}_i\)</span> <span class="math inline">\(\rightarrow\)</span> we’ll look at other forms of <span class="math inline">\(\boldsymbol{R}_i\)</span> later in the term</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="fragment absolute" style="top: 50px; right: 100px; width: 30%; ">
+<p>Also assume (for now) that <span class="math inline">\(b_{0i}\)</span> and <span class="math inline">\(\vec{\epsilon}_i\)</span> are <em>independent</em> (<span class="math inline">\(b_{0i}\perp \vec{\epsilon}_i\)</span>)</p>
+</div>
+</section><section id="the-linear-mixed-effects-model-cont." class="slide level2"><h2>The linear mixed effects model (cont.)</h2>
 <p>What’s “mixed” about this model?</p>
 <p><span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <ul>
@@ -614,24 +668,8 @@ September 17, 2024
 <div class="fragment">
 <p>Within-cluster variation: <span class="math display">\[\vec{\epsilon}_i \sim N(0, \boldsymbol{R}_i)\]</span></p>
 <ul>
-<li>Assumes that <span class="alert">cluster members</span> are <em>randomly</em> varying around the cluster-specific mean response: <span class="math inline">\(E[\vec{\epsilon}_i]=0\)</span>
-</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li>For now, assume <span class="math inline">\(\boldsymbol{R}_i = \sigma^2_\epsilon \boldsymbol{I}\)</span>
-<ul>
-<li>Assumes all observations in cluster <span class="math inline">\(i\)</span> are <em>conditionally independent</em> given <span class="math inline">\(b_{0i}\)</span>
-<ul>
-<li>Given cluster membership, all members of cluster are independent</li>
-</ul>
-</li>
-<li>Also known as an <span class="alert">independence model</span> of within-cluster variation</li>
-</ul>
-</li>
-<li>The typical member-to-member deviation in the cluster-specific level of the response is <span class="math inline">\(\sqrt{\sigma^2_\epsilon}\)</span>
-</li>
+<li><p>Assumes that <span class="alert">cluster members</span> are <em>randomly</em> varying around the cluster-specific mean response: <span class="math inline">\(E[\vec{\epsilon}_i]=0\)</span></p></li>
+<li><p>The typical member-to-member deviation in the cluster-specific level of the response is <span class="math inline">\(\sqrt{\sigma^2_\epsilon}\)</span></p></li>
 </ul>
 </div>
 </section><section id="variancecovariance-of-the-outcome" class="slide level2"><h2>Variance/covariance of the outcome</h2>
@@ -653,7 +691,7 @@ September 17, 2024
 </div>
 </div>
 </section><section id="what-does-this-covariance-matrix-look-like" class="slide level2"><h2>What does this covariance matrix look like?</h2>
-<p><span class="math display">\[\begin{align*}Cov[\vec{Y}_i] &amp;= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \boldsymbol{R}_i\\
+<p><span class="math display">\[\begin{align*}Cov[\vec{Y}_i] &amp;= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \sigma^2_\epsilon \boldsymbol{I}\\
 &amp;= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
 &amp;=\begin{bmatrix}
 \sigma^2_b &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
@@ -719,16 +757,37 @@ September 17, 2024
 &amp;\approx B^{-1} B B^{-1}\\
 &amp; = B^{-1} = Cov[\widehat{\beta}]\end{align*}\]</span> the robust variance is the same as the model-based variance!</p>
 <div class="fragment">
-<p><img data-src="clustering-SE-meme.png" class="absolute" style="top: 150px; right: 75px; width: 20%; "></p>
+<p><img data-src="clustering-SE-meme.png" class="absolute" style="top: 75px; right: -50px; width: 25%; "></p>
 </div>
 </section><section id="icc-in-lmes" class="slide level2"><h2>ICC in LMEs</h2>
-<p>LMEs also make it very intuitive to calculate the ICC: <span class="math display">\[\begin{align*}\text{ICC} &amp;= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\\
+<p>LMEs also make it very intuitive to calculate the ICC</p>
+<p><span class="math display">\[\vec{\xi}_i = \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p><span class="math display">\[b_{i0} \sim N(0, \sigma^2_b)\]</span></p>
+<p><span class="math display">\[\epsilon_{ij} \sim N(0, \sigma^2_\epsilon)\]</span></p>
+<p><span class="math display">\[\begin{align*}\text{ICC} &amp;= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\\
 &amp;= \frac{\sigma^2_b}{\sigma^2_b + \sigma^2_{\epsilon}}\end{align*}\]</span></p>
 <!-- --- -->
 <!-- ## Distributional assumptions -->
 <!-- LMEs assume that the outcome follows a [multivariate normal]{.alert} distribution -->
+</section><section id="confounding-by-cluster-membership-in-lmes" class="slide level2"><h2>Confounding by cluster membership in LMEs</h2>
+<p>The chief purpose of LMEs is to account for correlations between observations</p>
+<ul>
+<li>They assume cluster membership adds an additional level of variation to the outcome that isn’t accounted for by OLS modeling strategies</li>
+</ul>
+<div class="fragment">
+<p>Also assumes the random effects are independent of the fixed effect variables</p>
+<ul>
+<li>i.e., Cluster membership is affecting the outcome distribution, but not (meaningfully) impacting the exposure distribution</li>
+</ul>
+</div>
+<div class="fragment">
+<p>This means that <span class="alert">adding random intercepts does not account for confounding by cluster membership</span></p>
+<ul>
+<li>To account for confounding, we need to add additional (cluster-level) fixed effect variables to the mean model</li>
+</ul>
+</div>
 </section><section id="example-radon-measurements-in-minnesota" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
-<p>Let’s fit an LME model for our Minnesota log-radon measurements:</p>
+<p>Let’s fit an LME model for the effect of measurement floor on log-radon measurements in Minnesota houses. What would our model equation look like?</p>
 <div class="fragment">
 <p><span class="math display">\[Y_{ij} = \beta_0 + \beta_1 (\text{floor}_{ij}) + b_{0i} + \epsilon_{ij}\]</span></p>
 <ul>
@@ -738,7 +797,8 @@ September 17, 2024
 </ul>
 </div>
 </section><section id="example-radon-measurements-in-minnesota-1" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
-<p>What would the output/estiamtes of this model look like?</p>
+<p>What would the output/estimates of this model look like?</p>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(lme4)</span>
 <span id="cb1-2"><a href="#cb1-2"></a></span>
@@ -780,7 +840,9 @@ floor -0.288</code></pre>
 <li><p>How would we interpret this?</p></li>
 </ul>
 </li>
-</ul></section><section id="example-radon-measurements-in-minnesota-2" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+</ul>
+</div>
+</section><section id="example-radon-measurements-in-minnesota-2" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Let’s compare the model-based confidence intervals</p>
 <ul>
 <li>Model-based 95% CI: (-0.7194, -0.6064)</li>
@@ -821,7 +883,7 @@ floor -0.288</code></pre>
 </div>
 </div>
 <div class="fragment">
-<p><img data-src="clustering-SE-meme.png" class="absolute" style="top: 50px; right: 200px; width: 20%; "></p>
+<p><img data-src="clustering-SE-meme.png" class="absolute" style="top: 0px; right: 100px; width: 25%; "></p>
 </div>
 </div>
 </section><section id="example-radon-measurements-in-minnesota-3" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
@@ -969,6 +1031,9 @@ F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div>
+<div class="fragment absolute" style="top: 400px; right: 50px; width: 30%; ">
+<p><span class="alert">If county affects both % houses with basements and radon levels, what variables could we include to control for this confounding?</span></p>
+</div>
 </div>
 </section><section id="marginal-effects-in-lmes" class="slide level2"><h2>Marginal effects in LMEs</h2>
 <p>The default interpretation of LMEs is <span class="alert">conditional</span>… but we can sometimes extract <span class="alert">marginal</span> effects out of them</p>
@@ -993,7 +1058,7 @@ F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 <li>This is standard terminology within statistics</li>
 </ul>
 <div class="fragment">
-<p>In parts of the social sciences (*cough* economics *cough*), “fixed effects” refer to adjusting for cluster membership as covariates (think back to the last lecture)</p>
+<p>In parts of the social sciences (*cough* economics *cough*), “fixed effects” refer to adjusting for cluster membership as covariates</p>
 <ul>
 <li><p>These types of models are referred to in econ as “fixed effect models”</p></li>
 <li><p>This is done to adjust for the (potentially) confounding effect of cluster membership, not so much to deal with correlated data</p></li>

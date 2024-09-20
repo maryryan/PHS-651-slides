@@ -66,7 +66,7 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-3/slides-3"))
 One way to account for clustering in analysis is with a [linear mixed effects]{.alert} model
 $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
-- $\boldsymbol{X}_i\vec{\beta}$ are the [fixed effects]{.alert} representing the mean response
+- $\boldsymbol{X}_i\vec{\beta}$ are the [fixed effects]{.alert} representing the mean responses for cluster $i$
 
 - $\vec{Z}_ib_{0i}$ are the [random effects]{.alert} accounting for random between-cluster variation
 
@@ -88,27 +88,27 @@ Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they ar
 
 ## 552 review: logistic regression
 
-If our outcome $Y_{i}$ is [binary]{.alert}, we can model it using a logistic regression:
-$$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_i\beta_1 + \epsilon_i$$
+If our outcome for an individual $j$, $Y_{j}$, is [binary]{.alert}, we can model it using a logistic regression:
+$$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} = \beta_0 + U_j\beta_1 + \epsilon_j$$
 
-- We assume $Y_i \sim \text{Binomial}(p_i)$
+- We assume $Y_j \sim \text{Binomial}(p_j)$
 
-   - $E[Y_i] = p_i$
+   - $E[Y_j] = p_j$
    
-- The logit function $\log\left(\frac{x}{1-x}\right)$ acts as the [link]{.alert} between $E[Y_i]$ and the linear model $\boldsymbol{X}_i\vec{\beta}$
+- The logit function $\log\left(\frac{x}{1-x}\right)$ acts as the [link]{.alert} between $E[Y_j]$ and the linear model $\boldsymbol{X}_j\vec{\beta}$
 
-   - $\left(\frac{p_i}{1-p_i}\right)$ are known as the [odds]{.alert} of $u=1$ compared to $u=0$
+   - $\left(\frac{p_j}{1-p_j}\right)$ are known as the [odds]{.alert} of $u=1$ compared to $u=0$
 
 ---
 
 ## 522 review: logistic regression
 
-If our outcome $Y_{i}$ is [binary]{.alert}, we can model it using a logistic regression:
-$$\log\left(\frac{p_i}{1-p_i}\right) = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_i\beta_1 + \epsilon_i$$
+If our outcome for an individual $j$, $Y_{j}$, is [binary]{.alert}, we can model it using a logistic regression:
+$$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} = \beta_0 + U_j\beta_1 + \epsilon_j$$
 
 - $\beta_1$ tells us about the [log odds]{.alert}:
 
-$$\beta_1 = \log\left(\frac{p(u=1)}{1-p(w-1)}\right) - \log\left(\frac{p(u=0)}{1-p(u=0)}\right)$$
+$$\beta_1 = \log\left(\frac{p(u=1)}{1-p(u=1)}\right) - \log\left(\frac{p(u=0)}{1-p(u=0)}\right)$$
 
 - $e^{\beta_1}$ tells us about the [odds ratio]{.alert}:
 
@@ -128,7 +128,7 @@ Logistic regression is solving 2 problems for us:
 
 . . .
 
-These are common problems when analyzing many types of non-Normal data
+These are common problems when analyzing many types of non-Normal data that OLS doesn't accommodate
 
 - Logistic regression is a specific example of a broader class of [generalized linear models]{.alert}
 
@@ -139,57 +139,57 @@ These are common problems when analyzing many types of non-Normal data
 
 In the independent observation setting, many types of data are modeled using a common [generalized linear model]{.alert} (GLM) structure
 
-$$g(Y_i) = \boldsymbol{X}_i\vec{\beta} + \epsilon_i$$
+$$g(Y_j) = \boldsymbol{X}_j\vec{\beta} + \epsilon_j$$
 
 - $g(\cdot)$ is known as the [link function]{.alert} because it *links* a linear model on the righthand side to the outcome on the lefthand side
 
-- $\epsilon_i$ will still be Normally distributed, but its variance $\sigma^2_{\epsilon}$ will match the distribution of $Y_i$
+- $\epsilon_j$ will still be Normally distributed, but its variance $\sigma^2_{\epsilon}$ will match the distribution of $Y_j$
 
 ---
 
 ## Generalized linear models
 
 In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
-$$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T v_i^{-1}[Y_i - \mu_i(\vec{\beta})] = 0$$
+$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0$$
 
 
 where
 
-- The mean of the outcome $E[Y_i]=\mu_i(\vec{\beta})$ is a function of $\vec{\beta}$
+- The mean of the outcome $E[Y_j]=\mu_j(\vec{\beta})$ is a function of $\vec{\beta}$
 
-- The variance of the outcome $Var[Y_i] = v_i$ is some function $v_i$
+- The variance of the outcome $Var[Y_j] = v_j$ is some function $v_j$
 
 . . .
 
-- The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ (AKA: the score $\partial f(y_i)/\partial \beta$)
+- The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ (AKA: the score $\partial f(y_j)/\partial \beta$)
 
 ---
 
 ## Generalized linear models
 
 In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
-$$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T v_i^{-1}[Y_i - \mu_i(\vec{\beta})] = 0$$
+$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0$$
 
 Look similar?
 
-$$\sum_{i=1}^n\boldsymbol{X}^T\sigma^2[Y_i - \boldsymbol{X}\vec{\beta}]=0 $$
+$$\sum_{j=1}^n\boldsymbol{X}^T\sigma^2[Y_j - \boldsymbol{X}\vec{\beta}]=0 $$
 
 . . .
 
 OLS is a type of GLM!
 
-- $E[Y_i] = \mu_i(\beta) = \boldsymbol{X}\vec{\beta}$
+- $E[Y_j] = \mu_j(\beta) = \boldsymbol{X}\vec{\beta}$
 
-   - $\left(\frac{\partial \mu_i}{\partial \beta}\right) = \boldsymbol{X}$
+   - $\left(\frac{\partial \mu_j}{\partial \beta}\right) = \boldsymbol{X}$
 
-- $Var[Y_i] = v_i = \sigma^2$
+- $Var[Y_j] = v_j = \sigma^2$
 
 ---
 
 ## Generalized linear models
 
 In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
-$$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i - \mu_i(\beta)] = 0$$
+$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \beta}\right)^T v_j^{-1}[Y_j - \mu_j(\beta)] = 0$$
 
 - This estimating equation is based on the [likelihood function]{.alert} associated with the distribution we assume the outcome is coming from
 
@@ -203,17 +203,17 @@ $$\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[Y_i
 
 Exponential family distributions share some common statistical properties
 
-- The expectation of $Y_i$, $E[Y_i] = \mu_i(\beta)$ can be transformed by a link function $g(\cdot)$ so that it is *linearly* related to the covariates
-$$g(\mu_i) = \boldsymbol{X}\vec{\beta}$$
+- The expectation of $Y_j$, $E[Y_j] = \mu_j(\beta)$ can be transformed by a link function $g(\cdot)$ so that it is *linearly* related to the covariates
+$$g(\mu_j) = \boldsymbol{X}\vec{\beta}$$
 
    - Some types of exponential family distributions may have multiple link functions associated with it (i.e., Bernoulli)
 
-- Variance of $Y_i$ can be expressed in terms of
-$$\text{Var}[Y_i] = \phi v(\mu_i),$$
+- Variance of $Y_j$ can be expressed in terms of
+$$\text{Var}[Y_j] = \phi v(\mu_j),$$
 
    - $\phi$ is a scale parameter $>0$
    
-   - $v(\mu_i)$ is the variance function that describes how the outcome variance $\text{Var}[Y_i]$ is related to the mean of the outcome $\mu_i$
+   - $v(\mu_j)$ is the variance function that describes how the outcome variance $\text{Var}[Y_j]$ is related to the mean of the outcome $\mu_j$
    
       - If the mean and variance are independent, this will be 1
    
@@ -458,7 +458,7 @@ Say we want to see whether years of physician experience impacts whether a patie
 
 . . .
 
-Our (loose) structural model is then:
+Our (loose) model structure is then:
 
 $$\text{logit}(E[\text{remission}_{ij}]) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})$$
 
@@ -516,7 +516,7 @@ iccbin( cid = doc_ID, y = remission, data = cancer,
 Now let's see what a non-clustered logistic regression would get us:
 
 ```{r cancer logistic}
-logistic_fit <- glm( remission ~ Experience + CancerStage,
+logistic_fit <- glm( remission ~ Experience + factor(CancerStage),
          family = binomial(link="logit"),
          data = cancer)
 
@@ -524,17 +524,27 @@ summary(logistic_fit)
 
 ```
 
+:::: {.columns}
+
+::: {.column width="70%"}
 - $e^{\beta_1}$: `r round(exp(summary(logistic_fit)$coefficients[2,1]), 4)`
 
    - 95% CI: (`r round(exp(summary(logistic_fit)$coefficients[2,1] - summary(logistic_fit)$coefficients[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(logistic_fit)$coefficients[2,1] + summary(logistic_fit)$coefficients[2,2]*pnorm(0.975)), 4)`)
    
-. . .
+   - [Interpretation]{.alert}: [Cancer patients have an estimated 8.75% increased odds of going into remission if they have a physician with 1 year of experience compared to 0 years, cancer stage held constant. We are 95% confident the true odds is between 8.2 and 9.3%.]{.fragment}
+:::
 
+::: {.column width="30%"}
+::: {.fragment}
 [Can we trust this estimate?]{.alert}
+:::
 
-. . .
+::: {.fragment}
+- Assumptions: correct mean model; [independent]{.alert} observations
+:::
+:::
 
-- Assumptions: correct structural model; [independent]{.alert} observations
+::::
 
 ---
 
@@ -553,16 +563,18 @@ summary( glmm_fit )$tTable
 
 :::: {.columns}
 
-::: {.column width="40%"}
+::: {.column width="60%"}
 Logistic GLMM results:
 
 - $e^{\beta_1}$: `r round(exp(glmm_fit$coefficients$fixed[2]), 4)`
 
    - 95% CI: (`r round(exp(glmm_fit$coefficients$fixed[2] - summary(glmm_fit)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(glmm_fit$coefficients$fixed[2] + summary(glmm_fit)$tTable[2,2]*pnorm(0.975)), 4)`)
+   
+   - [Interpretation]{.alert}: [Cancer patients have an estimated 11.35% increased odds of going into remission if they have a physician with 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between 9.09 and 13.65%.]{.fragment}
 
 :::
 
-::: {.column width="60%"}
+::: {.column width="40%"}
 Compare to what we had with the unclustered logistic model:
 
 - $e^{\beta_1}$: `r round(exp(summary(logistic_fit)$coefficients[2,1]), 4)`
@@ -578,11 +590,19 @@ Compare to what we had with the unclustered logistic model:
 
 Binary outcomes are special in that there are several alternative link functions you can use
 
-- The logit link is very common
+- The [logit]{.alert} link is very common
+   
+   - Gives us odds ratios and log-odds ratios for $\beta_1$
 
-- The probit link is sometimes used in certain fields
+- The [probit]{.alert} link is sometimes used in certain fields for prediction
+   
+   - Function is the inverse Normal CDF
+   
+   - Coefficients are very difficult to interpret
 
-- The identity link also gets used
+- The [log]{.alert} link and [identity]{.alert} links also get used
+
+   - The former gives us risk ratios for $\beta_1$, while the latter gives us risk differences for $\beta_1$
 
 ---
 

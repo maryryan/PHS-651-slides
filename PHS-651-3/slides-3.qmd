@@ -401,6 +401,8 @@ $$\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \epsilon_{ij}$$
 
 where $b_{0i} \sim N(0, \sigma^2_b)$ and $\epsilon_{ij} \sim \left(0, p_{ij}(1-p_{ij})\right)$
 
+- We usually estimate $Var[\epsilon_{ij}]$ as $p(1-p)$
+
 ---
 
 ## Some notes

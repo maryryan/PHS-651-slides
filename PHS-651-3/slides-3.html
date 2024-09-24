@@ -669,7 +669,10 @@ September 24, 2024
 <p><span class="alert">What would our model look like?</span></p>
 <p><span class="math display">\[\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \epsilon_{ij}\]</span></p>
 <p>where <span class="math inline">\(b_{0i} \sim N(0, \sigma^2_b)\)</span> and <span class="math inline">\(\epsilon_{ij} \sim \left(0, p_{ij}(1-p_{ij})\right)\)</span></p>
-</section><section id="some-notes" class="slide level2"><h2>Some notes</h2>
+<ul>
+<li>We usually estimate <span class="math inline">\(Var[\epsilon_{ij}]\)</span> as <span class="math inline">\(p(1-p)\)</span>
+</li>
+</ul></section><section id="some-notes" class="slide level2"><h2>Some notes</h2>
 <p>In order to estimate regression coefficients from the likelihood function for a GLMM, we usually need to do some approximations</p>
 <ul>
 <li>

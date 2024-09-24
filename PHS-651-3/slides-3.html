@@ -500,7 +500,7 @@ September 24, 2024
 </ul>
 <div class="fragment">
 <ul>
-<li>The estimating equation is actually just the derivative of the likelihood with respect to regression parameters <span class="math inline">\(\beta\)</span> (AKA: the score <span class="math inline">\(\partial f(y_j)/\partial \beta\)</span>)</li>
+<li>The estimating equation is actually just the derivative of the likelihood with respect to regression parameters <span class="math inline">\(\beta\)</span> (<span class="math inline">\(\partial f(y_j)/\partial \beta\)</span>)</li>
 </ul>
 </div>
 </section><section id="generalized-linear-models-2" class="slide level2"><h2>Generalized linear models</h2>
@@ -583,7 +583,13 @@ September 24, 2024
 </td>
 </tr>
 </tbody>
-</table></section><section id="exponential-family-and-glms-examples" class="slide level2"><h2>Exponential family and GLMs: examples</h2>
+</table>
+<div class="fragment">
+<ul>
+<li>We’ll focus on binary/Bernoulli/Binomial data today and circle back to count/Poisson data later</li>
+</ul>
+</div>
+</section><section id="exponential-family-and-glms-examples" class="slide level2"><h2>Exponential family and GLMs: examples</h2>
 <p>Normal distribution</p>
 <ul>
 <li><p>Assume that <span class="math inline">\(g(\cdot)\)</span> is the identity function <span class="math inline">\(g(\mu) = \mu\)</span></p></li>
@@ -674,38 +680,47 @@ September 24, 2024
 </ol>
 </li>
 </ul>
-<p>So you might see multiple functions online for running GLMMs in R and SAS</p>
-<div class="columns">
-<div class="column" style="width:50%;">
 <div class="fragment">
-<p><span class="alert">We will use</span></p>
 <ul>
-<li><p><code>glmmPQL()</code> in R and <code>PROC GLIMMIX</code> in SAS</p></li>
-<li><p>These both use method 1 above, and can be used with longitudinal models developed later in this course</p></li>
+<li>
+<p>Either method doesn’t perform well when you have small number of events per cluster, better for count data</p>
+<ul>
+<li>Method 1 is the worse of the two in small event scenario</li>
+</ul>
+</li>
+<li><p>Method 2 can be computationally intense/expensive</p></li>
 </ul>
 </div>
-</div><div class="column" style="width:50%;">
-<div class="fragment">
-<p>Others include:</p>
+</section><section id="some-notes-1" class="slide level2"><h2>Some notes</h2>
+<p>There are 2 ways to approximate estimates:</p>
+<ol type="1">
+<li>Approximate maximum likelihood (penalized quasi-likelihood)</li>
+</ol>
+<ul>
+<li>
+<p><code>glmmPQL()</code> in R and <code>PROC GLIMMIX</code> in SAS</p>
+<ul>
+<li>Results can be especially unreliable (and different by software) if there are a small number of events per cluster</li>
+</ul>
+</li>
+</ul>
+<ol start="2" type="1">
+<li>Approximate the integral (Gaussian quadrature)</li>
+</ol>
 <ul>
 <li>
 <p><code>glmmML()</code>, <code>glmm()</code>, and <code>glmer()</code> in R</p>
 <ul>
-<li>Both use method 2 but can’t extend to the longitudinal models we’ll get to later</li>
+<li>First 2 can’t extend to the longitudinal models we’ll get to later</li>
 </ul>
 </li>
 <li>
-<p><code>PROC NLMIXED</code> in SAS</p>
+<p><code>PROC NLMIXED</code>, <code>PROC GLIMMIX METHOD=QUAD(QPOINTS=50)</code> in SAS</p>
 <ul>
-<li><p>Uses method 2</p></li>
-<li><p>Can extend to longitudinal models, but can take a while to run</p></li>
+<li>Can extend to longitudinal models, but can take a while to run</li>
 </ul>
 </li>
-</ul>
-</div>
-</div>
-</div>
-</section><section id="example-cancer-remission" class="slide level2"><h2>Example: cancer remission</h2>
+</ul></section><section id="example-cancer-remission" class="slide level2"><h2>Example: cancer remission</h2>
 <!-- https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/ -->
 <p>Say we want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment</p>
 <ul>
@@ -763,7 +778,7 @@ $ci
 </div>
 <div class="fragment">
 <ul>
-<li>Pretty strong evidence!</li>
+<li>Decent amount of clustering!</li>
 </ul>
 </div>
 </section><section id="example-cancer-remission-3" class="slide level2"><h2>Example: cancer remission</h2>
@@ -824,18 +839,17 @@ Number of Fisher Scoring iterations: 4</code></pre>
 </section><section id="example-cancer-remission-4" class="slide level2"><h2>Example: cancer remission</h2>
 <p>Now what about a logistic GLMM with random intercepts by physician:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb7-2"><a href="#cb7-2"></a>glmm_fit <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
-<span id="cb7-3"><a href="#cb7-3"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> doc_ID, <span class="at">family =</span> binomial, <span class="at">data =</span> cancer, </span>
-<span id="cb7-4"><a href="#cb7-4"></a>         <span class="at">verbose =</span> F )</span>
-<span id="cb7-5"><a href="#cb7-5"></a><span class="fu">summary</span>( glmm_fit )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb7-2"><a href="#cb7-2"></a>glmm_fit <span class="ot">&lt;-</span> <span class="fu">glmer</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> doc_ID), <span class="at">family =</span> binomial, <span class="at">data =</span> cancer, </span>
+<span id="cb7-3"><a href="#cb7-3"></a>         <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>) )</span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="fu">summary</span>( glmm_fit )<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                    Value  Std.Error   DF    t-value      p-value
-(Intercept)    -2.6355391 0.44747734 8115  -5.889771 4.021412e-09
-Experience      0.1074656 0.02450726  405   4.385051 1.480059e-05
-CancerStageII  -0.4681372 0.06208941 8115  -7.539727 5.218208e-14
-CancerStageIII -1.0892780 0.07847836 8115 -13.879980 2.612280e-43
-CancerStageIV  -2.4132991 0.12745333 8115 -18.934767 2.823650e-78</code></pre>
+<pre><code>                 Estimate Std. Error    z value     Pr(&gt;|z|)
+(Intercept)    -2.9477893 0.48456845  -6.083329 1.177125e-09
+Experience      0.1187726 0.02649019   4.483643 7.337924e-06
+CancerStageII  -0.4856890 0.07099432  -6.841238 7.851168e-12
+CancerStageIII -1.1208592 0.09006870 -12.444492 1.498347e-35
+CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
 </div>
 </div>
 <div class="columns">
@@ -843,9 +857,9 @@ CancerStageIV  -2.4132991 0.12745333 8115 -18.934767 2.823650e-78</code></pre>
 <p>Logistic GLMM results:</p>
 <ul>
 <li>
-<p><span class="math inline">\(e^{\beta_1}\)</span>: 1.1135</p>
+<p><span class="math inline">\(e^{\beta_1}\)</span>: 1.1261</p>
 <ul>
-<li><p>95% CI: (1.0909, 1.1365)</p></li>
+<li><p>95% CI: (1.1015, 1.1513)</p></li>
 <li><p><span class="alert">Interpretation</span>: <span class="fragment">Cancer patients have an estimated 11.35% increased odds of going into remission if they have a physician with 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between 9.09 and 13.65%.</span></p></li>
 </ul>
 </li>
@@ -860,6 +874,34 @@ CancerStageIV  -2.4132991 0.12745333 8115 -18.934767 2.823650e-78</code></pre>
 </ul>
 </li>
 </ul>
+</div>
+</div>
+</section><section id="example-cancer-remission-5" class="slide level2"><h2>Example: cancer remission</h2>
+<p>A brief comparison of <code>glmmPQL</code> vs <code>glmer</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>pql_fit <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
+<span id="cb9-3"><a href="#cb9-3"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> doc_ID, <span class="at">family =</span> binomial, <span class="at">data =</span> cancer, </span>
+<span id="cb9-4"><a href="#cb9-4"></a>         <span class="at">verbose =</span> F )</span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="fu">summary</span>( pql_fit )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    Value  Std.Error   DF    t-value      p-value
+(Intercept)    -2.6355391 0.44747734 8115  -5.889771 4.021412e-09
+Experience      0.1074656 0.02450726  405   4.385051 1.480059e-05
+CancerStageII  -0.4681372 0.06208941 8115  -7.539727 5.218208e-14
+CancerStageIII -1.0892780 0.07847836 8115 -13.879980 2.612280e-43
+CancerStageIV  -2.4132991 0.12745333 8115 -18.934767 2.823650e-78</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">summary</span>(glmm_fit)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 Estimate Std. Error    z value     Pr(&gt;|z|)
+(Intercept)    -2.9477893 0.48456845  -6.083329 1.177125e-09
+Experience      0.1187726 0.02649019   4.483643 7.337924e-06
+CancerStageII  -0.4856890 0.07099432  -6.841238 7.851168e-12
+CancerStageIII -1.1208592 0.09006870 -12.444492 1.498347e-35
+CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
 </div>
 </div>
 </section><section id="alternate-link-functions-for-binary-data" class="slide level2"><h2>Alternate link functions for binary data</h2>

@@ -161,7 +161,7 @@ where
 
 . . .
 
-- The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ (AKA: the score $\partial f(y_j)/\partial \beta$)
+- The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ ($\partial f(y_j)/\partial \beta$)
 
 ---
 
@@ -226,6 +226,10 @@ $$\text{Var}[Y_j] = \phi v(\mu_j),$$
 | Normal       | $v(\mu)=1$             | Identity: $g(\mu) = \mu = \boldsymbol{X}_i\vec{\beta}$                            |
 | Bernoulli    | $v(\mu)=\mu(1-\mu)$    | Logit: $g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_i\vec{\beta}$ |
 | Poisson      | $v(\mu)=\mu$           | Log: $g(\mu) = \log(\mu)= \boldsymbol{X}_i\vec{\beta}$                            |
+
+. . .
+
+- We'll focus on binary/Bernoulli/Binomial data today and circle back to count/Poisson data later
 
 ---
 
@@ -409,38 +413,35 @@ In order to estimate regression coefficients from the likelihood function for a 
 
    2. Approximate the integral (Gaussian quadrature)
 
-So you might see multiple functions online for running GLMMs in R and SAS
+. . .
 
+- Either method doesn't perform well when you have small number of events per cluster, better for count data
 
-:::: {.columns}
-
-::: {.column width="50%"}
-::: {.fragment}
-[We will use]{.alert}
-
-- `glmmPQL()` in R and `PROC GLIMMIX` in SAS
-
-- These both use method 1 above, and can be used with longitudinal models developed later in this course
-:::
-:::
-
-::: {.column width="50%"}
-::: {.fragment}
-Others include:
-
-- `glmmML()`, `glmm()`, and `glmer()` in R
-
-   - Both use method 2 but can't extend to the longitudinal models we'll get to later
+   - Method 1 is the worse of the two in small event scenario
    
-- `PROC NLMIXED` in SAS
+- Method 2 can be computationally intense/expensive
 
-   - Uses method 2
+---
+
+## Some notes
+
+There are 2 ways to approximate estimates:
+
+   1. Approximate maximum likelihood (penalized quasi-likelihood)
    
-   - Can extend to longitudinal models, but can take a while to run
-:::
-:::
+   - `glmmPQL()` in R and `PROC GLIMMIX` in SAS
+      
+      - Results can be especially unreliable (and different by software) if there are a small number of events per cluster
 
-::::
+   2. Approximate the integral (Gaussian quadrature)
+   
+   - `glmmML()`, `glmm()`, and `glmer()` in R
+      
+      - First 2 can't extend to the longitudinal models we'll get to later
+   
+   - `PROC NLMIXED`, `PROC GLIMMIX METHOD=QUAD(QPOINTS=50)` in SAS
+   
+      - Can extend to longitudinal models, but can take a while to run
 
 ---
 
@@ -507,7 +508,7 @@ iccbin( cid = doc_ID, y = remission, data = cancer,
 
 . . .
 
-- Pretty strong evidence!
+- Decent amount of clustering!
 
 ---
 
@@ -552,12 +553,11 @@ summary(logistic_fit)
 
 Now what about a logistic GLMM with random intercepts by physician:
 
-```{r cancer glmm}
-library(MASS)
-glmm_fit <- glmmPQL( remission ~ Experience + CancerStage,
-         random = ~ 1 | doc_ID, family = binomial, data = cancer, 
-         verbose = F )
-summary( glmm_fit )$tTable
+```{r cancer glmer}
+library(lme4)
+glmm_fit <- glmer( remission ~ Experience + CancerStage + (1 | doc_ID), family = binomial, data = cancer, 
+         control=glmerControl(optimizer="bobyqa") )
+summary( glmm_fit )$coefficients
 
 ```
 
@@ -566,9 +566,9 @@ summary( glmm_fit )$tTable
 ::: {.column width="60%"}
 Logistic GLMM results:
 
-- $e^{\beta_1}$: `r round(exp(glmm_fit$coefficients$fixed[2]), 4)`
+- $e^{\beta_1}$: `r round(exp(summary(glmm_fit)$coefficients[2,1]), 4)`
 
-   - 95% CI: (`r round(exp(glmm_fit$coefficients$fixed[2] - summary(glmm_fit)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(glmm_fit$coefficients$fixed[2] + summary(glmm_fit)$tTable[2,2]*pnorm(0.975)), 4)`)
+   - 95% CI: (`r round(exp(summary(glmm_fit)$coefficients[2,1] - summary(glmm_fit)$coefficients[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(glmm_fit)$coefficients[2,1] + summary(glmm_fit)$coefficients[2,2]*pnorm(0.975)), 4)`)
    
    - [Interpretation]{.alert}: [Cancer patients have an estimated 11.35% increased odds of going into remission if they have a physician with 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between 9.09 and 13.65%.]{.fragment}
 
@@ -583,6 +583,25 @@ Compare to what we had with the unclustered logistic model:
 :::
 
 ::::
+
+---
+
+## Example: cancer remission
+
+A brief comparison of `glmmPQL` vs `glmer`:
+
+```{r cancer pql}
+library(MASS)
+pql_fit <- glmmPQL( remission ~ Experience + CancerStage,
+         random = ~ 1 | doc_ID, family = binomial, data = cancer, 
+         verbose = F )
+summary( pql_fit )$tTable
+
+```
+
+```{r cancer glmer2}
+summary(glmm_fit)$coefficients
+```
 
 ---
 

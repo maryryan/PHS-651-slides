@@ -81,6 +81,8 @@ $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
 -   $\vec{\epsilon}_i$ is the regular between-individual variation
 
+- We assume the outcome observations in cluster *i*, $\vec{Y}_i$, follow a [multivariate probability distribution]{.alert}
+
 . . .
 
 The [fixed effects]{.alert} are shared across everyone in the sample,
@@ -113,17 +115,18 @@ inference about [population averages]{.alert} (marginal effects)
 
 -   Mean response is conditional *only* on the adjustment covariates we add
     to the mean model
-    
-- Want to do this with fewer distributional assumptions than GLMMs
 
 . . .
 
-This means we have to model (estimate) the outcome mean and the outcome
-covariance [separately]{.alert}
+Rigid distributional assumptions got in the way of this in LMEs/GLMMs
 
-- In GLMMs, we get these via distribution assumptions on the outcome and random effects
+- So for marginal models we want to use [fewer distributional assumptions]{.alert}
 
-- How do we do this without the rigidity of distribution assumptions?
+. . .
+
+- How can we account for correlation among outcome observations without the rigidity of distribution assumptions?
+
+   - Those assumptions helped show up what the covariance matrix for a cluster should look like and how we could estimate model parameters
 
    - What if we could [empirically estimate]{.alert} the covariance structure and use that?
 
@@ -157,8 +160,8 @@ There are 2 main components of a marginal model
    ii. The [within-cluster association]{.alert} of the outcomes\
       - Should depend on the means and a correlation parameter(s)
       
-::: {.fragment .absolute bottom=400 right=100}
-[Kind of like systematic variation in GLMMs!]{.alert}
+::: {.fragment .absolute bottom=400 right=100 width="30%"}
+[Component 2 is kind of like systematic variation in GLMMs!]{.alert}
 :::
 
 ---
@@ -178,7 +181,7 @@ $U_{ij}$, we might have:
 
 2.1.  $Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}$
 
-- Different variance for each cluster
+- Different variance for each cluster, which we assume is independent of $\mu_{ij}$
 
 . . .
 
@@ -215,30 +218,75 @@ $$\begin{bmatrix}
 If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster:
 $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
 &= \sqrt{\sigma^2_i}~ \alpha ~\sqrt{\sigma^2_i}\\
-&=\alpha \sigma^2_i\end{align*}$$
+&=\sigma^2_i\alpha\end{align*}$$
 
 . . .
 
+:::: {.columns}
+::: {.column width="50%"}
 which creates us a [covariance matrix]{.alert} for cluster $i$ that looks like:
 
 $$\begin{bmatrix}
-\sigma^2_i & \alpha & \dots & \alpha \\
-\alpha & \ddots & \dots & \alpha \\
+\sigma^2_i & \sigma^2_i\alpha & \dots & \sigma^2_i\alpha \\
+\sigma^2_i\alpha & \ddots & \dots & \sigma^2_i\alpha \\
 \vdots & \dots & \ddots & \vdots\\
-\alpha & \dots & \alpha & \sigma^2_i
+\sigma^2_i\alpha & \dots & \sigma^2_i\alpha & \sigma^2_i
 \end{bmatrix}$$
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+which is different than the covariance matrix we'd get from an LME:
+
+$$\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}$$
+:::
+:::
+::::
 
 . . .
 
 - Outcomes for individuals in **different** clusters would still have a covariance of 0 though because we're assuming that [clusters are independent of one another]{.alert}
 
-. . .
+---
 
-[Can we assume other types of correlation/covariance structures?]{.alert}
+## Marginal model components (cont.)
 
-. . .
+If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster:
+$$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
+&= \sqrt{\sigma^2_i}~ \alpha ~\sqrt{\sigma^2_i}\\
+&=\sigma^2_i\alpha\end{align*}$$
 
-- Yes!
+:::: {.columns}
+::: {.column width="50%"}
+which creates us a [covariance matrix]{.alert} for cluster $i$ that looks like:
+
+$$\begin{bmatrix}
+\sigma^2_i & \sigma^2_i\alpha & \dots & \sigma^2_i\alpha \\
+\sigma^2_i\alpha & \ddots & \dots & \sigma^2_i\alpha \\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_i\alpha & \dots & \sigma^2_i\alpha & \sigma^2_i
+\end{bmatrix}$$
+:::
+
+::: {.column width="50%"}
+which is different than the covariance matrix we'd get from an LME:
+
+$$\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}$$
+:::
+::::
+
+
+[Can we assume other types of correlation/covariance structures?]{.alert} [Yes!]{.fragment}
 
 ------------------------------------------------------------------------
 
@@ -246,6 +294,8 @@ $$\begin{bmatrix}
 
 The most basic (and the one we have the most prior experience with) is the [independence]{.alert} correlation structure
 
+:::: {.columns}
+::: {.column width="50%"}
 - Assumes all observations in a cluster are completely uncorrelated with each other
 
 $$\begin{bmatrix}
@@ -255,10 +305,13 @@ $$\begin{bmatrix}
 0 & \dots & 0 & 1
 \end{bmatrix}$$
 
+::: {.fragment}
 - We don't have to estimate anything here!
+:::
+:::
 
-. . .
-
+::: {.column width="50%"}
+::: {.fragment}
 Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}$, creates a covariance matrix that looks like
 
 $$\begin{bmatrix}
@@ -267,14 +320,19 @@ $$\begin{bmatrix}
 \vdots & \dots & \ddots & \vdots\\
 0 & \dots & 0 & \sigma^2_i
 \end{bmatrix}$$
+:::
+:::
 
+::::
 ------------------------------------------------------------------------
 
 ## Correlation structures: exchangeable
 
 Another type is the [exchangeable]{.alert} correlation structure (AKA: compound symmetry)
 
-- Assumes all observations related to each other to the same degree
+:::: {.columns}
+::: {.column width="50%"}
+- Assumes all observations in a cluster are related to each other to the same degree
 
 $$\begin{bmatrix}
 1 & \alpha & \dots & \alpha \\
@@ -283,18 +341,25 @@ $$\begin{bmatrix}
 \alpha & \dots & \alpha & 1
 \end{bmatrix}$$
 
+::: {.fragment}
 - Need to estimate $\alpha$
+:::
+:::
 
-. . .
-
+::: {.column width="50%"}
+::: {.fragment}
 Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}$, creates a covariance matrix that looks like
 
 $$\begin{bmatrix}
-\sigma^2_i & \alpha & \dots & \alpha \\
-\alpha & \ddots & \dots & \alpha \\
+\sigma^2_i & \sigma^2_i\alpha & \dots & \sigma^2_i\alpha \\
+\sigma^2_i\alpha & \ddots & \dots & \sigma^2_i\alpha \\
 \vdots & \dots & \ddots & \vdots\\
-\alpha & \dots & \alpha & \sigma^2_i
+\sigma^2_i\alpha & \dots & \sigma^2_i\alpha & \sigma^2_i
 \end{bmatrix}$$
+:::
+:::
+
+::::
 
 ------------------------------------------------------------------------
 
@@ -303,6 +368,8 @@ $$\begin{bmatrix}
 Could you assume all observations are (potentially) related to each other in
 different ways?
 
+:::: {.columns}
+::: {.column width="50%"}
 - Known as an [unstructured]{.alert} correlation structure
 
 $$\begin{bmatrix}
@@ -311,45 +378,36 @@ $$\begin{bmatrix}
 \vdots & \dots & \ddots & \vdots\\
 \alpha_{n1} & \dots & \alpha_{n(n-1)} & 1
 \end{bmatrix}$$
+:::
 
-. . .
-
+::: {.column width="50%"}
+::: {.fragment fragment-index=1}
 Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}$, creates a covariance matrix that looks like
 
 $$\begin{bmatrix}
-\sigma^2_i & \alpha_{12} & \dots & \alpha_{1n} \\
-\alpha_{21} & \ddots & \dots & \alpha_{2n} \\
+\sigma^2_i & \sigma^2_i\alpha_{12} & \dots & \sigma^2_i\alpha_{1n} \\
+\sigma^2_i\alpha_{21} & \ddots & \dots & \sigma^2_i\alpha_{2n} \\
 \vdots & \dots & \ddots & \vdots\\
-\alpha_{n1} & \dots & \alpha_{n(n-1)} & \sigma^2_i
+\sigma^2_i\alpha_{n1} & \dots & \sigma^2_i\alpha_{n(n-1)} & \sigma^2_i
 \end{bmatrix}$$
+:::
+:::
 
-------------------------------------------------------------------------
+::::
 
-## Correlation structures: unstructured
-
-Could you assume all observations are (potentially) related to each other in
-different ways?
-
-- Known as an [unstructured]{.alert} correlation structure
-
-$$\begin{bmatrix}
-1 & \alpha_{12} & \dots & \alpha_{1n} \\
-\alpha_{21} & \ddots & \dots & \alpha_{2n} \\
-\vdots & \dots & \ddots & \vdots\\
-\alpha_{n1} & \dots & \alpha_{n(n-1)} & 1
-\end{bmatrix}$$
-
+::: {.fragment fragment-index=2}
 - Offers maximum flexibility because correlations can be the same, very similar, or completely different from each other
+:::
 
-. . .
-
+::: {.fragment fragment-index=3}
 - But also requires you to estimate *every* correlation parameter in this matrix separately
 
    - This can cause computational and efficiency issues
-   
-. . .
+:::
 
+::: {.fragment fragment-index=4}
 - Can get away with unstructured correlation in small data sets, but usually easier to assume a simpler structure
+:::
 
 ------------------------------------------------------------------------
 
@@ -974,7 +1032,11 @@ Compared to our GEE:
 
 [A pretty big difference!]{.alert}
 
-- Went from an effect size of 11.35% higher odds of remission for each extra year of experience in the GLMM to 1.21% higher odds in the GEE
+- Went from an effect size of `r round((exp(cancer_glmm$coefficients$fixed[2])-1)*100, 2)`% higher odds of remission for each extra year of experience in the GLMM to `r round((exp(summary(cancer_gee)$coef[2,1])-1)*100,2)`% higher odds in the GEE
+
+::: {.fragment}
+- Why do you think this is?
+:::
 
 :::
 
@@ -983,74 +1045,6 @@ Compared to our GEE:
 ::::
 
 <!-- IS THIS A BIGGER EFFECT BC THE EXPOSURE IS AT THE CLUSTER LEVEL? -->
-
----
-
-## GEEs and count data
-
-GEEs are particularly useful when it comes to modeling [count outcomes]{.alert}
-
-- This is because GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions
-
-- Result: GEEs automatically account for over-dispersion
-
----
-
-## GLMMs vs GEEs: murder
-
-Let's see how GLMMs and GEEs compare with count data
-
-- Recall our county murder example
-
-- Want to see whether the real per capita personal income of a county impacts the number of murders
-
-```{r murder cleaning, echo=F}
-library(wooldridge)
-
-murder <- countymurders %>% 
-   dplyr::filter(year==1980)
-```
-
----
-
-## GLMMs vs GEEs: murder
-
-First our LME model:
-
-$$\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i} + \epsilon_{ij}$$
-
-```{r murder glmm}
-murder_glmm <- glmmPQL( murders ~ rpcpersinc,
-         random = ~ 1 | statefips, family = poisson, data = murder, 
-         verbose = F )
-summary( murder_glmm )$tTable
-
-```
-
-Logistic GLMM results:
-
-- GLMM $e^{\beta_1}$: `r round(exp(murder_glmm$coefficients$fixed[2]), 4)`
-
-   - 95% CI: (`r round(exp(murder_glmm$coefficients$fixed[2] - summary(murder_glmm)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(murder_glmm$coefficients$fixed[2] + summary(murder_glmm)$tTable[2,2]*pnorm(0.975)), 4)`)
-   
----
-
-## GLMMs vs GEEs: murder
-
-Now let's fit a GEE:
-```{r murder gee}
-# run an LME with random intercepts for county #
-murder_gee <- gee( murders ~ rpcpersinc,
-                  id=statefips, data=murder,
-                  family=poisson,
-                  corstr="exchangeable" )
-summary( murder_gee )$coef
-```
-
-
-- GEE $e^{\beta_1}$: `r round(exp(summary(murder_gee)$coef[2,1]),4)`
-
-   - 95% CI: (`r round(exp(summary(murder_gee)$coef[2,1] - summary(murder_gee)$coef[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(murder_gee)$coef[2,1] + summary(murder_gee)$coef[2,2]*pnorm(0.975)), 4)`)
 
 ---
 

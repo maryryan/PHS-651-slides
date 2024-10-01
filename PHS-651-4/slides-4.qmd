@@ -65,6 +65,14 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-4/slides-4"))
 ```
 :::
 
+---
+
+## First things first
+
+Welcome to October
+
+<img src="https://media.giphy.com/media/3oz8xG0aignBvOhIMU/giphy.gif" alt="GIF of dancing person dressed in black with Jack-o-lantern mask" width="50%">
+
 ------------------------------------------------------------------------
 
 ## Recap: linear mixed effect models

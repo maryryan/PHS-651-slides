@@ -126,9 +126,9 @@ Rigid distributional assumptions got in the way of this in LMEs/GLMMs
 
 - How can we account for correlation among outcome observations without the rigidity of distribution assumptions?
 
-   - Those assumptions helped show up what the covariance matrix for a cluster should look like and how we could estimate model parameters
+   - Those assumptions focused on specifying [within-cluster and between cluster variability]{.alert}, and helped show what the covariance matrix for a cluster should look like and how we could estimate model parameters
 
-   - What if we could [empirically estimate]{.alert} the covariance structure and use that?
+   - What if we focused more on the [within-cluster correlation]{.alert}, and use an [empirically estimated]{.alert} covariance structure?
 
 ------------------------------------------------------------------------
 
@@ -136,33 +136,35 @@ Rigid distributional assumptions got in the way of this in LMEs/GLMMs
 
 There are 2 main components of a marginal model
 
-1.  The [marginal expectation]{.alert} of the outcome $E[Y_{ij}|\vec{X}_{ij}]=\mu_{ij}$:
+1. The [marginal expectation]{.alert} of the outcome $E[Y_{ij}|\vec{X}_{ij}]=\mu_{ij}$:
+- $\mu_{ij}$ should only depend on the covariates in the model through the link function $g(\cdot)$: $g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$
 
--   $\mu_{ij}$ should only depend on the covariates in the model through
-    the link function $g(\cdot)$
-    
-    $$g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$$
+2. The covariance of the outcome $Cov[Y_{ij}, Y_{ik}|\boldsymbol{X}_i]$, which can be broken down into 2 more components:
 
-. . .
+:::: {.columns}
+::: {.column width="50%"}
+::: {.fragment}
+i. The [marginal variance]{.alert} of the outcome:
 
-2. The covariance of the outcome $Cov[Y_{ij}, Y_{ik}|\boldsymbol{X}_i]$
+$$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
 
-- Can be broken down into 2 more components:
+- Should depend on the marginal mean through the variance function $v(\cdot)$ and a scale parameter $\varphi$
+:::
+:::
 
-   i. The [marginal variance]{.alert} of the outcome:
+::: {.column width="50%"}
+::: {.fragment}
+ii. The [within-cluster association]{.alert} of the outcomes
 
-   $$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
-      - Should depend on the marginal mean through the variance function $v(\cdot)$ and a scale parameter $\varphi$
-      
-   
-. . .
+   - Should depend on the means and a correlation parameter(s)
+:::
+:::
+::::
 
-   ii. The [within-cluster association]{.alert} of the outcomes\
-      - Should depend on the means and a correlation parameter(s)
-      
-::: {.fragment .absolute bottom=400 right=100 width="30%"}
+::: {.fragment .absolute bottom=200 right=200 width="30%"}
 [Component 2 is kind of like systematic variation in GLMMs!]{.alert}
 :::
+
 
 ---
 
@@ -461,23 +463,21 @@ Thus is born [generalized estimating equations]{.alert}
 
 Generalized estimating equations (GEEs) find the $\beta$ that solves an
 estimating equation of the general form:
-$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
+$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
 
 -   Almost exactly the same as the one we saw for GLMs!
 
 . . .
 
--   Difference here: $v_i$ is the [working covariance]{.alert} for the
+-   Difference here: $V_i$ is the [working covariance]{.alert} for the
     outcome
 
     -   Explicitly accounts for models of outcome variance *and*
         within-cluster association (components 2.1 and 2.2)
         
-        $$v_i = sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]$$
-
-    -   With GLMMs, our random effects were getting stuck in with
-        $\mu_{ij}(\cdot)$ and the covariance structure was induced as a
-        side product
+        $$V_i = sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]$$
+        
+    -   Called "working" to distinguish it from the *true* covariance matrix of $\vec{Y}_i$
 
 ------------------------------------------------------------------------
 
@@ -485,10 +485,10 @@ $$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{
 
 Generalized estimating equations (GEEs) find the $\beta$ that solves an
 estimating equation of the general form:
-$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
+$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
 
-Since this estimating equation [only depends on the mean $\mu_{ij}(\cdot)$ and the (co)variance
-$v_i(\cdot)$ functions]{.alert}, a GEE doesn't have to correspond to a full likelihood/distribution like a GLMM does
+Since this estimating equation [only depends on the mean $\mu_{ij}(\cdot)$ and the working (co)variance
+$V_i$]{.alert}, a GEE doesn't have to correspond to a full likelihood/distribution like a GLMM does
 
 - This means we have [fewer assumptions]{.alert} about how $Y_{ij}$ behaves
 
@@ -505,12 +505,18 @@ $v_i(\cdot)$ functions]{.alert}, a GEE doesn't have to correspond to a full like
 
 Generalized estimating equations (GEEs) find the $\beta$ that solves an
 estimating equation of the general form:
-$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
+$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
 
-Since this estimating equation [only depends on the mean $\mu_{ij}(\cdot)$ and the (co)variance
-$v_i(\cdot)$ functions]{.alert}, a GEE doesn't have to correspond to a full likelihood/distribution like a GLMM does
+Since this estimating equation [only depends on the mean $\mu_{ij}(\cdot)$ and the working (co)variance
+$V_i$]{.alert}, a GEE doesn't have to correspond to a full likelihood/distribution like a GLMM does
 
 [What's the effect of this?]{.alert}
+
+. . .
+
+- Need to estimate mean model paramters $\beta$ and variance/covariance/correlation parameters $\varphi$, $\vec{\alpha}$
+
+- Estimation of model parameters no longer done by maximum likelihood, but by an iterative algorithm (like Newton-Raphson)
 
 . . .
 
@@ -538,11 +544,11 @@ We also need to be able to get variance estimates for our model parameters in or
 
 - The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
 
-$$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
+$$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
 
    - $\left(\frac{\partial \mu_i}{\partial \beta}\right)^T$ deals with the transformation of $Y_{ij}$ to $g(\mu_{ij})$, and links in the $\beta$s
    
-   - $v_i^{-1}$ incorporates the marginal outcome variance and the outcome correlation
+   - $V_i^{-1}$ incorporates the marginal outcome variance and the outcome correlation
    
 . . .
 
@@ -558,18 +564,18 @@ We also need to be able to get variance estimates for our model parameters in or
 
 - The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
 
-$$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
+$$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
 
    - $\left(\frac{\partial \mu_i}{\partial \beta}\right)^T$ deals with the transformation of $Y_{ij}$ to $g(\mu_{ij})$, and links in the $\beta$s
    
-   - $v_i^{-1}$ incorporates the marginal outcome variance and the outcome correlation
+   - $V_i^{-1}$ incorporates the marginal outcome variance and the outcome correlation
    
 [What would this look like for OLS?]{.alert}
 
 . . .
 
 $$\begin{align*}&\frac{\partial \mu_i}{\partial \beta} = \frac{\partial \boldsymbol{X}\vec{\beta}}{\partial \beta} = \boldsymbol{X}\\
-&v_i = \sigma^2\\
+&V_i = \sigma^2\\
 &Cov[\widehat{\beta}] = [\boldsymbol{X}^T (\sigma^2)^{-1} \boldsymbol{X}]^{-1} = \sigma^2 (\boldsymbol{X}^T\boldsymbol{X})^{-1}\end{align*}$$
 
 ---
@@ -580,11 +586,11 @@ We also need to be able to get variance estimates for our model parameters in or
 
 - The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
 
-$$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
+$$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
 
 The confidence intervals for $\vec{\beta}$ will take the form:
 
-$$\begin{align*}&\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(\left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\right)\\
+$$\begin{align*}&\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(\left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\right)\\
 &\rightarrow \widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(Cov[\widehat{\beta}]\right)\end{align*}$$
 
 ---
@@ -595,8 +601,8 @@ We can also use [robust or sandwich variance]{.alert} estimators to perform infe
 
 $$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
 where
-$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
-&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
+$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
+&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
 
 - $(Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T$ is the [empirical]{.alert} covariance of the outcome
    
@@ -612,8 +618,8 @@ We can also use [robust or sandwich variance]{.alert} estimators to perform infe
 
 $$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
 where
-$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
-&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
+$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
+&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
    
 If we're [right]{.alert} about model components 2.1 and 2.2, $A \approx B$ and:
 $$\begin{align*}Cov^*[\widehat{\beta}] &= B^{-1} A B^{-1}\\
@@ -629,16 +635,27 @@ We can also use [robust or sandwich variance]{.alert} estimators to perform infe
 
 $$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
 where
-$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
-&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T v_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
+$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
+&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
    
 The confidence intervals for $\vec{\beta}$ will take about the same form, just using $Cov^*[\widehat{\beta}]$ instead of $Cov[\widehat{\beta}]$:
 
 $$\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(Cov^*[\widehat{\beta}]\right)$$
 
-. . .
+---
 
-- Most people will automatically use the sandwich variance estimator over the model-based variance to cover their bases
+## Robust inference for $\widehat{\beta}$
+
+We can also use [robust or sandwich variance]{.alert} estimators to perform inference on $\widehat{\beta}$
+
+$$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
+where
+$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
+&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
+
+Most people will use the sandwich variance estimator over the model-based variance by default to cover their bases
+
+- Should note that robustness of the sandwich variance isn't guaranteed in scenarios when # clusters is small, cluster sizes are highly variable (see *Applied Longitudinal Analysis* pg. 359-361)
 
 ---
 
@@ -646,7 +663,7 @@ $$\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(Cov^*[\widehat{\bet
 
 Let's see how we'd fit a GEE using our Minnesota radon data
 
-- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses
+- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county
 
 ```{r radon, echo=F}
 radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
@@ -660,7 +677,7 @@ radon.mn <- radon %>%
    dplyr::filter(state == "MN")
 ```
 
-We're assuming:
+We'd assume:
 
 - Mean model: 
 
@@ -674,9 +691,9 @@ We're assuming:
 
 Let's see how we'd fit a GEE using our Minnesota radon data
 
-- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses
+- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county
 
-We're assuming:
+We'd assume:
 
 - Mean model: $E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})$\
 
@@ -684,22 +701,15 @@ We're assuming:
 
 - Correlation structure: exchangeable (just one correlation parameter to estimate)
 
+. . .
+
+Let's run it!
+
 ---
 
 ## GEEs: radon
 
-We're assuming:
-
-- Mean model: $E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})$\
-
-- Variance: $Var[Y_{ij}] = \sigma^2$
-
-- Correlation structure: exchangeable
-
 Let's run it:
-
-. . .
-
 ```{r radon gee}
 library(gee)
 
@@ -712,38 +722,19 @@ summary( radon_gee )$coef
 
 - $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
 
----
-
-## GEEs: radon
-
-Let's run it:
-```{r radon gee2}
-library(gee)
-
-# run a GEE with exchangeable correlation clustered on counties #
-radon_gee <- gee( log_radon ~ floor,
-                  id=cntyfips, # cluster ID needs to be a number, not names or categories
-                  data=radon.mn, corstr="exchangeable" )
-summary( radon_gee )$coef
-```
-
-- $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
-
 . . .
 
-[What abour our inference?]{.alert}
+[What about our inference?]{.alert}
 
-. . .
-
+::: {.fragment}
 Two SEs: model-based/naive; robust
+:::
 
-. . .
-
+::: {.fragment}
 - Naive 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`)
 
-. . .
-
 - Robust 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*pnorm(0.975), 4)`)
+:::
 
 ------------------------------------------------------------------------
 
@@ -753,7 +744,7 @@ We can also extend GEEs to non-Normal outcome data
 
 Recall: GEEs find the $\beta$ that solves an estimating equation of the
 general form:
-$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
+$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
 
 . . .
 
@@ -761,13 +752,17 @@ $$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T v_i^{-1}[y_{
 
 . . .
 
+- We have a link function $g(\cdot)$ that isn't the identity function
+
+. . .
+
 - Since $g(\cdot)$ isn't the identity function, $\left(\frac{\partial \mu_i}{\partial \beta}\right)^T \ne \boldsymbol{X}$
 
 . . .
 
-- The (co)variance function $v_i(\cdot)$ will likely depend on $\mu_{ij}$
+- The (co)variance $V_i$ will likely depend on $\mu_{ij}$
 
-   - With Normal data, $v_i(\cdot)$ was independent of $\mu_{ij}$
+   - With Normal data, $v(\cdot)$ was independent of $\mu_{ij}$
    
 ---
 
@@ -820,32 +815,9 @@ We're assuming:
 
 - Correlation structure: exchangeable
 
----
-
-## GEEs: cancer remission
-
-We're assuming:
-
-- Mean model: $logit\left(E[\text{remission}_{ij}|\vec{X}_{ij}]\right) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})$
-
-- Variance: $Var[Y_{ij}] = E[\text{remission}_{ij}|\vec{X}_{ij}]\left(1-E[\text{remission}_{ij}|\vec{X}_{ij}]\right)$
-
-- Correlation structure: exchangeable
-
-Let's run it:
-
 . . .
 
-```{r cancer gee}
-# run a GEE with exchangeable correlation clustered on clinicians #
-cancer_gee <- gee( remission ~ Experience + CancerStage,
-                  id=doc_ID, data=cancer,
-                  family=binomial,
-                  corstr="exchangeable" )
-summary( cancer_gee )$coef
-```
-
-- $e^{\beta_1}$: `r round(exp(summary(cancer_gee)$coef[2,1]),4)`
+Let's run it
 
 ---
 
@@ -853,7 +825,7 @@ summary( cancer_gee )$coef
 
 Let's run it:
 
-```{r cancer gee2}
+```{r cancer gee}
 # run a GEE with random intercepts for county #
 cancer_gee <- gee( remission ~ Experience + CancerStage,
                   id=doc_ID, data=cancer,
@@ -941,17 +913,7 @@ summary( radon_lme )$coef
 
 - LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
 
-   - 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`)
-
-:::
-
-::: {.fragment}
-
-Compared to our GEE:
-
-- GEE $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
-
-   - 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`)
+   - Model-based 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`)
 
 :::
 
@@ -961,13 +923,25 @@ Compared to our GEE:
 
 ::: {.fragment}
 
-[Not much difference!]{.alert}
+Compared to our GEE:
+
+- GEE $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
+
+   - Model-based 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`)
+   
+   - Robust 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*pnorm(0.975), 4)`)
 
 :::
 
 :::
 
 ::::
+
+::: {.fragment}
+
+[Not much difference!]{.alert}
+
+:::
 
 ---
 
@@ -1001,9 +975,7 @@ summary( cancer_glmm )$tTable
 ```
 
 :::: {.columns}
-
-::: {.column width="50%}
-
+::: {.column width="30%"}
 ::: {.fragment}
 
 Logistic GLMM results:
@@ -1013,36 +985,32 @@ Logistic GLMM results:
    - 95% CI: (`r round(exp(cancer_glmm$coefficients$fixed[2] - summary(cancer_glmm)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(cancer_glmm$coefficients$fixed[2] + summary(cancer_glmm)$tTable[2,2]*pnorm(0.975)), 4)`)
 
 :::
+:::
 
+::: {.column width="30%"}
 ::: {.fragment}
 
 Compared to our GEE:
 
 - GEE $e^{\beta_1}$: `r round(exp(summary(cancer_gee)$coef[2,1]),4)`
 
-   - 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`)
+   - Model-based 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`)
+   
+   - Robust 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,4]*pnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,4]*pnorm(0.975)), 4)`)
 
 :::
-
 :::
 
-::: {.column width="50%"}
-
+::: {.column width="33%"}
 ::: {.fragment}
 
 [A pretty big difference!]{.alert}
 
-- Went from an effect size of `r round((exp(cancer_glmm$coefficients$fixed[2])-1)*100, 2)`% higher odds of remission for each extra year of experience in the GLMM to `r round((exp(summary(cancer_gee)$coef[2,1])-1)*100,2)`% higher odds in the GEE
-
-::: {.fragment}
-- Why do you think this is?
+- Went from an effect size of `r round((exp(cancer_glmm$coefficients$fixed[2])-1)*100, 2)`% higher odds of remission for each extra year of experience in the GLMM to `r round((exp(summary(cancer_gee)$coef[2,1])-1)*100,2)`% higher odds in the GEE. [Why?]{.fragment .alert}
 :::
-
 :::
-
-:::
-
 ::::
+
 
 <!-- IS THIS A BIGGER EFFECT BC THE EXPOSURE IS AT THE CLUSTER LEVEL? -->
 

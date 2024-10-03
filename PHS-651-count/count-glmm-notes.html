@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<script src="slides-5_files/libs/clipboard/clipboard.min.js"></script>
-<script src="slides-5_files/libs/quarto-html/tabby.min.js"></script>
-<script src="slides-5_files/libs/quarto-html/popper.min.js"></script>
-<script src="slides-5_files/libs/quarto-html/tippy.umd.min.js"></script>
-<link href="slides-5_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="slides-5_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="slides-5_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="slides-5_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="count-glmm-notes_files/libs/clipboard/clipboard.min.js"></script>
+<script src="count-glmm-notes_files/libs/quarto-html/tabby.min.js"></script>
+<script src="count-glmm-notes_files/libs/quarto-html/popper.min.js"></script>
+<script src="count-glmm-notes_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="count-glmm-notes_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="count-glmm-notes_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="count-glmm-notes_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="count-glmm-notes_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.3.353">
-<title>slides-5</title>
+<title>count-glmm-notes</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-<link rel="stylesheet" href="slides-5_files/libs/revealjs/dist/reset.css">
-<link rel="stylesheet" href="slides-5_files/libs/revealjs/dist/reveal.css">
+<link rel="stylesheet" href="count-glmm-notes_files/libs/revealjs/dist/reset.css">
+<link rel="stylesheet" href="count-glmm-notes_files/libs/revealjs/dist/reveal.css">
 <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -94,13 +94,13 @@
     code span.vs { color: #008000; } /* VerbatimString */
     code span.wa { color: #696969; font-style: italic; } /* Warning */
   </style>
-<link rel="stylesheet" href="slides-5_files/libs/revealjs/dist/theme/quarto.css">
-<link href="slides-5_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-<link href="slides-5_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-<link href="slides-5_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-<link href="slides-5_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-<link href="slides-5_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-<link href="slides-5_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+<link rel="stylesheet" href="count-glmm-notes_files/libs/revealjs/dist/theme/quarto.css">
+<link href="count-glmm-notes_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+<link href="count-glmm-notes_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+<link href="count-glmm-notes_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+<link href="count-glmm-notes_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+<link href="count-glmm-notes_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+<link href="count-glmm-notes_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
 <style type="text/css">
 
   .callout {
@@ -392,7 +392,7 @@
 
 
 <section class="slide level2"><h1>
-Lecture 5.2: Diagnostics &amp; corrections
+Lecture 5: Modeling correlated count data
 </h1>
 <h2>
 PHS 651: Advanced regression methods
@@ -411,170 +411,197 @@ October 8, 2024
 <p><em>If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.</em></p>
 <p><em>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</em></p>
 </div>
-<div class="absolute" style="left: 260px; bottom: 5px; width: 1500px; ">
-<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/PHS-651-5/slides-5" class="uri">https://maryryan.github.io/PHS-651-slides/PHS-651-5/slides-5</a></p>
+<div class="absolute" style="left: 260px; bottom: 50px; width: 1500px; ">
+<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/PHS-651-4/slides-4" class="uri">https://maryryan.github.io/PHS-651-slides/PHS-651-4/slides-4</a></p>
 </div>
 <div class="absolute" style="left: 100px; bottom: 0px; width: 150px; ">
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="slides-5_files/figure-revealjs/qr%20code-1.png" width="192"></p>
+<p><img data-src="count-glmm-notes_files/figure-revealjs/qr%20code-1.png" width="192"></p>
 </div>
 </div>
 </div>
-</section><section id="model-diagnostics" class="slide level2"><h2>Model diagnostics</h2>
-<p>So far we’ve dealt with how to model correlated data</p>
-<ul>
-<li>But how do we assess whether the modeling choices we’ve made are sound?</li>
-</ul>
-<div class="fragment">
-<p>There are some analyses/diagnostics we can perform to explore this</p>
-</div>
-<div class="fragment">
+</section><section id="count-outcomes-and-glmms-poisson" class="slide level2"><h2>Count outcomes and GLMMs (poisson)</h2>
+<p>We’ve focused a lot on binary outcomes up until now, but count data (Poisson-distributed) can also be modeled using a GLMM</p>
 <ul>
 <li>
-<p>Heavy emphasis on <span class="alert">explore</span></p>
+<p>If we have <span class="math inline">\(\vec{Y}_i\)</span> that is distributed Poisson with event rate <span class="math inline">\(\lambda_{ij}\)</span> (# events per unit of time)</p>
 <ul>
-<li><p>We know that our model likely won’t perfectly reflect the true form/relationships in the data</p></li>
-<li><p>But we should assess whether there are <span class="alert">major discrepancies</span> between what we’ve assumed and what’s in the data</p></li>
-<li><p>Use these as a temperature check for whether the model needs to be adjusted, how much confidence can be placed in estimates, and whether estimates need to be presented with caveats</p></li>
+<li>Thus the mean for <span class="math inline">\(Y_{ij}\)</span>, <span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \mu_{ij}\)</span>, is the average count for a given unit of time, which is <span class="math inline">\(\mu_{ij}= \lambda_{ij}T_{ij}\)</span>
+</li>
+</ul>
+</li>
+<li><p>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(\vec{Y}_i\)</span></p></li>
+</ul>
+<p><span class="alert">What would our model look like?</span></p>
+<p><span class="math display">\[\text{log}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})\]</span></p>
+<p>where <span class="math inline">\(b_{0i} \sim N(0, \sigma^2_b)\)</span></p>
+<div class="fragment">
+<p><span class="alert">Note the lack of <span class="math inline">\(\epsilon_{ij}\)</span>!</span></p>
+<ul>
+<li>
+<p>This is because the Poisson distribution assumes <span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = Var[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \mu_{ij}\)</span></p>
+<ul>
+<li><p>However, this assumption is rarely true in real life (health) applications</p></li>
+<li><p>Often, <span class="math inline">\(Var[Y|\boldsymbol{X}_i, b_{0i}]&gt;E[Y|\boldsymbol{X}_i, b_{0i}]\)</span>, known as <span class="alert">over-dispersion</span></p></li>
 </ul>
 </li>
 </ul>
 </div>
+</section><section id="count-outcomes-and-glmms-negative-binomial" class="slide level2"><h2>Count outcomes and GLMMs (negative binomial)</h2>
+<p>When count data are over-dispersed, we can use a <span class="alert">negative-binomial</span> regression model</p>
+<p><span class="math display">\[\text{log}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij}) + \epsilon_{ij}\]</span></p>
+<p>where <span class="math inline">\(b_{0i}\sim N(0,\sigma^2_b)\)</span> and <span class="math inline">\(\exp(\epsilon_{ij}) \sim \text{Gamma}(1,\theta)\)</span></p>
 <div class="fragment">
-<p>Also, in the non-longitudinal clustered data settings, there are not many diagnostic checks for GEE models</p>
 <ul>
-<li><p>This is because we aren’t <em>assuming</em> much for GEEs - we’re estimating most of the covariance matrix</p></li>
-<li><p>So we’ll mostly be focusing on mixed models in this session</p></li>
+<li><p>This means <span class="math inline">\(Var(Y_{ij}|\boldsymbol{X}_i, b_{0i}) = E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] + \theta\left(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]\right)^2 = \mu_{ij} + \theta \mu_{ij}^2\)</span></p></li>
+<li><p>Our covariance structure then looks like</p></li>
 </ul>
+<p><span class="math display">\[\begin{bmatrix}
+\sigma^2_b + \mu_{ij} + \theta \mu_{ij}^2 &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \mu_{ij} + \theta \mu_{ij}^2
+\end{bmatrix}\]</span></p>
 </div>
-</section><section id="residual-analysis" class="slide level2"><h2>Residual analysis</h2>
-<p><span class="alert">Residuals</span> are the difference between the observed outcomes and the ones predicted by your model</p>
-<p><span class="math display">\[r_{ij} = Y_{ij} - \boldsymbol{X}_{ij}\widehat{\vec{\beta}}\]</span></p>
-<div class="fragment">
-<p>If the model <span class="alert">adequately captures</span> the systematic trend of the response, then <span class="alert">the residuals should exhibit no systematic pattern</span></p>
+</section><section id="example-murders-and-income" class="slide level2"><h2>Example: murders and income</h2>
+<p>Let’s say we want to see whether the real per capita personal income of a county impacts its number of murders</p>
 <ul>
-<li>i.e., they should be scattered fairly randomly around zero</li>
-</ul>
-</div>
-</section><section id="residuals-vs-predicted-response" class="slide level2"><h2>Residuals vs predicted response</h2>
-<p>Residuals can be used to check for systematic departures from the model for the mean response</p>
-<ul>
-<li>
-<p>We often do this by making a scatter plot of residuals vs predicted values</p>
-<ul>
-<li>Fitting a smoothed curve (e.g., lowess) through the scatter plot is helpful in this respect</li>
-</ul>
-</li>
-</ul>
-<div class="fragment">
-<p><img data-src="residual-plot-example.png" width="1000"></p>
-</div>
-</section><section id="residuals-vs-predicted-response-1" class="slide level2"><h2>Residuals vs predicted response</h2>
-<p>In OLS, any systematic pattern in the residual indicates inadequacy of the model</p>
-<ul>
-<li>Solution: re-fit the data with a more flexible model (e.g., interactions, quadratic terms, and perhaps more covariates)</li>
-</ul>
-<p><img data-src="residual-plot-example.png" width="1000"></p>
-</section><section id="residuals-vs-predicted-response-2" class="slide level2"><h2>Residuals vs predicted response</h2>
-<p>But with correlated data, <span class="alert">errors from the same cluster are correlated</span>, and don’t necessarily have the same variance</p>
-<ul>
-<li>
-<p>This means that homoscedasticity may not hold for residuals vs predicted response</p>
-<ul>
-<li>i.e., “fanning” of residuals may not be a bad sign</li>
-</ul>
-</li>
-</ul>
-<p><img data-src="residual-plot-example.png" width="1000"></p>
-</section><section id="de-correlated-residuals" class="slide level2"><h2>De-correlated residuals</h2>
-<p>One way to fix this is to “de-correlate” the residuals</p>
-<ul>
-<li><p>Done by transforming the residuals via <span class="alert">Cholesky decomposition</span></p></li>
-<li><p>This makes it so the components of the transformed residuals for cluster <span class="math inline">\(i\)</span> (<span class="math inline">\(r^*_i\)</span>) are uncorrelated and have variance 1</p></li>
-</ul></section><section id="cholesky-decomposition" class="slide level2"><h2>Cholesky decomposition</h2>
-<p>Given an estimate of the residual covariance matrix for cluster <span class="math inline">\(i\)</span>, <span class="math inline">\(\widehat{\Sigma}_i\)</span>, the Cholesky decomposition of this is <span class="math display">\[\widehat{\Sigma}_i = L_i L_i^T\]</span></p>
-<ul>
-<li>
-<span class="math inline">\(L_i\)</span> is a lower triangular matrix</li>
-</ul>
-<p>The transformed residuals are then: <span class="math display">\[r^*_i = L_i^{-1}r_i\]</span></p>
-<p>We would then plot the Cholesky-transformed residuals agains the Cholesky-transformed predicted response</p>
-</section><section id="cholesky-decomposition-minnesota-radon" class="slide level2"><h2>Cholesky decomposition: Minnesota radon</h2>
-<p>Let’s try this for our radon LME model <span class="math display">\[Y_{ij} = \beta_0 + \beta_1 (\text{floor}_{ij}) + b_{0i} + \epsilon_{ij}\]</span></p>
+<li><p>Data from 1980</p></li>
+<li><p>Assume clustering by state</p></li>
+</ul></section><section id="example-murders-and-income-1" class="slide level2"><h2>Example: murders and income</h2>
+<p>Let’s get an idea of our data…</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(nlme)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(mgcv)</span>
-<span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co"># run an LME with random intercepts for county #</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a>radon_nlme <span class="ot">&lt;-</span> <span class="fu">lme</span>( log_radon <span class="sc">~</span> floor,</span>
-<span id="cb1-6"><a href="#cb1-6"></a>                   <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> county, <span class="at">data=</span>radon.mn )</span>
-<span id="cb1-7"><a href="#cb1-7"></a></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co"># get the residuals #</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a>raw.residuals <span class="ot">&lt;-</span> <span class="fu">residuals</span>(radon_nlme, <span class="at">level=</span><span class="dv">0</span>)</span>
-<span id="cb1-10"><a href="#cb1-10"></a></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co"># Cholesky residuals</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a>est.cov <span class="ot">&lt;-</span> <span class="fu">extract.lme.cov</span>(radon_nlme, radon) <span class="co"># We extract the blocked covariance function of the residuals</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a>Li <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">chol</span>(est.cov)) <span class="co"># We find the Cholesky transformation of the residuals. (The transform is to get the lower trangular matrix.)</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a>cholesky.residuals <span class="ot">&lt;-</span> <span class="fu">solve</span>(Li) <span class="sc">%*%</span> raw.residuals <span class="co"># We then calculate the transformed residuals.</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="fu">hist</span>(cholesky.residuals) <span class="co"># We plot the residuals</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img data-src="slides-5_files/figure-revealjs/radon%20nlme-1.png" width="960"></p>
-</div>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>cholesky.fitted <span class="ot">&lt;-</span> <span class="fu">solve</span>(Li) <span class="sc">%*%</span> <span class="fu">fitted</span>( radon_nlme)</span>
-<span id="cb2-2"><a href="#cb2-2"></a></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="fu">plot</span>(cholesky.fitted, cholesky.residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img data-src="slides-5_files/figure-revealjs/radon%20nlme-2.png" width="960"></p>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>murder <span class="sc">%&gt;%</span> </span>
+<span id="cb1-2"><a href="#cb1-2"></a>   <span class="fu">group_by</span>(statefips) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-3"><a href="#cb1-3"></a>   <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">mean_murders=</span><span class="fu">mean</span>(murders, <span class="at">na.rm=</span>T), <span class="at">mean_capita =</span> <span class="fu">mean</span>(rpcpersinc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 46 × 4
+   statefips     n mean_murders mean_capita
+       &lt;int&gt; &lt;int&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+ 1         1    62        6.65        8083.
+ 2         2     7        2.57       16705.
+ 3         5    73        2.81        8080.
+ 4         6    58       58.7        12820.
+ 5         8    55        2.91       11577.
+ 6         9     8       17.9        13732.
+ 7        10     3       14          11025.
+ 8        11     1      200          15197.
+ 9        15     3        6.33       11926.
+10        16    41        0.707       9913.
+# ℹ 36 more rows</code></pre>
 </div>
 </div>
-</section><section id="cholesky-decomposition-1" class="slide level2"><h2>Cholesky decomposition</h2>
-<p>Unfortunately it’s not easy to do this for GLMMs with non-Normal outcomes</p>
-</section><section id="de-correlated-residual-vs-covariate" class="slide level2"><h2>De-correlated residual vs covariate</h2>
-<p>Similar scatter plots of the de-correlated residuals against a particular covariate can be examined for systematic trend</p>
+</section><section id="example-murders-and-income-2" class="slide level2"><h2>Example: murders and income</h2>
+<p>First our Poisson mixed effects model:</p>
+<p><span class="math display">\[\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i}\]</span></p>
 <ul>
-<li>Such a trend may indicate omission of a quadratic term or need for transformation of the covariate</li>
+<li>All data is on the per-year scale so <span class="math inline">\(T_{ij}=1\)</span>, and <span class="math inline">\(\log(T_{ij})=0\)</span>, so no need to add the time offset term</li>
 </ul>
-<div class="fragment">
-<p><img data-src="residual-covariate-plot.png" width="2000"></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>murder_glmm <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( murders <span class="sc">~</span> rpcpersinc,</span>
+<span id="cb3-2"><a href="#cb3-2"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> statefips, <span class="at">family =</span> <span class="fu">quasipoisson</span>(<span class="at">link=</span><span class="st">"log"</span>), <span class="at">data =</span> murder, </span>
+<span id="cb3-3"><a href="#cb3-3"></a>         <span class="at">verbose =</span> F )</span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="fu">summary</span>( murder_glmm )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   Value    Std.Error   DF   t-value      p-value
+(Intercept) -1.045388626 2.787126e-01 2150 -3.750776 1.809501e-04
+rpcpersinc   0.000257099 1.993114e-05 2150 12.899362 1.006960e-36</code></pre>
 </div>
-</section><section id="diagnostics-for-gees" class="slide level2"><h2>Diagnostics for GEEs</h2>
-<p>While we don’t do a lot of model testing for GEEs, we can compare the empirical estimates of the covariance structure to the model-based estimates</p>
-<ul>
-<li><p>If there is a large discrepancy, our robust variance estimator is probably doing the heavy lifting of correcting this for us</p></li>
-<li><p>In this setting (non-longitudinal clustered data) though, we aren’t likely to see much discrepancy</p></li>
-</ul></section><section id="small-n-corrections" class="slide level2"><h2>Small n corrections</h2>
-<p>Where we can focus on GEE is in the variance corrections department</p>
+</div>
+<p>Poisson GLMM results:</p>
 <ul>
 <li>
-<p>The sandwich variance estimator can help us out with misspecification, but it doesn’t perform well when we don’t have many (&lt;50) clusters</p>
+<p>Poisson <span class="math inline">\(e^{\beta_1}\)</span>: 1.0003</p>
 <ul>
-<li>Since sandwich estimators are more often used with GEEs and GLMMs, this “small n” issue is usually more common in GEE analyses</li>
+<li>95% CI: (1.0002, 1.0003)</li>
 </ul>
 </li>
+</ul></section><section id="example-murders-and-income-3" class="slide level2"><h2>Example: murders and income</h2>
+<p>Now our negative binomial mixed effects model:</p>
+<p><span class="math display">\[\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i} + \epsilon_{ij}\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># find theta #</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>murder_theta <span class="ot">&lt;-</span> <span class="fu">glm.nb</span>(murders <span class="sc">~</span> rpcpersinc, <span class="at">data=</span>murder)<span class="sc">$</span>call<span class="sc">$</span>init.theta</span>
+<span id="cb5-3"><a href="#cb5-3"></a></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co"># fit model #</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>murder_glmmnb <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( murders <span class="sc">~</span> rpcpersinc,</span>
+<span id="cb5-6"><a href="#cb5-6"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> statefips, <span class="at">family =</span> <span class="fu">negative.binomial</span>(<span class="at">theta =</span> murder_theta), <span class="at">data =</span> murder, </span>
+<span id="cb5-7"><a href="#cb5-7"></a>         <span class="at">verbose =</span> F )</span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="fu">summary</span>( murder_glmmnb )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    Value    Std.Error   DF   t-value      p-value
+(Intercept) -3.3458066494 3.479936e-01 2150 -9.614563 1.862156e-21
+rpcpersinc   0.0004354949 2.892331e-05 2150 15.056884 8.730031e-49</code></pre>
+</div>
+</div>
+<p>Negative Binomial GLMM results:</p>
+<ul>
 <li>
-<p>There are several choices of correction you can implement in either SAS or R:</p>
+<p>NB <span class="math inline">\(e^{\beta_1}\)</span>: 1.0004</p>
 <ul>
-<li><p>Mancl &amp; DeRoun</p></li>
-<li><p>Kauermann &amp; Carroll</p></li>
-<li><p>Fay &amp; Graubard</p></li>
+<li>95% CI: (1.0004, 1.0005)</li>
 </ul>
 </li>
-<li><p>Which one you pick isn’t so important (comparative benefits of each are relatively small)</p></li>
+</ul></section><section id="gees-and-count-data" class="slide level2"><h2>GEEs and count data</h2>
+<p>GEEs are particularly useful when it comes to modeling <span class="alert">count outcomes</span></p>
+<ul>
+<li><p>This is because GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions</p></li>
+<li><p>Result: GEEs automatically account for over-dispersion</p></li>
+</ul></section><section id="glmms-vs-gees-murder" class="slide level2"><h2>GLMMs vs GEEs: murder</h2>
+<p>Let’s see how GLMMs and GEEs compare with count data</p>
+<ul>
+<li><p>Recall our county murder example</p></li>
+<li><p>Want to see whether the real per capita personal income of a county impacts the number of murders</p></li>
+</ul></section><section id="glmms-vs-gees-murder-1" class="slide level2"><h2>GLMMs vs GEEs: murder</h2>
+<p>First our LME model:</p>
+<p><span class="math display">\[\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i} + \epsilon_{ij}\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>murder_glmm <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( murders <span class="sc">~</span> rpcpersinc,</span>
+<span id="cb7-2"><a href="#cb7-2"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> statefips, <span class="at">family =</span> poisson, <span class="at">data =</span> murder, </span>
+<span id="cb7-3"><a href="#cb7-3"></a>         <span class="at">verbose =</span> F )</span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="fu">summary</span>( murder_glmm )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   Value    Std.Error   DF   t-value      p-value
+(Intercept) -1.045388626 2.787126e-01 2150 -3.750776 1.809501e-04
+rpcpersinc   0.000257099 1.993114e-05 2150 12.899362 1.006960e-36</code></pre>
+</div>
+</div>
+<p>Logistic GLMM results:</p>
+<ul>
 <li>
-<p>R: <code>geesmv</code> package: https://cran.r-project.org/web/packages/geesmv/geesmv.pdf</p>
+<p>GLMM <span class="math inline">\(e^{\beta_1}\)</span>: 1.0003</p>
 <ul>
-<li>has all the regular corrections (KC, MR, FG)</li>
+<li>95% CI: (1.0002, 1.0003)</li>
 </ul>
 </li>
+</ul></section><section id="glmms-vs-gees-murder-2" class="slide level2"><h2>GLMMs vs GEEs: murder</h2>
+<p>Now let’s fit a GEE:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># run an LME with random intercepts for county #</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>murder_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( murders <span class="sc">~</span> rpcpersinc,</span>
+<span id="cb9-3"><a href="#cb9-3"></a>                  <span class="at">id=</span>statefips, <span class="at">data=</span>murder,</span>
+<span id="cb9-4"><a href="#cb9-4"></a>                  <span class="at">family=</span>poisson,</span>
+<span id="cb9-5"><a href="#cb9-5"></a>                  <span class="at">corstr=</span><span class="st">"exchangeable"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  (Intercept)    rpcpersinc 
+-1.1488404529  0.0002885202 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">summary</span>( murder_gee )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                Estimate   Naive S.E.   Naive z  Robust S.E.  Robust z
+(Intercept) -0.953738051 4.001175e-01 -2.383645 2.612118e-01 -3.651206
+rpcpersinc   0.000274346 2.804078e-05  9.783821 1.786876e-05 15.353391</code></pre>
+</div>
+</div>
+<ul>
 <li>
-<p>SAS: GLIMMIX has KC (EMPIRICAL=HC2), FG (EMPIRICAL=FIROEEQ), MR (EMPIRICAL=HC3)</p>
+<p>GEE <span class="math inline">\(e^{\beta_1}\)</span>: 1.0003</p>
 <ul>
-<li>nothing for GENMOND</li>
+<li>95% CI: (1.0003, 1.0003)</li>
 </ul>
 </li>
-</ul></section><section id="informative-cluster-size" class="slide level2"><h2>Informative cluster size</h2>
+</ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
@@ -583,7 +610,7 @@ October 8, 2024
 </div>
   </div>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="slides-5_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="slides-5_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="slides-5_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="slides-5_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="slides-5_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="slides-5_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="slides-5_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="slides-5_files/libs/revealjs/plugin/notes/notes.js"></script><script src="slides-5_files/libs/revealjs/plugin/search/search.js"></script><script src="slides-5_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="slides-5_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="count-glmm-notes_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="count-glmm-notes_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/notes/notes.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/search/search.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
 
       // Full list of configuration options available at:
       // https://revealjs.com/config/

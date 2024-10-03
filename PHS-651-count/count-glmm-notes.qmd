@@ -1,7 +1,76 @@
 ---
-title: "Count GLMM"
-format: revealjs
-editor: visual
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+library(MASS)
+library(gee)
+```
+
+<h1>Lecture 5.1: Modeling correlated count data</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>October 8, 2024</h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=50 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-4/slides-4>
+
+:::
+
+::: {.absolute bottom=0 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-5/slides-5"))
+```
+:::
+
+---
+
+## 552 review: Count data regression
+
 ---
 
 ## Count outcomes and GLMMs (poisson)
@@ -31,6 +100,7 @@ where $b_{0i} \sim N(0, \sigma^2_b)$
     -   Often, $Var[Y|\boldsymbol{X}_i, b_{0i}]>E[Y|\boldsymbol{X}_i, b_{0i}]$, known as [over-dispersion]{.alert}
 
 ```{r glmm poisson, eval=F, echo=F}
+library(MASS)
 glmmPQL( y ~ u,
          random = ~ 1 | cluster, family = quasipoisson(link="log"),
          data=data)
@@ -143,35 +213,28 @@ Negative Binomial GLMM results:
 -   NB $e^{\beta_1}$: `r round(exp(murder_glmmnb$coefficients$fixed[2]), 4)`
 
     -   95% CI: (`r round(exp(murder_glmmnb$coefficients$fixed[2] - summary(murder_glmmnb)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(murder_glmmnb$coefficients$fixed[2] + summary(murder_glmmnb)$tTable[2,2]*pnorm(0.975)), 4)`)
-    
----
+
+------------------------------------------------------------------------
 
 ## GEEs and count data
 
 GEEs are particularly useful when it comes to modeling [count outcomes]{.alert}
 
-- This is because GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions
+-   This is because GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions
 
-- Result: GEEs automatically account for over-dispersion
+-   Result: GEEs automatically account for over-dispersion
 
----
+------------------------------------------------------------------------
 
 ## GLMMs vs GEEs: murder
 
 Let's see how GLMMs and GEEs compare with count data
 
-- Recall our county murder example
+-   Recall our county murder example
 
-- Want to see whether the real per capita personal income of a county impacts the number of murders
+-   Want to see whether the real per capita personal income of a county impacts the number of murders
 
-```{r murder cleaning, echo=F}
-library(wooldridge)
-
-murder <- countymurders %>% 
-   dplyr::filter(year==1980)
-```
-
----
+------------------------------------------------------------------------
 
 ## GLMMs vs GEEs: murder
 
@@ -179,7 +242,7 @@ First our LME model:
 
 $$\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i} + \epsilon_{ij}$$
 
-```{r murder glmm}
+```{r murder glmm2}
 murder_glmm <- glmmPQL( murders ~ rpcpersinc,
          random = ~ 1 | statefips, family = poisson, data = murder, 
          verbose = F )
@@ -189,15 +252,16 @@ summary( murder_glmm )$tTable
 
 Logistic GLMM results:
 
-- GLMM $e^{\beta_1}$: `r round(exp(murder_glmm$coefficients$fixed[2]), 4)`
+-   GLMM $e^{\beta_1}$: `r round(exp(murder_glmm$coefficients$fixed[2]), 4)`
 
-   - 95% CI: (`r round(exp(murder_glmm$coefficients$fixed[2] - summary(murder_glmm)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(murder_glmm$coefficients$fixed[2] + summary(murder_glmm)$tTable[2,2]*pnorm(0.975)), 4)`)
-   
----
+    -   95% CI: (`r round(exp(murder_glmm$coefficients$fixed[2] - summary(murder_glmm)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(murder_glmm$coefficients$fixed[2] + summary(murder_glmm)$tTable[2,2]*pnorm(0.975)), 4)`)
+
+------------------------------------------------------------------------
 
 ## GLMMs vs GEEs: murder
 
 Now let's fit a GEE:
+
 ```{r murder gee}
 # run an LME with random intercepts for county #
 murder_gee <- gee( murders ~ rpcpersinc,
@@ -207,8 +271,6 @@ murder_gee <- gee( murders ~ rpcpersinc,
 summary( murder_gee )$coef
 ```
 
+-   GEE $e^{\beta_1}$: `r round(exp(summary(murder_gee)$coef[2,1]),4)`
 
-- GEE $e^{\beta_1}$: `r round(exp(summary(murder_gee)$coef[2,1]),4)`
-
-   - 95% CI: (`r round(exp(summary(murder_gee)$coef[2,1] - summary(murder_gee)$coef[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(murder_gee)$coef[2,1] + summary(murder_gee)$coef[2,2]*pnorm(0.975)), 4)`)
-
+    -   95% CI: (`r round(exp(summary(murder_gee)$coef[2,1] - summary(murder_gee)$coef[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(murder_gee)$coef[2,1] + summary(murder_gee)$coef[2,2]*pnorm(0.975)), 4)`)

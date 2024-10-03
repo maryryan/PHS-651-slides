@@ -31,7 +31,7 @@ library(gridExtra)
 library(qrcode)
 ```
 
-<h1>Lecture 5: Diagnostics & corrections</h1>
+<h1>Lecture 5.2: Diagnostics & corrections</h1>
 
 <h2>PHS 651: Advanced regression methods</h2>
 

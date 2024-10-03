@@ -739,9 +739,9 @@ Two SEs: model-based/naive; robust
 :::
 
 ::: {.fragment}
-- Naive 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`)
+- Naive 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`)
 
-- Robust 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*pnorm(0.975), 4)`)
+- Robust 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*qnorm(0.975), 4)`)
 :::
 
 ------------------------------------------------------------------------
@@ -846,9 +846,9 @@ summary( cancer_gee )$coef
 
 . . .
 
-- Naive 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`)
+- Naive 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,2]*qnorm(0.975)), 4)`)
 
-- Robust 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,4]*pnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,4]*pnorm(0.975)), 4)`)
+- Robust 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,4]*qnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,4]*qnorm(0.975)), 4)`)
 
 <!-- ------------------------------------------------------------------------ -->
 
@@ -921,7 +921,7 @@ summary( radon_lme )$coef
 
 - LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
 
-   - Model-based 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*pnorm(0.975), 4)`)
+   - Model-based 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`)
 
 :::
 
@@ -935,9 +935,9 @@ Compared to our GEE:
 
 - GEE $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
 
-   - Model-based 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*pnorm(0.975), 4)`)
+   - Model-based 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`)
    
-   - Robust 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*pnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*pnorm(0.975), 4)`)
+   - Robust 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*qnorm(0.975), 4)`)
 
 :::
 
@@ -990,7 +990,7 @@ Logistic GLMM results:
 
 - GLMM $e^{\beta_1}$: `r round(exp(cancer_glmm$coefficients$fixed[2]), 4)`
 
-   - 95% CI: (`r round(exp(cancer_glmm$coefficients$fixed[2] - summary(cancer_glmm)$tTable[2,2]*pnorm(0.975)), 4)`, `r round(exp(cancer_glmm$coefficients$fixed[2] + summary(cancer_glmm)$tTable[2,2]*pnorm(0.975)), 4)`)
+   - 95% CI: (`r round(exp(cancer_glmm$coefficients$fixed[2] - summary(cancer_glmm)$tTable[2,2]*qnorm(0.975)), 4)`, `r round(exp(cancer_glmm$coefficients$fixed[2] + summary(cancer_glmm)$tTable[2,2]*qnorm(0.975)), 4)`)
 
 :::
 :::
@@ -1002,9 +1002,9 @@ Compared to our GEE:
 
 - GEE $e^{\beta_1}$: `r round(exp(summary(cancer_gee)$coef[2,1]),4)`
 
-   - Model-based 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,2]*pnorm(0.975)), 4)`)
+   - Model-based 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,2]*qnorm(0.975)), 4)`)
    
-   - Robust 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,4]*pnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,4]*pnorm(0.975)), 4)`)
+   - Robust 95% CI: (`r round(exp(summary(cancer_gee)$coef[2,1] - summary(cancer_gee)$coef[2,4]*qnorm(0.975)), 4)`, `r round(exp(summary(cancer_gee)$coef[2,1] + summary(cancer_gee)$coef[2,4]*qnorm(0.975)), 4)`)
 
 :::
 :::

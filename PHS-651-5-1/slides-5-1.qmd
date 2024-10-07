@@ -1,0 +1,531 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+library(MASS)
+library(gee)
+```
+
+<h1>Lecture 5.1: Modeling clustered count data</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>October 8, 2024</h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=50 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-5-1/slides-5-1>
+
+:::
+
+::: {.absolute bottom=0 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-5=1/slides-5-1"))
+```
+:::
+
+---
+
+## Working with count data
+
+Up to this point we've focused on 2 types of outcome data:
+
+- Continuous
+
+- Binary
+
+There are many other types of outcome data we might be interested, including [count]{.alert} data
+
+- How many seizure events does a participant experience in a week?
+
+- How many serious falls does a resident of an assisted living facility experience in a month?
+
+- How many inclement weather events does a community experience in a year?
+
+There are several properties of count data that make it inappropriate for our previous modeling strategies
+
+---
+
+## 551/552 review: Distribution of count data
+
+In general, we think of count data for individual $j$, $Y_j$, collected during time $T_j$ as following a [Poisson distribution]{.alert}
+
+$$Y_j \sim \text{Poisson}(\lambda T_j)$$
+
+- Parameterized by [rate parameter]{.alert} $\lambda$: number of events per unit of time
+
+- Mean: $E[Y_j] = \lambda T_j$; Variance; $Var[Y_j_j] = \lambda T$
+
+We assume 3 things:
+
+1. Stationarity: The expected number of events per unit time is the same throughout the entire time interval
+
+2. Independence: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval
+
+3. Rare events: For any very small time interval $h$:
+
+   - The probability of observing 1 event is directly proportional to the length of the time interval, e.g. $P(\text{1 event}) \approx \lambda h$
+   
+   - The probability of observing no events is approximately $1-\lambda h$
+   
+   - The probability of observing 2 or more events is essentially 0
+
+---
+
+## 552/551 review: Count data and time
+
+Ideally when we collect count data, we want to collect it on the *same time scale* for everyone
+
+- Count of events within 1 day, 1 month, 1 year
+
+- This may not always be the case, especially when combining data from multiple sources
+
+If we collect count data on different time scales, we can use the stationarity assumption to "standardize" the data to a common scale
+
+- e.g., "12 events in 1 year" translates to "1 event per month", or "2 events per day" translates to "14 events per week"
+
+- Note: this may not always match reality
+
+---
+
+## 552 review: Poisson regression
+
+One way to model count data is by using a Poisson regression:
+
+$$\log[\lambda(\boldsymbol{X})] = \boldsymbol{X}\vec{\beta}= \beta_0 + U_j\beta_1$$
+
+We will also sometimes model the mean of the count data, rather than the rate:
+
+$$\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)$$
+
+- $T_j$ is known as an [offset]{.alert}
+
+Both these regressions assume:
+
+1. The outcome data, $Y_j$, follow a Poisson distribution with mean $\lambda(\boldsymbol{X})T_j$ and variance $\lambda(\boldsymbol{X})T_j$
+
+2. We have correctly specified the linear predictors (isolating causal pathway) and the link function
+
+3. Each outcome observation is independent of one another
+
+---
+
+## 552 review: Negative Binomial regression
+
+In reality, we often have count data where $E[Y_j|\boldsymbol{X}] \ne Var[Y_j|\boldsymbol{X}]$
+
+- If $Var[Y_j | \boldsymbol{X}] > \lambda(\boldsymbol{X})T_j$ this is called [overdispersion]{.alert}
+
+- If $Var[Y_j | \boldsymbol{X}] < \lambda(\boldsymbol{X})T_j$ this is called [underdispersion]{.alert}
+
+:::: {.columns}
+::: {.column width="50%"}
+::: {.fragment}
+We can instead assume:
+
+$$Y_j | \theta \sim \text{Poisson}(\lambda T_j \theta)$$
+$$\theta \sim \text{Gamma}(\alpha, \beta)$$
+
+- Mean: $E[\theta] = \alpha/\beta = \mu_{\theta}$
+
+- Variance: $Var[\theta] = \alpha/\beta^2 = \sigma^2_{\theta}$
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+We combine these to create:
+
+$$Y_j \sim \text{Negative Binomial}(\lambda T_j, \theta)$$
+
+- Mean: $E[Y_j] = \lambda T_j \mu_{\theta}$
+
+- Variance: $Var[Y_j] = \lambda T_j (\mu_{\theta} + \lambda T_j \sigma^2_{\theta})$
+:::
+:::
+::::
+
+---
+
+## 552 review: Negative Binomial regression
+
+We can use this distribution to create a negative binomial regression:
+
+$$\log(E[Y_j | \theta]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)$$
+
+This assumes:
+
+1. The outcome data, $Y_j$, follow a [Negative Binomial]{.alert} distribution with mean $\lambda(\boldsymbol{X})T_j \mu_\theta$ and variance $\lambda T_j (\mu_\theta + \lambda T_j \sigma^2_{\theta})$
+
+2. We have correctly specified the linear predictors (isolating causal pathway) and the link function
+
+3. Each outcome observation is independent of one another
+
+Poisson regression is a special case of negative binomial regression, where we assume $\mu_{\theta}=1$ and $\sigma^2_{\theta}=0$
+
+---
+
+## Clustered count outcomes
+
+A common assumption across both of these regression methods is that all outcome observations are independent of one another
+
+Can we think of some examples where count outcomes might be clustered?
+
+---
+
+## Clustered count outcomes
+
+A common assumption across both of these regression methods is that all outcome observations are independent of one another
+
+Can we think of some examples where count outcomes might be clustered?
+
+- Residents' number of serious falls in one month may be clustered by living facility
+
+- Cancer incidence in a county for one year may be clustered by state
+
+- Number of disciplinary incidents per student in a school year may be clustered by school
+
+. . .
+
+This means that the Poisson and NB regression we've discussed won't give us correct inference for these data
+
+- Luckily, we can extend GLMMs and GEEs from weeks 3 and 4 these cases!
+
+---
+
+## Count outcomes and Poisson GLMMs
+
+Say we have count outcome data for multiple individuals in a cluster $i$, $\vec{Y}_i$, that is distributed Poisson with event rate $\lambda_{ij}$
+
+- We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
+
+:::: {.columns}
+::: {.column width="50%"}
+
+[A GLMM representation for this would look like:]{.alert}
+
+$$\text{log}(\lambda_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})$$
+
+where $b_{0i} \sim N(0, \sigma^2_b)$
+
+- Also assumes individual-level variation: $Var[Y_{ij}|\boldsymbol{X}, b_{i0}] = \lambda(\boldsymbol{X})T_j$
+
+- Cluster-specific non-exposure group rate: $E[Y_{ij}|u_{ij}=0,b_{i0}] = \beta_0 + b_{i0} + \log(T_{ij})$
+
+- Global/population-averaged non-exposure group rate: $\beta_0$
+
+:::
+
+::: {.column width="50%"}
+
+Our covariance structure then looks like
+
+$$\begin{bmatrix}
+\sigma^2_b + \lambda(\boldsymbol{X})T_{ij} & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \lambda(\boldsymbol{X})T_{ij}
+\end{bmatrix}$$
+
+:::
+::::
+
+```{r glmm poisson, eval=F, echo=F}
+library(MASS)
+glmmPQL( y ~ u,
+         random = ~ 1 | cluster, family = quasipoisson(link="log"),
+         data=data)
+```
+
+------------------------------------------------------------------------
+
+## Count outcomes and NB GLMMs
+
+When count data are over-dispersed, we can use a [negative-binomial]{.alert} regression model
+
+$$\text{log}(\lambda_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})$$
+
+where $b_{0i}\sim N(0,\sigma^2_b)$
+
+- Also assumes individual-level variation: $Var[Y_{ij}|\theta, \boldsymbol{X}, b_{i0}] = \lambda T_j (\mu_\theta + \lambda T_j \sigma^2_{\theta})$
+
+- Our covariance structure then looks like
+
+$$\begin{bmatrix}
+\sigma^2_b + \lambda T_{ij} (\mu_\theta + \lambda T_{ij} \sigma^2_{\theta}) & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \lambda T_{ij} (\mu_\theta + \lambda T_{ij} \sigma^2_{\theta})
+\end{bmatrix}$$
+
+```{r glmm neg bin, eval=F, echo=F}
+glmmPQL( y ~ u,
+         random = ~ 1 | cluster, family = negative.binomial(theta = 1),
+         data=data)
+```
+
+---
+
+## Example: Student awards and writing scores
+
+We have a simulated dataset documenting the number of awards earned by individual students at 20 high schools. Let's say we want to say whether the number of awards a student receives is impacted by their score on a standardized writing test
+
+```{r awards}
+library(foreign)
+awards <- read.dta("https://stats.idre.ucla.edu/stat/data/hsbdemo.dta")
+awards$cid <- factor(awards$cid)
+
+glimpse(awards)
+```
+
+- Student-level variables: gender, socioeconomic status, test scores (math, reading, writing, science, social studies), honors course enrollment status, program enrollment type (general, academic, vocational)
+
+- School-level variables: school ID, school type (public/private)
+
+---
+
+## Example: Student awards and writing scores
+
+Let's get an idea of our data...
+
+```{r awards table 1}
+awards %>% 
+   group_by(cid) %>% 
+   summarize(n=n(), mean_math=mean(write, na.rm=T), mean_awards = mean(awards), var_awards=var(awards))
+```
+
+---
+
+## Example: Student awards and writing scores
+
+First our Poisson mixed effects model:
+
+$$\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}$$
+
+- All data is on the per-year scale so $T_{ij}=1$, and $\log(T_{ij})=0$, so no need to add the time offset term
+
+```{r awards glmm PQL}
+library(MASS)
+awards_pql <- glmmPQL( awards ~ write,
+                       random = ~ 1 | cid, family = poisson(link="log"),
+                       data = awards, verbose = F )
+summary( awards_pql )$tTable
+
+```
+
+. . .
+
+- $\exp (\beta_1)$: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate `r round(exp(summary( awards_pql )$coef$fixed[2]),4)` times greater than the student whose writing score is 1 point lower
+
+- 95% CI: exp(`r round(awards_pql$coefficients$fixed[2],4)` $\pm$ `r round(summary(awards_pql)$tTable[2,2],4)` $\times Z_{1-\alpha/2})$
+
+   - We are 95% confident the true award incidence ratio for writing scores is between `r round(exp(awards_pql$coefficients$fixed[2] - summary(awards_pql)$tTable[2,2]*qnorm(0.975)), 4)` and `r round(exp(awards_pql$coefficients$fixed[2] + summary(awards_pql)$tTable[2,2]*qnorm(0.975)), 4)`.
+
+---
+
+## Example: Student awards and writing scores
+
+We can also run this model using Gaussian quadrature:
+
+```{r awards glmm quad}
+library(lme4)
+awards_quad <- glmer( awards ~ write + (1 | cid),
+                      family = poisson(link="log"), data = awards,
+                      control=glmerControl(optimizer="bobyqa") )
+summary( awards_quad )$coefficients
+
+```
+
+. . .
+
+- $\exp (\beta_1)$: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate `r round(exp(summary( awards_quad )$coef[2,1]),4)` times greater than the student whose writing score is 1 point lower
+
+- 95% CI: exp(`r round(summary( awards_quad )$coef[2,1],4)` $\pm$ `r round(summary( awards_quad )$coef[2,2],4)` $\times Z_{1-\alpha/2})$
+
+   - We are 95% confident the true award incidence ratio for writing scores is between `r round(exp(summary( awards_quad )$coef[2,1] - summary( awards_quad )$coef[2,2]*qnorm(0.975)), 4)` and `r round(exp(summary( awards_quad )$coef[2,1] + summary( awards_quad )$coef[2,2]*qnorm(0.975)), 4)`.
+   
+   - GLMM CI: ( `r round(exp(awards_pql$coefficients$fixed[2] - summary(awards_pql)$tTable[2,2]*qnorm(0.975)), 4)`, `r round(exp(awards_pql$coefficients$fixed[2] + summary(awards_pql)$tTable[2,2]*qnorm(0.975)), 4)`)
+
+---
+
+## Example: Student awards and writing scores
+
+Now our NB mixed effects model, via PQL:
+
+$$\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}$$
+
+```{r awards glmm NB PQL}
+# find theta #
+awards_theta <- glm.nb(awards ~ write, data=awards)$call$init.theta
+
+# fit model #
+awards_NBpql <- glmmPQL( awards ~ write,
+                       random = ~ 1 | cid, family = negative.binomial(theta = awards_theta),
+                       data = awards, verbose = F )
+summary( awards_NBpql )$tTable
+```
+
+. . .
+
+- $\exp (\beta_1)$: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate `r round(exp(summary( awards_NBpql )$coef$fixed[2]),4)` times greater than the student whose writing score is 1 point lower
+
+- 95% CI: (`r round(exp(awards_NBpql$coefficients$fixed[2] - summary(awards_NBpql)$tTable[2,2]*qnorm(0.975)), 4)`, `r round(exp(awards_NBpql$coefficients$fixed[2] + summary(awards_NBpql)$tTable[2,2]*qnorm(0.975)), 4)`)
+
+---
+
+## Example: Student awards and writing scores
+
+... and via quadrature:
+
+```{r awards glmm NB quad}
+awards_NBquad <- glmer( awards ~ write + (1 | cid),
+                      family =negative.binomial(theta = awards_theta), data = awards,
+                      control=glmerControl(optimizer="bobyqa") )
+summary( awards_NBquad )$coefficients
+```
+
+- $\exp (\beta_1)$: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate `r round(exp(summary( awards_NBquad )$coef[2,1]),4)` times greater than the student whose writing score is 1 point lower
+
+- 95% CI: (`r round(exp(summary( awards_NBquad )$coef[2,1] - summary( awards_NBquad )$coef[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary( awards_NBquad )$coef[2,1] + summary( awards_NBquad )$coef[2,2]*qnorm(0.975)), 4)`)
+
+---
+
+## Count outcomes and GEEs
+
+We can also model count outcomes using GEEs
+
+Recall: a GEE has 2 main components
+
+1. Marginal expectation of the outcome ("the mean model"): $E[Y_{ij}|X_{ij}]=\mu_{ij}$
+
+2.1 The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
+
+2.2 The within-cluster association of the outcome ("correlation structure")
+
+We can combine 2.1 and 2.2 to create the working covariance matrix $V_i$
+
+. . .
+
+The main difference between Poisson and NB GEEs is in specification of component 2.1
+
+- Poisson 2.1: $\lambda(\boldsymbol{X}_i)T_{ij}$
+
+- NB 2.1: $\lambda(\boldsymbol{X}_i) T_{ij} \left[\mu_{\theta} + \lambda(\boldsymbol{X}_i) T_{ij} \sigma^2_{\theta}\right]$
+
+. . .
+
+The robust covariance matrix is special here:
+
+-   Because GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions
+
+-   Result: GEEs automatically account for over-dispersion without needing to use a NB
+
+---
+
+## Example: Student awards and writing scores {.smaller}
+
+Let's fit a Poisson GEE:
+
+1. Marginal expectation of outcome: $\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij})$
+
+2.1. Marginal variance of outcome: $\lambda(\text{writing score}_{ij})$
+
+2.2. Correlation structure? Exchangeable
+
+```{r awards gee}
+library(gee)
+awards_gee <- gee( awards ~ write, id=cid,
+                   family = poisson(link="log"), corstr="exchangeable",
+                   data = awards )
+summary( awards_gee )$coef
+```
+
+. . .
+
+- $\exp (\beta_1)$: A student whose writing score is 1 point higher would be expected to have an award rate `r round(exp(summary( awards_gee )$coef[2,1]),4)` times greater than the student whose writing score is 1 point lower
+
+- Robust 95% CI: exp(`r round(summary( awards_gee )$coef[2,1],4)` $\pm$ `r round(summary( awards_gee )$coef[2,4],4)` $\times Z_{1-\alpha/2})$
+
+   - We are 95% confident the true award incidence ratio for writing scores is between `r round(exp(summary( awards_gee )$coef[2,1] - summary( awards_gee )$coef[2,4]*qnorm(0.975)), 4)` and `r round(exp(summary( awards_gee )$coef[2,1] + summary( awards_gee )$coef[2,4]*qnorm(0.975)), 4)`.
+
+
+---
+
+## Example: Student awards and writing scores
+
+Now a Negative Binomial GEE:
+
+2.1. Marginal variance of outcome: $\lambda(\text{writing score}_{ij}) T_{ij} \left[\mu_{\theta} + \lambda(\text{writing score}_{ij}) T_{ij} \sigma^2_{\theta}\right]$
+
+```{r awards gee NB}
+library(geeM)
+library(MASS)
+awards_NBgee <- geem( awards ~ write, id=cid,
+                   family = MASS::negative.binomial(awards_theta),
+                   corstr="exchangeable",
+                   data = awards )
+summary( awards_NBgee )
+```
+
+. . .
+
+:::: {.columns}
+::: {.column width="50%"}
+- Compare point estimates for $\exp(\beta_1)$:
+   
+   - NB GEE: `r round(exp(0.1617),4)`
+   
+   - Poisson GEE: `r round(exp(summary( awards_gee )$coef[2,1]), 4)`
+:::
+
+::: {.column width="50%"}
+- Compare robust SEs:
+   
+   - NB GEE: `r round(summary(awards_NBgee)$se.robust[2], 4)`
+   
+   - Poisson GEE: `r round(summary( awards_gee )$coef[2,4], 4)`
+:::
+::::

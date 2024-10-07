@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<script src="count-glmm-notes_files/libs/clipboard/clipboard.min.js"></script>
-<script src="count-glmm-notes_files/libs/quarto-html/tabby.min.js"></script>
-<script src="count-glmm-notes_files/libs/quarto-html/popper.min.js"></script>
-<script src="count-glmm-notes_files/libs/quarto-html/tippy.umd.min.js"></script>
-<link href="count-glmm-notes_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="count-glmm-notes_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="count-glmm-notes_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="count-glmm-notes_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="slides-5-1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="slides-5-1_files/libs/quarto-html/tabby.min.js"></script>
+<script src="slides-5-1_files/libs/quarto-html/popper.min.js"></script>
+<script src="slides-5-1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="slides-5-1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="slides-5-1_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="slides-5-1_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="slides-5-1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.3.353">
-<title>count-glmm-notes</title>
+<title>slides-5-1</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-<link rel="stylesheet" href="count-glmm-notes_files/libs/revealjs/dist/reset.css">
-<link rel="stylesheet" href="count-glmm-notes_files/libs/revealjs/dist/reveal.css">
+<link rel="stylesheet" href="slides-5-1_files/libs/revealjs/dist/reset.css">
+<link rel="stylesheet" href="slides-5-1_files/libs/revealjs/dist/reveal.css">
 <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -94,13 +94,13 @@
     code span.vs { color: #008000; } /* VerbatimString */
     code span.wa { color: #696969; font-style: italic; } /* Warning */
   </style>
-<link rel="stylesheet" href="count-glmm-notes_files/libs/revealjs/dist/theme/quarto.css">
-<link href="count-glmm-notes_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-<link href="count-glmm-notes_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-<link href="count-glmm-notes_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-<link href="count-glmm-notes_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-<link href="count-glmm-notes_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-<link href="count-glmm-notes_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+<link rel="stylesheet" href="slides-5-1_files/libs/revealjs/dist/theme/quarto.css">
+<link href="slides-5-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+<link href="slides-5-1_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+<link href="slides-5-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+<link href="slides-5-1_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+<link href="slides-5-1_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+<link href="slides-5-1_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
 <style type="text/css">
 
   .callout {
@@ -392,7 +392,7 @@
 
 
 <section class="slide level2"><h1>
-Lecture 5: Modeling correlated count data
+Lecture 5.1: Modeling clustered count data
 </h1>
 <h2>
 PHS 651: Advanced regression methods
@@ -412,205 +412,440 @@ October 8, 2024
 <p><em>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</em></p>
 </div>
 <div class="absolute" style="left: 260px; bottom: 50px; width: 1500px; ">
-<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/PHS-651-4/slides-4" class="uri">https://maryryan.github.io/PHS-651-slides/PHS-651-4/slides-4</a></p>
+<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/PHS-651-5-1/slides-5-1" class="uri">https://maryryan.github.io/PHS-651-slides/PHS-651-5-1/slides-5-1</a></p>
 </div>
 <div class="absolute" style="left: 100px; bottom: 0px; width: 150px; ">
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="count-glmm-notes_files/figure-revealjs/qr%20code-1.png" width="192"></p>
+<p><img data-src="slides-5-1_files/figure-revealjs/qr%20code-1.png" width="192"></p>
 </div>
 </div>
 </div>
-</section><section id="count-outcomes-and-glmms-poisson" class="slide level2"><h2>Count outcomes and GLMMs (poisson)</h2>
-<p>We’ve focused a lot on binary outcomes up until now, but count data (Poisson-distributed) can also be modeled using a GLMM</p>
+</section><section id="working-with-count-data" class="slide level2"><h2>Working with count data</h2>
+<p>Up to this point we’ve focused on 2 types of outcome data:</p>
+<ul>
+<li><p>Continuous</p></li>
+<li><p>Binary</p></li>
+</ul>
+<p>There are many other types of outcome data we might be interested, including <span class="alert">count</span> data</p>
+<ul>
+<li><p>How many seizure events does a participant experience in a week?</p></li>
+<li><p>How many serious falls does a resident of an assisted living facility experience in a month?</p></li>
+<li><p>How many inclement weather events does a community experience in a year?</p></li>
+</ul>
+<p>There are several properties of count data that make it inappropriate for our previous modeling strategies</p>
+</section><section id="review-distribution-of-count-data" class="slide level2"><h2>551/552 review: Distribution of count data</h2>
+<p>In general, we think of count data for individual <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_j\)</span>, collected during time <span class="math inline">\(T_j\)</span> as following a <span class="alert">Poisson distribution</span></p>
+<p><span class="math display">\[Y_j \sim \text{Poisson}(\lambda T_j)\]</span></p>
+<ul>
+<li><p>Parameterized by <span class="alert">rate parameter</span> <span class="math inline">\(\lambda\)</span>: number of events per unit of time</p></li>
+<li><p>Mean: <span class="math inline">\(E[Y_j] = \lambda T_j\)</span>; Variance; <span class="math inline">\(Var[Y_j_j] = \lambda T\)</span></p></li>
+</ul>
+<p>We assume 3 things:</p>
+<ol type="1">
+<li><p>Stationarity: The expected number of events per unit time is the same throughout the entire time interval</p></li>
+<li><p>Independence: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval</p></li>
+<li>
+<p>Rare events: For any very small time interval <span class="math inline">\(h\)</span>:</p>
+<ul>
+<li><p>The probability of observing 1 event is directly proportional to the length of the time interval, e.g.&nbsp;<span class="math inline">\(P(\text{1 event}) \approx \lambda h\)</span></p></li>
+<li><p>The probability of observing no events is approximately <span class="math inline">\(1-\lambda h\)</span></p></li>
+<li><p>The probability of observing 2 or more events is essentially 0</p></li>
+</ul>
+</li>
+</ol></section><section id="review-count-data-and-time" class="slide level2"><h2>552/551 review: Count data and time</h2>
+<p>Ideally when we collect count data, we want to collect it on the <em>same time scale</em> for everyone</p>
+<ul>
+<li><p>Count of events within 1 day, 1 month, 1 year</p></li>
+<li><p>This may not always be the case, especially when combining data from multiple sources</p></li>
+</ul>
+<p>If we collect count data on different time scales, we can use the stationarity assumption to “standardize” the data to a common scale</p>
+<ul>
+<li><p>e.g., “12 events in 1 year” translates to “1 event per month”, or “2 events per day” translates to “14 events per week”</p></li>
+<li><p>Note: this may not always match reality</p></li>
+</ul></section><section id="review-poisson-regression" class="slide level2"><h2>552 review: Poisson regression</h2>
+<p>One way to model count data is by using a Poisson regression:</p>
+<p><span class="math display">\[\log[\lambda(\boldsymbol{X})] = \boldsymbol{X}\vec{\beta}= \beta_0 + U_j\beta_1\]</span></p>
+<p>We will also sometimes model the mean of the count data, rather than the rate:</p>
+<p><span class="math display">\[\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)\]</span></p>
 <ul>
 <li>
-<p>If we have <span class="math inline">\(\vec{Y}_i\)</span> that is distributed Poisson with event rate <span class="math inline">\(\lambda_{ij}\)</span> (# events per unit of time)</p>
+<span class="math inline">\(T_j\)</span> is known as an <span class="alert">offset</span>
+</li>
+</ul>
+<p>Both these regressions assume:</p>
+<ol type="1">
+<li><p>The outcome data, <span class="math inline">\(Y_j\)</span>, follow a Poisson distribution with mean <span class="math inline">\(\lambda(\boldsymbol{X})T_j\)</span> and variance <span class="math inline">\(\lambda(\boldsymbol{X})T_j\)</span></p></li>
+<li><p>We have correctly specified the linear predictors (isolating causal pathway) and the link function</p></li>
+<li><p>Each outcome observation is independent of one another</p></li>
+</ol></section><section id="review-negative-binomial-regression" class="slide level2"><h2>552 review: Negative Binomial regression</h2>
+<p>In reality, we often have count data where <span class="math inline">\(E[Y_j|\boldsymbol{X}] \ne Var[Y_j|\boldsymbol{X}]\)</span></p>
 <ul>
-<li>Thus the mean for <span class="math inline">\(Y_{ij}\)</span>, <span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \mu_{ij}\)</span>, is the average count for a given unit of time, which is <span class="math inline">\(\mu_{ij}= \lambda_{ij}T_{ij}\)</span>
+<li><p>If <span class="math inline">\(Var[Y_j | \boldsymbol{X}] &gt; \lambda(\boldsymbol{X})T_j\)</span> this is called <span class="alert">overdispersion</span></p></li>
+<li><p>If <span class="math inline">\(Var[Y_j | \boldsymbol{X}] &lt; \lambda(\boldsymbol{X})T_j\)</span> this is called <span class="alert">underdispersion</span></p></li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<p>We can instead assume:</p>
+<p><span class="math display">\[Y_j | \theta \sim \text{Poisson}(\lambda T_j \theta)\]</span> <span class="math display">\[\theta \sim \text{Gamma}(\alpha, \beta)\]</span></p>
+<ul>
+<li><p>Mean: <span class="math inline">\(E[\theta] = \alpha/\beta = \mu_{\theta}\)</span></p></li>
+<li><p>Variance: <span class="math inline">\(Var[\theta] = \alpha/\beta^2 = \sigma^2_{\theta}\)</span></p></li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p>We combine these to create:</p>
+<p><span class="math display">\[Y_j \sim \text{Negative Binomial}(\lambda T_j, \theta)\]</span></p>
+<ul>
+<li><p>Mean: <span class="math inline">\(E[Y_j] = \lambda T_j \mu_{\theta}\)</span></p></li>
+<li><p>Variance: <span class="math inline">\(Var[Y_j] = \lambda T_j (\mu_{\theta} + \lambda T_j \sigma^2_{\theta})\)</span></p></li>
+</ul>
+</div>
+</div>
+</div>
+</section><section id="review-negative-binomial-regression-1" class="slide level2"><h2>552 review: Negative Binomial regression</h2>
+<p>We can use this distribution to create a negative binomial regression:</p>
+<p><span class="math display">\[\log(E[Y_j | \theta]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)\]</span></p>
+<p>This assumes:</p>
+<ol type="1">
+<li><p>The outcome data, <span class="math inline">\(Y_j\)</span>, follow a <span class="alert">Negative Binomial</span> distribution with mean <span class="math inline">\(\lambda(\boldsymbol{X})T_j \mu_\theta\)</span> and variance <span class="math inline">\(\lambda T_j (\mu_\theta + \lambda T_j \sigma^2_{\theta})\)</span></p></li>
+<li><p>We have correctly specified the linear predictors (isolating causal pathway) and the link function</p></li>
+<li><p>Each outcome observation is independent of one another</p></li>
+</ol>
+<p>Poisson regression is a special case of negative binomial regression, where we assume <span class="math inline">\(\mu_{\theta}=1\)</span> and <span class="math inline">\(\sigma^2_{\theta}=0\)</span></p>
+</section><section id="clustered-count-outcomes" class="slide level2"><h2>Clustered count outcomes</h2>
+<p>A common assumption across both of these regression methods is that all outcome observations are independent of one another</p>
+<p>Can we think of some examples where count outcomes might be clustered?</p>
+</section><section id="clustered-count-outcomes-1" class="slide level2"><h2>Clustered count outcomes</h2>
+<p>A common assumption across both of these regression methods is that all outcome observations are independent of one another</p>
+<p>Can we think of some examples where count outcomes might be clustered?</p>
+<ul>
+<li><p>Residents’ number of serious falls in one month may be clustered by living facility</p></li>
+<li><p>Cancer incidence in a county for one year may be clustered by state</p></li>
+<li><p>Number of disciplinary incidents per student in a school year may be clustered by school</p></li>
+</ul>
+<div class="fragment">
+<p>This means that the Poisson and NB regression we’ve discussed won’t give us correct inference for these data</p>
+<ul>
+<li>Luckily, we can extend GLMMs and GEEs from weeks 3 and 4 these cases!</li>
+</ul>
+</div>
+</section><section id="count-outcomes-and-poisson-glmms" class="slide level2"><h2>Count outcomes and Poisson GLMMs</h2>
+<p>Say we have count outcome data for multiple individuals in a cluster <span class="math inline">\(i\)</span>, <span class="math inline">\(\vec{Y}_i\)</span>, that is distributed Poisson with event rate <span class="math inline">\(\lambda_{ij}\)</span></p>
+<ul>
+<li>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(\vec{Y}_i\)</span>
 </li>
 </ul>
-</li>
-<li><p>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(\vec{Y}_i\)</span></p></li>
-</ul>
-<p><span class="alert">What would our model look like?</span></p>
-<p><span class="math display">\[\text{log}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})\]</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="alert">A GLMM representation for this would look like:</span></p>
+<p><span class="math display">\[\text{log}(\lambda_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})\]</span></p>
 <p>where <span class="math inline">\(b_{0i} \sim N(0, \sigma^2_b)\)</span></p>
-<div class="fragment">
-<p><span class="alert">Note the lack of <span class="math inline">\(\epsilon_{ij}\)</span>!</span></p>
 <ul>
-<li>
-<p>This is because the Poisson distribution assumes <span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = Var[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \mu_{ij}\)</span></p>
-<ul>
-<li><p>However, this assumption is rarely true in real life (health) applications</p></li>
-<li><p>Often, <span class="math inline">\(Var[Y|\boldsymbol{X}_i, b_{0i}]&gt;E[Y|\boldsymbol{X}_i, b_{0i}]\)</span>, known as <span class="alert">over-dispersion</span></p></li>
+<li><p>Also assumes individual-level variation: <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}, b_{i0}] = \lambda(\boldsymbol{X})T_j\)</span></p></li>
+<li><p>Cluster-specific non-exposure group rate: <span class="math inline">\(E[Y_{ij}|u_{ij}=0,b_{i0}] = \beta_0 + b_{i0} + \log(T_{ij})\)</span></p></li>
+<li><p>Global/population-averaged non-exposure group rate: <span class="math inline">\(\beta_0\)</span></p></li>
 </ul>
-</li>
-</ul>
+</div><div class="column" style="width:50%;">
+<p>Our covariance structure then looks like</p>
+<p><span class="math display">\[\begin{bmatrix}
+\sigma^2_b + \lambda(\boldsymbol{X})T_{ij} &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \lambda(\boldsymbol{X})T_{ij}
+\end{bmatrix}\]</span></p>
 </div>
-</section><section id="count-outcomes-and-glmms-negative-binomial" class="slide level2"><h2>Count outcomes and GLMMs (negative binomial)</h2>
+</div>
+</section><section id="count-outcomes-and-nb-glmms" class="slide level2"><h2>Count outcomes and NB GLMMs</h2>
 <p>When count data are over-dispersed, we can use a <span class="alert">negative-binomial</span> regression model</p>
-<p><span class="math display">\[\text{log}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij}) + \epsilon_{ij}\]</span></p>
-<p>where <span class="math inline">\(b_{0i}\sim N(0,\sigma^2_b)\)</span> and <span class="math inline">\(\exp(\epsilon_{ij}) \sim \text{Gamma}(1,\theta)\)</span></p>
-<div class="fragment">
+<p><span class="math display">\[\text{log}(\lambda_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})\]</span></p>
+<p>where <span class="math inline">\(b_{0i}\sim N(0,\sigma^2_b)\)</span></p>
 <ul>
-<li><p>This means <span class="math inline">\(Var(Y_{ij}|\boldsymbol{X}_i, b_{0i}) = E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] + \theta\left(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]\right)^2 = \mu_{ij} + \theta \mu_{ij}^2\)</span></p></li>
+<li><p>Also assumes individual-level variation: <span class="math inline">\(Var[Y_{ij}|\theta, \boldsymbol{X}, b_{i0}] = \lambda T_j (\mu_\theta + \lambda T_j \sigma^2_{\theta})\)</span></p></li>
 <li><p>Our covariance structure then looks like</p></li>
 </ul>
 <p><span class="math display">\[\begin{bmatrix}
-\sigma^2_b + \mu_{ij} + \theta \mu_{ij}^2 &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b + \lambda T_{ij} (\mu_\theta + \lambda T_{ij} \sigma^2_{\theta}) &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
 \sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \mu_{ij} + \theta \mu_{ij}^2
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \lambda T_{ij} (\mu_\theta + \lambda T_{ij} \sigma^2_{\theta})
 \end{bmatrix}\]</span></p>
+</section><section id="example-student-awards-and-writing-scores" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+<p>We have a simulated dataset documenting the number of awards earned by individual students at 20 high schools. Let’s say we want to say whether the number of awards a student receives is impacted by their score on a standardized writing test</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb1-2"><a href="#cb1-2"></a>awards <span class="ot">&lt;-</span> <span class="fu">read.dta</span>(<span class="st">"https://stats.idre.ucla.edu/stat/data/hsbdemo.dta"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3"></a>awards<span class="sc">$</span>cid <span class="ot">&lt;-</span> <span class="fu">factor</span>(awards<span class="sc">$</span>cid)</span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">glimpse</span>(awards)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 200
+Columns: 13
+$ id      &lt;dbl&gt; 45, 108, 15, 67, 153, 51, 164, 133, 2, 53, 1, 128, 16, 106, 89…
+$ female  &lt;fct&gt; female, male, male, male, male, female, male, male, female, ma…
+$ ses     &lt;fct&gt; low, middle, high, low, middle, high, middle, middle, middle, …
+$ schtyp  &lt;fct&gt; public, public, public, public, public, public, public, public…
+$ prog    &lt;fct&gt; vocation, general, vocation, vocation, vocation, general, voca…
+$ read    &lt;dbl&gt; 34, 34, 39, 37, 39, 42, 31, 50, 39, 34, 34, 39, 47, 36, 35, 44…
+$ write   &lt;dbl&gt; 35, 33, 39, 37, 31, 36, 36, 31, 41, 37, 44, 33, 31, 44, 35, 44…
+$ math    &lt;dbl&gt; 41, 41, 44, 42, 40, 42, 46, 40, 33, 46, 40, 38, 44, 37, 40, 39…
+$ science &lt;dbl&gt; 29, 36, 26, 33, 39, 31, 39, 34, 42, 39, 39, 47, 36, 42, 51, 34…
+$ socst   &lt;dbl&gt; 26, 36, 42, 32, 51, 39, 46, 31, 41, 31, 41, 41, 36, 41, 33, 46…
+$ honors  &lt;fct&gt; not enrolled, not enrolled, not enrolled, not enrolled, not en…
+$ awards  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ cid     &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,…</code></pre>
 </div>
-</section><section id="example-murders-and-income" class="slide level2"><h2>Example: murders and income</h2>
-<p>Let’s say we want to see whether the real per capita personal income of a county impacts its number of murders</p>
+</div>
 <ul>
-<li><p>Data from 1980</p></li>
-<li><p>Assume clustering by state</p></li>
-</ul></section><section id="example-murders-and-income-1" class="slide level2"><h2>Example: murders and income</h2>
+<li><p>Student-level variables: gender, socioeconomic status, test scores (math, reading, writing, science, social studies), honors course enrollment status, program enrollment type (general, academic, vocational)</p></li>
+<li><p>School-level variables: school ID, school type (public/private)</p></li>
+</ul></section><section id="example-student-awards-and-writing-scores-1" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>Let’s get an idea of our data…</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>murder <span class="sc">%&gt;%</span> </span>
-<span id="cb1-2"><a href="#cb1-2"></a>   <span class="fu">group_by</span>(statefips) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-3"><a href="#cb1-3"></a>   <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">mean_murders=</span><span class="fu">mean</span>(murders, <span class="at">na.rm=</span>T), <span class="at">mean_capita =</span> <span class="fu">mean</span>(rpcpersinc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>awards <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2"></a>   <span class="fu">group_by</span>(cid) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3"></a>   <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">mean_math=</span><span class="fu">mean</span>(write, <span class="at">na.rm=</span>T), <span class="at">mean_awards =</span> <span class="fu">mean</span>(awards), <span class="at">var_awards=</span><span class="fu">var</span>(awards))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 46 × 4
-   statefips     n mean_murders mean_capita
-       &lt;int&gt; &lt;int&gt;        &lt;dbl&gt;       &lt;dbl&gt;
- 1         1    62        6.65        8083.
- 2         2     7        2.57       16705.
- 3         5    73        2.81        8080.
- 4         6    58       58.7        12820.
- 5         8    55        2.91       11577.
- 6         9     8       17.9        13732.
- 7        10     3       14          11025.
- 8        11     1      200          15197.
- 9        15     3        6.33       11926.
-10        16    41        0.707       9913.
-# ℹ 36 more rows</code></pre>
+<pre><code># A tibble: 20 × 5
+   cid       n mean_math mean_awards var_awards
+   &lt;fct&gt; &lt;int&gt;     &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+ 1 1        11      36.4       0          0    
+ 2 2        10      41.3       0          0    
+ 3 3         9      43.8       0.111      0.111
+ 4 4        11      41.8       0.182      0.364
+ 5 5        11      46.2       0.364      0.455
+ 6 6         9      49.9       1          1.25 
+ 7 7         9      50.6       0.778      0.694
+ 8 8        11      50.7       0.818      0.564
+ 9 9         9      49.1       0.556      0.528
+10 10       10      51.2       1          0.889
+11 11       12      53.8       1.33       0.788
+12 12       10      57.7       1.9        0.544
+13 13        9      60.3       2.78       1.69 
+14 14       10      54.4       1.4        1.82 
+15 15       10      59.6       2.6        0.933
+16 16       11      62.5       3.73       2.62 
+17 17        7      61.3       3          2    
+18 18       10      63.5       4.4        3.38 
+19 19       11      61.4       3.73       5.82 
+20 20       10      63.1       4          2.44 </code></pre>
 </div>
 </div>
-</section><section id="example-murders-and-income-2" class="slide level2"><h2>Example: murders and income</h2>
+</section><section id="example-student-awards-and-writing-scores-2" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>First our Poisson mixed effects model:</p>
-<p><span class="math display">\[\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i}\]</span></p>
+<p><span class="math display">\[\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}\]</span></p>
 <ul>
 <li>All data is on the per-year scale so <span class="math inline">\(T_{ij}=1\)</span>, and <span class="math inline">\(\log(T_{ij})=0\)</span>, so no need to add the time offset term</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>murder_glmm <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( murders <span class="sc">~</span> rpcpersinc,</span>
-<span id="cb3-2"><a href="#cb3-2"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> statefips, <span class="at">family =</span> <span class="fu">quasipoisson</span>(<span class="at">link=</span><span class="st">"log"</span>), <span class="at">data =</span> murder, </span>
-<span id="cb3-3"><a href="#cb3-3"></a>         <span class="at">verbose =</span> F )</span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="fu">summary</span>( murder_glmm )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb5-2"><a href="#cb5-2"></a>awards_pql <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( awards <span class="sc">~</span> write,</span>
+<span id="cb5-3"><a href="#cb5-3"></a>                       <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> cid, <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link=</span><span class="st">"log"</span>),</span>
+<span id="cb5-4"><a href="#cb5-4"></a>                       <span class="at">data =</span> awards, <span class="at">verbose =</span> F )</span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="fu">summary</span>( awards_pql )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                   Value    Std.Error   DF   t-value      p-value
-(Intercept) -1.045388626 2.787126e-01 2150 -3.750776 1.809501e-04
-rpcpersinc   0.000257099 1.993114e-05 2150 12.899362 1.006960e-36</code></pre>
+<pre><code>                 Value   Std.Error  DF   t-value      p-value
+(Intercept) -9.1886125 0.237503758 179 -38.68828 7.277792e-89
+write        0.1670155 0.003847571 179  43.40805 5.918009e-97</code></pre>
 </div>
 </div>
-<p>Poisson GLMM results:</p>
+<div class="fragment">
 <ul>
+<li><p><span class="math inline">\(\exp (\beta_1)\)</span>: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate 1.1818 times greater than the student whose writing score is 1 point lower</p></li>
 <li>
-<p>Poisson <span class="math inline">\(e^{\beta_1}\)</span>: 1.0003</p>
+<p>95% CI: exp(0.167 <span class="math inline">\(\pm\)</span> 0.0038 <span class="math inline">\(\times Z_{1-\alpha/2})\)</span></p>
 <ul>
-<li>95% CI: (1.0002, 1.0003)</li>
+<li>We are 95% confident the true award incidence ratio for writing scores is between 1.1729 and 1.1907.</li>
 </ul>
 </li>
-</ul></section><section id="example-murders-and-income-3" class="slide level2"><h2>Example: murders and income</h2>
-<p>Now our negative binomial mixed effects model:</p>
-<p><span class="math display">\[\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i} + \epsilon_{ij}\]</span></p>
+</ul>
+</div>
+</section><section id="example-student-awards-and-writing-scores-3" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+<p>We can also run this model using Gaussian quadrature:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># find theta #</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a>murder_theta <span class="ot">&lt;-</span> <span class="fu">glm.nb</span>(murders <span class="sc">~</span> rpcpersinc, <span class="at">data=</span>murder)<span class="sc">$</span>call<span class="sc">$</span>init.theta</span>
-<span id="cb5-3"><a href="#cb5-3"></a></span>
-<span id="cb5-4"><a href="#cb5-4"></a><span class="co"># fit model #</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>murder_glmmnb <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( murders <span class="sc">~</span> rpcpersinc,</span>
-<span id="cb5-6"><a href="#cb5-6"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> statefips, <span class="at">family =</span> <span class="fu">negative.binomial</span>(<span class="at">theta =</span> murder_theta), <span class="at">data =</span> murder, </span>
-<span id="cb5-7"><a href="#cb5-7"></a>         <span class="at">verbose =</span> F )</span>
-<span id="cb5-8"><a href="#cb5-8"></a><span class="fu">summary</span>( murder_glmmnb )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb7-2"><a href="#cb7-2"></a>awards_quad <span class="ot">&lt;-</span> <span class="fu">glmer</span>( awards <span class="sc">~</span> write <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> cid),</span>
+<span id="cb7-3"><a href="#cb7-3"></a>                      <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link=</span><span class="st">"log"</span>), <span class="at">data =</span> awards,</span>
+<span id="cb7-4"><a href="#cb7-4"></a>                      <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>) )</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="fu">summary</span>( awards_quad )<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                    Value    Std.Error   DF   t-value      p-value
-(Intercept) -3.3458066494 3.479936e-01 2150 -9.614563 1.862156e-21
-rpcpersinc   0.0004354949 2.892331e-05 2150 15.056884 8.730031e-49</code></pre>
+<pre><code>              Estimate Std. Error   z value     Pr(&gt;|z|)
+(Intercept) -9.1885650 0.67847755 -13.54292 8.725429e-42
+write        0.1670148 0.01099133  15.19513 3.808977e-52</code></pre>
 </div>
 </div>
-<p>Negative Binomial GLMM results:</p>
+<div class="fragment">
 <ul>
+<li><p><span class="math inline">\(\exp (\beta_1)\)</span>: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate 1.1818 times greater than the student whose writing score is 1 point lower</p></li>
 <li>
-<p>NB <span class="math inline">\(e^{\beta_1}\)</span>: 1.0004</p>
+<p>95% CI: exp(0.167 <span class="math inline">\(\pm\)</span> 0.011 <span class="math inline">\(\times Z_{1-\alpha/2})\)</span></p>
 <ul>
-<li>95% CI: (1.0004, 1.0005)</li>
+<li><p>We are 95% confident the true award incidence ratio for writing scores is between 1.1566 and 1.2075.</p></li>
+<li><p>GLMM CI: ( 1.1729, 1.1907)</p></li>
 </ul>
 </li>
-</ul></section><section id="gees-and-count-data" class="slide level2"><h2>GEEs and count data</h2>
-<p>GEEs are particularly useful when it comes to modeling <span class="alert">count outcomes</span></p>
-<ul>
-<li><p>This is because GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions</p></li>
-<li><p>Result: GEEs automatically account for over-dispersion</p></li>
-</ul></section><section id="glmms-vs-gees-murder" class="slide level2"><h2>GLMMs vs GEEs: murder</h2>
-<p>Let’s see how GLMMs and GEEs compare with count data</p>
-<ul>
-<li><p>Recall our county murder example</p></li>
-<li><p>Want to see whether the real per capita personal income of a county impacts the number of murders</p></li>
-</ul></section><section id="glmms-vs-gees-murder-1" class="slide level2"><h2>GLMMs vs GEEs: murder</h2>
-<p>First our LME model:</p>
-<p><span class="math display">\[\text{log}(\text{number of murders}_{ij}) = \beta_0 + \beta_1(\text{per capita personal income}_{ij}) + b_{0i} + \epsilon_{ij}\]</span></p>
+</ul>
+</div>
+</section><section id="example-student-awards-and-writing-scores-4" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+<p>Now our NB mixed effects model, via PQL:</p>
+<p><span class="math display">\[\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}\]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>murder_glmm <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( murders <span class="sc">~</span> rpcpersinc,</span>
-<span id="cb7-2"><a href="#cb7-2"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> statefips, <span class="at">family =</span> poisson, <span class="at">data =</span> murder, </span>
-<span id="cb7-3"><a href="#cb7-3"></a>         <span class="at">verbose =</span> F )</span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="fu">summary</span>( murder_glmm )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># find theta #</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>awards_theta <span class="ot">&lt;-</span> <span class="fu">glm.nb</span>(awards <span class="sc">~</span> write, <span class="at">data=</span>awards)<span class="sc">$</span>call<span class="sc">$</span>init.theta</span>
+<span id="cb9-3"><a href="#cb9-3"></a></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># fit model #</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>awards_NBpql <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( awards <span class="sc">~</span> write,</span>
+<span id="cb9-6"><a href="#cb9-6"></a>                       <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> cid, <span class="at">family =</span> <span class="fu">negative.binomial</span>(<span class="at">theta =</span> awards_theta),</span>
+<span id="cb9-7"><a href="#cb9-7"></a>                       <span class="at">data =</span> awards, <span class="at">verbose =</span> F )</span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="fu">summary</span>( awards_NBpql )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                   Value    Std.Error   DF   t-value      p-value
-(Intercept) -1.045388626 2.787126e-01 2150 -3.750776 1.809501e-04
-rpcpersinc   0.000257099 1.993114e-05 2150 12.899362 1.006960e-36</code></pre>
+<pre><code>                 Value   Std.Error  DF   t-value      p-value
+(Intercept) -9.1886459 0.237507753 179 -38.68777 7.293171e-89
+write        0.1670161 0.003847645 179  43.40736 5.933345e-97</code></pre>
 </div>
 </div>
-<p>Logistic GLMM results:</p>
+<div class="fragment">
 <ul>
-<li>
-<p>GLMM <span class="math inline">\(e^{\beta_1}\)</span>: 1.0003</p>
-<ul>
-<li>95% CI: (1.0002, 1.0003)</li>
+<li><p><span class="math inline">\(\exp (\beta_1)\)</span>: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate 1.1818 times greater than the student whose writing score is 1 point lower</p></li>
+<li><p>95% CI: (1.1729, 1.1907)</p></li>
 </ul>
-</li>
-</ul></section><section id="glmms-vs-gees-murder-2" class="slide level2"><h2>GLMMs vs GEEs: murder</h2>
-<p>Now let’s fit a GEE:</p>
+</div>
+</section><section id="example-student-awards-and-writing-scores-5" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+<p>… and via quadrature:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># run an LME with random intercepts for county #</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a>murder_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( murders <span class="sc">~</span> rpcpersinc,</span>
-<span id="cb9-3"><a href="#cb9-3"></a>                  <span class="at">id=</span>statefips, <span class="at">data=</span>murder,</span>
-<span id="cb9-4"><a href="#cb9-4"></a>                  <span class="at">family=</span>poisson,</span>
-<span id="cb9-5"><a href="#cb9-5"></a>                  <span class="at">corstr=</span><span class="st">"exchangeable"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>awards_NBquad <span class="ot">&lt;-</span> <span class="fu">glmer</span>( awards <span class="sc">~</span> write <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> cid),</span>
+<span id="cb11-2"><a href="#cb11-2"></a>                      <span class="at">family =</span><span class="fu">negative.binomial</span>(<span class="at">theta =</span> awards_theta), <span class="at">data =</span> awards,</span>
+<span id="cb11-3"><a href="#cb11-3"></a>                      <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>) )</span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="fu">summary</span>( awards_NBquad )<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  (Intercept)    rpcpersinc 
--1.1488404529  0.0002885202 </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">summary</span>( murder_gee )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                Estimate   Naive S.E.   Naive z  Robust S.E.  Robust z
-(Intercept) -0.953738051 4.001175e-01 -2.383645 2.612118e-01 -3.651206
-rpcpersinc   0.000274346 2.804078e-05  9.783821 1.786876e-05 15.353391</code></pre>
+<pre><code>              Estimate  Std. Error   z value     Pr(&gt;|z|)
+(Intercept) -9.1886030 0.586130740 -15.67671 2.182630e-55
+write        0.1670154 0.009505865  17.56972 4.202092e-69</code></pre>
 </div>
 </div>
 <ul>
+<li><p><span class="math inline">\(\exp (\beta_1)\)</span>: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate 1.1818 times greater than the student whose writing score is 1 point lower</p></li>
+<li><p>95% CI: (1.16, 1.204)</p></li>
+</ul></section><section id="count-outcomes-and-gees" class="slide level2"><h2>Count outcomes and GEEs</h2>
+<p>We can also model count outcomes using GEEs</p>
+<p>Recall: a GEE has 2 main components</p>
+<ol type="1">
+<li>Marginal expectation of the outcome (“the mean model”): <span class="math inline">\(E[Y_{ij}|X_{ij}]=\mu_{ij}\)</span>
+</li>
+</ol>
+<p>2.1 The marginal variance of the outcome: <span class="math inline">\(Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})\)</span></p>
+<p>2.2 The within-cluster association of the outcome (“correlation structure”)</p>
+<p>We can combine 2.1 and 2.2 to create the working covariance matrix <span class="math inline">\(V_i\)</span></p>
+<div class="fragment">
+<p>The main difference between Poisson and NB GEEs is in specification of component 2.1</p>
+<ul>
+<li><p>Poisson 2.1: <span class="math inline">\(\lambda(\boldsymbol{X}_i)T_{ij}\)</span></p></li>
+<li><p>NB 2.1: <span class="math inline">\(\lambda(\boldsymbol{X}_i) T_{ij} \left[\mu_{\theta} + \lambda(\boldsymbol{X}_i) T_{ij} \sigma^2_{\theta}\right]\)</span></p></li>
+</ul>
+</div>
+<div class="fragment">
+<p>The robust covariance matrix is special here:</p>
+<ul>
+<li><p>Because GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions</p></li>
+<li><p>Result: GEEs automatically account for over-dispersion without needing to use a NB</p></li>
+</ul>
+</div>
+</section><section id="example-student-awards-and-writing-scores-6" class="slide level2 smaller"><h2>Example: Student awards and writing scores</h2>
+<p>Let’s fit a Poisson GEE:</p>
+<ol type="1">
+<li>Marginal expectation of outcome: <span class="math inline">\(\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij})\)</span>
+</li>
+</ol>
+<p>2.1. Marginal variance of outcome: <span class="math inline">\(\lambda(\text{writing score}_{ij})\)</span></p>
+<p>2.2. Correlation structure? Exchangeable</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">library</span>(gee)</span>
+<span id="cb13-2"><a href="#cb13-2"></a>awards_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( awards <span class="sc">~</span> write, <span class="at">id=</span>cid,</span>
+<span id="cb13-3"><a href="#cb13-3"></a>                   <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link=</span><span class="st">"log"</span>), <span class="at">corstr=</span><span class="st">"exchangeable"</span>,</span>
+<span id="cb13-4"><a href="#cb13-4"></a>                   <span class="at">data =</span> awards )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)       write 
+ -9.1885651   0.1670148 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">summary</span>( awards_gee )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Estimate  Naive S.E.   Naive z Robust S.E.  Robust z
+(Intercept) -8.8462883 0.285152288 -31.02303 0.336940867 -26.25472
+write        0.1616664 0.004536567  35.63628 0.005357313  30.17677</code></pre>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li><p><span class="math inline">\(\exp (\beta_1)\)</span>: A student whose writing score is 1 point higher would be expected to have an award rate 1.1755 times greater than the student whose writing score is 1 point lower</p></li>
 <li>
-<p>GEE <span class="math inline">\(e^{\beta_1}\)</span>: 1.0003</p>
+<p>Robust 95% CI: exp(0.1617 <span class="math inline">\(\pm\)</span> 0.0054 <span class="math inline">\(\times Z_{1-\alpha/2})\)</span></p>
 <ul>
-<li>95% CI: (1.0003, 1.0003)</li>
+<li>We are 95% confident the true award incidence ratio for writing scores is between 1.1632 and 1.1879.</li>
 </ul>
 </li>
 </ul>
+</div>
+</section><section id="example-student-awards-and-writing-scores-7" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+<p>Now a Negative Binomial GEE:</p>
+<p>2.1. Marginal variance of outcome: <span class="math inline">\(\lambda(\text{writing score}_{ij}) T_{ij} \left[\mu_{\theta} + \lambda(\text{writing score}_{ij}) T_{ij} \sigma^2_{\theta}\right]\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">library</span>(geeM)</span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb17-3"><a href="#cb17-3"></a>awards_NBgee <span class="ot">&lt;-</span> <span class="fu">geem</span>( awards <span class="sc">~</span> write, <span class="at">id=</span>cid,</span>
+<span id="cb17-4"><a href="#cb17-4"></a>                   <span class="at">family =</span> MASS<span class="sc">::</span><span class="fu">negative.binomial</span>(awards_theta),</span>
+<span id="cb17-5"><a href="#cb17-5"></a>                   <span class="at">corstr=</span><span class="st">"exchangeable"</span>,</span>
+<span id="cb17-6"><a href="#cb17-6"></a>                   <span class="at">data =</span> awards )</span>
+<span id="cb17-7"><a href="#cb17-7"></a><span class="fu">summary</span>( awards_NBgee )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Estimates Model SE Robust SE   wald p
+(Intercept)   -8.8460 0.285200  0.336900 -26.26 0
+write          0.1617 0.004537  0.005357  30.18 0
+
+ Estimated Correlation Parameter:  0.1638 
+ Correlation Structure:  exchangeable 
+ Est. Scale Parameter:  0.1154 
+
+ Number of GEE iterations: 8 
+ Number of Clusters:  20    Maximum Cluster Size:  12 
+ Number of observations with nonzero weight:  200 </code></pre>
+</div>
+</div>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>
+<p>Compare point estimates for <span class="math inline">\(\exp(\beta_1)\)</span>:</p>
+<ul>
+<li><p>NB GEE: 1.1755</p></li>
+<li><p>Poisson GEE: 1.1755</p></li>
+</ul>
+</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<ul>
+<li>
+<p>Compare robust SEs:</p>
+<ul>
+<li><p>NB GEE: 0.0054</p></li>
+<li><p>Poisson GEE: 0.0054</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
+</div>
 </div>
 </section>
 </div>
   </div>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="count-glmm-notes_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="count-glmm-notes_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/notes/notes.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/search/search.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="count-glmm-notes_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="slides-5-1_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="slides-5-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="slides-5-1_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="slides-5-1_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="slides-5-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="slides-5-1_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="slides-5-1_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="slides-5-1_files/libs/revealjs/plugin/notes/notes.js"></script><script src="slides-5-1_files/libs/revealjs/plugin/search/search.js"></script><script src="slides-5-1_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="slides-5-1_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
 
       // Full list of configuration options available at:
       // https://revealjs.com/config/

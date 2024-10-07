@@ -39,7 +39,7 @@ library(qrcode)
 
 <h3>Mary Ryan Baumann, PhD</h3>
 
-<h3>October 8, 2024</h3>
+<h3>October 10, 2024</h3>
 
 <br>
 
@@ -55,13 +55,13 @@ library(qrcode)
 
 ::: {.absolute bottom=5 left=260 width=1500}
 
-Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-5/slides-5>
+Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-5-2/slides-5-2>
 
 :::
 
 ::: {.absolute bottom=0 left=100 width=150}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
-plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-5/slides-5"))
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-5-2/slides-5-2"))
 ```
 :::
 

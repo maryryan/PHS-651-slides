@@ -67,6 +67,10 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-5-2/slides-5-2")
 
 ---
 
+- Leverage plot (mixed models)
+
+---
+
 ## Model diagnostics
 
 So far we've dealt with how to model correlated data

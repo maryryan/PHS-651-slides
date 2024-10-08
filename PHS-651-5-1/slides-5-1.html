@@ -439,9 +439,10 @@ October 8, 2024
 <p><span class="math display">\[Y_j \sim \text{Poisson}(\lambda T_j)\]</span></p>
 <ul>
 <li><p>Parameterized by <span class="alert">rate parameter</span> <span class="math inline">\(\lambda\)</span>: number of events per unit of time</p></li>
-<li><p>Mean: <span class="math inline">\(E[Y_j] = \lambda T_j\)</span>; Variance; <span class="math inline">\(Var[Y_j_j] = \lambda T\)</span></p></li>
+<li><p>Mean: <span class="math inline">\(E[Y_j] = \lambda T_j\)</span>; Variance: <span class="math inline">\(Var[Y_j_j] = \lambda T\)</span></p></li>
 </ul>
-<p>We assume 3 things:</p>
+<div class="fragment">
+<p>We assume 3 things with a Poisson distribution:</p>
 <ol type="1">
 <li><p>Stationarity: The expected number of events per unit time is the same throughout the entire time interval</p></li>
 <li><p>Independence: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval</p></li>
@@ -453,7 +454,9 @@ October 8, 2024
 <li><p>The probability of observing 2 or more events is essentially 0</p></li>
 </ul>
 </li>
-</ol></section><section id="review-count-data-and-time" class="slide level2"><h2>552/551 review: Count data and time</h2>
+</ol>
+</div>
+</section><section id="review-count-data-and-time" class="slide level2"><h2>552/551 review: Count data and time</h2>
 <p>Ideally when we collect count data, we want to collect it on the <em>same time scale</em> for everyone</p>
 <ul>
 <li><p>Count of events within 1 day, 1 month, 1 year</p></li>
@@ -507,10 +510,16 @@ October 8, 2024
 </div>
 </section><section id="review-negative-binomial-regression-1" class="slide level2"><h2>552 review: Negative Binomial regression</h2>
 <p>We can use this distribution to create a negative binomial regression:</p>
-<p><span class="math display">\[\log(E[Y_j | \theta]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)\]</span></p>
+<p><span class="math display">\[\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)\]</span></p>
 <p>This assumes:</p>
 <ol type="1">
-<li><p>The outcome data, <span class="math inline">\(Y_j\)</span>, follow a <span class="alert">Negative Binomial</span> distribution with mean <span class="math inline">\(\lambda(\boldsymbol{X})T_j \mu_\theta\)</span> and variance <span class="math inline">\(\lambda T_j (\mu_\theta + \lambda T_j \sigma^2_{\theta})\)</span></p></li>
+<li>
+<p>The outcome data, <span class="math inline">\(Y_j\)</span>, follow a <span class="alert">Negative Binomial</span> distribution with mean <span class="math inline">\(\lambda(\boldsymbol{X})T_j \mu_\theta\)</span> and variance <span class="math inline">\(\lambda T_j (\mu_\theta + \lambda T_j \sigma^2_{\theta})\)</span></p>
+<ul>
+<li>Often assume <span class="math inline">\(\mu_{\theta}=1\)</span> but allow <span class="math inline">\(\sigma^2_{\theta}&gt;0\)</span>
+</li>
+</ul>
+</li>
 <li><p>We have correctly specified the linear predictors (isolating causal pathway) and the link function</p></li>
 <li><p>Each outcome observation is independent of one another</p></li>
 </ol>
@@ -635,7 +644,7 @@ $ cid     &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2
 </div>
 </section><section id="example-student-awards-and-writing-scores-2" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>First our Poisson mixed effects model:</p>
-<p><span class="math display">\[\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}\]</span></p>
+<p><span class="math display">\[\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}(\text{school}_{i})\]</span></p>
 <ul>
 <li>All data is on the per-year scale so <span class="math inline">\(T_{ij}=1\)</span>, and <span class="math inline">\(\log(T_{ij})=0\)</span>, so no need to add the time offset term</li>
 </ul>
@@ -715,19 +724,19 @@ write        0.1670161 0.003847645 179  43.40736 5.933345e-97</code></pre>
 </section><section id="example-student-awards-and-writing-scores-5" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>… and via quadrature:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>awards_NBquad <span class="ot">&lt;-</span> <span class="fu">glmer</span>( awards <span class="sc">~</span> write <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> cid),</span>
-<span id="cb11-2"><a href="#cb11-2"></a>                      <span class="at">family =</span><span class="fu">negative.binomial</span>(<span class="at">theta =</span> awards_theta), <span class="at">data =</span> awards,</span>
-<span id="cb11-3"><a href="#cb11-3"></a>                      <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>) )</span>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>awards_NBquad <span class="ot">&lt;-</span> <span class="fu">glmer.nb</span>( awards <span class="sc">~</span> write <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> cid),</span>
+<span id="cb11-2"><a href="#cb11-2"></a>                           <span class="at">data =</span> awards,</span>
+<span id="cb11-3"><a href="#cb11-3"></a>                           <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>) )</span>
 <span id="cb11-4"><a href="#cb11-4"></a><span class="fu">summary</span>( awards_NBquad )<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>              Estimate  Std. Error   z value     Pr(&gt;|z|)
-(Intercept) -9.1886030 0.586130740 -15.67671 2.182630e-55
-write        0.1670154 0.009505865  17.56972 4.202092e-69</code></pre>
+<pre><code>              Estimate Std. Error   z value     Pr(&gt;|z|)
+(Intercept) -9.1887339 0.84910482 -10.82167 2.717733e-27
+write        0.1670175 0.01373927  12.15622 5.316210e-34</code></pre>
 </div>
 </div>
 <ul>
 <li><p><span class="math inline">\(\exp (\beta_1)\)</span>: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate 1.1818 times greater than the student whose writing score is 1 point lower</p></li>
-<li><p>95% CI: (1.16, 1.204)</p></li>
+<li><p>95% CI: (1.1504, 1.214)</p></li>
 </ul></section><section id="count-outcomes-and-gees" class="slide level2"><h2>Count outcomes and GEEs</h2>
 <p>We can also model count outcomes using GEEs</p>
 <p>Recall: a GEE has 2 main components</p>
@@ -748,8 +757,9 @@ write        0.1670154 0.009505865  17.56972 4.202092e-69</code></pre>
 <div class="fragment">
 <p>The robust covariance matrix is special here:</p>
 <ul>
-<li><p>Because GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions</p></li>
-<li><p>Result: GEEs automatically account for over-dispersion without needing to use a NB</p></li>
+<li><p>GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions</p></li>
+<li><p>Result: GEEs will automatically account for over-dispersion without needing to use a NB</p></li>
+<li><p>Specifying a NB may give you extra efficiency though if you know you have some kind of dispersion</p></li>
 </ul>
 </div>
 </section><section id="example-student-awards-and-writing-scores-6" class="slide level2 smaller"><h2>Example: Student awards and writing scores</h2>

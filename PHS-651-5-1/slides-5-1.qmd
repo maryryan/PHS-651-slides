@@ -97,9 +97,11 @@ $$Y_j \sim \text{Poisson}(\lambda T_j)$$
 
 - Parameterized by [rate parameter]{.alert} $\lambda$: number of events per unit of time
 
-- Mean: $E[Y_j] = \lambda T_j$; Variance; $Var[Y_j_j] = \lambda T$
+- Mean: $E[Y_j] = \lambda T_j$; Variance: $Var[Y_j_j] = \lambda T$
 
-We assume 3 things:
+. . .
+
+We assume 3 things with a Poisson distribution:
 
 1. Stationarity: The expected number of events per unit time is the same throughout the entire time interval
 
@@ -194,11 +196,13 @@ $$Y_j \sim \text{Negative Binomial}(\lambda T_j, \theta)$$
 
 We can use this distribution to create a negative binomial regression:
 
-$$\log(E[Y_j | \theta]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)$$
+$$\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)$$
 
 This assumes:
 
 1. The outcome data, $Y_j$, follow a [Negative Binomial]{.alert} distribution with mean $\lambda(\boldsymbol{X})T_j \mu_\theta$ and variance $\lambda T_j (\mu_\theta + \lambda T_j \sigma^2_{\theta})$
+
+   - Often assume $\mu_{\theta}=1$ but allow $\sigma^2_{\theta}>0$
 
 2. We have correctly specified the linear predictors (isolating causal pathway) and the link function
 
@@ -343,7 +347,7 @@ awards %>%
 
 First our Poisson mixed effects model:
 
-$$\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}$$
+$$\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}(\text{school}_{i})$$
 
 - All data is on the per-year scale so $T_{ij}=1$, and $\log(T_{ij})=0$, so no need to add the time offset term
 
@@ -421,9 +425,9 @@ summary( awards_NBpql )$tTable
 ... and via quadrature:
 
 ```{r awards glmm NB quad}
-awards_NBquad <- glmer( awards ~ write + (1 | cid),
-                      family =negative.binomial(theta = awards_theta), data = awards,
-                      control=glmerControl(optimizer="bobyqa") )
+awards_NBquad <- glmer.nb( awards ~ write + (1 | cid),
+                           data = awards,
+                           control=glmerControl(optimizer="bobyqa") )
 summary( awards_NBquad )$coefficients
 ```
 
@@ -459,9 +463,11 @@ The main difference between Poisson and NB GEEs is in specification of component
 
 The robust covariance matrix is special here:
 
--   Because GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions
+-   GEEs empirically estimate the variances rather than using distributional (Poisson) assumptions
 
--   Result: GEEs automatically account for over-dispersion without needing to use a NB
+-   Result: GEEs will automatically account for over-dispersion without needing to use a NB
+
+   - Specifying a NB may give you extra efficiency though if you know you have some kind of dispersion
 
 ---
 

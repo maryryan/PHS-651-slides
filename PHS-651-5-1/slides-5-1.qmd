@@ -97,7 +97,7 @@ $$Y_j \sim \text{Poisson}(\lambda T_j)$$
 
 - Parameterized by [rate parameter]{.alert} $\lambda$: number of events per unit of time
 
-- Mean: $E[Y_j] = \lambda T_j$; Variance: $Var[Y_j_j] = \lambda T$
+- Mean: $E[Y_j] = \lambda T_j$; Variance: $Var[Y_j] = \lambda T$
 
 . . .
 
@@ -397,6 +397,28 @@ summary( awards_quad )$coefficients
 
 ## Example: Student awards and writing scores
 
+For SAS, we would use PROC GLIMMIX like in Week 3
+```{sas glmm, eval=F}
+/* PQL method */
+PROC GLIMMIX data=awards;
+        class cid;
+        model awards = write / dist = poisson link=log solution cl;
+        random intercept / subject=cid;
+run;
+
+/* Gaussian quadrature method */
+PROC GLIMMIX method=quad data=awards;
+        class cid;
+        model awards = write / dist = poisson link=log solution cl;
+        random intercept / subject=cid;
+run;
+   
+```
+
+---
+
+## Example: Student awards and writing scores
+
 Now our NB mixed effects model, via PQL:
 
 $$\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}$$
@@ -434,6 +456,28 @@ summary( awards_NBquad )$coefficients
 - $\exp (\beta_1)$: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate `r round(exp(summary( awards_NBquad )$coef[2,1]),4)` times greater than the student whose writing score is 1 point lower
 
 - 95% CI: (`r round(exp(summary( awards_NBquad )$coef[2,1] - summary( awards_NBquad )$coef[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary( awards_NBquad )$coef[2,1] + summary( awards_NBquad )$coef[2,2]*qnorm(0.975)), 4)`)
+
+---
+
+## Example: Student awards and writing scores
+
+For SAS, we would just change the distribution on PROC GLIMMIX
+```{sas NBglmm, eval=F}
+/* PQL method */
+PROC GLIMMIX data=awards;
+        class cid;
+        model awards = write / dist = negbin link=log solution cl;
+        random intercept / subject=cid;
+run;
+
+/* Gaussian quadrature method */
+PROC GLIMMIX method=quad data=awards;
+        class cid;
+        model awards = write / dist = negbin link=log solution cl;
+        random intercept / subject=cid;
+run;
+   
+```
 
 ---
 
@@ -535,3 +579,25 @@ summary( awards_NBgee )
    - Poisson GEE: `r round(summary( awards_gee )$coef[2,4], 4)`
 :::
 ::::
+
+---
+
+## Example: Student awards and writing scores
+
+For SAS, we would use PROC GENMOD like we did in Week 4
+```{sas gee, eval=F}
+/* Poisson GEE */
+PROC GENMOD data=awards;
+        class cid;
+        model awards = write / dist = poisson link=log;
+        repeated subject=cid / type=exch;
+run;
+
+/* Negative Binomial GEE */
+PROC GENMOD data=awards;
+        class cid;
+        model awards = write / dist = negbin link=log;
+        repeated subject=cid / type=exch;
+run;
+   
+```

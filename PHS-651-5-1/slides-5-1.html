@@ -439,7 +439,7 @@ October 8, 2024
 <p><span class="math display">\[Y_j \sim \text{Poisson}(\lambda T_j)\]</span></p>
 <ul>
 <li><p>Parameterized by <span class="alert">rate parameter</span> <span class="math inline">\(\lambda\)</span>: number of events per unit of time</p></li>
-<li><p>Mean: <span class="math inline">\(E[Y_j] = \lambda T_j\)</span>; Variance: <span class="math inline">\(Var[Y_j_j] = \lambda T\)</span></p></li>
+<li><p>Mean: <span class="math inline">\(E[Y_j] = \lambda T_j\)</span>; Variance: <span class="math inline">\(Var[Y_j] = \lambda T\)</span></p></li>
 </ul>
 <div class="fragment">
 <p>We assume 3 things with a Poisson distribution:</p>
@@ -698,17 +698,35 @@ write        0.1670148 0.01099133  15.19513 3.808977e-52</code></pre>
 </ul>
 </div>
 </section><section id="example-student-awards-and-writing-scores-4" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+<p>For SAS, we would use PROC GLIMMIX like in Week 3</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource sas number-lines code-with-copy"><code class="sourceCode"><span id="cb9-1"><a href="#cb9-1"></a>/* PQL method */</span>
+<span id="cb9-2"><a href="#cb9-2"></a>PROC GLIMMIX data=awards;</span>
+<span id="cb9-3"><a href="#cb9-3"></a>        class cid;</span>
+<span id="cb9-4"><a href="#cb9-4"></a>        model awards = write / dist = poisson link=log solution cl;</span>
+<span id="cb9-5"><a href="#cb9-5"></a>        random intercept / subject=cid;</span>
+<span id="cb9-6"><a href="#cb9-6"></a>run;</span>
+<span id="cb9-7"><a href="#cb9-7"></a></span>
+<span id="cb9-8"><a href="#cb9-8"></a>/* Gaussian quadrature method */</span>
+<span id="cb9-9"><a href="#cb9-9"></a>PROC GLIMMIX method=quad data=awards;</span>
+<span id="cb9-10"><a href="#cb9-10"></a>        class cid;</span>
+<span id="cb9-11"><a href="#cb9-11"></a>        model awards = write / dist = poisson link=log solution cl;</span>
+<span id="cb9-12"><a href="#cb9-12"></a>        random intercept / subject=cid;</span>
+<span id="cb9-13"><a href="#cb9-13"></a>run;</span>
+<span id="cb9-14"><a href="#cb9-14"></a>   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="example-student-awards-and-writing-scores-5" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>Now our NB mixed effects model, via PQL:</p>
 <p><span class="math display">\[\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}\]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># find theta #</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a>awards_theta <span class="ot">&lt;-</span> <span class="fu">glm.nb</span>(awards <span class="sc">~</span> write, <span class="at">data=</span>awards)<span class="sc">$</span>call<span class="sc">$</span>init.theta</span>
-<span id="cb9-3"><a href="#cb9-3"></a></span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># fit model #</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a>awards_NBpql <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( awards <span class="sc">~</span> write,</span>
-<span id="cb9-6"><a href="#cb9-6"></a>                       <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> cid, <span class="at">family =</span> <span class="fu">negative.binomial</span>(<span class="at">theta =</span> awards_theta),</span>
-<span id="cb9-7"><a href="#cb9-7"></a>                       <span class="at">data =</span> awards, <span class="at">verbose =</span> F )</span>
-<span id="cb9-8"><a href="#cb9-8"></a><span class="fu">summary</span>( awards_NBpql )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># find theta #</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>awards_theta <span class="ot">&lt;-</span> <span class="fu">glm.nb</span>(awards <span class="sc">~</span> write, <span class="at">data=</span>awards)<span class="sc">$</span>call<span class="sc">$</span>init.theta</span>
+<span id="cb10-3"><a href="#cb10-3"></a></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="co"># fit model #</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>awards_NBpql <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( awards <span class="sc">~</span> write,</span>
+<span id="cb10-6"><a href="#cb10-6"></a>                       <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> cid, <span class="at">family =</span> <span class="fu">negative.binomial</span>(<span class="at">theta =</span> awards_theta),</span>
+<span id="cb10-7"><a href="#cb10-7"></a>                       <span class="at">data =</span> awards, <span class="at">verbose =</span> F )</span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="fu">summary</span>( awards_NBpql )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 Value   Std.Error  DF   t-value      p-value
 (Intercept) -9.1886459 0.237507753 179 -38.68777 7.293171e-89
@@ -721,13 +739,13 @@ write        0.1670161 0.003847645 179  43.40736 5.933345e-97</code></pre>
 <li><p>95% CI: (1.1729, 1.1907)</p></li>
 </ul>
 </div>
-</section><section id="example-student-awards-and-writing-scores-5" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+</section><section id="example-student-awards-and-writing-scores-6" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>… and via quadrature:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>awards_NBquad <span class="ot">&lt;-</span> <span class="fu">glmer.nb</span>( awards <span class="sc">~</span> write <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> cid),</span>
-<span id="cb11-2"><a href="#cb11-2"></a>                           <span class="at">data =</span> awards,</span>
-<span id="cb11-3"><a href="#cb11-3"></a>                           <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>) )</span>
-<span id="cb11-4"><a href="#cb11-4"></a><span class="fu">summary</span>( awards_NBquad )<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>awards_NBquad <span class="ot">&lt;-</span> <span class="fu">glmer.nb</span>( awards <span class="sc">~</span> write <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> cid),</span>
+<span id="cb12-2"><a href="#cb12-2"></a>                           <span class="at">data =</span> awards,</span>
+<span id="cb12-3"><a href="#cb12-3"></a>                           <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>) )</span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="fu">summary</span>( awards_NBquad )<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              Estimate Std. Error   z value     Pr(&gt;|z|)
 (Intercept) -9.1887339 0.84910482 -10.82167 2.717733e-27
@@ -737,7 +755,25 @@ write        0.1670175 0.01373927  12.15622 5.316210e-34</code></pre>
 <ul>
 <li><p><span class="math inline">\(\exp (\beta_1)\)</span>: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate 1.1818 times greater than the student whose writing score is 1 point lower</p></li>
 <li><p>95% CI: (1.1504, 1.214)</p></li>
-</ul></section><section id="count-outcomes-and-gees" class="slide level2"><h2>Count outcomes and GEEs</h2>
+</ul></section><section id="example-student-awards-and-writing-scores-7" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+<p>For SAS, we would just change the distribution on PROC GLIMMIX</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource sas number-lines code-with-copy"><code class="sourceCode"><span id="cb14-1"><a href="#cb14-1"></a>/* PQL method */</span>
+<span id="cb14-2"><a href="#cb14-2"></a>PROC GLIMMIX data=awards;</span>
+<span id="cb14-3"><a href="#cb14-3"></a>        class cid;</span>
+<span id="cb14-4"><a href="#cb14-4"></a>        model awards = write / dist = negbin link=log solution cl;</span>
+<span id="cb14-5"><a href="#cb14-5"></a>        random intercept / subject=cid;</span>
+<span id="cb14-6"><a href="#cb14-6"></a>run;</span>
+<span id="cb14-7"><a href="#cb14-7"></a></span>
+<span id="cb14-8"><a href="#cb14-8"></a>/* Gaussian quadrature method */</span>
+<span id="cb14-9"><a href="#cb14-9"></a>PROC GLIMMIX method=quad data=awards;</span>
+<span id="cb14-10"><a href="#cb14-10"></a>        class cid;</span>
+<span id="cb14-11"><a href="#cb14-11"></a>        model awards = write / dist = negbin link=log solution cl;</span>
+<span id="cb14-12"><a href="#cb14-12"></a>        random intercept / subject=cid;</span>
+<span id="cb14-13"><a href="#cb14-13"></a>run;</span>
+<span id="cb14-14"><a href="#cb14-14"></a>   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="count-outcomes-and-gees" class="slide level2"><h2>Count outcomes and GEEs</h2>
 <p>We can also model count outcomes using GEEs</p>
 <p>Recall: a GEE has 2 main components</p>
 <ol type="1">
@@ -762,7 +798,7 @@ write        0.1670175 0.01373927  12.15622 5.316210e-34</code></pre>
 <li><p>Specifying a NB may give you extra efficiency though if you know you have some kind of dispersion</p></li>
 </ul>
 </div>
-</section><section id="example-student-awards-and-writing-scores-6" class="slide level2 smaller"><h2>Example: Student awards and writing scores</h2>
+</section><section id="example-student-awards-and-writing-scores-8" class="slide level2 smaller"><h2>Example: Student awards and writing scores</h2>
 <p>Let’s fit a Poisson GEE:</p>
 <ol type="1">
 <li>Marginal expectation of outcome: <span class="math inline">\(\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij})\)</span>
@@ -771,15 +807,15 @@ write        0.1670175 0.01373927  12.15622 5.316210e-34</code></pre>
 <p>2.1. Marginal variance of outcome: <span class="math inline">\(\lambda(\text{writing score}_{ij})\)</span></p>
 <p>2.2. Correlation structure? Exchangeable</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">library</span>(gee)</span>
-<span id="cb13-2"><a href="#cb13-2"></a>awards_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( awards <span class="sc">~</span> write, <span class="at">id=</span>cid,</span>
-<span id="cb13-3"><a href="#cb13-3"></a>                   <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link=</span><span class="st">"log"</span>), <span class="at">corstr=</span><span class="st">"exchangeable"</span>,</span>
-<span id="cb13-4"><a href="#cb13-4"></a>                   <span class="at">data =</span> awards )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">library</span>(gee)</span>
+<span id="cb15-2"><a href="#cb15-2"></a>awards_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( awards <span class="sc">~</span> write, <span class="at">id=</span>cid,</span>
+<span id="cb15-3"><a href="#cb15-3"></a>                   <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link=</span><span class="st">"log"</span>), <span class="at">corstr=</span><span class="st">"exchangeable"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4"></a>                   <span class="at">data =</span> awards )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Intercept)       write 
  -9.1885651   0.1670148 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">summary</span>( awards_gee )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">summary</span>( awards_gee )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              Estimate  Naive S.E.   Naive z Robust S.E.  Robust z
 (Intercept) -8.8462883 0.285152288 -31.02303 0.336940867 -26.25472
@@ -797,17 +833,17 @@ write        0.1616664 0.004536567  35.63628 0.005357313  30.17677</code></pre>
 </li>
 </ul>
 </div>
-</section><section id="example-student-awards-and-writing-scores-7" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+</section><section id="example-student-awards-and-writing-scores-9" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>Now a Negative Binomial GEE:</p>
 <p>2.1. Marginal variance of outcome: <span class="math inline">\(\lambda(\text{writing score}_{ij}) T_{ij} \left[\mu_{\theta} + \lambda(\text{writing score}_{ij}) T_{ij} \sigma^2_{\theta}\right]\)</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">library</span>(geeM)</span>
-<span id="cb17-2"><a href="#cb17-2"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb17-3"><a href="#cb17-3"></a>awards_NBgee <span class="ot">&lt;-</span> <span class="fu">geem</span>( awards <span class="sc">~</span> write, <span class="at">id=</span>cid,</span>
-<span id="cb17-4"><a href="#cb17-4"></a>                   <span class="at">family =</span> MASS<span class="sc">::</span><span class="fu">negative.binomial</span>(awards_theta),</span>
-<span id="cb17-5"><a href="#cb17-5"></a>                   <span class="at">corstr=</span><span class="st">"exchangeable"</span>,</span>
-<span id="cb17-6"><a href="#cb17-6"></a>                   <span class="at">data =</span> awards )</span>
-<span id="cb17-7"><a href="#cb17-7"></a><span class="fu">summary</span>( awards_NBgee )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">library</span>(geeM)</span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb19-3"><a href="#cb19-3"></a>awards_NBgee <span class="ot">&lt;-</span> <span class="fu">geem</span>( awards <span class="sc">~</span> write, <span class="at">id=</span>cid,</span>
+<span id="cb19-4"><a href="#cb19-4"></a>                   <span class="at">family =</span> MASS<span class="sc">::</span><span class="fu">negative.binomial</span>(awards_theta),</span>
+<span id="cb19-5"><a href="#cb19-5"></a>                   <span class="at">corstr=</span><span class="st">"exchangeable"</span>,</span>
+<span id="cb19-6"><a href="#cb19-6"></a>                   <span class="at">data =</span> awards )</span>
+<span id="cb19-7"><a href="#cb19-7"></a><span class="fu">summary</span>( awards_NBgee )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Estimates Model SE Robust SE   wald p
 (Intercept)   -8.8460 0.285200  0.336900 -26.26 0
@@ -846,10 +882,28 @@ write          0.1617 0.004537  0.005357  30.18 0
 </ul>
 </div>
 </div>
+</div>
+</section><section id="example-student-awards-and-writing-scores-10" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+<p>For SAS, we would use PROC GENMOD like we did in Week 4</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource sas number-lines code-with-copy"><code class="sourceCode"><span id="cb21-1"><a href="#cb21-1"></a>/* Poisson GEE */</span>
+<span id="cb21-2"><a href="#cb21-2"></a>PROC GENMOD data=awards;</span>
+<span id="cb21-3"><a href="#cb21-3"></a>        class cid;</span>
+<span id="cb21-4"><a href="#cb21-4"></a>        model awards = write / dist = poisson link=log;</span>
+<span id="cb21-5"><a href="#cb21-5"></a>        repeated subject=cid / type=exch;</span>
+<span id="cb21-6"><a href="#cb21-6"></a>run;</span>
+<span id="cb21-7"><a href="#cb21-7"></a></span>
+<span id="cb21-8"><a href="#cb21-8"></a>/* Negative Binomial GEE */</span>
+<span id="cb21-9"><a href="#cb21-9"></a>PROC GENMOD data=awards;</span>
+<span id="cb21-10"><a href="#cb21-10"></a>        class cid;</span>
+<span id="cb21-11"><a href="#cb21-11"></a>        model awards = write / dist = negbin link=log;</span>
+<span id="cb21-12"><a href="#cb21-12"></a>        repeated subject=cid / type=exch;</span>
+<span id="cb21-13"><a href="#cb21-13"></a>run;</span>
+<span id="cb21-14"><a href="#cb21-14"></a>   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
-</div>
 </div>
 </section>
 </div>

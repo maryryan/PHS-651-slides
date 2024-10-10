@@ -98,29 +98,76 @@ Also, in the non-longitudinal clustered data settings, there are not many diagno
 
 ---
 
+## Modeling choices
+
+Let's review the various modeling choices we've covered so far
+
+First, we can choose between conditional/mixed vs marginal models
+
+- Usually this will be driven by whether we want a conditional or population-averaged interpretation of our effects
+
+:::: {.columns}
+::: {.column width="50%"}
+::: {.fragment fragment-index=1}
+Within conditional/mixed models, we make decisions about:
+
+- Variable for random intercepts
+
+- [Variable(s) for fixed effects (isolating causal pathway)]{.fragment .highlight-red fragment-index=3}
+
+- [Outcome distribution]{.fragment .highlight-red fragment-index=3}
+
+- Link function
+
+- For GLMMs: estimation algorithm (PQL vs Gaussian quadrature)
+
+- Model-based vs robust confidence intervals
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment fragment-index=2}
+Within marginal models, we make decisions about:
+
+- [How to specify the mean model/what variables to include to isolate causal pathway]{.fragment .highlight-red fragment-index=3}
+
+- Marginal variance function
+
+- Correlation structure
+
+- Model-based vs robust confidence intervals
+:::
+:::
+::::
+
+---
+
 ## Residual analysis
 
 [Residuals]{.alert} are the difference between the observed outcomes and the ones predicted by your model
 
 $$r_{ij} = Y_{ij} - \boldsymbol{X}_{ij}\widehat{\vec{\beta}}$$
 
-. . .
-
 If the model [adequately captures]{.alert} the systematic trend of the response, then [the residuals should exhibit no systematic pattern]{.alert}
 
 - i.e., they should be scattered fairly randomly around zero
+
+. . .
+
+In mixed models, we also have conditional residuals:
+$$r^c_{ij} = Y_{ij} - \boldsymbol{X}_{ij}\widehat{\vec{\beta}} - Z_i \hat{b}_{i0}$$
+
+- $r_{ij}$ would then be known as the marginal residuals
 
 ---
 
 ## Residuals vs predicted/fitted response
 
-Residuals can be used to check for systematic departures from the model for the mean response
+Residuals can be used to check for systematic departures from the model for the [mean response]{.alert}
 
 - We often do this by making a scatter plot of residuals vs predicted values
 
    - Fitting a smoothed curve (e.g., lowess) through the scatter plot is helpful in this respect
-   
-. . .
 
 ![](residual-plot-example.png){width=1000}
 
@@ -134,11 +181,17 @@ Usually, if there is any systematic pattern in the residual indicates inadequacy
 
 ![](residual-plot-example.png){width=1000}
 
+::: {.absolute right=0 bottom=400 width="45%"}
+- Plots of [conditional]{.alert} residuals will tell you about the adequacy of the fixed effects
+
+- Plots of the [marginal]{.alert} residuals will tell you about how well the data fits your assumptions about the random intercepts (zero mean)
+:::
+
 ---
 
 ## Residuals vs predicted response
 
-In R, we can do this by plotting the model object:
+In R, we can plot the model object to get a conditional residuals plot:
 ```{r radon data clean, echo=F}
 radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
 
@@ -157,7 +210,58 @@ library(lme4)
 # run an LME with random intercepts for county #
 radon_lme <- lmer(log_radon ~ floor + (1 | county), data=radon.mn)
 
-plot(radon_lme)
+plot(radon_lme, smooth=T)
+```
+
+::: {.absolute right=100 top=450}
+- Points fairly randomly distributed around 0
+
+- Smoothed line not showing significant trends
+:::
+
+---
+
+## Residuals vs predicted response
+
+We can also get the marginal residuals:
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r marg resid plot}
+library(HLMdiag)
+
+# get various standardized and marginal residuals #
+radon_resid <- hlm_resid(radon_lme,standardize=TRUE)
+
+colnames(radon_resid)
+```
+:::
+
+::: {.column width="50%"}
+```{r marg resid plot2}
+radon_resid %>% 
+   ggplot(aes(x=.mar.fitted, y=.chol.mar.resid))+
+   geom_point() +
+   geom_smooth(se=F) +
+   theme(text = element_text(size = 20)) 
+```
+:::
+::::
+
+- Since `floor` only takes on 2 values, our marginal fitted values only take on 2 values
+
+---
+
+## Residuals vs predicted response
+
+We can also use `hlm_resid()` to get a nicer-looking conditional residuals plot than base R provides
+
+```{r marg resid plot3}
+radon_resid %>% 
+   ggplot(aes(x=.fitted, y=.std.resid))+
+   geom_point() +
+   geom_smooth(se=F) +
+   theme(text = element_text(size = 20)) 
 ```
 
 ---
@@ -165,17 +269,23 @@ plot(radon_lme)
 ## Residuals vs predicted response
 
 
-In SAS, we can add the "plots=residualpanel" option to the end of PROC GLIMMIX
+In SAS, we can add the `plots=residualpanel` option to the end of `PROC GLIMMIX`
 
 ```{sas eval=F}
 PROC GLIMMIX data=dance plots=residualpanel;
-        class county floor(REF="0");
-        model log_radon = floor / dist = normal solution cl;
-        random intercept / subject=county;
+        class village_id dance_class_bin(REF="0");
+        model gaitfollowup = dance_class_bin / dist = normal solution cl;
+        random intercept / subject=village_id;
 run;
 ```
 
-- Our residuals plot would be the one in the top left
+::: {.absolute width="45%"}
+- Our residuals vs fitted plot would be the one in the top left
+
+- `residualspanel` defaults to conditional residuals
+
+   - we can have it also print marginal residuals by changing the option to `plots=residualspanel(marginal conditional)`
+:::
 
 ::: {.absolute right=0 bottom=0}
 ![](residualpanel.png){width=1000}
@@ -191,7 +301,7 @@ Recall that Poisson GLMMs assume that the mean and variance of the data are the 
 
 - If variance $>$ mean, we have [over]{.alert}dispersion
 
-- If variance $<$ mean, we have [under]{.alert}dispersion (less common)
+- If variance $<$ mean, we have [under]{.alert}dispersion
 
 . . .
 
@@ -220,13 +330,13 @@ SAS calculates and displays $\hat\phi$ in its default result output
 
 :::: {.columns}
 ::: {.column width="50%"}
-- For PROC GLIMMIX method=QUAD, the dispersion parameter is listed under "Pearson Chi-Square / DF" in the "fit statistics for conditional distribution" table
+- For `PROC GLIMMIX method=QUAD`, the dispersion parameter is listed under "Pearson Chi-Square / DF" in the "fit statistics for conditional distribution" table
 
 ![](glimmix_quad.png){width=700}
 :::
 
 ::: {.column width="50%"}
-- For PROC GLIMMIX with PQL, the dispersion parameter is listed under "Gener. Chi-Square / DF" in the "fit statistics" table
+- For `PROC GLIMMIX` with PQL, the dispersion parameter is listed under "Gener. Chi-Square / DF" in the "fit statistics" table
 
 ![](glimmix_pql.png){width=700}
 :::
@@ -273,6 +383,10 @@ library(DHARMa)
 testDispersion(awards_quad, type="PearsonChisq")
 ```
 
+- This provides a formal test for whether $\hat{\phi} \ne 0$ in addition to calculating the estimated $\phi$
+
+- I would generally [not]{.alert} pay much attention to the p-value - focus on the estimated value for $\phi$
+
 . . .
 
 - Unfortunately, can't really get a dispersion parameter estimate for a model using PQL in R
@@ -289,26 +403,75 @@ If there's dispersion in the mixed model, there will (likely) be dispersion in t
 
 We may also be interested in whether we have particularly influential observations in our data that are (overly) influencing our model estimates - we investigate this via "leverage" or Cook's distance plots
 
+- Leverage looks at how removing an observation/cluster affects predicted values/residuals
+
+- Cook's distance looks at how removing an observation/cluster affects regression coefficients when combined
+
+We can also see whether we have any particularly influential clusters as well
+
+. . .
+
+Unfortunately `PROC GLIMMIX` doesn't have functionality for influence metrics, but R does
+
 ---
 
 ## Leverage 
 
-```{r leverage, out.width="100%"}
-library(performance)
-plot(check_model(radon_lme))
+Observation-level leverage/Cook's D
+```{r leverage, out.width="65%"}
+library(ggpubr)
+# looking at observation-level leverage #
+radon_leverage_obs <- hlm_influence(radon_lme, leverage="overall")
+
+ggarrange(
+dotplot_diag(radon_leverage_obs$leverage.overall, cutoff="internal", name="leverage")+ ylab("Leverage"),
+dotplot_diag(radon_leverage_obs$cooksd, cutoff="internal", name="cooks.distance")+ ylab("Cook's distance"),
+ncol=2,nrow=1)
 ```
+
+::: {.absolute right=0 bottom=200 width="30%"}
+Looks like we have a lot of observations that are influential based on Cook's distance...
+:::
 
 ---
 
-## DFBETA for GEEs
+## Leverage 
 
-A similar measure of influential observations for GEEs is DFBETA - it's the change in a regression coefficient if the $ij^{th}$ observation were removed
+Cluster-level leverage/Cook's D
+```{r leverage cluster, out.width="65%"}
+# looking at observation-level leverage on the fixed effect estimates #
+radon_leverage_cnty <- hlm_influence(radon_lme, leverage="overall", level="county")
 
-- Most functions/procedures will plot DFBETAs for all coefficients in the regression
+ggarrange(
+dotplot_diag(radon_leverage_cnty$leverage.overall, cutoff="internal", name="leverage"),
+dotplot_diag(radon_leverage_cnty$cooksd, cutoff="internal", name="cooks.distance"),
+ncol=2,nrow=1)
+```
 
-In SAS, we use the PLOTS(UNPACK)=DFBETA option:
+::: {.absolute right=0 bottom=200 width="30%"}
+Just a few key counties that are influential based on Cook's distance...
+:::
+
+---
+
+## DFBETA
+
+A similar measure of influential observations is DFBETA - it's the change in a regression coefficient if the $ij^{th}$ observation were removed
+
+- Most functions/procedures will plot DFBETAs for each coefficients in the regression
+
+DFBETA is technically agnostic to model type - should work for both conditional and marginal models
+
+- For SAS, `PROC GLIMMIX` doesn't have any influence statistics built in but `PROC GENMOD` does
+
+- For R, I've had issues getting the `lmer()`, `glmer()`, and `gee()` functions to play nicely with the `dfbeta()` function
+
+---
+
+## DFBETA in `PROC GENMOD`
+
+In SAS, we use the `PLOTS(UNPACK)=DFBETA` option:
 ```{sas DFBETA, eval=F}
-
 proc genmod data=dance PLOTS(UNPACK)=DFBETA;
         class village_id dance_class_bin(REF="0");
         model gaitfollowup = dance_class_bin / dist = normal;
@@ -319,6 +482,8 @@ run;
 :::: {.columns}
 ::: {.column widht="60%"}
 - We're looking for observations that are clearly apart from the "herd"
+
+   - This plot looks fairly random and scattered, though
 
 - We could also look at the standardized DFBETA by using PLOTS(UNPACK)=DFBETAS
 :::

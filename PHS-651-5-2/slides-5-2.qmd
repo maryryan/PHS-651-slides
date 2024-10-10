@@ -403,7 +403,7 @@ If there's dispersion in the mixed model, there will (likely) be dispersion in t
 
 We may also be interested in whether we have particularly influential observations in our data that are (overly) influencing our model estimates - we investigate this via "leverage" or Cook's distance plots
 
-- Leverage looks at how removing an observation/cluster affects predicted values/residuals
+- Leverage looks at how removing an observation/cluster affects predicted values/residuals -- it will tell us us about extreme values in the predictor space
 
 - Cook's distance looks at how removing an observation/cluster affects regression coefficients when combined
 

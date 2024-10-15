@@ -63,20 +63,25 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-6/slides-6"))
 
 ## A new type of clustering
 
-Previously we have discussed how outcome observations can be clustered due to some kind of group membership that often dealt with where the observations came from in space or societal/institutional membership
+:::: {.columns}
+::: {.column width="60%"}
+Previously we have discussed how outcome observations can be [clustered]{.alert} due to some kind of group membership that often dealt with where the observations came from in space or societal/institutional membership
 
 - Geographic groups (city, county, state, region, apartment/residential building, etc)
 
 - Institutional groups (schools, school districts, etc)
 
-We briefly touched on scenarios where clustering occurred because we obserevd multiple observations for a single person:
+- Social hierarchy groups (household, family, etc)
+
+We also briefly touched on scenarios where clustering occurred because we observed multiple observations for a single person ([person is the cluster]{.alert}):
 
 - Eyes in someone's head
 
 - Person answering multiple questions on one survey
+:::
 
-. . .
-
+::: {.column width="40%"}
+::: {.fragment}
 A common element between these were that all observations came from the [same moment in time]{.alert}
 
 - We also call this a type of [cross-sectional]{.alert} (or latitudinal) sampling
@@ -84,6 +89,9 @@ A common element between these were that all observations came from the [same mo
 - This is about estimating the effect of an exposure on an outcome at a particular moment in time
 
 What if we wanted to observe how an exposure affects an outcome [across time?]{.alert}
+:::
+:::
+::::
 
 ---
 
@@ -97,23 +105,29 @@ What if we wanted to observe how an exposure affects an outcome [across time?]{.
 
 What's wrong with a cross-sectional study?
 
+- Just asking a different kind of question!
+
 - Only observe how exposure impacts outcome at a particular moment
 
 - No understanding of whether outcome changed while exposure was applied or whether it was always low/high
+
+   - Correlation vs causation
+
+- Can maybe get at between-subject differences, but not within-subject change
 
 ---
 
 ## Types of longitudinal studies
 
-There are (generally) 2 types of longitudinal studies:
+There are 2 general types of longitudinal studies:
 
-1. Individuals recruited at a particular chronological time point and repeatedly observed
+1. Individuals recruited at a particular [chronological time point]{.alert} and repeatedly observed
    
    - Individuals match up on chronological time (date), but not necessarily lifecycle time
    
    - Sometimes called panel data
 
-2. Individuals recruited at a particular lifecycle point and repeatedly observed
+2. Individuals recruited at a particular [lifecycle/event point]{.alert} and repeatedly observed
 
    - e.g., from birth, from exposure
    
@@ -121,7 +135,11 @@ There are (generally) 2 types of longitudinal studies:
    
    - Sometimes called cohort data
    
-Putting a specific label isn't as important as understanding how similar you would expect individuals to be at [study baseline]{.alert} (they're first visit in the study)
+Can also have combinations of the two!
+
+- Study that recruits everyone in a particular year for future repeated observation, but within the study has multiple age cohort they're recruiting to
+
+Putting a specific label on a study isn't as important as understanding how similar you would expect individuals to be at [study baseline]{.alert} (their first visit in the study)
 
 ---
 
@@ -162,18 +180,35 @@ For temporal trend in response, why isn't repeated cross-sectional data ideal?
 
 4. Cost (need to re-recruit at each time point)
 
-By comparing responses at different time points from the same subject, longitudinal analysis removes systematic and random difference between individuals, provides direct info on individual-level trajectory, and reduces study cost
+By comparing responses at different time points from the same subject, longitudinal analysis:
+
+- Removes systematic and random difference between individuals
+
+- Provides direct info on individual-level trajectory
+
+- Can reduce study cost
 
 ---
 
 ## Longitudinal data structure
 
+:::: {.columns}
+::: {.column widht="50%"}
 Most longitudinal data is structured such that the outcome and exposure are measured at baseline, and only the outcome is re-measured at each time point:
 
 ![](long-structure.png)
+:::
 
-- We can also structure longitudinal data to repeatedly observe the exposure variable or other variables along with the outcome, but generally want all these observations to be happening at the same timepoint
+::: {.column width="50%"}
+We can also structure longitudinal data to repeatedly observe the exposure variable or other variables along with the outcome, but generally want all these observations to be happening at the same timepoint
 
+![](time-varying-long.png)
+:::
+::::
+
+Most longitudinal studies aim to have [balanced]{.alert} data
+
+- Same number of observations per individual, collected at the "same" time points
 
 ---
 
@@ -190,6 +225,8 @@ Longitudinal data comes with some complications - some we've seen before and som
    - Cluster/group unit: individual (across time)
 
 2. Variability often heterogeneous across time
+
+   - Within-cluster heterogeneity
 
 3. We may or may not expect an individual's observations to be correlated the same across time
 
@@ -237,17 +274,13 @@ To test the effect of Succimer, a (longitudinal) randomized trial was conducted 
 
 ## Example: Treatment of lead-exposed children trial
 
-:::: {.columns}
-::: {.column width="60%"}
-![](succ_plot.png)
-:::
+![](succ_plot.png){width="65%"}
 
-::: {.column width="40%"}
+::: {.absolute right=0 top=200}
 This shows longitudinal trends of treatment groups
 
 - Is there another way we might want to analyze these data?
 :::
-::::
 
 ---
 
@@ -267,6 +300,130 @@ We'll focus on a randomly selected subset of the 300 female participants living 
 
 ## Example: Six Cities study of air pollution and health
 
-What do we see in this plot?
+![](fev_plot.png){width="65%"}
 
-![](fev_plot.png)
+::: {.absolute right=300 top=200}
+What do we see in this plot?
+:::
+
+---
+
+## Example: Menarche and body fat
+
+Researchers conducted a [prospective longitudinal]{.alert} study on body fat accumulation in a cohort of 162 girls from MIT Growth and Development study
+
+- At study start, all participants were pre-menarcheal (before 1st period) and not considered obese
+
+- Participants followed up with annual until 4 years after 1st period
+
+- Body fat measured at each exam
+
+---
+
+## Example: Menarche and body fat
+
+![](menarche1.png){width="65%"}
+
+::: {.absolute right=200 top=200}
+What do we see in this plot?
+:::
+
+---
+
+## Example: Menarche and body fat
+
+Consider an analysis of the changes in percent body fat before and after 1st period
+
+- For the purposes of these analyses "time" is coded as "time since menarche" and can be positive or negative
+
+- Study design is almost "balanced" if timing of measurement is defined as time since baseline measurement
+
+- Inherently [unbalanced]{.alert} when timing of measurements is defined as time since a participant experienced 1st period
+
+
+---
+
+## Example Menarche and body fat
+
+What differences do we see between these two plots?
+
+:::: {.columns}
+::: {.column width="50%"}
+![](menarche1.png){width="100%"}
+:::
+
+::: {.column width="50%"}
+![](menarche2.png){width="200%"}
+:::
+::::
+
+---
+
+### Longitudinal hypotheses
+
+![](long-hypotheses.png){width="45%"}
+
+::: {.absolute right=100 top=200 width="35%"}
+With longitudinal data, we are usually interested one of several types of hypotheses:
+
+1. Presence/absence of exposure group-by-time interaction effect
+
+2. Presence/absence of time effect
+
+3. Presence/absence of group effect
+:::
+
+---
+
+## Longitudinal reference groups
+
+In 552-style data we only dealt with reference groups with respect to exposure and additional adjustment covariates
+
+Previously in this class, we added cluster membership on top of that if we used conditional/mixed models
+
+Now, we may also need to add in reference groups with respect to within-cluster time
+
+- Everyone's "baseline" outcome measure may not be comparable
+
+---
+
+## Adjusting for baseline outcomes
+
+Let $Y_{i0}$ be the baseline outcome measurement for individual $i$, and $\{Y_{i1}, \dots, Y_{iJ}\}$ be the follow-up measurements at times 1 through $J$
+
+There are 4 main methods for handling baseline outcome measurements in longitudinal data
+
+1. Keep $Y_{i0}$ as part of the outcome vector, and use exposure group and time (and group-by-time interaction) as adjustment variables
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Exposure}_{ij}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+
+   - $\beta_1$ interpreted as expected difference in outcome between exposure groups [at baseline]{.alert}
+
+. . .
+
+2. Keep $Y_{i0}$ as part of the outcome vector, and use time and group-by-time interaction as adjustment variables (no group variable)
+
+$$E[Y_{ij}] = \beta_0 + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+
+   - Assumes group means at baseline are [equal]{.alert} ($\beta_1=0$)
+   
+   - This is a [bad assumption]{.alert} for observational studies, but usually fine for randomized trials
+---
+
+## Adjusting for baseline outcomes
+
+3. Use change from baseline $(Y_{ij} - Y_{i0})$ as outcome, and use exposure and time (and group-by-time interaction) as adjustment variables
+
+$$E[Y_{ij} - Y_{i0}] = \beta_0 + \beta_1 (\text{Exposure}_{ij}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+
+   - $\beta_1$ interpreted as expected difference in the change-from-baseline outcomes between exposure groups [at follow-up time 1]{.alert}
+
+. . .
+
+4. Use follow-up measurements *only* as outcome vector, and use $Y_{i0}$ as adjustment variable, along with exposure and time (and group-by-time interaction)
+
+$$E[Y_{ij}] = \beta_0 + \beta_{\text{baseline}}(Y_{i0}) + \beta_1 (\text{Exposure}_{ij}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+
+   - $\beta_1$ interpreted as expected difference in outcome between exposure groups at follow up time 1, who had the same baseline outcomes
+   
+   - Assumes group means at baseline are equal (no baseline-by-group effect) $\rightarrow$ [bad assumption]{.alert} for observational studies

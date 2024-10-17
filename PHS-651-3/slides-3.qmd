@@ -534,7 +534,7 @@ summary(logistic_fit)
 
    - 95% CI: (`r round(exp(summary(logistic_fit)$coefficients[2,1] - summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary(logistic_fit)$coefficients[2,1] + summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)`)
    
-   - [Interpretation]{.alert}: [Cancer patients have an estimated 8.75% increased odds of going into remission if they have a physician with 1 year of experience compared to 0 years, cancer stage held constant. We are 95% confident the true odds is between 8.2 and 9.3%.]{.fragment}
+   - [Interpretation]{.alert}: [Cancer patients have an estimated 8.75% increased odds of going into remission if they have a physician with 1 year of experience compared to 0 years, cancer stage held constant. We are 95% confident the true odds is between `r (round(exp(summary(logistic_fit)$coefficients[2,1] - summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100` and `r (round(exp(summary(logistic_fit)$coefficients[2,1] + summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100`%.]{.fragment}
 :::
 
 ::: {.column width="30%"}
@@ -572,7 +572,7 @@ Logistic GLMM results:
 
    - 95% CI: (`r round(exp(summary(glmm_fit)$coefficients[2,1] - summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary(glmm_fit)$coefficients[2,1] + summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)`)
    
-   - [Interpretation]{.alert}: [Cancer patients have an estimated 11.35% increased odds of going into remission if they have a physician with 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between 9.09 and 13.65%.]{.fragment}
+   - [Interpretation]{.alert}: [Cancer patients have an estimated 11.35% increased odds of going into remission if they have a physician with 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between `r (round(exp(summary(glmm_fit)$coefficients[2,1] - summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100` and `r (round(exp(summary(glmm_fit)$coefficients[2,1] + summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100`%.]{.fragment}
 
 :::
 

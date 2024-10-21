@@ -19,10 +19,10 @@ execute:
    eval: true
    echo: true
 editor: 
-  markdown: 
-    wrap: 72
+   markdown: 
+      wrap: 72
 ---
-
+   
 ```{r load libraries, echo=F}
 library(tidyverse)
 library(ggdag)
@@ -31,18 +31,18 @@ library(gridExtra)
 library(qrcode)
 ```
 
-<h1>Lecture 7: Modeling the (longitudinal) covariance</h1>
-
+<h1>Lecture 7: Modeling the mean and covariance with longitudinal data</h1>
+   
 <h2>PHS 651: Advanced regression methods</h2>
 
 <hr>
 
 <h3>Mary Ryan Baumann, PhD</h3>
 
-<h3>October 22, 2024</h3>
+<h3>October 22 & 24, 2024</h3>
 
 <br>
-
+   
 ::: {style="font-size: 75%;"}
 **Recording disclosure**
 
@@ -56,22 +56,347 @@ library(qrcode)
 ::: {.absolute bottom=50 left=260 width=1500}
 
 Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-7/slides-7>
-
+   
 :::
-
+   
 ::: {.absolute bottom=0 left=100 width=150}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-7/slides-7"))
 ```
 :::
+   
+---
+
+## Modeling the mean with repeated measures
+
+When dealing with non-longitudinal data, we (usually) have one primary type of research question for our models: "How does the outcome differ in exposure and non-exposure groups?"
+
+With longitudinal data, we may also be interested in a research question like this
+
+. . .
+
+However, we need to be more specific about how we're comparing the outcome in the exposure groups
+
+- Differences in outcome at last measurement time?
+
+- Differences in the outcome change from baseline?
+
+- Differences in outcome trend over time?
+
+. . .
+
+Understanding how we want to compare outcomes between the exposure groups will help us understand what our reference groups are
+
+---
+
+### Longitudinal hypotheses
+
+![](long-hypotheses.png){width="45%"}
+
+::: {.absolute right=100 top=200 width="35%"}
+With longitudinal data, we are usually interested one of several types of hypotheses:
+
+1. Presence/absence of time effect
+
+2. Presence/absence of group/exposure effect
+
+3. Presence/absence of exposure group-by-time interaction effect
+
+How do we model each of these hypotheses?
+:::
+
+
+---
+
+## Hypothesis 1: Time effect
+
+Longitudinal data repeatedly observes the outcome in an individual
+
+- Along with the outcome measurements, we also observe the timing of these measurements
+
+- Timing can be measured categorically (e.g., "visit 1, visit 2...") or numerically (e.g., number of days since study entry)
+
+. . .
+
+One of the most basic ways we might analyze longitudinal data is to try to model how the outcome changes over time across the entire study population (not looking at exposure groups)
+
+[How might we model this?]{.alert}
+
+---
+
+## Hypothesis 1: Categorical time
+
+Longitudinal data repeatedly observes the outcome in an individual $i$ across $J$ measurement occasions: $Y_{ij}$
+
+One of the most basic ways we might analyze longitudinal data is to try to model how the outcome changes over time across the entire study population (not looking at exposure groups)
+
+One representation:
+
+$$E[Y_{ij}] = \beta_0 I(\text{Baseline}_i) + \beta_1 I(\text{Visit 1}_i) + \beta_2 I(\text{Visit 2}_i) + \dots \beta_J I(\text{Visit J}_i)$$
+
+. . .
+
+- Each $\beta$ represents the average outcome at a particular categorical time point
+
+   - If $\beta_0 = \beta_1 = \dots = \beta_J$, the outcome is not changing across time
+   
+---
+
+## Hypothesis 1: Categorical time
+
+Longitudinal data repeatedly observes the outcome in an individual $i$ across $J$ measurement occasions: $Y_{ij}$
+
+An alternative representation:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 I(\text{Visit 1}_i) + \beta_2 I(\text{Visit 2}_i) + \dots \beta_J I(\text{Visit J}_i)$$
+
+. . .
+
+- $\beta_0$ represents the average outcome at baseline
+
+- All other regression coefficients represent the difference in average outcomes between a particular categorical time point and baseline 
+
+   - If $\beta_1 = \dots = \beta_J = 0$, the outcome is not changing across time
+   
+:::: {.columns}
+::: {.column width="50%"}
+::: {.fragment}
+Neither representation makes an assumption about how outcomes change (or don't) from time point to time point
+
+- Could increase, then decrease, then increase slightly, then increase even more, etc
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+Both representations assume that "visits" are happening at the same time for everyone (or are at least at comparable times)
+
+- What if this is not true?
+:::
+:::
+::::
+
+---
+
+## Hypothesis 1: Numerical time
+
+Longitudinal data repeatedly observes the outcome in an individual $i$ across $J$ measurement occasions: $Y_{ij}$
+
+If we let $\text{Time}_{ij}$ represent the exact time since study entry that participant $i$ is observed for visit $j$, could model as:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij})$$
+
+. . .
+
+- $\beta_0$ represents the average outcome at baseline (0 time since study entry)
+
+- $\beta_1$ represents average difference in outcomes comparing measurements 1 time unit apart
+
+   - If $\beta_1 = 0$, the outcome is not changing across time
+   
+   - Like a weighted average of the categorical time effects we saw before
+
+---
+
+## Hypothesis 1: Numerical time
+
+If we let $\text{Time}_{ij}$ represent the exact time since study entry that participant $i$ is observed for visit $j$, could model as:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij})$$
+
+- $\beta_0$ represents the average outcome at baseline (0 time since study entry)
+
+- $\beta_1$ represents average difference in outcomes comparing measurements 1 time unit apart
+
+:::: {.columns}
+::: {.column width="60%"}
+::: {.fragment}
+This makes strong assumption that the outcome is linearly associated with time
+
+- Will see same change in outcome whether we're comparing outcomes at Baseline vs week 1 or at week 10 vs week 11
+
+- Could alter this assumption by adding polynomial time effects:
+
+   - e.g., Quadratic time effect: $E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij}) + \beta_2 (\text{Time}_{ij})^2$
+:::
+:::
+
+::: {.column width="40%"}
+::: {.fragment}
+Makes no assumption about timing of observations across participants/clusters
+:::
+:::
+::::
+
+---
+
+## Hypothesis 2: Group/exposure effect
+
+Now we might want to compare outcomes between exposure groups
+
+- Let $U_{i0}$ be an exposure indicator for participant $i$, collected at baseline
+
+[How might we model this?]{.alert}
+
+---
+
+## Hypothesis 2: Group/exposure effect
+
+Now we might want to compare outcomes between exposure groups
+
+- Let $U_{i0}$ be an exposure indicator for participant $i$, collected at baseline
+
+For illustration, assume we want to fit a linear effect for numerically-observed time:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij})$$
+
+. . .
+
+- $\beta_0$ represents the average outcome at baseline (0 time since study entry) in the unexposed group
+
+- $\beta_1$ represents the average difference in outcomes between the exposed and unexposed groups, [conditional on measurement time]{.alert}
+
+   - If $\beta_1 = 0$, there is no difference in (similarly-timed) outcomes between exposure groups
+   
+---
+
+## Hypothesis 2: Group/exposure effect
+
+We could generalize this to let exposure group membership change with time: $U_{ij}$
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{ij}) + \beta_2 (\text{Time}_{ij})$$
+
+- $\beta_1$ now represents effect of exposure, when exposure is not tied to a study time
+
+. . .
+
+Both representations assume that the effect of exposure is constant across time
+
+- Doesn't matter if comparing exposed/unexposed at Week 1 or Week 24
+
+- What if this is not true?
+
+---
+
+## Hypothesis 3: Exposure group $\times$ time effect
+
+Now we might want to compare change in outcomes over time between exposure groups
+
+- Let $U_{i0}$ be an exposure indicator for participant $i$ collected at baseline, and assume we want to fit a linear effect for numerically-observed time:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 (U_{i0} \times\text{Time}_{ij})$$
+
+. . .
+
+[What do the regression coefficients represent?]{.alert}
+
+- $\beta_0$:
+
+- $\beta_1$:
+
+- $\beta_2$:
+
+- $(\beta_1 + \beta_3)$:
+
+- $(\beta_2 + \beta_3)$:
+
+- $\beta_3$:
+
+---
+
+## Hypothesis 3: Exposure group $\times$ time effect
+
+Now we might want to compare change in outcomes over time between exposure groups
+
+- Let $U_{i0}$ be an exposure indicator for participant $i$ collected at baseline, and assume we want to fit a linear effect for numerically-observed time:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 (U_{i0} \times\text{Time}_{ij})$$
+
+- $\beta_0$: average outcome at baseline (0 time since study entry) in the unexposed group
+
+- $\beta_1$: average difference in outcomes between the exposed and unexposed groups [at baseline]{.alert}
+
+- $\beta_2$: average difference in outcomes comparing unexposed measurements 1 time unit apart
+
+- $(\beta_1 + \beta_3)$: difference in outcomes between exposed and unexposed groups [at the same measurement time]{.alert}
+
+- $(\beta_2 + \beta_3)$: average difference in outcomes comparing exposed measurements 1 time unit apart
+
+- $\beta_3$: whether exposure effect changes with time
+
+---
+
+## Hypothesis 3: Exposure group $\times$ time effect
+
+Now we might want to compare change in outcomes over time between exposure groups
+
+- Let $U_{i0}$ be an exposure indicator for participant $i$ collected at baseline, and assume we want to fit a linear effect for numerically-observed time:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 (U_{i0} \times\text{Time}_{ij})$$
+
+If we were dealing with categorical time, would need to interact exposure variable with **each** time point indicator
+
+---
+
+## Adjusting for baseline outcomes
+
+But what do we do when there are differences in outcomes between exposure groups at baseline?
+
+. . .
+
+There are 4 main methods for handling baseline outcome measurements in longitudinal data
+
+1. Keep $Y_{i0}$ as part of the outcome vector, and use exposure group and time (and group-by-time interaction) as adjustment variables
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})$$
+
+   - $\beta_1$ interpreted as expected difference in outcome between exposure groups [at baseline]{.alert}
+
+. . .
+
+2. Keep $Y_{i0}$ as part of the outcome vector, and use time and group-by-time interaction as adjustment variables (no group variable)
+
+$$E[Y_{ij}] = \beta_0 + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})$$
+
+   - Assumes group means at baseline are [equal]{.alert} ($\beta_1=0$)
+   
+   - This is a [bad assumption]{.alert} for observational studies, but usually fine for randomized trials
+   
+---
+
+## Adjusting for baseline outcomes
+
+3. Use change from baseline $(Y_{ij} - Y_{i0})$ as outcome, and use exposure and time (and group-by-time interaction) as adjustment variables
+
+$$E[Y_{ij} - Y_{i0}] = \beta_0 + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})$$
+
+   - $(\beta_1 + \beta_3)$ interpreted as expected difference in the change-from-baseline outcomes between exposure groups [conditional on follow-up time]{.alert}
+   
+   - $\beta_0$ only meaningful if choose another reference time besides baseline (because change from baseline at time 0 is 0 for everyone)
+
+---
+
+## Adjusting for baseline outcomes
+
+4. Use follow-up measurements *only* as outcome vector, and use $Y_{i0}$ as adjustment variable, along with exposure and time (and group-by-time interaction)
+
+$$E[Y^*_{ij}] = \beta_0 + \beta_{\text{baseline}}(Y_{i0}) + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})$$
+
+   - $\beta_1$ interpreted as expected difference in outcome between exposure groups at follow up time 1, who had the same baseline outcomes
+   
+   - $\beta_0$ only included if choose another reference time besides baseline
+   
+   - Assumes group means at baseline are equal (no baseline-by-group effect) $\rightarrow$ [bad assumption]{.alert} for observational studies
 
 ---
 
 ## Longitudinal covariance/correlation structures
 
+Now that we have time handled in the mean model, how does it affect covariance/correlation structures
+
 Previously we lightly touched on correlation structures for clustered, non-longitudinal data
 
-- Remember: independence, exchangeable, unstructured from Lectures 2 and 4
+- Remember: independence, exchangeable, unstructured from Lectures 4 and 5.1
 
 . . .
 
@@ -83,15 +408,19 @@ With longitudinal data, there are a much wider range of potential structures
 
 ## Unstructured covariance
 
+We'll fit an unstructured covariance structure here to show how correlation tends to behave in (very balanced, not enormous) longitudinal data
+
+Maybe also try a 2nd one where there's way bigger cluster sizes - might also save this for tutorial lecture
+
 ---
 
 ## Covariance Pattern Models
 
 When attempting to impose some structure on the covariance, a subtle balance needs to be struck
 
-- Too little structure means too many parameters means imprecise estimate (large variance)
+- Too little structure means too many parameters to estimate, which means imprecise point estimate (large variance)
 
-- Too much structure means more opportunity for mis-specification means inaccurate estimate (large bias)
+- Too much structure means more opportunity for mis-specification, which means inaccurate point estimate (large bias)
 
    - Classic tradeoff between bias and variance
    
@@ -105,7 +434,7 @@ Covariance pattern models have their basis in models for serial correlation orig
 
 - Correlation is the same across all observations in the cluster
 
-- [We saw this one before in lecture 2 and 4!]{.alert}
+- [We saw this one before in lectures 2, 4, and 5.1!]{.alert}
 
 $$\begin{bmatrix}
 1 & \alpha & \dots & \alpha\\
@@ -114,13 +443,13 @@ $$\begin{bmatrix}
 \alpha & \dots & \alpha & 1
 \end{bmatrix}$$
 
-You'll always be estimating a single correlation $\alpha$, regardless of $n$
+You'll always be estimating a single correlation $\alpha$, regardless of cluster size $n$
 
 . . .
 
 This pattern has strong assumptions (measurements are exchangeable)
 
-- [This is usually not valid with longitudinal data]{.alert}
+- [This may not be valid with longitudinal data]{.alert}
 
 ---
 
@@ -139,7 +468,7 @@ $$\begin{bmatrix}
 \alpha_{n-1} & \dots & \alpha_1 & 1
 \end{bmatrix}$$
 
-You'll be estimating $(n-1)$ correlations
+You'll be estimating $(n-1)$ correlation paramteres
 
 . . .
 
@@ -156,7 +485,7 @@ An [autoregressive]{.alert} structure assumes:
 
 $$\begin{bmatrix}
 1 & \alpha^1 & \dots & \alpha^{n-1}\\
-\alpha^1 & \ddots & \dots & \alpha_{n-2}\\
+\alpha^1 & \ddots & \dots & \alpha^{n-2}\\
 \vdots & \dots & \ddots & \vdots\\
 \alpha^{n-1} & \dots & \alpha^1 & 1
 \end{bmatrix}$$
@@ -173,7 +502,7 @@ Means less correlation for measurements taken farther apart; but [only appropria
 
 All the structures we've looked at so far have assumed that our observed times points are approximately equally spaced
 
-- This is appropriate when observations are things like hours, days, weeks, months, years...
+- This is appropriate when we have a lot of control in observation timing...
 
 . . .
 
@@ -218,9 +547,8 @@ The banded structure assumes correlation is 0 beyond some specified interval
 
 It is possible to apply a banded pattern to any of the correlation pattern models considered so far
 
-::: {.r-stack}
+. . .
 
-::: {.fragment .fade-in-then-out}
 A banded Toeplitz structure with a band size of 3 looks like:
 
 $$\begin{bmatrix}
@@ -232,9 +560,17 @@ $$\begin{bmatrix}
 0 && \dots &\alpha_2 & \alpha_1 & 1
 \end{bmatrix}$$
 
-:::
+---
 
-::: {.fragment .fade-in-then-out}
+## Banded correlation
+
+All of the previous structures have have required us to estimate some parameter for the off-diagonal matrix elements
+
+- What if we know at some point the correlation between observations will go to 0? [Enter the banded structure!]{.alert}
+
+The banded structure assumes correlation is 0 beyond some specified interval
+
+It is possible to apply a banded pattern to any of the correlation pattern models considered so far
 
 A banded autoregression structure with a band size of 4 looks like:
 $$\begin{bmatrix}
@@ -246,9 +582,17 @@ $$\begin{bmatrix}
 0 && \dots & \alpha^3&\alpha^2 & \alpha^1 & 1
 \end{bmatrix}$$
 
-:::
+---
 
-::: {.fragment .fade-in}
+## Banded correlation
+
+All of the previous structures have have required us to estimate some parameter for the off-diagonal matrix elements
+
+- What if we know at some point the correlation between observations will go to 0? [Enter the banded structure!]{.alert}
+
+The banded structure assumes correlation is 0 beyond some specified interval
+
+It is possible to apply a banded pattern to any of the correlation pattern models considered so far
 
 A banded exponential structure with a band size of 4 looks like:
 $$\begin{bmatrix}
@@ -260,10 +604,6 @@ $$\begin{bmatrix}
 0 && \dots & \alpha^{|t_{i1}-t_{i4}|}&\alpha^{|t_{i1}-t_{i3}|} & \alpha^{|t_{i1}-t_{i2}|} & 1
 \end{bmatrix}$$
 
-:::
-
-:::
-
 ---
 
 ## Choices, choices
@@ -273,7 +613,7 @@ With way more structures to choose from, it may be more difficult to make a deci
 
 ---
 
-## Variograms
+## Variograms -- save this for diagnostics
 
 Variogram plots are one way to assess the how strong the 
 ```{r cd4, echo=F}

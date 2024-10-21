@@ -392,7 +392,7 @@
 
 
 <section class="slide level2"><h1>
-Lecture 7: Modeling the (longitudinal) covariance
+Lecture 7: Modeling the mean and covariance with longitudinal data
 </h1>
 <h2>
 PHS 651: Advanced regression methods
@@ -402,7 +402,7 @@ PHS 651: Advanced regression methods
 Mary Ryan Baumann, PhD
 </h3>
 <h3>
-October 22, 2024
+October 22 &amp; 24, 2024
 </h3>
 <p><br></p>
 <div style="font-size: 75%;">
@@ -421,10 +421,253 @@ October 22, 2024
 </div>
 </div>
 </div>
-</section><section id="longitudinal-covariancecorrelation-structures" class="slide level2"><h2>Longitudinal covariance/correlation structures</h2>
+</section><section id="modeling-the-mean-with-repeated-measures" class="slide level2"><h2>Modeling the mean with repeated measures</h2>
+<p>When dealing with non-longitudinal data, we (usually) have one primary type of research question for our models: “How does the outcome differ in exposure and non-exposure groups?”</p>
+<p>With longitudinal data, we may also be interested in a research question like this</p>
+<div class="fragment">
+<p>However, we need to be more specific about how we’re comparing the outcome in the exposure groups</p>
+<ul>
+<li><p>Differences in outcome at last measurement time?</p></li>
+<li><p>Differences in the outcome change from baseline?</p></li>
+<li><p>Differences in outcome trend over time?</p></li>
+</ul>
+</div>
+<div class="fragment">
+<p>Understanding how we want to compare outcomes between the exposure groups will help us understand what our reference groups are</p>
+</div>
+</section><section class="slide level2"><h3 id="longitudinal-hypotheses">Longitudinal hypotheses</h3>
+<p><img data-src="long-hypotheses.png" style="width:45.0%"></p>
+<div class="absolute" style="top: 200px; right: 100px; width: 35%; ">
+<p>With longitudinal data, we are usually interested one of several types of hypotheses:</p>
+<ol type="1">
+<li><p>Presence/absence of time effect</p></li>
+<li><p>Presence/absence of group/exposure effect</p></li>
+<li><p>Presence/absence of exposure group-by-time interaction effect</p></li>
+</ol>
+<p>How do we model each of these hypotheses?</p>
+</div>
+</section><section id="hypothesis-1-time-effect" class="slide level2"><h2>Hypothesis 1: Time effect</h2>
+<p>Longitudinal data repeatedly observes the outcome in an individual</p>
+<ul>
+<li><p>Along with the outcome measurements, we also observe the timing of these measurements</p></li>
+<li><p>Timing can be measured categorically (e.g., “visit 1, visit 2…”) or numerically (e.g., number of days since study entry)</p></li>
+</ul>
+<div class="fragment">
+<p>One of the most basic ways we might analyze longitudinal data is to try to model how the outcome changes over time across the entire study population (not looking at exposure groups)</p>
+<p><span class="alert">How might we model this?</span></p>
+</div>
+</section><section id="hypothesis-1-categorical-time" class="slide level2"><h2>Hypothesis 1: Categorical time</h2>
+<p>Longitudinal data repeatedly observes the outcome in an individual <span class="math inline">\(i\)</span> across <span class="math inline">\(J\)</span> measurement occasions: <span class="math inline">\(Y_{ij}\)</span></p>
+<p>One of the most basic ways we might analyze longitudinal data is to try to model how the outcome changes over time across the entire study population (not looking at exposure groups)</p>
+<p>One representation:</p>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 I(\text{Baseline}_i) + \beta_1 I(\text{Visit 1}_i) + \beta_2 I(\text{Visit 2}_i) + \dots \beta_J I(\text{Visit J}_i)\]</span></p>
+<div class="fragment">
+<ul>
+<li>
+<p>Each <span class="math inline">\(\beta\)</span> represents the average outcome at a particular categorical time point</p>
+<ul>
+<li>If <span class="math inline">\(\beta_0 = \beta_1 = \dots = \beta_J\)</span>, the outcome is not changing across time</li>
+</ul>
+</li>
+</ul>
+</div>
+</section><section id="hypothesis-1-categorical-time-1" class="slide level2"><h2>Hypothesis 1: Categorical time</h2>
+<p>Longitudinal data repeatedly observes the outcome in an individual <span class="math inline">\(i\)</span> across <span class="math inline">\(J\)</span> measurement occasions: <span class="math inline">\(Y_{ij}\)</span></p>
+<p>An alternative representation:</p>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 + \beta_1 I(\text{Visit 1}_i) + \beta_2 I(\text{Visit 2}_i) + \dots \beta_J I(\text{Visit J}_i)\]</span></p>
+<div class="fragment">
+<ul>
+<li><p><span class="math inline">\(\beta_0\)</span> represents the average outcome at baseline</p></li>
+<li>
+<p>All other regression coefficients represent the difference in average outcomes between a particular categorical time point and baseline</p>
+<ul>
+<li>If <span class="math inline">\(\beta_1 = \dots = \beta_J = 0\)</span>, the outcome is not changing across time</li>
+</ul>
+</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<p>Neither representation makes an assumption about how outcomes change (or don’t) from time point to time point</p>
+<ul>
+<li>Could increase, then decrease, then increase slightly, then increase even more, etc</li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p>Both representations assume that “visits” are happening at the same time for everyone (or are at least at comparable times)</p>
+<ul>
+<li>What if this is not true?</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</section><section id="hypothesis-1-numerical-time" class="slide level2"><h2>Hypothesis 1: Numerical time</h2>
+<p>Longitudinal data repeatedly observes the outcome in an individual <span class="math inline">\(i\)</span> across <span class="math inline">\(J\)</span> measurement occasions: <span class="math inline">\(Y_{ij}\)</span></p>
+<p>If we let <span class="math inline">\(\text{Time}_{ij}\)</span> represent the exact time since study entry that participant <span class="math inline">\(i\)</span> is observed for visit <span class="math inline">\(j\)</span>, could model as:</p>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij})\]</span></p>
+<div class="fragment">
+<ul>
+<li><p><span class="math inline">\(\beta_0\)</span> represents the average outcome at baseline (0 time since study entry)</p></li>
+<li>
+<p><span class="math inline">\(\beta_1\)</span> represents average difference in outcomes comparing measurements 1 time unit apart</p>
+<ul>
+<li><p>If <span class="math inline">\(\beta_1 = 0\)</span>, the outcome is not changing across time</p></li>
+<li><p>Like a weighted average of the categorical time effects we saw before</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</section><section id="hypothesis-1-numerical-time-1" class="slide level2"><h2>Hypothesis 1: Numerical time</h2>
+<p>If we let <span class="math inline">\(\text{Time}_{ij}\)</span> represent the exact time since study entry that participant <span class="math inline">\(i\)</span> is observed for visit <span class="math inline">\(j\)</span>, could model as:</p>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij})\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\beta_0\)</span> represents the average outcome at baseline (0 time since study entry)</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> represents average difference in outcomes comparing measurements 1 time unit apart</p></li>
+</ul>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div class="fragment">
+<p>This makes strong assumption that the outcome is linearly associated with time</p>
+<ul>
+<li><p>Will see same change in outcome whether we’re comparing outcomes at Baseline vs week 1 or at week 10 vs week 11</p></li>
+<li>
+<p>Could alter this assumption by adding polynomial time effects:</p>
+<ul>
+<li>e.g., Quadratic time effect: <span class="math inline">\(E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij}) + \beta_2 (\text{Time}_{ij})^2\)</span>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div><div class="column" style="width:40%;">
+<div class="fragment">
+<p>Makes no assumption about timing of observations across participants/clusters</p>
+</div>
+</div>
+</div>
+</section><section id="hypothesis-2-groupexposure-effect" class="slide level2"><h2>Hypothesis 2: Group/exposure effect</h2>
+<p>Now we might want to compare outcomes between exposure groups</p>
+<ul>
+<li>Let <span class="math inline">\(U_{i0}\)</span> be an exposure indicator for participant <span class="math inline">\(i\)</span>, collected at baseline</li>
+</ul>
+<p><span class="alert">How might we model this?</span></p>
+</section><section id="hypothesis-2-groupexposure-effect-1" class="slide level2"><h2>Hypothesis 2: Group/exposure effect</h2>
+<p>Now we might want to compare outcomes between exposure groups</p>
+<ul>
+<li>Let <span class="math inline">\(U_{i0}\)</span> be an exposure indicator for participant <span class="math inline">\(i\)</span>, collected at baseline</li>
+</ul>
+<p>For illustration, assume we want to fit a linear effect for numerically-observed time:</p>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij})\]</span></p>
+<div class="fragment">
+<ul>
+<li><p><span class="math inline">\(\beta_0\)</span> represents the average outcome at baseline (0 time since study entry) in the unexposed group</p></li>
+<li>
+<p><span class="math inline">\(\beta_1\)</span> represents the average difference in outcomes between the exposed and unexposed groups, <span class="alert">conditional on measurement time</span></p>
+<ul>
+<li>If <span class="math inline">\(\beta_1 = 0\)</span>, there is no difference in (similarly-timed) outcomes between exposure groups</li>
+</ul>
+</li>
+</ul>
+</div>
+</section><section id="hypothesis-2-groupexposure-effect-2" class="slide level2"><h2>Hypothesis 2: Group/exposure effect</h2>
+<p>We could generalize this to let exposure group membership change with time: <span class="math inline">\(U_{ij}\)</span></p>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 + \beta_1 (U_{ij}) + \beta_2 (\text{Time}_{ij})\]</span></p>
+<ul>
+<li>
+<span class="math inline">\(\beta_1\)</span> now represents effect of exposure, when exposure is not tied to a study time</li>
+</ul>
+<div class="fragment">
+<p>Both representations assume that the effect of exposure is constant across time</p>
+<ul>
+<li><p>Doesn’t matter if comparing exposed/unexposed at Week 1 or Week 24</p></li>
+<li><p>What if this is not true?</p></li>
+</ul>
+</div>
+</section><section id="hypothesis-3-exposure-group-times-time-effect" class="slide level2"><h2>Hypothesis 3: Exposure group <span class="math inline">\(\times\)</span> time effect</h2>
+<p>Now we might want to compare change in outcomes over time between exposure groups</p>
+<ul>
+<li>Let <span class="math inline">\(U_{i0}\)</span> be an exposure indicator for participant <span class="math inline">\(i\)</span> collected at baseline, and assume we want to fit a linear effect for numerically-observed time:</li>
+</ul>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 (U_{i0} \times\text{Time}_{ij})\]</span></p>
+<div class="fragment">
+<p><span class="alert">What do the regression coefficients represent?</span></p>
+<ul>
+<li><p><span class="math inline">\(\beta_0\)</span>:</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span>:</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span>:</p></li>
+<li><p><span class="math inline">\((\beta_1 + \beta_3)\)</span>:</p></li>
+<li><p><span class="math inline">\((\beta_2 + \beta_3)\)</span>:</p></li>
+<li><p><span class="math inline">\(\beta_3\)</span>:</p></li>
+</ul>
+</div>
+</section><section id="hypothesis-3-exposure-group-times-time-effect-1" class="slide level2"><h2>Hypothesis 3: Exposure group <span class="math inline">\(\times\)</span> time effect</h2>
+<p>Now we might want to compare change in outcomes over time between exposure groups</p>
+<ul>
+<li>Let <span class="math inline">\(U_{i0}\)</span> be an exposure indicator for participant <span class="math inline">\(i\)</span> collected at baseline, and assume we want to fit a linear effect for numerically-observed time:</li>
+</ul>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 (U_{i0} \times\text{Time}_{ij})\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\beta_0\)</span>: average outcome at baseline (0 time since study entry) in the unexposed group</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span>: average difference in outcomes between the exposed and unexposed groups <span class="alert">at baseline</span></p></li>
+<li><p><span class="math inline">\(\beta_2\)</span>: average difference in outcomes comparing unexposed measurements 1 time unit apart</p></li>
+<li><p><span class="math inline">\((\beta_1 + \beta_3)\)</span>: difference in outcomes between exposed and unexposed groups <span class="alert">at the same measurement time</span></p></li>
+<li><p><span class="math inline">\((\beta_2 + \beta_3)\)</span>: average difference in outcomes comparing exposed measurements 1 time unit apart</p></li>
+<li><p><span class="math inline">\(\beta_3\)</span>: whether exposure effect changes with time</p></li>
+</ul></section><section id="hypothesis-3-exposure-group-times-time-effect-2" class="slide level2"><h2>Hypothesis 3: Exposure group <span class="math inline">\(\times\)</span> time effect</h2>
+<p>Now we might want to compare change in outcomes over time between exposure groups</p>
+<ul>
+<li>Let <span class="math inline">\(U_{i0}\)</span> be an exposure indicator for participant <span class="math inline">\(i\)</span> collected at baseline, and assume we want to fit a linear effect for numerically-observed time:</li>
+</ul>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 (U_{i0} \times\text{Time}_{ij})\]</span></p>
+<p>If we were dealing with categorical time, would need to interact exposure variable with <strong>each</strong> time point indicator</p>
+</section><section id="adjusting-for-baseline-outcomes" class="slide level2"><h2>Adjusting for baseline outcomes</h2>
+<p>But what do we do when there are differences in outcomes between exposure groups at baseline?</p>
+<div class="fragment">
+<p>There are 4 main methods for handling baseline outcome measurements in longitudinal data</p>
+<ol type="1">
+<li>Keep <span class="math inline">\(Y_{i0}\)</span> as part of the outcome vector, and use exposure group and time (and group-by-time interaction) as adjustment variables</li>
+</ol>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})\]</span></p>
+<ul>
+<li>
+<span class="math inline">\(\beta_1\)</span> interpreted as expected difference in outcome between exposure groups <span class="alert">at baseline</span>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<ol start="2" type="1">
+<li>Keep <span class="math inline">\(Y_{i0}\)</span> as part of the outcome vector, and use time and group-by-time interaction as adjustment variables (no group variable)</li>
+</ol>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})\]</span></p>
+<ul>
+<li><p>Assumes group means at baseline are <span class="alert">equal</span> (<span class="math inline">\(\beta_1=0\)</span>)</p></li>
+<li><p>This is a <span class="alert">bad assumption</span> for observational studies, but usually fine for randomized trials</p></li>
+</ul>
+</div>
+</section><section id="adjusting-for-baseline-outcomes-1" class="slide level2"><h2>Adjusting for baseline outcomes</h2>
+<ol start="3" type="1">
+<li>Use change from baseline <span class="math inline">\((Y_{ij} - Y_{i0})\)</span> as outcome, and use exposure and time (and group-by-time interaction) as adjustment variables</li>
+</ol>
+<p><span class="math display">\[E[Y_{ij} - Y_{i0}] = \beta_0 + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})\]</span></p>
+<ul>
+<li><p><span class="math inline">\((\beta_1 + \beta_3)\)</span> interpreted as expected difference in the change-from-baseline outcomes between exposure groups <span class="alert">conditional on follow-up time</span></p></li>
+<li><p><span class="math inline">\(\beta_0\)</span> only meaningful if choose another reference time besides baseline (because change from baseline at time 0 is 0 for everyone)</p></li>
+</ul></section><section id="adjusting-for-baseline-outcomes-2" class="slide level2"><h2>Adjusting for baseline outcomes</h2>
+<ol start="4" type="1">
+<li>Use follow-up measurements <em>only</em> as outcome vector, and use <span class="math inline">\(Y_{i0}\)</span> as adjustment variable, along with exposure and time (and group-by-time interaction)</li>
+</ol>
+<p><span class="math display">\[E[Y^*_{ij}] = \beta_0 + \beta_{\text{baseline}}(Y_{i0}) + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\beta_1\)</span> interpreted as expected difference in outcome between exposure groups at follow up time 1, who had the same baseline outcomes</p></li>
+<li><p><span class="math inline">\(\beta_0\)</span> only included if choose another reference time besides baseline</p></li>
+<li><p>Assumes group means at baseline are equal (no baseline-by-group effect) <span class="math inline">\(\rightarrow\)</span> <span class="alert">bad assumption</span> for observational studies</p></li>
+</ul></section><section id="longitudinal-covariancecorrelation-structures" class="slide level2"><h2>Longitudinal covariance/correlation structures</h2>
+<p>Now that we have time handled in the mean model, how does it affect covariance/correlation structures</p>
 <p>Previously we lightly touched on correlation structures for clustered, non-longitudinal data</p>
 <ul>
-<li>Remember: independence, exchangeable, unstructured from Lectures 2 and 4</li>
+<li>Remember: independence, exchangeable, unstructured from Lectures 4 and 5.1</li>
 </ul>
 <div class="fragment">
 <p>With longitudinal data, there are a much wider range of potential structures</p>
@@ -433,12 +676,14 @@ October 22, 2024
 </ul>
 </div>
 </section><section id="unstructured-covariance" class="slide level2"><h2>Unstructured covariance</h2>
+<p>We’ll fit an unstructured covariance structure here to show how correlation tends to behave in (very balanced, not enormous) longitudinal data</p>
+<p>Maybe also try a 2nd one where there’s way bigger cluster sizes - might also save this for tutorial lecture</p>
 </section><section id="covariance-pattern-models" class="slide level2"><h2>Covariance Pattern Models</h2>
 <p>When attempting to impose some structure on the covariance, a subtle balance needs to be struck</p>
 <ul>
-<li><p>Too little structure means too many parameters means imprecise estimate (large variance)</p></li>
+<li><p>Too little structure means too many parameters to estimate, which means imprecise point estimate (large variance)</p></li>
 <li>
-<p>Too much structure means more opportunity for mis-specification means inaccurate estimate (large bias)</p>
+<p>Too much structure means more opportunity for mis-specification, which means inaccurate point estimate (large bias)</p>
 <ul>
 <li>Classic tradeoff between bias and variance</li>
 </ul>
@@ -449,7 +694,7 @@ October 22, 2024
 <p><span class="alert">Compound symmetry/exchangeable correlation</span> assumes:</p>
 <ul>
 <li><p>Correlation is the same across all observations in the cluster</p></li>
-<li><p><span class="alert">We saw this one before in lecture 2 and 4!</span></p></li>
+<li><p><span class="alert">We saw this one before in lectures 2, 4, and 5.1!</span></p></li>
 </ul>
 <p><span class="math display">\[\begin{bmatrix}
 1 &amp; \alpha &amp; \dots &amp; \alpha\\
@@ -457,11 +702,11 @@ October 22, 2024
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
 \alpha &amp; \dots &amp; \alpha &amp; 1
 \end{bmatrix}\]</span></p>
-<p>You’ll always be estimating a single correlation <span class="math inline">\(\alpha\)</span>, regardless of <span class="math inline">\(n\)</span></p>
+<p>You’ll always be estimating a single correlation <span class="math inline">\(\alpha\)</span>, regardless of cluster size <span class="math inline">\(n\)</span></p>
 <div class="fragment">
 <p>This pattern has strong assumptions (measurements are exchangeable)</p>
 <ul>
-<li><span class="alert">This is usually not valid with longitudinal data</span></li>
+<li><span class="alert">This may not be valid with longitudinal data</span></li>
 </ul>
 </div>
 </section><section id="toeplitz-correlation" class="slide level2"><h2>Toeplitz correlation</h2>
@@ -480,7 +725,7 @@ October 22, 2024
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
 \alpha_{n-1} &amp; \dots &amp; \alpha_1 &amp; 1
 \end{bmatrix}\]</span></p>
-<p>You’ll be estimating <span class="math inline">\((n-1)\)</span> correlations</p>
+<p>You’ll be estimating <span class="math inline">\((n-1)\)</span> correlation paramteres</p>
 <div class="fragment">
 <p><span class="alert">Only appropriate when measurements are (approximately) equally spaced!!</span></p>
 </div>
@@ -491,7 +736,7 @@ October 22, 2024
 </ul>
 <p><span class="math display">\[\begin{bmatrix}
 1 &amp; \alpha^1 &amp; \dots &amp; \alpha^{n-1}\\
-\alpha^1 &amp; \ddots &amp; \dots &amp; \alpha_{n-2}\\
+\alpha^1 &amp; \ddots &amp; \dots &amp; \alpha^{n-2}\\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
 \alpha^{n-1} &amp; \dots &amp; \alpha^1 &amp; 1
 \end{bmatrix}\]</span></p>
@@ -502,7 +747,7 @@ October 22, 2024
 </section><section id="unevenly-timed-observations" class="slide level2"><h2>Unevenly timed observations</h2>
 <p>All the structures we’ve looked at so far have assumed that our observed times points are approximately equally spaced</p>
 <ul>
-<li>This is appropriate when observations are things like hours, days, weeks, months, years…</li>
+<li>This is appropriate when we have a lot of control in observation timing…</li>
 </ul>
 <div class="fragment">
 <p>… But it’s not uncommon to have observation time points that <strong>aren’t</strong> always evenly spaced!</p>
@@ -540,8 +785,8 @@ October 22, 2024
 <div class="fragment">
 <p>The banded structure assumes correlation is 0 beyond some specified interval</p>
 <p>It is possible to apply a banded pattern to any of the correlation pattern models considered so far</p>
-<div class="r-stack">
-<div class="fragment fade-in-then-out">
+</div>
+<div class="fragment">
 <p>A banded Toeplitz structure with a band size of 3 looks like:</p>
 <p><span class="math display">\[\begin{bmatrix}
 1 &amp; \alpha_1 &amp; \alpha_2 &amp; 0 &amp; \dots &amp; 0\\
@@ -552,7 +797,14 @@ October 22, 2024
 0 &amp;&amp; \dots &amp;\alpha_2 &amp; \alpha_1 &amp; 1
 \end{bmatrix}\]</span></p>
 </div>
-<div class="fragment fade-in-then-out">
+</section><section id="banded-correlation-1" class="slide level2"><h2>Banded correlation</h2>
+<p>All of the previous structures have have required us to estimate some parameter for the off-diagonal matrix elements</p>
+<ul>
+<li>What if we know at some point the correlation between observations will go to 0? <span class="alert">Enter the banded structure!</span>
+</li>
+</ul>
+<p>The banded structure assumes correlation is 0 beyond some specified interval</p>
+<p>It is possible to apply a banded pattern to any of the correlation pattern models considered so far</p>
 <p>A banded autoregression structure with a band size of 4 looks like: <span class="math display">\[\begin{bmatrix}
 1 &amp; \alpha^1 &amp; \alpha^2 &amp; \alpha^3 &amp; 0 &amp; \dots &amp; 0\\
 \alpha^1 &amp; 1 &amp; \alpha^1 &amp; \alpha^2&amp; \ddots &amp; \dots &amp; 0\\
@@ -561,8 +813,14 @@ October 22, 2024
 \vdots &amp;&amp; \dots &amp;&amp; \ddots &amp;&amp; \vdots\\
 0 &amp;&amp; \dots &amp; \alpha^3&amp;\alpha^2 &amp; \alpha^1 &amp; 1
 \end{bmatrix}\]</span></p>
-</div>
-<div class="fragment fade-in">
+</section><section id="banded-correlation-2" class="slide level2"><h2>Banded correlation</h2>
+<p>All of the previous structures have have required us to estimate some parameter for the off-diagonal matrix elements</p>
+<ul>
+<li>What if we know at some point the correlation between observations will go to 0? <span class="alert">Enter the banded structure!</span>
+</li>
+</ul>
+<p>The banded structure assumes correlation is 0 beyond some specified interval</p>
+<p>It is possible to apply a banded pattern to any of the correlation pattern models considered so far</p>
 <p>A banded exponential structure with a band size of 4 looks like: <span class="math display">\[\begin{bmatrix}
 1 &amp; \alpha^{|t_{i1}-t_{i2}|} &amp; \alpha^{|t_{i1}-t_{i3}|} &amp; \alpha^{|t_{i1}-t_{i4}|} &amp; 0 &amp; \dots &amp; 0\\
 \alpha^{|t_{i1}-t_{i2}|} &amp; 1 &amp; \alpha^{|t_{i1}-t_{i2}|} &amp; \alpha^2&amp; \ddots &amp; \dots &amp; 0\\
@@ -571,12 +829,9 @@ October 22, 2024
 \vdots &amp;&amp; \dots &amp;&amp; \ddots &amp;&amp; \vdots\\
 0 &amp;&amp; \dots &amp; \alpha^{|t_{i1}-t_{i4}|}&amp;\alpha^{|t_{i1}-t_{i3}|} &amp; \alpha^{|t_{i1}-t_{i2}|} &amp; 1
 \end{bmatrix}\]</span></p>
-</div>
-</div>
-</div>
 </section><section id="choices-choices" class="slide level2"><h2>Choices, choices</h2>
 <p>With way more structures to choose from, it may be more difficult to make a decision than it was with non-longitudinal data</p>
-</section><section id="variograms" class="slide level2"><h2>Variograms</h2>
+</section><section id="variograms-save-this-for-diagnostics" class="slide level2"><h2>Variograms – save this for diagnostics</h2>
 <p>Variogram plots are one way to assess the how strong the</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(joineR)</span>

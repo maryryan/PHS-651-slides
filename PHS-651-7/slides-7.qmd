@@ -67,15 +67,35 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-7/slides-7"))
    
 ---
 
+## Recall: longitudinal data
+
+[Longitudinal data]{.alert} occur when a research participant is observed repeatedly through time
+
+- Primary goal of longitudinal data collection is to characterize [change in response over time]{.alert} and how factors/exposures impact that change
+
+What's wrong with a cross-sectional study?
+
+- Just asking a different kind of question!
+
+- Only observe how exposure impacts outcome at a particular moment
+
+- No understanding of whether outcome changed while exposure was applied or whether it was always low/high
+
+   - Correlation vs causation
+
+- Can maybe get at between-subject differences, but not within-subject change
+
+---
+
 ## Modeling the mean with repeated measures
 
-When dealing with non-longitudinal data, we (usually) have one primary type of research question for our models: "How does the outcome differ in exposure and non-exposure groups?"
+When dealing with non-longitudinal data, we (usually) have one primary type of research question for our models: *"How does the outcome differ in exposure and non-exposure groups?"*
 
-With longitudinal data, we may also be interested in a research question like this
+- With longitudinal data, we may also be interested in a research question like this
 
 . . .
 
-However, we need to be more specific about how we're comparing the outcome in the exposure groups
+However, we need to be more specific about [how we're comparing the outcome in the exposure groups]{.alert}
 
 - Differences in outcome at last measurement time?
 
@@ -102,7 +122,9 @@ With longitudinal data, we are usually interested one of several types of hypoth
 
 3. Presence/absence of exposure group-by-time interaction effect
 
-How do we model each of these hypotheses?
+[How do each of these 3 hypotheses match up to the 3 plots?]{.alert}
+
+[How do create a mean model each of these hypotheses?]{.fragment}
 :::
 
 
@@ -126,13 +148,15 @@ One of the most basic ways we might analyze longitudinal data is to try to model
 
 ## Hypothesis 1: Categorical time
 
-Longitudinal data repeatedly observes the outcome in an individual $i$ across $J$ measurement occasions: $Y_{ij}$
-
 One of the most basic ways we might analyze longitudinal data is to try to model how the outcome changes over time across the entire study population (not looking at exposure groups)
+
+Say we observe the outcome in an individual *i* across *J* measurement occasions: $Y_{ij}$
 
 One representation:
 
-$$E[Y_{ij}] = \beta_0 I(\text{Baseline}_i) + \beta_1 I(\text{Visit 1}_i) + \beta_2 I(\text{Visit 2}_i) + \dots \beta_J I(\text{Visit J}_i)$$
+$$E[Y_{ij}] = \beta_0 I(\text{Baseline}_i) + \beta_1 I(\text{Visit 1}_i) + \beta_2 I(\text{Visit 2}_i) + \dots \beta_J I(\text{Visit J}_i),$$
+
+where $I(\cdot)$ is an indicator function/dummy variable
 
 . . .
 
@@ -144,7 +168,7 @@ $$E[Y_{ij}] = \beta_0 I(\text{Baseline}_i) + \beta_1 I(\text{Visit 1}_i) + \beta
 
 ## Hypothesis 1: Categorical time
 
-Longitudinal data repeatedly observes the outcome in an individual $i$ across $J$ measurement occasions: $Y_{ij}$
+Say we observe the outcome in an individual *i* across *J* measurement occasions: $Y_{ij}$
 
 An alternative representation:
 
@@ -154,7 +178,7 @@ $$E[Y_{ij}] = \beta_0 + \beta_1 I(\text{Visit 1}_i) + \beta_2 I(\text{Visit 2}_i
 
 - $\beta_0$ represents the average outcome at baseline
 
-- All other regression coefficients represent the difference in average outcomes between a particular categorical time point and baseline 
+- All other regression coefficients represent the [difference]{.alert} in average outcomes between a particular categorical time point and baseline 
 
    - If $\beta_1 = \dots = \beta_J = 0$, the outcome is not changing across time
    
@@ -171,6 +195,8 @@ Neither representation makes an assumption about how outcomes change (or don't) 
 ::: {.fragment}
 Both representations assume that "visits" are happening at the same time for everyone (or are at least at comparable times)
 
+- No sense of "distance" between visits
+
 - What if this is not true?
 :::
 :::
@@ -180,9 +206,9 @@ Both representations assume that "visits" are happening at the same time for eve
 
 ## Hypothesis 1: Numerical time
 
-Longitudinal data repeatedly observes the outcome in an individual $i$ across $J$ measurement occasions: $Y_{ij}$
+Say we observe the outcome in an individual *i* across *J* measurement occasions: $Y_{ij}$
 
-If we let $\text{Time}_{ij}$ represent the exact time since study entry that participant $i$ is observed for visit $j$, could model as:
+If we let $\text{Time}_{ij}$ represent the exact time since study entry that participant *i* is observed for visit *j*, we could model as:
 
 $$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij})$$
 
@@ -190,7 +216,7 @@ $$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij})$$
 
 - $\beta_0$ represents the average outcome at baseline (0 time since study entry)
 
-- $\beta_1$ represents average difference in outcomes comparing measurements 1 time unit apart
+- $\beta_1$ represents average difference in outcomes comparing measurements [1 time unit apart]{.alert}
 
    - If $\beta_1 = 0$, the outcome is not changing across time
    
@@ -200,7 +226,7 @@ $$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij})$$
 
 ## Hypothesis 1: Numerical time
 
-If we let $\text{Time}_{ij}$ represent the exact time since study entry that participant $i$ is observed for visit $j$, could model as:
+If we let $\text{Time}_{ij}$ represent the exact time since study entry that participant *i* is observed for visit *j*, could model as:
 
 $$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij})$$
 
@@ -210,11 +236,11 @@ $$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij})$$
 
 :::: {.columns}
 ::: {.column width="60%"}
-::: {.fragment}
-This makes strong assumption that the outcome is linearly associated with time
+This makes strong assumption that the outcome is [linearly]{.alert} associated with time
 
 - Will see same change in outcome whether we're comparing outcomes at Baseline vs week 1 or at week 10 vs week 11
 
+::: {.fragment}
 - Could alter this assumption by adding polynomial time effects:
 
    - e.g., Quadratic time effect: $E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij}) + \beta_2 (\text{Time}_{ij})^2$
@@ -224,6 +250,8 @@ This makes strong assumption that the outcome is linearly associated with time
 ::: {.column width="40%"}
 ::: {.fragment}
 Makes no assumption about timing of observations across participants/clusters
+
+- "Smooths out" timing irregularities
 :::
 :::
 ::::
@@ -234,7 +262,7 @@ Makes no assumption about timing of observations across participants/clusters
 
 Now we might want to compare outcomes between exposure groups
 
-- Let $U_{i0}$ be an exposure indicator for participant $i$, collected at baseline
+- Let $U_{i0}$ be an exposure indicator for participant *i*, collected at baseline
 
 [How might we model this?]{.alert}
 
@@ -244,7 +272,7 @@ Now we might want to compare outcomes between exposure groups
 
 Now we might want to compare outcomes between exposure groups
 
-- Let $U_{i0}$ be an exposure indicator for participant $i$, collected at baseline
+- Let $U_{i0}$ be an exposure indicator for participant *i*, collected at baseline
 
 For illustration, assume we want to fit a linear effect for numerically-observed time:
 
@@ -266,6 +294,8 @@ We could generalize this to let exposure group membership change with time: $U_{
 
 $$E[Y_{ij}] = \beta_0 + \beta_1 (U_{ij}) + \beta_2 (\text{Time}_{ij})$$
 
+. . .
+
 - $\beta_1$ now represents effect of exposure, when exposure is not tied to a study time
 
 . . .
@@ -282,7 +312,7 @@ Both representations assume that the effect of exposure is constant across time
 
 Now we might want to compare change in outcomes over time between exposure groups
 
-- Let $U_{i0}$ be an exposure indicator for participant $i$ collected at baseline, and assume we want to fit a linear effect for numerically-observed time:
+- Let $U_{i0}$ be an exposure indicator for participant *i* collected at baseline, and assume we want to fit a linear effect for numerically-observed time:
 
 $$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 (U_{i0} \times\text{Time}_{ij})$$
 
@@ -308,7 +338,7 @@ $$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 
 
 Now we might want to compare change in outcomes over time between exposure groups
 
-- Let $U_{i0}$ be an exposure indicator for participant $i$ collected at baseline, and assume we want to fit a linear effect for numerically-observed time:
+- Let $U_{i0}$ be an exposure indicator for participant *i* collected at baseline, and assume we want to fit a linear effect for numerically-observed time:
 
 $$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 (U_{i0} \times\text{Time}_{ij})$$
 
@@ -330,7 +360,7 @@ $$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 
 
 Now we might want to compare change in outcomes over time between exposure groups
 
-- Let $U_{i0}$ be an exposure indicator for participant $i$ collected at baseline, and assume we want to fit a linear effect for numerically-observed time:
+- Let $U_{i0}$ be an exposure indicator for participant *i* collected at baseline, and assume we want to fit a linear effect for numerically-observed time:
 
 $$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 (U_{i0} \times\text{Time}_{ij})$$
 
@@ -352,7 +382,9 @@ $$E[Y_{ij}] = \beta_0 + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \b
 
    - $\beta_1$ interpreted as expected difference in outcome between exposure groups [at baseline]{.alert}
 
-. . .
+---
+
+## Adjusting for baseline outcomes
 
 2. Keep $Y_{i0}$ as part of the outcome vector, and use time and group-by-time interaction as adjustment variables (no group variable)
 
@@ -370,7 +402,7 @@ $$E[Y_{ij}] = \beta_0 + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times
 
 $$E[Y_{ij} - Y_{i0}] = \beta_0 + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})$$
 
-   - $(\beta_1 + \beta_3)$ interpreted as expected difference in the change-from-baseline outcomes between exposure groups [conditional on follow-up time]{.alert}
+   - $(\beta_1 + \beta_3)$ interpreted as expected difference in the change-from-baseline outcomes between exposure groups [at same follow-up time]{.alert} (conditional on follow-up time)
    
    - $\beta_0$ only meaningful if choose another reference time besides baseline (because change from baseline at time 0 is 0 for everyone)
 
@@ -382,9 +414,9 @@ $$E[Y_{ij} - Y_{i0}] = \beta_0 + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{
 
 $$E[Y^*_{ij}] = \beta_0 + \beta_{\text{baseline}}(Y_{i0}) + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})$$
 
-   - $\beta_1$ interpreted as expected difference in outcome between exposure groups at follow up time 1, who had the same baseline outcomes
+   - $(\beta_1 + \beta_3)$ interpreted as expected difference in outcome between exposure groups at same follow-up time, [who had the same baseline outcomes]{.alert}
    
-   - $\beta_0$ only included if choose another reference time besides baseline
+   - $\beta_0$ only meaningful if choose another reference time besides baseline
    
    - Assumes group means at baseline are equal (no baseline-by-group effect) $\rightarrow$ [bad assumption]{.alert} for observational studies
 
@@ -392,9 +424,9 @@ $$E[Y^*_{ij}] = \beta_0 + \beta_{\text{baseline}}(Y_{i0}) + \beta_1 (\text{U}_{i
 
 ## Longitudinal covariance/correlation structures
 
-Now that we have time handled in the mean model, how does it affect covariance/correlation structures
+Now that we have time handled in the mean model, we can think about how longitudinal data affects covariance/correlation structures
 
-Previously we lightly touched on correlation structures for clustered, non-longitudinal data
+Previously we touched on some basic correlation structures for clustered, non-longitudinal data
 
 - Remember: independence, exchangeable, unstructured from Lectures 4 and 5.1
 
@@ -406,11 +438,85 @@ With longitudinal data, there are a much wider range of potential structures
 
 ---
 
-## Unstructured covariance
+## Longitudinal covariance/correlation structures
 
-We'll fit an unstructured covariance structure here to show how correlation tends to behave in (very balanced, not enormous) longitudinal data
+As an illustration, we'll use data are from a study of dental growth measurements
 
-Maybe also try a 2nd one where there's way bigger cluster sizes - might also save this for tutorial lecture
+- Distance (mm) from the center of the pituitary gland to the pteryomaxillary fissure were obtained on 11 girls and 16 boys at ages 8, 10, 12, and 14
+
+```{r dental data, echo=F}
+dental <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/dental-data.txt", sep="")
+colnames(dental) <- c("ID", "Gender", "age8", "age10", "age12", "age14")
+glimpse(dental)
+```
+
+---
+
+## Unstructured covariance/correlation
+
+:::: {.columns}
+::: {.column width="50%"}
+Let's look at what the "raw" covariance matrix for this data looks like:
+
+```{r dental cov, echo=F}
+dental %>% select(age8,age10,age14) %>% cov()
+```
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+and the "raw" correlation matrix:
+
+```{r dental cor, echo=F}
+library(corrr)
+dental %>% select(age8,age10,age14) %>% correlate(diagonal = 1)
+```
+:::
+:::
+::::
+
+. . .
+
+[What do we see?]{.alert}
+
+---
+
+## Unstructured covariance/correlation
+
+:::: {.columns}
+::: {.column width="50%"}
+Let's look at what the "raw" covariance matrix for this data looks like:
+
+```{r dental cov2, echo=F}
+dental %>% select(age8,age10,age14) %>% cov()
+```
+:::
+
+::: {.column width="50%"}
+and the "raw" correlation matrix:
+
+```{r dental cor2, echo=F}
+library(corrr)
+dental %>% select(age8,age10,age14) %>% correlate(diagonal = 1)
+```
+:::
+::::
+
+Using an unstructured correlation/covariance structure gives us the most flexibility/robustness because we make no assumptions about what patterns we should be seeing
+
+. . .
+
+But...
+
+- only appropriate when data is [balanced]{.alert}
+
+   - How would we event create the covariance matrix if measurement times aren't standardized?
+
+- hard to estimate when there are lots of measurement visits/occasions
+
+. . .
+
+In these cases, it is often helpful to impose a [structure]{.alert} on the covariance/correlation
 
 ---
 
@@ -422,7 +528,7 @@ When attempting to impose some structure on the covariance, a subtle balance nee
 
 - Too much structure means more opportunity for mis-specification, which means inaccurate point estimate (large bias)
 
-   - Classic tradeoff between bias and variance
+   - Classic trade-off between bias and variance
    
 Covariance pattern models have their basis in models for serial correlation originally developed for time series data
 
@@ -498,6 +604,46 @@ Means less correlation for measurements taken farther apart; but [only appropria
 
 ---
 
+## Covariance matrices
+
+To get the covariance matrix under any of these patters, we multiply them by the outcome variance, $\sigma^2$:
+
+$$\sigma^2\begin{bmatrix}
+1 & \alpha & \dots & \alpha\\
+\alpha & \ddots & \dots & \alpha\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha & \dots & \alpha & 1
+\end{bmatrix}
+~~~~~~\sigma^2 \begin{bmatrix}
+1 & \alpha_1 & \dots & \alpha_{n-1}\\
+\alpha_1 & \ddots & \dots & \alpha_{n-2}\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha_{n-1} & \dots & \alpha_1 & 1
+\end{bmatrix}
+~~~~~~\sigma^2 \begin{bmatrix}
+1 & \alpha^1 & \dots & \alpha^{n-1}\\
+\alpha^1 & \ddots & \dots & \alpha^{n-2}\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha^{n-1} & \dots & \alpha^1 & 1
+\end{bmatrix}$$
+
+. . .
+
+If we wanted to consider variances that vary across time, $Var[Y_{ij}] = \sigma^2_j$, we could do that as well
+
+- These are called [heterogeneous]{.alert} covariance patterns
+
+- Example - heterogeneous compound symmetry covariance pattern:
+
+$$\begin{bmatrix}
+\sigma^2_1 & \alpha\sigma_1\sigma_2 & \dots & \alpha\sigma_1\sigma_n\\
+\alpha\sigma_1\sigma_2 & \ddots & \dots & \alpha\sigma_2\sigma_n\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha\sigma_1\sigma_n & \dots & \alpha\sigma_n\sigma_{n-1} & \sigma^2_n
+\end{bmatrix}$$
+
+---
+
 ## Unevenly timed observations
 
 All the structures we've looked at so far have assumed that our observed times points are approximately equally spaced
@@ -520,7 +666,7 @@ How do we handle this?
 
 When measurement occasions are not equally-spaced over time, we can the autoregressive model can be generalized
 
-- Let $\{t_{i1}, t_{i2}, \dots, t_{in_i}\}$ denote the observation times for the $i$th individual
+- Let $\{t_{i1}, t_{i2}, \dots, t_{in_i}\}$ denote the observation times for the *i*th individual
 
 . . .
 
@@ -610,53 +756,107 @@ $$\begin{bmatrix}
 
 With way more structures to choose from, it may be more difficult to make a decision than it was with non-longitudinal data
 
+- Choice of model for covariance should be based on a ["maximal" model]{.alert} for the mean that minimizes any potential misspecification
+
+- Maximal mean model should be in a certain sense the most elaborate model for the mean response that we would consider from a subject-matter point of view
+
+Once maximal model has been chosen, residual variation and covariation can be used to select appropriate model for covariance
+
+- For nested covariance pattern models, a likelihood ratio test statistic can be constructed that compares "full" and "reduced" models
 
 ---
 
-## Variograms -- save this for diagnostics
+## Covariance pattern likelihood ratio test
 
-Variogram plots are one way to assess the how strong the 
-```{r cd4, echo=F}
-cd4 <- read.csv("~/Desktop/teaching/PHS-651/data/Gelman-data/cd4/allvar.csv",header=T)
+For example, compound symmetry model is special case of the Toeplitz model with
+$$\rho_1 = \rho_2 =\dots =\rho_{n-1}$$
 
-cd4 <- cd4 %>% 
-   as.data.frame() %>% 
-   dplyr::filter(treatmnt==1) %>% 
-   rename(age_baseline = baseage,
-          age = visage) %>% 
-   mutate(time = age - age_baseline) %>% 
-   select(!(treatmnt))
+[Likelihood ratio test]{.alert} is obtained by taking twice the difference in the respective maximized REML log-likelihoods,
+$$G^2 = 2(\hat{l}_{full} - \hat{l}_{reduced})$$
+and comparing statistic to a chi-squared distribution with degrees-of-freedom equal to difference between the number of covariance parameters in full and reduced models
 
+- "Full" here would be the most complicated covariance structure, while reduced would be a simpler one
+
+---
+
+## Covariance pattern AIC
+
+To compare non-nested model, an alternative approach is the Akaike Information Criterion (AIC)
+
+- According to the AIC, given a set of competing models for the covariance, one should select the model that [minimizes]{.alert}
+
+$$AIC = -2(\text{maximized log-likelihood}) + 2(\text{number of parameters})$$
+
+
+Note that models receive a pentality for having a larger number of parameters
+
+---
+
+## Example: Exercise Therapy Trial
+
+Subjects were assigned to one of two weightlifting programs to increase muscle strength
+
+- Treatment 1: number of repetitions of the exercises was increased as subjects became stronger
+
+- Treatment 2: number of repetitions was held constant but amount of weight was increased as subjects became stronger
+
+Measurements of body strength were taken at baseline and on days 2, 4, 6, 8, 10, and 12
+
+- We'll focus only on measures of strength obtained at baseline (or day 0) and on days 4, 6, 8, and 12
+
+---
+
+## Example: Exercise Therapy Trial
+
+What do we observe?
+
+- Covariance matrix:
+```{r exercise, echo=F}
+exercise <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/exercise-data.txt", sep="", na.strings=".")
+colnames(exercise) <- c("ID", "PROGRAM", "day0","day2", "day4", "day6", "day8", "day10", "day12")
+
+exercise %>% select(day0, day4, day6, day8, day12) %>% cov(use="pairwise.complete.obs")
 ```
 
-```{r variogram, fig.align='center', fig.height=8.5, fig.width=15}
-library(joineR)
-library(splines)
-
-# fit outcome against time with some splines #
-fit <- lm( sqrt(CD4PCT) ~ ns( time, knots=c(0.5, 1, 1.5)),
-           data=cd4)
-
-# find the residuals #
-resids <- residuals( fit )
-
-# calculate the variogram #
-vario <- variogram( indv = cd4$newpid,
-                    time = cd4$time,
-                    Y = resids )
-
-# only take the complete cases #
-vario$svar <- vario$svar[complete.cases(vario$svar),]
-
-# plot variogram #
-plot( vario$svar[,1], vario$svar[,2], pch=".", ylim=c(0, 1.2*var(resids)),
-      cex=4, cex.axis=2, cex.lab=2)
-
-# smooth line of variogram over time #
-lines( smooth.spline(vario$svar[,1], vario$svar[,2],df=3), lwd=3 )
-
-# show where the total variation is #
-abline(h=var(resids), lty=2, lwd=3)
-
+- Correlation matrix:
+```{r exercise2, echo=F}
+exercise %>% select(day0, day4, day6, day8, day12) %>% correlate(diagonal = 1)
 ```
 
+---
+
+## Example: Exercise Therapy Trial
+
+Let's compare what model fit would look like using an unstructured, autoregressive, and exponential covariance model for the mean model:
+
+$$E[\text{body strength}_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Program}_i \times \text{Time}_{ij})$$
+
+![](compare-covar.png){width="55%"}
+
+- There is a hierarchy among the models: autoregressive and exponential are both nested within unstructured
+
+- The autoregressive and exponential models are not nested but have the same number of parameters
+
+---
+
+## Example: Exercise Therapy Trial
+
+LRT comparing autoregressive vs unstructured covariance:
+
+![](autoreg.png){width="55%"}
+
+- There is evidence that the autoregressive model does not provide an adequate fit to the covariance
+
+---
+
+## Example: Exercise Therapy Trial
+
+LRT comparing exponential vs unstructured covariance:
+
+![](exponential.png){width="65%"}
+
+- Exponential covariance provides an adequate fit to the data
+
+- Also, in terms of AIC, the exponential model minimizes this criterion
+
+![](compare-covar.png){width="55%"}

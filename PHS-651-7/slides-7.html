@@ -538,7 +538,13 @@ October 22 &amp; 24, 2024
 <div class="fragment">
 <ul>
 <li>
-<span class="math inline">\(\beta_1\)</span> now represents effect of exposure, when exposure is not tied to a study time</li>
+<p>We must be extra careful here with our interpretation of <span class="math inline">\(\beta_1\)</span></p>
+<ul>
+<li>
+<span class="math inline">\(\beta_1\)</span> only maintains its causal interpretation if <span class="math inline">\(U_{i(j+1)}\)</span> is not predicted by <span class="math inline">\(Y_{ij}\)</span> give <span class="math inline">\(U_{ij}\)</span>; otherwise, we say that <span class="math inline">\(Y_{ij}\)</span> <span class="alert">confounds</span> the relationship between <span class="math inline">\(Y_{i(j+1)}\)</span> and <span class="math inline">\(U_{i(j+1)}\)</span>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="fragment">

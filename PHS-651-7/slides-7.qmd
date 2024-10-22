@@ -296,7 +296,9 @@ $$E[Y_{ij}] = \beta_0 + \beta_1 (U_{ij}) + \beta_2 (\text{Time}_{ij})$$
 
 . . .
 
-- $\beta_1$ now represents effect of exposure, when exposure is not tied to a study time
+- We must be extra careful here with our interpretation of $\beta_1$
+
+   - $\beta_1$ only maintains its causal interpretation if $U_{i(j+1)}$ is not predicted by $Y_{ij}$ give $U_{ij}$; otherwise, we say that $Y_{ij}$ [confounds]{.alert} the relationship between $Y_{i(j+1)}$ and $U_{i(j+1)}$
 
 . . .
 

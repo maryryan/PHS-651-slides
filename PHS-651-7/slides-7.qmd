@@ -790,7 +790,7 @@ To compare non-nested model, an alternative approach is the Akaike Information C
 $$AIC = -2(\text{maximized log-likelihood}) + 2(\text{number of parameters})$$
 
 
-Note that models receive a pentality for having a larger number of parameters
+Note that models receive a penalty for having a larger number of parameters
 
 ---
 

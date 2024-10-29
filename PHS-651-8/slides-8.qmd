@@ -67,17 +67,51 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-8/slides-8"))
 
 ---
 
+## Concepts to action
+
+Last week we talked about how longitudinal data can impact how we formulate our [mean model]{.alert}
+
+- Need to include [time]{.alert} as a regression coefficient
+
+- May be interested in exposure-by-time [interaction]{.alert}
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (t_{ij}) + \beta_3 (U_{i0} \times t_{ij})$$
+
+. . .
+
+We also talked about how it impacts our [correlation/covariance matrix]{.alert}, and the types of correlation structures that may be appropriate
+
+- Exchangeable, Toeplitz, autoregressive, exponential, unstructured...
+
+. . .
+
+But how do we apply correlation/covariance structures to a modeling framework?
+
+. . .
+
+- Two ways:
+
+   1. Adding (additional) random effects to a mixed model to induce a correlation/covariance structure
+   
+   2. Directly applying the correlation structure to the covariance matrix in a GEE [- we'll start here]{.fragment .alert}
+
+---
+
 ## Recap: Non-longitudinal GEEs
 
 Recall: a GEE has 2 main components
 
 1. Marginal expectation of the outcome ("the mean model"): $E[Y_{ij}|X_{ij}]=\mu_{ij}$
 
-2.1 The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
+<br>
 
-2.2 The within-cluster association of the outcome ("correlation structure")
+2. The covariance of the outcome $V_i$
 
-We can combine 2.1 and 2.2 to create the working covariance matrix $V_i$
+   2.1 The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
+   
+   <br>
+   
+   2.2 The within-cluster association of the outcome ("correlation structure")
 
 ---
 
@@ -85,7 +119,7 @@ We can combine 2.1 and 2.2 to create the working covariance matrix $V_i$
 
 We can easily extend this framework to longitudinal data
 
-[How would we modify each of the components?]{.alert}
+[How would we modify each of the components for longitudinal data?]{.alert}
 
 1. Marginal expectation of the outcome
 
@@ -115,13 +149,13 @@ We can easily extend this framework to longitudinal data
 
    - Simply add time (and possibly exposure-by-time interactions) to the mean model
 
-$$g(E[Y_{ij}]) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + \beta_3(U_{i0} \times \text{Time}_{ij})$$
+$$g(E[Y_{ij}]) = \beta_0 + \beta_1U_{i0} + \beta_2(t_{ij}) + \beta_3(U_{i0} \times t_{ij})$$
 
 . . .
 
 2.1 The marginal variance of the outcome
 
-   - Will probably stay the same, unless we want different variances at different time ppints
+   - Will probably stay the same, unless we want different variances at different time points (heterogeneous variance)
 
 $$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
 
@@ -150,7 +184,7 @@ Due to its distributional assumptions, doing the same extension for GLMMs is sli
 ## Recap: Non-longitudinal GLMMs
 
 Recall the random effects model we used for non-longitudinal clustered data:
-$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}$$
 
 - Where we assumed that each cluster had it's own cluster-specific mean ($\beta_0 + b_{0i}$) that varied by some $b_{0i}$ around the overall sample mean $\beta_0$
 
@@ -158,7 +192,7 @@ $$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$
 
 . . .
 
-The random intercept induced an exchangeable covariance matrix:
+The random intercept induced an [exchangeable]{.alert} covariance matrix:
 $$\begin{align*}Var[\vec{Y}_i] &= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
 &=\begin{bmatrix}
 \sigma^2_b & \sigma^2_b & \dots & \sigma^2_b\\
@@ -179,18 +213,52 @@ $$\begin{align*}Var[\vec{Y}_i] &= [\text{cluster-to-cluster variation}] + [\text
 
 ---
 
+## Recap: Non-longitudinal GLMMs
+
+Recall the random effects model we used for non-longitudinal clustered data:
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}$$
+
+- Where we assumed that each cluster had it's own cluster-specific mean ($\beta_0 + b_{0i}$) that varied by some $b_{0i}$ around the overall sample mean $\beta_0$
+
+- We called $b_{i0}$ the [random intercept]{.alert}
+
+:::: {.columns}
+::: {.column width="50%"}
+We could also express the covariance matrix using matrix notation:
+$$Cov[\vec{Y}_i] = \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \sigma^2_\epsilon \boldsymbol{I}$$
+
+- This assumes:
+$$b_{i0} \sim N(0, \sigma^2_b) ~~~~~~~ \epsilon_{ij} \sim N(0, \sigma^2_{\epsilon})$$
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+Or more generally:
+$$Cov[\vec{Y}_i] = \vec{Z}_i\boldsymbol{G}\vec{Z}_i^T + \boldsymbol{R_i}$$
+:::
+:::
+::::
+
+---
+
 ## Longitudinal GLMMs
 
-Extending the random effects model longitudinal data:
-$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}$$
+Extending the random effects model longitudinal data (could also include interaction):
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(t_{ij}) + b_{0i}Z_i+\epsilon_{ij}$$
 
 what is the interpretation of:
 
 - $\beta_0$:
 
+<br>
+
 - $\beta_0 + b_{0i}$:
 
+<br>
+
 - $\beta_1$:
+
+<br>
 
 - $\beta_2$:
 
@@ -199,30 +267,36 @@ what is the interpretation of:
 ## Longitudinal GLMMs
 
 Extending the random effects model longitudinal data:
-$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}$$
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(t_{ij}) + b_{0i}Z_i+\epsilon_{ij}$$
 
-The random intercept still induces an exchangeable covariance matrix:
+:::: {.columns}
+::: {.column width="50%"}
+The random intercept still induces an [exchangeable]{.alert} covariance matrix:
 $$Var[\vec{Y}_i] =\begin{bmatrix}
 \sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
 \sigma^2_b & \ddots & \dots & \sigma^2_b\\
 \vdots & \dots & \ddots & \vdots\\
 \sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
 \end{bmatrix}$$
+:::
 
-This assumes that every member of cluster $i$ has the same relationship to one another (same correlation)
+::: {.column width="50%"}
+This assumes that every member of cluster $i$ has the same relationship to one another ([same correlation]{.alert}): $\sigma^2_b/(\sigma^2_b + \sigma^2_\epsilon)$
 
-. . .
+::: {.fragment}
+- In longitudinal data, though, cluster $i$ is a single person and the "members" of the cluster are observations collected at [separate time points]{.alert}
 
-- In longitudinal data, though, cluster $i$ is a single person and the "members" of the cluster are observations collected at separate time points
-
-- An observation collected at time 1 may relate to observations at times 2 and 3 differently
+- An observation collected at time 1 may relate to observations at times 2 and 3 [differently]{.alert}
+:::
+:::
+::::
 
 ---
 
 ## Longitudinal GLMMs
 
 Extending the random effects model longitudinal data:
-$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}$$
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(t_{ij}) + b_{0i}Z_i+\epsilon_{ij}$$
 
 Additionally, inclusion of only [random intercepts]{.alert} assumes that, though everyone's may randomly vary around some global baseline, everyone has the [same outcome trajectory]{.alert} over time
 
@@ -234,7 +308,7 @@ Additionally, inclusion of only [random intercepts]{.alert} assumes that, though
 ::: {.column width="50%"}
 - Different issue from exposure-by-time interaction
 
-[One solution would be to allow for each cluster to have [variation in its slope]{.alert} as well]{.fragment}
+[One solution would be to allow for each cluster (person) to have [variation in its slope]{.alert} as well]{.fragment}
 
 [- Random slopes and intercepts!]{.alert .fragment}
 :::
@@ -244,9 +318,9 @@ Additionally, inclusion of only [random intercepts]{.alert} assumes that, though
 
 ## Random slope and intercept model
 
-Consider a model with intercepts and slopes that vary randomly among individuals:
+Consider a model with intercepts [and slopes]{.alert} that vary randomly among individuals:
 
-$$g(Y_{ij}) = \beta_0 + t_{ij}\beta_1 + U_{i0}\beta_2 + Z_i0b_{i0} + t_{ij}b_{i1} + e_{ij}$$
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{i0}Z_{i0} + b_{i1}t_{ij} + e_{ij}$$
 
 - This model suggests that individuals vary not only in their baseline level of response (when $t_{i1} = 0$), but also in terms of their changes in the response over time
 
@@ -256,15 +330,13 @@ $$g(Y_{ij}) = \beta_0 + t_{ij}\beta_1 + U_{i0}\beta_2 + Z_i0b_{i0} + t_{ij}b_{i1
 
 ## Random slope and intercept model
 
-Consider a model with intercepts and slopes that vary randomly among individuals:
+Consider a model with intercepts [and slopes]{.alert} that vary randomly among individuals:
 
-$$g(Y_{ij}) = \beta_0 + t_{ij}\beta_1 + U_{i0}\beta_2 + Z_i0b_{i0} + t_{ij}b_{i1} + e_{ij}$$
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{i0}Z_{i0} + b_{i1}t_{ij} + \epsilon_{ij}$$
 
 Here we assume:
 
-$$b_{i0} \sim N(0, \sigma^2_{b0})$$
-$$b_{i1} \sim N(0, \sigma^2_{b1})$$
-$$\epsilon_{ij} \sim N(0, \sigma^2_\epsilon)$$
+$$b_{i0} \sim N(0, \sigma^2_{b0}) ~~~~~ b_{i1} \sim N(0, \sigma^2_{b1}) ~~~~~ \epsilon_{ij} \sim N(0, \sigma^2_\epsilon)$$
 
 . . .
 
@@ -277,9 +349,7 @@ $$Cov[b_{i0}, b_{i1}] = \sigma_{b0,b1}$$
 
 ## Variance/covariance of random effects
 
-In general, any component of $\beta$ can be allowed to vary randomly by simply including corresponding covariate in $Z_{ij}$
-
-- The vector of random effects, $\vec{b}_i$, are assumed to have a multivariate normal distribution with mean zero and covariance matrix $\boldsymbol{G}$
+In fact, the vector of random effects, $\vec{b}_i$, are assumed to have a [multivariate normal distribution]{.alert} with mean zero and covariance matrix $\boldsymbol{G}$
 
 $$\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})$$
 
@@ -287,6 +357,10 @@ For example, in the random intercepts and slopes model considered earlier
 $$\begin{bmatrix}
 \sigma^2_{b0} & \sigma_{b0,b1}\\
 \sigma_{b0,b1} &  \sigma^2_{b1}\end{bmatrix}$$
+
+. . .
+
+In general, any component of $\beta$ can be allowed to vary randomly by simply including the corresponding covariate in $\vec{Z}_{ij}$
 
 ---
 
@@ -342,5 +416,38 @@ $$Cov[Y_{ij}, Y_{ik}] = \sigma^2_{b1} + (t_{ij} + t_{ik})\sigma_{b0,b1} + t_{ij}
 
 ---
 
+## Random effects & correlation structures
+
+When we just had random intercepts it was very clear how this created an exchangeable correlation/covariance matrix
+
+. . .
+
+[Do we get a similar result when we add random slopes?]{.alert}
+
+. . .
+
+- Kind of
+
+. . .
+
+Adding random slopes induces something like an [exponential]{.alert} correlation structure
+
+- Correlation between observations within an individual gets smaller the further apart in time the observations are
+
+Let's see this in action with an example
+
+---
+
+## Example: 
+
+---
+
+## Structures on $\boldsymbol{R_i}$
+
+Up until now we've assumed that the $\epsilon_{ij}$ errors are independent within an individual: $\sigma^2_\epsilon \boldsymbol{I}$
+
+- This assumes [constant variance]{.alert} across time
+
+- This is the most common type of structure to assume
 
 

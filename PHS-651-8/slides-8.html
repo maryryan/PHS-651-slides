@@ -356,18 +356,50 @@ October 29, 2024
 </div>
 </div>
 </div>
+</section><section id="concepts-to-action" class="slide level2"><h2>Concepts to action</h2>
+<p>Last week we talked about how longitudinal data can impact how we formulate our <span class="alert">mean model</span></p>
+<ul>
+<li><p>Need to include <span class="alert">time</span> as a regression coefficient</p></li>
+<li><p>May be interested in exposure-by-time <span class="alert">interaction</span></p></li>
+</ul>
+<p><span class="math display">\[E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (t_{ij}) + \beta_3 (U_{i0} \times t_{ij})\]</span></p>
+<div class="fragment">
+<p>We also talked about how it impacts our <span class="alert">correlation/covariance matrix</span>, and the types of correlation structures that may be appropriate</p>
+<ul>
+<li>Exchangeable, Toeplitz, autoregressive, exponential, unstructured…</li>
+</ul>
+</div>
+<div class="fragment">
+<p>But how do we apply correlation/covariance structures to a modeling framework?</p>
+</div>
+<div class="fragment">
+<ul>
+<li>
+<p>Two ways:</p>
+<ol type="1">
+<li><p>Adding (additional) random effects to a mixed model to induce a correlation/covariance structure</p></li>
+<li><p>Directly applying the correlation structure to the covariance matrix in a GEE <span class="fragment alert">- we’ll start here</span></p></li>
+</ol>
+</li>
+</ul>
+</div>
 </section><section id="recap-non-longitudinal-gees" class="slide level2"><h2>Recap: Non-longitudinal GEEs</h2>
 <p>Recall: a GEE has 2 main components</p>
 <ol type="1">
 <li>Marginal expectation of the outcome (“the mean model”): <span class="math inline">\(E[Y_{ij}|X_{ij}]=\mu_{ij}\)</span>
 </li>
 </ol>
+<p><br></p>
+<ol start="2" type="1">
+<li>
+<p>The covariance of the outcome <span class="math inline">\(V_i\)</span></p>
 <p>2.1 The marginal variance of the outcome: <span class="math inline">\(Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})\)</span></p>
+<p><br></p>
 <p>2.2 The within-cluster association of the outcome (“correlation structure”)</p>
-<p>We can combine 2.1 and 2.2 to create the working covariance matrix <span class="math inline">\(V_i\)</span></p>
-</section><section id="longitudinal-gees" class="slide level2"><h2>Longitudinal GEEs</h2>
+</li>
+</ol></section><section id="longitudinal-gees" class="slide level2"><h2>Longitudinal GEEs</h2>
 <p>We can easily extend this framework to longitudinal data</p>
-<p><span class="alert">How would we modify each of the components?</span></p>
+<p><span class="alert">How would we modify each of the components for longitudinal data?</span></p>
 <ol type="1">
 <li>Marginal expectation of the outcome</li>
 </ol>
@@ -386,11 +418,11 @@ October 29, 2024
 </ul>
 </li>
 </ol>
-<p><span class="math display">\[g(E[Y_{ij}]) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + \beta_3(U_{i0} \times \text{Time}_{ij})\]</span></p>
+<p><span class="math display">\[g(E[Y_{ij}]) = \beta_0 + \beta_1U_{i0} + \beta_2(t_{ij}) + \beta_3(U_{i0} \times t_{ij})\]</span></p>
 <div class="fragment">
 <p>2.1 The marginal variance of the outcome</p>
 <ul>
-<li>Will probably stay the same, unless we want different variances at different time ppints</li>
+<li>Will probably stay the same, unless we want different variances at different time points (heterogeneous variance)</li>
 </ul>
 <p><span class="math display">\[Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})\]</span></p>
 </div>
@@ -408,13 +440,13 @@ October 29, 2024
 </ul>
 <p>Due to its distributional assumptions, doing the same extension for GLMMs is slightly more involved…</p>
 </section><section id="recap-non-longitudinal-glmms" class="slide level2"><h2>Recap: Non-longitudinal GLMMs</h2>
-<p>Recall the random effects model we used for non-longitudinal clustered data: <span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p>Recall the random effects model we used for non-longitudinal clustered data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
 <ul>
 <li><p>Where we assumed that each cluster had it’s own cluster-specific mean (<span class="math inline">\(\beta_0 + b_{0i}\)</span>) that varied by some <span class="math inline">\(b_{0i}\)</span> around the overall sample mean <span class="math inline">\(\beta_0\)</span></p></li>
 <li><p>We called <span class="math inline">\(b_{i0}\)</span> the <span class="alert">random intercept</span></p></li>
 </ul>
 <div class="fragment">
-<p>The random intercept induced an exchangeable covariance matrix: <span class="math display">\[\begin{align*}Var[\vec{Y}_i] &amp;= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
+<p>The random intercept induced an <span class="alert">exchangeable</span> covariance matrix: <span class="math display">\[\begin{align*}Var[\vec{Y}_i] &amp;= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
 &amp;=\begin{bmatrix}
 \sigma^2_b &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
 \sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
@@ -432,31 +464,68 @@ October 29, 2024
 \sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \sigma^2_\epsilon
 \end{bmatrix}\end{align*}\]</span></p>
 </div>
+</section><section id="recap-non-longitudinal-glmms-1" class="slide level2"><h2>Recap: Non-longitudinal GLMMs</h2>
+<p>Recall the random effects model we used for non-longitudinal clustered data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
+<ul>
+<li><p>Where we assumed that each cluster had it’s own cluster-specific mean (<span class="math inline">\(\beta_0 + b_{0i}\)</span>) that varied by some <span class="math inline">\(b_{0i}\)</span> around the overall sample mean <span class="math inline">\(\beta_0\)</span></p></li>
+<li><p>We called <span class="math inline">\(b_{i0}\)</span> the <span class="alert">random intercept</span></p></li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>We could also express the covariance matrix using matrix notation: <span class="math display">\[Cov[\vec{Y}_i] = \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \sigma^2_\epsilon \boldsymbol{I}\]</span></p>
+<ul>
+<li>This assumes: <span class="math display">\[b_{i0} \sim N(0, \sigma^2_b) ~~~~~~~ \epsilon_{ij} \sim N(0, \sigma^2_{\epsilon})\]</span>
+</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p>Or more generally: <span class="math display">\[Cov[\vec{Y}_i] = \vec{Z}_i\boldsymbol{G}\vec{Z}_i^T + \boldsymbol{R_i}\]</span></p>
+</div>
+</div>
+</div>
 </section><section id="longitudinal-glmms" class="slide level2"><h2>Longitudinal GLMMs</h2>
-<p>Extending the random effects model longitudinal data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
+<p>Extending the random effects model longitudinal data (could also include interaction): <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(t_{ij}) + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
 <p>what is the interpretation of:</p>
 <ul>
-<li><p><span class="math inline">\(\beta_0\)</span>:</p></li>
-<li><p><span class="math inline">\(\beta_0 + b_{0i}\)</span>:</p></li>
-<li><p><span class="math inline">\(\beta_1\)</span>:</p></li>
-<li><p><span class="math inline">\(\beta_2\)</span>:</p></li>
+<li>
+<span class="math inline">\(\beta_0\)</span>:</li>
+</ul>
+<p><br></p>
+<ul>
+<li>
+<span class="math inline">\(\beta_0 + b_{0i}\)</span>:</li>
+</ul>
+<p><br></p>
+<ul>
+<li>
+<span class="math inline">\(\beta_1\)</span>:</li>
+</ul>
+<p><br></p>
+<ul>
+<li>
+<span class="math inline">\(\beta_2\)</span>:</li>
 </ul></section><section id="longitudinal-glmms-1" class="slide level2"><h2>Longitudinal GLMMs</h2>
-<p>Extending the random effects model longitudinal data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
-<p>The random intercept still induces an exchangeable covariance matrix: <span class="math display">\[Var[\vec{Y}_i] =\begin{bmatrix}
+<p>Extending the random effects model longitudinal data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(t_{ij}) + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>The random intercept still induces an <span class="alert">exchangeable</span> covariance matrix: <span class="math display">\[Var[\vec{Y}_i] =\begin{bmatrix}
 \sigma^2_b + \sigma^2_\epsilon &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
 \sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
 \sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \sigma^2_\epsilon
 \end{bmatrix}\]</span></p>
-<p>This assumes that every member of cluster <span class="math inline">\(i\)</span> has the same relationship to one another (same correlation)</p>
+</div><div class="column" style="width:50%;">
+<p>This assumes that every member of cluster <span class="math inline">\(i\)</span> has the same relationship to one another (<span class="alert">same correlation</span>): <span class="math inline">\(\sigma^2_b/(\sigma^2_b + \sigma^2_\epsilon)\)</span></p>
 <div class="fragment">
 <ul>
-<li><p>In longitudinal data, though, cluster <span class="math inline">\(i\)</span> is a single person and the “members” of the cluster are observations collected at separate time points</p></li>
-<li><p>An observation collected at time 1 may relate to observations at times 2 and 3 differently</p></li>
+<li><p>In longitudinal data, though, cluster <span class="math inline">\(i\)</span> is a single person and the “members” of the cluster are observations collected at <span class="alert">separate time points</span></p></li>
+<li><p>An observation collected at time 1 may relate to observations at times 2 and 3 <span class="alert">differently</span></p></li>
 </ul>
 </div>
+</div>
+</div>
 </section><section id="longitudinal-glmms-2" class="slide level2"><h2>Longitudinal GLMMs</h2>
-<p>Extending the random effects model longitudinal data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
+<p>Extending the random effects model longitudinal data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(t_{ij}) + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
 <p>Additionally, inclusion of only <span class="alert">random intercepts</span> assumes that, though everyone’s may randomly vary around some global baseline, everyone has the <span class="alert">same outcome trajectory</span> over time</p>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -465,22 +534,22 @@ October 29, 2024
 <ul>
 <li>Different issue from exposure-by-time interaction</li>
 </ul>
-<p><span class="fragment">One solution would be to allow for each cluster to have <span class="alert">variation in its slope</span> as well</span></p>
+<p><span class="fragment">One solution would be to allow for each cluster (person) to have <span class="alert">variation in its slope</span> as well</span></p>
 <p><span class="alert fragment">- Random slopes and intercepts!</span></p>
 </div>
 </div>
 </section><section id="random-slope-and-intercept-model" class="slide level2"><h2>Random slope and intercept model</h2>
-<p>Consider a model with intercepts and slopes that vary randomly among individuals:</p>
-<p><span class="math display">\[g(Y_{ij}) = \beta_0 + t_{ij}\beta_1 + U_{i0}\beta_2 + Z_i0b_{i0} + t_{ij}b_{i1} + e_{ij}\]</span></p>
+<p>Consider a model with intercepts <span class="alert">and slopes</span> that vary randomly among individuals:</p>
+<p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{i0}Z_{i0} + b_{i1}t_{ij} + e_{ij}\]</span></p>
 <ul>
 <li>This model suggests that individuals vary not only in their baseline level of response (when <span class="math inline">\(t_{i1} = 0\)</span>), but also in terms of their changes in the response over time</li>
 </ul>
 <p><img data-src="rand-slope.png" style="width:40.0%"></p>
 </section><section id="random-slope-and-intercept-model-1" class="slide level2"><h2>Random slope and intercept model</h2>
-<p>Consider a model with intercepts and slopes that vary randomly among individuals:</p>
-<p><span class="math display">\[g(Y_{ij}) = \beta_0 + t_{ij}\beta_1 + U_{i0}\beta_2 + Z_i0b_{i0} + t_{ij}b_{i1} + e_{ij}\]</span></p>
+<p>Consider a model with intercepts <span class="alert">and slopes</span> that vary randomly among individuals:</p>
+<p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{i0}Z_{i0} + b_{i1}t_{ij} + \epsilon_{ij}\]</span></p>
 <p>Here we assume:</p>
-<p><span class="math display">\[b_{i0} \sim N(0, \sigma^2_{b0})\]</span> <span class="math display">\[b_{i1} \sim N(0, \sigma^2_{b1})\]</span> <span class="math display">\[\epsilon_{ij} \sim N(0, \sigma^2_\epsilon)\]</span></p>
+<p><span class="math display">\[b_{i0} \sim N(0, \sigma^2_{b0}) ~~~~~ b_{i1} \sim N(0, \sigma^2_{b1}) ~~~~~ \epsilon_{ij} \sim N(0, \sigma^2_\epsilon)\]</span></p>
 <div class="fragment">
 <p>We also assume: <span class="math display">\[Cov[b_{i0}, b_{i1}] = \sigma_{b0,b1}\]</span></p>
 <ul>
@@ -488,15 +557,14 @@ October 29, 2024
 </ul>
 </div>
 </section><section id="variancecovariance-of-random-effects" class="slide level2"><h2>Variance/covariance of random effects</h2>
-<p>In general, any component of <span class="math inline">\(\beta\)</span> can be allowed to vary randomly by simply including corresponding covariate in <span class="math inline">\(Z_{ij}\)</span></p>
-<ul>
-<li>The vector of random effects, <span class="math inline">\(\vec{b}_i\)</span>, are assumed to have a multivariate normal distribution with mean zero and covariance matrix <span class="math inline">\(\boldsymbol{G}\)</span>
-</li>
-</ul>
+<p>In fact, the vector of random effects, <span class="math inline">\(\vec{b}_i\)</span>, are assumed to have a <span class="alert">multivariate normal distribution</span> with mean zero and covariance matrix <span class="math inline">\(\boldsymbol{G}\)</span></p>
 <p><span class="math display">\[\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})\]</span></p>
 <p>For example, in the random intercepts and slopes model considered earlier <span class="math display">\[\begin{bmatrix}
 \sigma^2_{b0} &amp; \sigma_{b0,b1}\\
 \sigma_{b0,b1} &amp;  \sigma^2_{b1}\end{bmatrix}\]</span></p>
+<div class="fragment">
+<p>In general, any component of <span class="math inline">\(\beta\)</span> can be allowed to vary randomly by simply including the corresponding covariate in <span class="math inline">\(\vec{Z}_{ij}\)</span></p>
+</div>
 </section><section id="variancecovariance-of-the-outcome" class="slide level2"><h2>Variance/covariance of the outcome</h2>
 <p>What does this mean for the covariance matrix of the outcome?</p>
 <div class="fragment">
@@ -527,7 +595,32 @@ October 29, 2024
 <li>If <span class="math inline">\(\sigma_{b0,b1}=0\)</span>, then <span class="math inline">\(Var[Y_{ij}]\)</span> increases with time</li>
 </ul>
 </div>
-</section><section class="slide level2"><p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
+</section><section id="random-effects-correlation-structures" class="slide level2"><h2>Random effects &amp; correlation structures</h2>
+<p>When we just had random intercepts it was very clear how this created an exchangeable correlation/covariance matrix</p>
+<div class="fragment">
+<p><span class="alert">Do we get a similar result when we add random slopes?</span></p>
+</div>
+<div class="fragment">
+<ul>
+<li>Kind of</li>
+</ul>
+</div>
+<div class="fragment">
+<p>Adding random slopes induces something like an <span class="alert">exponential</span> correlation structure</p>
+<ul>
+<li>Correlation between observations within an individual gets smaller the further apart in time the observations are</li>
+</ul>
+<p>Let’s see this in action with an example</p>
+</div>
+</section><section id="example-1" class="slide level2"><h2>Example:</h2>
+</section><section id="structures-on-boldsymbolr_i" class="slide level2"><h2>Structures on <span class="math inline">\(\boldsymbol{R_i}\)</span>
+</h2>
+<p>Up until now we’ve assumed that the <span class="math inline">\(\epsilon_{ij}\)</span> errors are independent within an individual: <span class="math inline">\(\sigma^2_\epsilon \boldsymbol{I}\)</span></p>
+<ul>
+<li><p>This assumes <span class="alert">constant variance</span> across time</p></li>
+<li><p>This is the most common type of structure to assume</p></li>
+</ul>
+<p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
 </div>

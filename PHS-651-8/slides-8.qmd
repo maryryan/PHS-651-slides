@@ -187,6 +187,9 @@ exercise_long <- exercise %>%
    pivot_longer(!(c("ID","PROGRAM")), names_to="time", values_to="strength") %>% 
    mutate(time=parse_number(time))
 
+exercise_long_complete <- exercise_long %>% 
+   filter(complete.cases(.))
+
 glimpse(exercise_long)
 ```
 
@@ -274,7 +277,7 @@ $$g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}$$
 
 - Where we assumed that each cluster had it's own cluster-specific mean ($\beta_0 + b_{0i}$) that varied by some $b_{0i}$ around the overall sample mean $\beta_0$
 
-- We called $b_{i0}$ the [random intercept]{.alert}
+- We called $b_{0i}$ the [random intercept]{.alert}
 
 . . .
 
@@ -306,7 +309,7 @@ $$g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}$$
 
 - Where we assumed that each cluster had it's own cluster-specific mean ($\beta_0 + b_{0i}$) that varied by some $b_{0i}$ around the overall sample mean $\beta_0$
 
-- We called $b_{i0}$ the [random intercept]{.alert}
+- We called $b_{0i}$ the [random intercept]{.alert}
 
 If $Corr[Y_{ij}, Y_{ik}] = \sigma^2_b/(\sigma^2_b + \sigma^2_\epsilon) = \sigma^2_b/\sigma^2= \rho$, we can rewrite $Var[\vec{Y}_i]$ as:
 
@@ -328,7 +331,7 @@ $$g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}$$
 
 - Where we assumed that each cluster had it's own cluster-specific mean ($\beta_0 + b_{0i}$) that varied by some $b_{0i}$ around the overall sample mean $\beta_0$
 
-- We called $b_{i0}$ the [random intercept]{.alert}
+- We called $b_{0i}$ the [random intercept]{.alert}
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -336,7 +339,7 @@ We could also express the covariance matrix using matrix notation:
 $$Cov[\vec{Y}_i] = \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \sigma^2_\epsilon \boldsymbol{I}$$
 
 - This assumes:
-$$b_{i0} \sim N(0, \sigma^2_b) ~~~~~~~ \epsilon_{ij} \sim N(0, \sigma^2_{\epsilon})$$
+$$b_{0i} \sim N(0, \sigma^2_b) ~~~~~~~ \epsilon_{ij} \sim (0, \sigma^2_{\epsilon})$$
 :::
 
 ::: {.column width="50%"}
@@ -429,7 +432,7 @@ Additionally, inclusion of only [random intercepts]{.alert} assumes that, though
 
 Consider a model with intercepts [and slopes]{.alert} that vary randomly among individuals:
 
-$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{i0}Z_{i0} + \color{green}{b_{i1}t_{ij}} + e_{ij}$$
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{0i}Z_{i0} + \color{green}{b_{1i}t_{ij}} + e_{ij}$$
 
 - This model suggests that individuals vary not only in their baseline level of response (when $t_{i1} = 0$), but also in terms of their changes in the response over time
 
@@ -441,16 +444,16 @@ $$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{i0}Z_{i0} + \color{gr
 
 Consider a model with intercepts [and slopes]{.alert} that vary randomly among individuals:
 
-$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{i0}Z_{i0} + \color{green}{b_{i1}t_{ij}} + \epsilon_{ij}$$
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{0i}Z_{i0} + \color{green}{b_{1i}t_{ij}} + \epsilon_{ij}$$
 
 Here we assume:
 
-$$b_{i0} \sim N(0, \sigma^2_{b0}) ~~~~~ \color{green}{b_{i1} \sim N(0, \sigma^2_{b1})} ~~~~~ \epsilon_{ij} \sim N(0, \sigma^2_\epsilon)$$
+$$b_{0i} \sim N(0, \sigma^2_{b0}) ~~~~~ \color{green}{b_{1i} \sim N(0, \sigma^2_{b1})} ~~~~~ \epsilon_{ij} \sim (0, \sigma^2_\epsilon)$$
 
 . . .
 
 We also assume:
-$$Cov[b_{i0}, b_{i1}] = \sigma_{b0,b1}$$
+$$Cov[b_{0i}, b_{1i}] = \sigma_{b0,b1}$$
 
 - The random slopes and intercepts (may) not be independent!
 
@@ -472,7 +475,7 @@ $$\boldsymbol{G}=\begin{bmatrix}
 
 ::: {.column width="50%"}
 ::: {.fragment}
-Could also re-formulate $Cov[b_{i0}, b_{i1}]$ to be $\rho\sigma^*_{b0,b1}$, which would get us:
+Could also re-formulate $Cov[b_{0i}, b_{1i}]$ to be $\rho\sigma^*_{b0,b1}$, which would get us:
 $$\boldsymbol{G} = \begin{bmatrix}
 \sigma^2_{b0} & \rho\sigma^*_{b0,b1}\\
 \rho\sigma^*_{b0,b1} &  \sigma^2_{b1}\end{bmatrix}$$
@@ -491,8 +494,8 @@ What does this mean for the covariance matrix of the outcome?
 If we assume the within-individual errors are independent, then the variance of a single outcome measure is:
 $$\begin{align*}Var[Y_{ij}] &= Var[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}]\\
 &= Var[\boldsymbol{Z}_i \vec{b}_{i}+\epsilon_{ij}]\\
-&= Var[\vec{Z}_{1i} b_{i0} + t_{ij} b_{i1} +\epsilon_{ij}]\\
-&= Var[\vec{Z}_{1i} b_{i0}] + Var[t_{ij} b_{i1}] + 2Cov[\vec{Z}_{1i} b_{i0}, t_{ij} b_{i1}]+Var[\epsilon_{ij}]\\
+&= Var[\vec{Z}_{1i} b_{0i} + t_{ij} b_{1i} +\epsilon_{ij}]\\
+&= Var[\vec{Z}_{1i} b_{0i}] + Var[t_{ij} b_{1i}] + 2Cov[\vec{Z}_{1i} b_{0i}, t_{ij} b_{1i}]+Var[\epsilon_{ij}]\\
 &= \sigma^2_{b0} + t^2_{ij}\sigma^2_{b1}+ 2t_{ij}\sigma_{b0,b1} + \sigma^2_{\epsilon}\end{align*}$$
 
 ---
@@ -508,9 +511,9 @@ $$Var[Y_{ij}] = \sigma^2_{b0} + t^2_{ij}\sigma^2_{b1}+ 2t_{ij}\sigma_{b0,b1} + \
 
 And the covariance between 2 outcome measures in the same cluster is:
 $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= Cov[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}, \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ik}]\\
-&= Cov[\vec{Z}_{1i}b_{i0} +t_{ij}b_{i1}+\epsilon_{ij}, \vec{Z}_{1i}b_{i0}+t_{ik}b_{i1}+\epsilon_{ik}]\\
-&= Cov[\vec{Z}_{1i}b_{i0}, \vec{Z}_{1i}b_{i0}] + Cov[\vec{Z}_{1i}b_{i0}, t_{ik}b_{01}] + Cov[\vec{Z}_{i1}b_{i0}, \epsilon_{ik}] + Cov[t_{ij}b_{i1}, \vec{Z}_{1i}b_{i0}]\\
-&~~~~~~+ Cov[t_{ij}b_{i1}, t_{ik}b_{i1}] + Cov[t_{ij}b_{i1}, \epsilon_{ik}] + Cov[\epsilon_{ij}, \vec{Z}_{1i}b_{i0}] + Cov[\epsilon_{ij}, t_{ik}b_{i1}] + Cov[\epsilon_{ij}, \epsilon_{ik}]\\
+&= Cov[\vec{Z}_{1i}b_{0i} +t_{ij}b_{1i}+\epsilon_{ij}, \vec{Z}_{1i}b_{0i}+t_{ik}b_{1i}+\epsilon_{ik}]\\
+&= Cov[\vec{Z}_{1i}b_{0i}, \vec{Z}_{1i}b_{0i}] + Cov[\vec{Z}_{1i}b_{0i}, t_{ik}b_{01}] + Cov[\vec{Z}_{i1}b_{0i}, \epsilon_{ik}] + Cov[t_{ij}b_{1i}, \vec{Z}_{1i}b_{0i}]\\
+&~~~~~~+ Cov[t_{ij}b_{1i}, t_{ik}b_{1i}] + Cov[t_{ij}b_{1i}, \epsilon_{ik}] + Cov[\epsilon_{ij}, \vec{Z}_{1i}b_{0i}] + Cov[\epsilon_{ij}, t_{ik}b_{1i}] + Cov[\epsilon_{ij}, \epsilon_{ik}]\\
 &= \sigma^2_{b0} + t_{ik}\sigma_{b0,b1} + 0 + t_{ij}\sigma_{b0,b1} + t_{ij}t_{ik}\sigma^2_{b1} + 0 + 0 + 0 + 0\\
 &= \sigma^2_{b0} + (t_{ij} + t_{ik})\sigma_{b0,b1} + t_{ij}t_{ik}\sigma^2_{b1}\end{align*}$$
 
@@ -576,7 +579,7 @@ Recall the exercise therapy trial from last week:
 
 . . .
 
-$$\text{body strength}_{ij} = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij}) + b_{i0}(\text{ID}_i) + b_{i1}t_{ij} + \epsilon_{ij}$$
+$$\text{body strength}_{ij} = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij}) + b_{0i}(\text{ID}_i) + b_{1i}t_{ij} + \epsilon_{ij}$$
 
 $$\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})$$
 $$\vec{\epsilon}_i \sim MVN(\vec{0}, \sigma^2\boldsymbol{I})$$
@@ -653,7 +656,7 @@ Up until now we've assumed that the $\epsilon_{ij}$ errors are independent withi
 
 . . .
 
-Can we assume a non-independent structure for $\boldsymbol{R_i}$?
+[Can we assume a non-independent structure for $\boldsymbol{R_i}$?]{.alert}
 
 . . .
 
@@ -665,6 +668,67 @@ We tend not to for 3 reasons:
 
 1. In doing so, we lose the interpretation of $\epsilon_{ij}$ as sampling/measurement error
 
-2. You might run into estimation issues if you try to estimate $\boldsymbol{G}$ and non-diagonal $\boldsymbol{R_i}$ without enough information in the data
+2. You might run into estimation issues if you try to estimate a full $\boldsymbol{G}$ (intercepts and slopes) and non-diagonal $\boldsymbol{R_i}$ without enough information in the data
 
-3. Often random effects and regular, diagonal measurement error ($\boldsymbol{R_i} = \sigma^2_\epsilon \boldsymbol{I}$) together take care of any time-variation in correlation
+3. Often full random effects (intercepts and slopes) and regular, diagonal measurement error ($\boldsymbol{R_i} = \sigma^2_\epsilon \boldsymbol{I}$) together take care of any time-variation in correlation
+
+---
+
+## Structures on $\boldsymbol{R_i}$ in GLMMs?
+
+If we *do* want to use a non-independent $\boldsymbol{R_i}$, we should [only fit random intercepts]{.alert}
+
+- This is sometimes called a [hybrid random effects]{.alert} model
+
+. . .
+
+Let $C_i(t_{ij})$ be our [serial correlation]{.alert} parameter. Then we can specify the model as:
+
+$$Y_{ij} = \beta_0 + \beta_1 U_{i0} + \beta_3 t_{ij} + b_{0i}Z_i + C_i(t_{ij}) + \epsilon_{ij}$$
+
+- Random intercepts: $b_{0i} \sim N(0, \sigma^2_0)$
+
+- Serial correlation: $C_i(t_{ij}) \sim N(0, \sigma^2_c); ~~ Corr[C_i(t_{ij}), C_i(t_{ik})] = \rho(t_{ij}, t_{ik})$
+
+   - Usually we use an exponential correlation function: $\rho(t_{ij}, t_{ik}) = \exp\{-|t_{ij} - t_{ik}|\}$
+
+- Measurement error: $\epsilon_{ij} \sim (0, \sigma^2_\epsilon)$
+
+---
+
+## Example: Exercise therapy trial
+
+Let's try this with the exercise trial data
+
+```{r exercise hybrid}
+library(nlme)
+exercise_hybrid <- lme( strength ~ PROGRAM*time,
+                        random = ~1 | ID,
+                        correlation = corExp( form = ~ time | ID, nugget=TRUE),
+                      data = exercise_long_complete )
+summary(exercise_hybrid)
+```
+
+---
+
+## Example: Exercise therapy trial
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r exercise hybrid2}
+summary(exercise_hybrid)
+```
+:::
+
+::: {.column width="50%"}
+Interpreting the output:
+
+- `(random) SD`: square-root of variance associated with random intercept ($\sqrt{\sigma^2_0}$)
+
+- `Residual SD`: square root of $\sigma^2_0 + \sigma^2_\epsilon$
+
+- `range`: correlation between observations one time unit apart
+
+- `nugget`: if this is 0, there's no measurement error
+:::
+::::

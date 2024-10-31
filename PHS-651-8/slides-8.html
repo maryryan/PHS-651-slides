@@ -618,7 +618,7 @@ PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pr
 <p>Recall the random effects model we used for non-longitudinal clustered data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
 <ul>
 <li><p>Where we assumed that each cluster had it’s own cluster-specific mean (<span class="math inline">\(\beta_0 + b_{0i}\)</span>) that varied by some <span class="math inline">\(b_{0i}\)</span> around the overall sample mean <span class="math inline">\(\beta_0\)</span></p></li>
-<li><p>We called <span class="math inline">\(b_{i0}\)</span> the <span class="alert">random intercept</span></p></li>
+<li><p>We called <span class="math inline">\(b_{0i}\)</span> the <span class="alert">random intercept</span></p></li>
 </ul>
 <div class="fragment">
 <p>The random intercept induced an <span class="alert">exchangeable</span> covariance matrix: <span class="math display">\[\begin{align*}Var[\vec{Y}_i] &amp;= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
@@ -643,7 +643,7 @@ PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pr
 <p>Recall the random effects model we used for non-longitudinal clustered data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
 <ul>
 <li><p>Where we assumed that each cluster had it’s own cluster-specific mean (<span class="math inline">\(\beta_0 + b_{0i}\)</span>) that varied by some <span class="math inline">\(b_{0i}\)</span> around the overall sample mean <span class="math inline">\(\beta_0\)</span></p></li>
-<li><p>We called <span class="math inline">\(b_{i0}\)</span> the <span class="alert">random intercept</span></p></li>
+<li><p>We called <span class="math inline">\(b_{0i}\)</span> the <span class="alert">random intercept</span></p></li>
 </ul>
 <p>If <span class="math inline">\(Corr[Y_{ij}, Y_{ik}] = \sigma^2_b/(\sigma^2_b + \sigma^2_\epsilon) = \sigma^2_b/\sigma^2= \rho\)</span>, we can rewrite <span class="math inline">\(Var[\vec{Y}_i]\)</span> as:</p>
 <p><span class="math display">\[\sigma^2\begin{bmatrix}
@@ -657,13 +657,13 @@ PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pr
 <p>Recall the random effects model we used for non-longitudinal clustered data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
 <ul>
 <li><p>Where we assumed that each cluster had it’s own cluster-specific mean (<span class="math inline">\(\beta_0 + b_{0i}\)</span>) that varied by some <span class="math inline">\(b_{0i}\)</span> around the overall sample mean <span class="math inline">\(\beta_0\)</span></p></li>
-<li><p>We called <span class="math inline">\(b_{i0}\)</span> the <span class="alert">random intercept</span></p></li>
+<li><p>We called <span class="math inline">\(b_{0i}\)</span> the <span class="alert">random intercept</span></p></li>
 </ul>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>We could also express the covariance matrix using matrix notation: <span class="math display">\[Cov[\vec{Y}_i] = \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \sigma^2_\epsilon \boldsymbol{I}\]</span></p>
 <ul>
-<li>This assumes: <span class="math display">\[b_{i0} \sim N(0, \sigma^2_b) ~~~~~~~ \epsilon_{ij} \sim N(0, \sigma^2_{\epsilon})\]</span>
+<li>This assumes: <span class="math display">\[b_{0i} \sim N(0, \sigma^2_b) ~~~~~~~ \epsilon_{ij} \sim (0, \sigma^2_{\epsilon})\]</span>
 </li>
 </ul>
 </div><div class="column" style="width:50%;">
@@ -729,18 +729,18 @@ PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pr
 </div>
 </section><section id="random-slope-and-intercept-model" class="slide level2"><h2>Random slope and intercept model</h2>
 <p>Consider a model with intercepts <span class="alert">and slopes</span> that vary randomly among individuals:</p>
-<p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{i0}Z_{i0} + \color{green}{b_{i1}t_{ij}} + e_{ij}\]</span></p>
+<p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{0i}Z_{i0} + \color{green}{b_{1i}t_{ij}} + e_{ij}\]</span></p>
 <ul>
 <li>This model suggests that individuals vary not only in their baseline level of response (when <span class="math inline">\(t_{i1} = 0\)</span>), but also in terms of their changes in the response over time</li>
 </ul>
 <p><img data-src="rand-slope.png" style="width:40.0%"></p>
 </section><section id="random-slope-and-intercept-model-1" class="slide level2"><h2>Random slope and intercept model</h2>
 <p>Consider a model with intercepts <span class="alert">and slopes</span> that vary randomly among individuals:</p>
-<p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{i0}Z_{i0} + \color{green}{b_{i1}t_{ij}} + \epsilon_{ij}\]</span></p>
+<p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{0i}Z_{i0} + \color{green}{b_{1i}t_{ij}} + \epsilon_{ij}\]</span></p>
 <p>Here we assume:</p>
-<p><span class="math display">\[b_{i0} \sim N(0, \sigma^2_{b0}) ~~~~~ \color{green}{b_{i1} \sim N(0, \sigma^2_{b1})} ~~~~~ \epsilon_{ij} \sim N(0, \sigma^2_\epsilon)\]</span></p>
+<p><span class="math display">\[b_{0i} \sim N(0, \sigma^2_{b0}) ~~~~~ \color{green}{b_{1i} \sim N(0, \sigma^2_{b1})} ~~~~~ \epsilon_{ij} \sim (0, \sigma^2_\epsilon)\]</span></p>
 <div class="fragment">
-<p>We also assume: <span class="math display">\[Cov[b_{i0}, b_{i1}] = \sigma_{b0,b1}\]</span></p>
+<p>We also assume: <span class="math display">\[Cov[b_{0i}, b_{1i}] = \sigma_{b0,b1}\]</span></p>
 <ul>
 <li>The random slopes and intercepts (may) not be independent!</li>
 </ul>
@@ -755,7 +755,7 @@ PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pr
 \sigma_{b0,b1} &amp;  \sigma^2_{b1}\end{bmatrix}\]</span></p>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
-<p>Could also re-formulate <span class="math inline">\(Cov[b_{i0}, b_{i1}]\)</span> to be <span class="math inline">\(\rho\sigma^*_{b0,b1}\)</span>, which would get us: <span class="math display">\[\boldsymbol{G} = \begin{bmatrix}
+<p>Could also re-formulate <span class="math inline">\(Cov[b_{0i}, b_{1i}]\)</span> to be <span class="math inline">\(\rho\sigma^*_{b0,b1}\)</span>, which would get us: <span class="math display">\[\boldsymbol{G} = \begin{bmatrix}
 \sigma^2_{b0} &amp; \rho\sigma^*_{b0,b1}\\
 \rho\sigma^*_{b0,b1} &amp;  \sigma^2_{b1}\end{bmatrix}\]</span></p>
 </div>
@@ -766,8 +766,8 @@ PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pr
 <div class="fragment">
 <p>If we assume the within-individual errors are independent, then the variance of a single outcome measure is: <span class="math display">\[\begin{align*}Var[Y_{ij}] &amp;= Var[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}]\\
 &amp;= Var[\boldsymbol{Z}_i \vec{b}_{i}+\epsilon_{ij}]\\
-&amp;= Var[\vec{Z}_{1i} b_{i0} + t_{ij} b_{i1} +\epsilon_{ij}]\\
-&amp;= Var[\vec{Z}_{1i} b_{i0}] + Var[t_{ij} b_{i1}] + 2Cov[\vec{Z}_{1i} b_{i0}, t_{ij} b_{i1}]+Var[\epsilon_{ij}]\\
+&amp;= Var[\vec{Z}_{1i} b_{0i} + t_{ij} b_{1i} +\epsilon_{ij}]\\
+&amp;= Var[\vec{Z}_{1i} b_{0i}] + Var[t_{ij} b_{1i}] + 2Cov[\vec{Z}_{1i} b_{0i}, t_{ij} b_{1i}]+Var[\epsilon_{ij}]\\
 &amp;= \sigma^2_{b0} + t^2_{ij}\sigma^2_{b1}+ 2t_{ij}\sigma_{b0,b1} + \sigma^2_{\epsilon}\end{align*}\]</span></p>
 </div>
 </section><section id="variancecovariance-of-the-outcome-1" class="slide level2"><h2>Variance/covariance of the outcome</h2>
@@ -775,9 +775,9 @@ PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pr
 <p>If we assume the within-individual errors are independent, then the variance of a single outcome measure is: <span class="math display">\[Var[Y_{ij}] = \sigma^2_{b0} + t^2_{ij}\sigma^2_{b1}+ 2t_{ij}\sigma_{b0,b1} + \sigma^2_{\epsilon}\]</span></p>
 <div class="fragment">
 <p>And the covariance between 2 outcome measures in the same cluster is: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= Cov[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}, \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ik}]\\
-&amp;= Cov[\vec{Z}_{1i}b_{i0} +t_{ij}b_{i1}+\epsilon_{ij}, \vec{Z}_{1i}b_{i0}+t_{ik}b_{i1}+\epsilon_{ik}]\\
-&amp;= Cov[\vec{Z}_{1i}b_{i0}, \vec{Z}_{1i}b_{i0}] + Cov[\vec{Z}_{1i}b_{i0}, t_{ik}b_{01}] + Cov[\vec{Z}_{i1}b_{i0}, \epsilon_{ik}] + Cov[t_{ij}b_{i1}, \vec{Z}_{1i}b_{i0}]\\
-&amp;~~~~~~+ Cov[t_{ij}b_{i1}, t_{ik}b_{i1}] + Cov[t_{ij}b_{i1}, \epsilon_{ik}] + Cov[\epsilon_{ij}, \vec{Z}_{1i}b_{i0}] + Cov[\epsilon_{ij}, t_{ik}b_{i1}] + Cov[\epsilon_{ij}, \epsilon_{ik}]\\
+&amp;= Cov[\vec{Z}_{1i}b_{0i} +t_{ij}b_{1i}+\epsilon_{ij}, \vec{Z}_{1i}b_{0i}+t_{ik}b_{1i}+\epsilon_{ik}]\\
+&amp;= Cov[\vec{Z}_{1i}b_{0i}, \vec{Z}_{1i}b_{0i}] + Cov[\vec{Z}_{1i}b_{0i}, t_{ik}b_{01}] + Cov[\vec{Z}_{i1}b_{0i}, \epsilon_{ik}] + Cov[t_{ij}b_{1i}, \vec{Z}_{1i}b_{0i}]\\
+&amp;~~~~~~+ Cov[t_{ij}b_{1i}, t_{ik}b_{1i}] + Cov[t_{ij}b_{1i}, \epsilon_{ik}] + Cov[\epsilon_{ij}, \vec{Z}_{1i}b_{0i}] + Cov[\epsilon_{ij}, t_{ik}b_{1i}] + Cov[\epsilon_{ij}, \epsilon_{ik}]\\
 &amp;= \sigma^2_{b0} + t_{ik}\sigma_{b0,b1} + 0 + t_{ij}\sigma_{b0,b1} + t_{ij}t_{ik}\sigma^2_{b1} + 0 + 0 + 0 + 0\\
 &amp;= \sigma^2_{b0} + (t_{ij} + t_{ik})\sigma_{b0,b1} + t_{ij}t_{ik}\sigma^2_{b1}\end{align*}\]</span></p>
 </div>
@@ -825,7 +825,7 @@ PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pr
 </ul>
 <p><span class="alert">What would our model look like?</span></p>
 <div class="fragment">
-<p><span class="math display">\[\text{body strength}_{ij} = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij}) + b_{i0}(\text{ID}_i) + b_{i1}t_{ij} + \epsilon_{ij}\]</span></p>
+<p><span class="math display">\[\text{body strength}_{ij} = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij}) + b_{0i}(\text{ID}_i) + b_{1i}t_{ij} + \epsilon_{ij}\]</span></p>
 <p><span class="math display">\[\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})\]</span> <span class="math display">\[\vec{\epsilon}_i \sim MVN(\vec{0}, \sigma^2\boldsymbol{I})\]</span></p>
 </div>
 </section><section id="example-exercise-therapy-trial-5" class="slide level2"><h2>Example: Exercise therapy trial</h2>
@@ -927,7 +927,7 @@ time        -0.02882181  1.00000000</code></pre>
 <li><p>This is the most common type of structure to assume</p></li>
 </ul>
 <div class="fragment">
-<p>Can we assume a non-independent structure for <span class="math inline">\(\boldsymbol{R_i}\)</span>?</p>
+<p><span class="alert">Can we assume a non-independent structure for <span class="math inline">\(\boldsymbol{R_i}\)</span>?</span></p>
 </div>
 <div class="fragment">
 <ul>
@@ -938,13 +938,129 @@ time        -0.02882181  1.00000000</code></pre>
 <p>We tend not to for 3 reasons:</p>
 <ol type="1">
 <li><p>In doing so, we lose the interpretation of <span class="math inline">\(\epsilon_{ij}\)</span> as sampling/measurement error</p></li>
-<li><p>You might run into estimation issues if you try to estimate <span class="math inline">\(\boldsymbol{G}\)</span> and non-diagonal <span class="math inline">\(\boldsymbol{R_i}\)</span> without enough information in the data</p></li>
-<li><p>Often random effects and regular, diagonal measurement error (<span class="math inline">\(\boldsymbol{R_i} = \sigma^2_\epsilon \boldsymbol{I}\)</span>) together take care of any time-variation in correlation</p></li>
+<li><p>You might run into estimation issues if you try to estimate a full <span class="math inline">\(\boldsymbol{G}\)</span> (intercepts and slopes) and non-diagonal <span class="math inline">\(\boldsymbol{R_i}\)</span> without enough information in the data</p></li>
+<li><p>Often full random effects (intercepts and slopes) and regular, diagonal measurement error (<span class="math inline">\(\boldsymbol{R_i} = \sigma^2_\epsilon \boldsymbol{I}\)</span>) together take care of any time-variation in correlation</p></li>
 </ol>
+</div>
+</section><section id="structures-on-boldsymbolr_i-in-glmms-1" class="slide level2"><h2>Structures on <span class="math inline">\(\boldsymbol{R_i}\)</span> in GLMMs?</h2>
+<p>If we <em>do</em> want to use a non-independent <span class="math inline">\(\boldsymbol{R_i}\)</span>, we should <span class="alert">only fit random intercepts</span></p>
+<ul>
+<li>This is sometimes called a <span class="alert">hybrid random effects</span> model</li>
+</ul>
+<div class="fragment">
+<p>Let <span class="math inline">\(C_i(t_{ij})\)</span> be our <span class="alert">serial correlation</span> parameter. Then we can specify the model as:</p>
+<p><span class="math display">\[Y_{ij} = \beta_0 + \beta_1 U_{i0} + \beta_3 t_{ij} + b_{0i}Z_i + C_i(t_{ij}) + \epsilon_{ij}\]</span></p>
+<ul>
+<li><p>Random intercepts: <span class="math inline">\(b_{0i} \sim N(0, \sigma^2_0)\)</span></p></li>
+<li>
+<p>Serial correlation: <span class="math inline">\(C_i(t_{ij}) \sim N(0, \sigma^2_c); ~~ Corr[C_i(t_{ij}), C_i(t_{ik})] = \rho(t_{ij}, t_{ik})\)</span></p>
+<ul>
+<li>Usually we use an exponential correlation function: <span class="math inline">\(\rho(t_{ij}, t_{ik}) = \exp\{-|t_{ij} - t_{ik}|\}\)</span>
+</li>
+</ul>
+</li>
+<li><p>Measurement error: <span class="math inline">\(\epsilon_{ij} \sim (0, \sigma^2_\epsilon)\)</span></p></li>
+</ul>
+</div>
+</section><section id="example-exercise-therapy-trial-8" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<p>Let’s try this with the exercise trial data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb19-2"><a href="#cb19-2"></a>exercise_hybrid <span class="ot">&lt;-</span> <span class="fu">lme</span>( strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time,</span>
+<span id="cb19-3"><a href="#cb19-3"></a>                        <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> ID,</span>
+<span id="cb19-4"><a href="#cb19-4"></a>                        <span class="at">correlation =</span> <span class="fu">corExp</span>( <span class="at">form =</span> <span class="sc">~</span> time <span class="sc">|</span> ID, <span class="at">nugget=</span><span class="cn">TRUE</span>),</span>
+<span id="cb19-5"><a href="#cb19-5"></a>                      <span class="at">data =</span> exercise_long_complete )</span>
+<span id="cb19-6"><a href="#cb19-6"></a><span class="fu">summary</span>(exercise_hybrid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed-effects model fit by REML
+  Data: exercise_long_complete 
+       AIC      BIC   logLik
+  818.9659 846.6426 -401.483
+
+Random effects:
+ Formula: ~1 | ID
+        (Intercept) Residual
+StdDev: 0.007491876 3.425732
+
+Correlation Structure: Exponential spatial correlation
+ Formula: ~time | ID 
+ Parameter estimate(s):
+     range     nugget 
+51.8967728  0.0130083 
+Fixed effects:  strength ~ PROGRAM * time 
+                Value Std.Error  DF  t-value p-value
+(Intercept)  78.51291 1.8664766 200 42.06477  0.0000
+PROGRAM       1.29439 1.1353393  35  1.14010  0.2620
+time          0.07735 0.1034248 200  0.74792  0.4554
+PROGRAM:time  0.04656 0.0634439 200  0.73395  0.4638
+ Correlation: 
+             (Intr) PROGRAM time  
+PROGRAM      -0.954               
+time         -0.326  0.311        
+PROGRAM:time  0.309 -0.324  -0.952
+
+Standardized Within-Group Residuals:
+        Min          Q1         Med          Q3         Max 
+-2.17924915 -0.61350007 -0.01609496  0.64697445  2.69032490 
+
+Number of Observations: 239
+Number of Groups: 37 </code></pre>
+</div>
+</div>
+</section><section id="example-exercise-therapy-trial-9" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="fu">summary</span>(exercise_hybrid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed-effects model fit by REML
+  Data: exercise_long_complete 
+       AIC      BIC   logLik
+  818.9659 846.6426 -401.483
+
+Random effects:
+ Formula: ~1 | ID
+        (Intercept) Residual
+StdDev: 0.007491876 3.425732
+
+Correlation Structure: Exponential spatial correlation
+ Formula: ~time | ID 
+ Parameter estimate(s):
+     range     nugget 
+51.8967728  0.0130083 
+Fixed effects:  strength ~ PROGRAM * time 
+                Value Std.Error  DF  t-value p-value
+(Intercept)  78.51291 1.8664766 200 42.06477  0.0000
+PROGRAM       1.29439 1.1353393  35  1.14010  0.2620
+time          0.07735 0.1034248 200  0.74792  0.4554
+PROGRAM:time  0.04656 0.0634439 200  0.73395  0.4638
+ Correlation: 
+             (Intr) PROGRAM time  
+PROGRAM      -0.954               
+time         -0.326  0.311        
+PROGRAM:time  0.309 -0.324  -0.952
+
+Standardized Within-Group Residuals:
+        Min          Q1         Med          Q3         Max 
+-2.17924915 -0.61350007 -0.01609496  0.64697445  2.69032490 
+
+Number of Observations: 239
+Number of Groups: 37 </code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p>Interpreting the output:</p>
+<ul>
+<li><p><code>(random) SD</code>: square-root of variance associated with random intercept (<span class="math inline">\(\sqrt{\sigma^2_0}\)</span>)</p></li>
+<li><p><code>Residual SD</code>: square root of <span class="math inline">\(\sigma^2_0 + \sigma^2_\epsilon\)</span></p></li>
+<li><p><code>range</code>: correlation between observations one time unit apart</p></li>
+<li><p><code>nugget</code>: if this is 0, there’s no measurement error</p></li>
+</ul>
+</div>
+</div>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
-</div>
 </div>
 </section>
 </div>

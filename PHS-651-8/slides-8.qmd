@@ -582,7 +582,7 @@ Recall the exercise therapy trial from last week:
 $$\text{body strength}_{ij} = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij}) + b_{0i}(\text{ID}_i) + b_{1i}t_{ij} + \epsilon_{ij}$$
 
 $$\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})$$
-$$\vec{\epsilon}_i \sim MVN(\vec{0}, \sigma^2\boldsymbol{I})$$
+$$\vec{\epsilon}_i \sim (\vec{0}, \sigma^2_\epsilon\boldsymbol{I})$$
 
 ---
 
@@ -648,11 +648,11 @@ $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= \sigma^2_{b0} + (t_{ij} + t_{ik})\sigma_{
 
 Up until now we've assumed that the $\epsilon_{ij}$ errors are independent within an individual: $\sigma^2_\epsilon \boldsymbol{I}$
 
-- This assumes [constant variance]{.alert} across time
-
 - Allows us to interpret $\epsilon_{ij}$ as [sampling/measurement error]{.alert}
 
-- This is the most common type of structure to assume
+- This assumes [constant measurement error]{.alert} across time
+
+- This is the most common type of structure to assume with mixed models
 
 . . .
 
@@ -732,3 +732,39 @@ Interpreting the output:
 - `nugget`: if this is 0, there's no measurement error
 :::
 ::::
+
+---
+
+## Example: Exercise therapy trial
+
+Comparing hybrid and random slopes models:
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r hybrid 2}
+summary(exercise_hybrid)$tTable[,1:4]
+```
+:::
+
+::: {.column width="50%"}
+```{r slopes 2}
+summary(exercise_lme)$coef
+```
+:::
+::::
+
+::: {.fragment fragment-index=1}
+$$E[\text{body strength}_{ij} | \text{Program}_{ij}, t_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})$$
+
+- $\beta_0$: [Average strength of Program 1 at baseline]{.fragment fragment-index=3}
+
+- $\beta_1$: [Difference in avg. strength between Program 2 and Program 1 at baseline]{.fragment fragment-index=3}
+
+- $\beta_2$: [Rate of strength change in Program 1 between 2 adjacent timepoints]{.fragment fragment-index=3}
+
+- $(\beta_2 + \beta_3)$: [Rate of strength change in Program 2 between 2 adjacent timepoints]{.fragment fragment-index=3}
+
+- $(\beta_1 + \beta_3)$: [Difference in strength between Program 2 and Program 1 at the same timepoint]{.fragment fragment-index=3}
+
+- $\beta_3$: [Difference in Program 1's strength change rate and Program 2's strength change rate]{.fragment fragment-index=3}
+:::

@@ -826,7 +826,7 @@ PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pr
 <p><span class="alert">What would our model look like?</span></p>
 <div class="fragment">
 <p><span class="math display">\[\text{body strength}_{ij} = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij}) + b_{0i}(\text{ID}_i) + b_{1i}t_{ij} + \epsilon_{ij}\]</span></p>
-<p><span class="math display">\[\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})\]</span> <span class="math display">\[\vec{\epsilon}_i \sim MVN(\vec{0}, \sigma^2\boldsymbol{I})\]</span></p>
+<p><span class="math display">\[\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})\]</span> <span class="math display">\[\vec{\epsilon}_i \sim (\vec{0}, \sigma^2_\epsilon\boldsymbol{I})\]</span></p>
 </div>
 </section><section id="example-exercise-therapy-trial-5" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <p>If we run the mixed model…</p>
@@ -922,9 +922,9 @@ time        -0.02882181  1.00000000</code></pre>
 </section><section id="structures-on-boldsymbolr_i-in-glmms" class="slide level2"><h2>Structures on <span class="math inline">\(\boldsymbol{R_i}\)</span> in GLMMs?</h2>
 <p>Up until now we’ve assumed that the <span class="math inline">\(\epsilon_{ij}\)</span> errors are independent within an individual: <span class="math inline">\(\sigma^2_\epsilon \boldsymbol{I}\)</span></p>
 <ul>
-<li><p>This assumes <span class="alert">constant variance</span> across time</p></li>
 <li><p>Allows us to interpret <span class="math inline">\(\epsilon_{ij}\)</span> as <span class="alert">sampling/measurement error</span></p></li>
-<li><p>This is the most common type of structure to assume</p></li>
+<li><p>This assumes <span class="alert">constant measurement error</span> across time</p></li>
+<li><p>This is the most common type of structure to assume with mixed models</p></li>
 </ul>
 <div class="fragment">
 <p><span class="alert">Can we assume a non-independent structure for <span class="math inline">\(\boldsymbol{R_i}\)</span>?</span></p>
@@ -1057,6 +1057,44 @@ Number of Groups: 37 </code></pre>
 <li><p><code>nugget</code>: if this is 0, there’s no measurement error</p></li>
 </ul>
 </div>
+</div>
+</section><section id="example-exercise-therapy-trial-10" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<p>Comparing hybrid and random slopes models:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="fu">summary</span>(exercise_hybrid)<span class="sc">$</span>tTable[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   Value  Std.Error  DF    t-value
+(Intercept)  78.51290524 1.86647655 200 42.0647691
+PROGRAM       1.29439498 1.13533930  35  1.1400953
+time          0.07735368 0.10342475 200  0.7479223
+PROGRAM:time  0.04656484 0.06344391 200  0.7339529</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="fu">summary</span>(exercise_lme)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                Estimate Std. Error    t value
+(Intercept)  79.00099353 1.74863676 45.1786189
+PROGRAM       1.13141472 1.06373238  1.0636272
+time          0.06500878 0.11045207  0.5885701
+PROGRAM:time  0.05197818 0.06744593  0.7706645</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment" data-fragment-index="1">
+<p><span class="math display">\[E[\text{body strength}_{ij} | \text{Program}_{ij}, t_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\beta_0\)</span>: <span class="fragment" data-fragment-index="3">Average strength of Program 1 at baseline</span></p></li>
+<li><p><span class="math inline">\(\beta_1\)</span>: <span class="fragment" data-fragment-index="3">Difference in avg. strength between Program 2 and Program 1 at baseline</span></p></li>
+<li><p><span class="math inline">\(\beta_2\)</span>: <span class="fragment" data-fragment-index="3">Rate of strength change in Program 1 between 2 adjacent timepoints</span></p></li>
+<li><p><span class="math inline">\((\beta_2 + \beta_3)\)</span>: <span class="fragment" data-fragment-index="3">Rate of strength change in Program 2 between 2 adjacent timepoints</span></p></li>
+<li><p><span class="math inline">\((\beta_1 + \beta_3)\)</span>: <span class="fragment" data-fragment-index="3">Difference in strength between Program 2 and Program 1 at the same timepoint</span></p></li>
+<li><p><span class="math inline">\(\beta_3\)</span>: <span class="fragment" data-fragment-index="3">Difference in Program 1’s strength change rate and Program 2’s strength change rate</span></p></li>
+</ul>
 </div>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">

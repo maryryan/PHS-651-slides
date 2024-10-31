@@ -971,83 +971,11 @@ time        -0.02882181  1.00000000</code></pre>
 <span id="cb19-4"><a href="#cb19-4"></a>                        <span class="at">correlation =</span> <span class="fu">corExp</span>( <span class="at">form =</span> <span class="sc">~</span> time <span class="sc">|</span> ID, <span class="at">nugget=</span><span class="cn">TRUE</span>),</span>
 <span id="cb19-5"><a href="#cb19-5"></a>                      <span class="at">data =</span> exercise_long_complete )</span>
 <span id="cb19-6"><a href="#cb19-6"></a><span class="fu">summary</span>(exercise_hybrid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Linear mixed-effects model fit by REML
-  Data: exercise_long_complete 
-       AIC      BIC   logLik
-  818.9659 846.6426 -401.483
-
-Random effects:
- Formula: ~1 | ID
-        (Intercept) Residual
-StdDev: 0.007491876 3.425732
-
-Correlation Structure: Exponential spatial correlation
- Formula: ~time | ID 
- Parameter estimate(s):
-     range     nugget 
-51.8967728  0.0130083 
-Fixed effects:  strength ~ PROGRAM * time 
-                Value Std.Error  DF  t-value p-value
-(Intercept)  78.51291 1.8664766 200 42.06477  0.0000
-PROGRAM       1.29439 1.1353393  35  1.14010  0.2620
-time          0.07735 0.1034248 200  0.74792  0.4554
-PROGRAM:time  0.04656 0.0634439 200  0.73395  0.4638
- Correlation: 
-             (Intr) PROGRAM time  
-PROGRAM      -0.954               
-time         -0.326  0.311        
-PROGRAM:time  0.309 -0.324  -0.952
-
-Standardized Within-Group Residuals:
-        Min          Q1         Med          Q3         Max 
--2.17924915 -0.61350007 -0.01609496  0.64697445  2.69032490 
-
-Number of Observations: 239
-Number of Groups: 37 </code></pre>
-</div>
 </div>
 </section><section id="example-exercise-therapy-trial-9" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="fu">summary</span>(exercise_hybrid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Linear mixed-effects model fit by REML
-  Data: exercise_long_complete 
-       AIC      BIC   logLik
-  818.9659 846.6426 -401.483
-
-Random effects:
- Formula: ~1 | ID
-        (Intercept) Residual
-StdDev: 0.007491876 3.425732
-
-Correlation Structure: Exponential spatial correlation
- Formula: ~time | ID 
- Parameter estimate(s):
-     range     nugget 
-51.8967728  0.0130083 
-Fixed effects:  strength ~ PROGRAM * time 
-                Value Std.Error  DF  t-value p-value
-(Intercept)  78.51291 1.8664766 200 42.06477  0.0000
-PROGRAM       1.29439 1.1353393  35  1.14010  0.2620
-time          0.07735 0.1034248 200  0.74792  0.4554
-PROGRAM:time  0.04656 0.0634439 200  0.73395  0.4638
- Correlation: 
-             (Intr) PROGRAM time  
-PROGRAM      -0.954               
-time         -0.326  0.311        
-PROGRAM:time  0.309 -0.324  -0.952
-
-Standardized Within-Group Residuals:
-        Min          Q1         Med          Q3         Max 
--2.17924915 -0.61350007 -0.01609496  0.64697445  2.69032490 
-
-Number of Observations: 239
-Number of Groups: 37 </code></pre>
-</div>
-</div>
+<p><img data-src="hybrid-out.png" style="width:80.0%"></p>
 </div><div class="column" style="width:50%;">
 <p>Interpreting the output:</p>
 <ul>
@@ -1063,7 +991,7 @@ Number of Groups: 37 </code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="fu">summary</span>(exercise_hybrid)<span class="sc">$</span>tTable[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">summary</span>(exercise_hybrid)<span class="sc">$</span>tTable[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                   Value  Std.Error  DF    t-value
 (Intercept)  78.51290524 1.86647655 200 42.0647691
@@ -1074,7 +1002,7 @@ PROGRAM:time  0.04656484 0.06344391 200  0.7339529</code></pre>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="fu">summary</span>(exercise_lme)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="fu">summary</span>(exercise_lme)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                Estimate Std. Error    t value
 (Intercept)  79.00099353 1.74863676 45.1786189

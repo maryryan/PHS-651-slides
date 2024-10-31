@@ -700,7 +700,7 @@ $$Y_{ij} = \beta_0 + \beta_1 U_{i0} + \beta_3 t_{ij} + b_{0i}Z_i + C_i(t_{ij}) +
 
 Let's try this with the exercise trial data
 
-```{r exercise hybrid}
+```{r exercise hybrid, output=F}
 library(nlme)
 exercise_hybrid <- lme( strength ~ PROGRAM*time,
                         random = ~1 | ID,
@@ -708,16 +708,12 @@ exercise_hybrid <- lme( strength ~ PROGRAM*time,
                       data = exercise_long_complete )
 summary(exercise_hybrid)
 ```
-
 ---
 
 ## Example: Exercise therapy trial
-
 :::: {.columns}
 ::: {.column width="50%"}
-```{r exercise hybrid2}
-summary(exercise_hybrid)
-```
+![](hybrid-out.png){width=80%}
 :::
 
 ::: {.column width="50%"}

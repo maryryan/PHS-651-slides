@@ -1013,17 +1013,50 @@ PROGRAM:time  0.05197818 0.06744593  0.7706645</code></pre>
 </div>
 </div>
 </div>
-<div class="fragment" data-fragment-index="1">
 <p><span class="math display">\[E[\text{body strength}_{ij} | \text{Program}_{ij}, t_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})\]</span></p>
 <ul>
-<li><p><span class="math inline">\(\beta_0\)</span>: <span class="fragment" data-fragment-index="3">Average strength of Program 1 at baseline</span></p></li>
-<li><p><span class="math inline">\(\beta_1\)</span>: <span class="fragment" data-fragment-index="3">Difference in avg. strength between Program 2 and Program 1 at baseline</span></p></li>
-<li><p><span class="math inline">\(\beta_2\)</span>: <span class="fragment" data-fragment-index="3">Rate of strength change in Program 1 between 2 adjacent timepoints</span></p></li>
-<li><p><span class="math inline">\((\beta_2 + \beta_3)\)</span>: <span class="fragment" data-fragment-index="3">Rate of strength change in Program 2 between 2 adjacent timepoints</span></p></li>
-<li><p><span class="math inline">\((\beta_1 + \beta_3)\)</span>: <span class="fragment" data-fragment-index="3">Difference in strength between Program 2 and Program 1 at the same timepoint</span></p></li>
-<li><p><span class="math inline">\(\beta_3\)</span>: <span class="fragment" data-fragment-index="3">Difference in Program 1’s strength change rate and Program 2’s strength change rate</span></p></li>
-</ul>
+<li><p><span class="math inline">\(\beta_0\)</span>:</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span>:</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span>:</p></li>
+<li><p><span class="math inline">\((\beta_2 + \beta_3)\)</span>:</p></li>
+<li><p><span class="math inline">\((\beta_1 + \beta_3)\)</span>:</p></li>
+<li><p><span class="math inline">\(\beta_3\)</span>:</p></li>
+</ul></section><section id="example-exercise-therapy-trial-11" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<p>Comparing hybrid and random slopes models:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">summary</span>(exercise_hybrid)<span class="sc">$</span>tTable[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   Value  Std.Error  DF    t-value
+(Intercept)  78.51290524 1.86647655 200 42.0647691
+PROGRAM       1.29439498 1.13533930  35  1.1400953
+time          0.07735368 0.10342475 200  0.7479223
+PROGRAM:time  0.04656484 0.06344391 200  0.7339529</code></pre>
 </div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="fu">summary</span>(exercise_lme)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                Estimate Std. Error    t value
+(Intercept)  79.00099353 1.74863676 45.1786189
+PROGRAM       1.13141472 1.06373238  1.0636272
+time          0.06500878 0.11045207  0.5885701
+PROGRAM:time  0.05197818 0.06744593  0.7706645</code></pre>
+</div>
+</div>
+</div>
+</div>
+<p><span class="math display">\[E[\text{body strength}_{ij} | \text{Program}_{ij}, t_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\beta_0\)</span>: Average strength of Program 1 at baseline</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span>: Difference in avg. strength between Program 2 and Program 1 at baseline</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span>: Rate of strength change in Program 1 between 2 adjacent timepoints</p></li>
+<li><p><span class="math inline">\((\beta_2 + \beta_3)\)</span>: Rate of strength change in Program 2 between 2 adjacent timepoints</p></li>
+<li><p><span class="math inline">\((\beta_1 + \beta_3)\)</span>: Difference in strength between Program 2 and Program 1 at the same timepoint</p></li>
+<li><p><span class="math inline">\(\beta_3\)</span>: Difference in Program 1’s strength change rate and Program 2’s strength change rate</p></li>
+</ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 

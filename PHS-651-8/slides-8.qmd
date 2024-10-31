@@ -749,18 +749,50 @@ summary(exercise_lme)$coef
 :::
 ::::
 
-::: {.fragment fragment-index=1}
 $$E[\text{body strength}_{ij} | \text{Program}_{ij}, t_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})$$
 
-- $\beta_0$: [Average strength of Program 1 at baseline]{.fragment fragment-index=3}
+- $\beta_0$: 
 
-- $\beta_1$: [Difference in avg. strength between Program 2 and Program 1 at baseline]{.fragment fragment-index=3}
+- $\beta_1$: 
 
-- $\beta_2$: [Rate of strength change in Program 1 between 2 adjacent timepoints]{.fragment fragment-index=3}
+- $\beta_2$: 
 
-- $(\beta_2 + \beta_3)$: [Rate of strength change in Program 2 between 2 adjacent timepoints]{.fragment fragment-index=3}
+- $(\beta_2 + \beta_3)$: 
 
-- $(\beta_1 + \beta_3)$: [Difference in strength between Program 2 and Program 1 at the same timepoint]{.fragment fragment-index=3}
+- $(\beta_1 + \beta_3)$: 
 
-- $\beta_3$: [Difference in Program 1's strength change rate and Program 2's strength change rate]{.fragment fragment-index=3}
+- $\beta_3$: 
+
+---
+
+## Example: Exercise therapy trial
+
+Comparing hybrid and random slopes models:
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r hybrid 3}
+summary(exercise_hybrid)$tTable[,1:4]
+```
 :::
+
+::: {.column width="50%"}
+```{r slopes 3}
+summary(exercise_lme)$coef
+```
+:::
+::::
+
+$$E[\text{body strength}_{ij} | \text{Program}_{ij}, t_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})$$
+
+- $\beta_0$: Average strength of Program 1 at baseline
+
+- $\beta_1$: Difference in avg. strength between Program 2 and Program 1 at baseline
+
+- $\beta_2$: Rate of strength change in Program 1 between 2 adjacent timepoints
+
+- $(\beta_2 + \beta_3)$: Rate of strength change in Program 2 between 2 adjacent timepoints
+
+- $(\beta_1 + \beta_3)$: Difference in strength between Program 2 and Program 1 at the same timepoint
+
+- $\beta_3$: Difference in Program 1's strength change rate and Program 2's strength change rate

@@ -1,0 +1,380 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+library(corrr)
+```
+
+<h1>Lecture 9.1: Inference & model building for longitudinal GEEs & GLMMs</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>November 5, 2024</h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=50 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-9-1/slides-9-1>
+
+:::
+
+::: {.absolute bottom=0 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-9-1/slides-9-1"))
+```
+:::
+
+---
+
+## Recall: Longitudinal data and GEEs
+
+Last week we talked about how we can modify GEEs and GLMMs to handle longitudinal data
+
+. . .
+
+For GEEs we can:
+
+- Include time as a variable in the mean model
+
+- Choose between a [wider variety of correlation structures]{.alert} that might better reflect more complex relationships between observations with a cluster/person
+
+   - Toeplitz, autoregression, exponential, etc.
+   
+---
+
+## Recall: Longitudinal data and GLMMs
+
+For GLMMs we can:
+
+:::: {.columns}
+::: {.column width="50%"}
+
+- Include time as a variable in the mean model
+
+- Include [random slope]{.alert} for time (or other variables) in model in addition to random intercept to allow for heterogeneity is trends over time
+
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{0i}Z_{i0} + b_{1i}t_{ij} + \epsilon_{ij}$$
+
+$$\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})~~~ \vec{\epsilon}_{i} \sim (\vec{0}, \boldsymbol{R}_i)$$
+
+$$\boldsymbol{G}=\begin{bmatrix}
+\sigma^2_{b0} & \sigma_{b0,b1}\\
+\sigma_{b0,b1} &  \sigma^2_{b1}\end{bmatrix}~~~ \boldsymbol{R_i} = \sigma^2_\epsilon\boldsymbol{I}$$
+
+:::
+
+::: {.column width="50%"}
+
+- Add [serial correlation parameter]{.alert} in addition to random intercept (hybrid random effects model)
+
+$$Y_{ij} = \beta_0 + \beta_1 U_{i0} + \beta_3 t_{ij} + b_{0i}Z_i + C_i(t_{ij}) + \epsilon_{ij}$$
+
+$$C_i(t_{ij}) \sim N(0, \sigma^2_c)$$
+$$Corr[C_i(t_{ij}), C_i(t_{ik})] = \exp\{-|t_{ij} - t_{ik}|\}$$
+
+:::
+::::
+
+---
+
+## Recall: Effect of random slopes on GLMM covariance
+
+We also saw that the addition of random slopes makes it so the marginal variance and covariance of the outcome are [functions of time]{.alert}
+
+If we assume the within-individual errors are independent, then the variance of a single outcome measure is:
+$$Var[Y_{ij}] = \sigma^2_{b0} + t^2_{ij}\sigma^2_{b1}+ 2t_{ij}\sigma_{b0,b1} + \sigma^2_{\epsilon}$$
+
+And the covariance between 2 outcome measures in the same cluster is:
+$$Cov[Y_{ij}, Y_{ik}] = \sigma^2_{b0} + (t_{ij} + t_{ik})\sigma_{b0,b1} + t_{ij}t_{ik}\sigma^2_{b1}$$
+
+. . .
+
+This attempts to get the same result that autoregressive or exponential correlation structures have on working covariance matrices in GEEs
+
+- Potentially decaying correlation between observations as the outcomes are measured further apart in time
+
+---
+
+## Inference for a single regression parameter
+
+The fundamentals of statistical inference remain the same between non-longitudinal clustered data and longitudinal data models
+
+- Confidence intervals for a single regression coefficients are still:
+
+   - $\hat{\beta} \pm SE_\beta \times Z_{1-\alpha/2}$, if using a Z critical value 
+   
+   - $\hat{\beta} \pm SE_\beta \times T_{DoF; ~1-\alpha/2}$ if using a t critical value
+
+. . .
+   
+For GEE models, we generally always use [robust]{.alert} or sandwich-based standard errors to account for any misspecification of the correlation structure or marginal variance
+
+- Exceptions include when data are very unbalanced or the number of clusters/people is small
+
+. . .
+
+For GLMMs, we can use either model-based or robust standard errors
+
+. . .
+
+It's important to note that while GEEs only require the mean model to be correct for $\hat{\beta}$ to be a consistent estimator (fewer distributional assumptions)...
+
+... GLMMs require both the mean and distributional assumptions to be correct for $\hat{\beta}$ to be a consistent estimator (robust SEs can't fix everything)
+
+---
+
+## Inference for combinations of parameters
+
+As we've seen the past few weeks, the introduction of time as a model covariate and and the introducton of time-by-exposure interaction effects impact the interpretation of our regression coefficients
+
+Recall our exercise therapy example:
+
+$$E[\text{body strength}_{ij} | \text{Program}_{ij}, t_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})$$
+
+- $\beta_0$: Average strength of Program 1 at baseline
+
+- $\beta_1$: Difference in avg. strength between Program 2 and Program 1 at baseline
+
+- $\beta_2$: Rate of strength change in Program 1 between 2 adjacent timepoints
+
+- $(\beta_2 + \beta_3)$: Rate of strength change in Program 2 between 2 adjacent timepoints
+
+- $(\beta_1 + \beta_3)$: Difference in strength between Program 2 and Program 1 at the same timepoint
+
+- $\beta_3$: Difference in Program 1's strength change rate and Program 2's strength change rate
+
+. . .
+
+This means we may actually be interested in inference on [combinations]{.alert} of regression coefficients instead of the singular coefficients by themselves
+
+---
+
+## Inference for combinations of parameters
+
+[How do we do inference on $(\hat{\beta}_1 + \hat{\beta}_3)$?]{.alert}
+
+. . .
+
+- Let $\vec{\hat{\beta}} = (\hat{\beta}_0, \hat{\beta}_1, \hat{\beta}_2, \hat{\beta}_3, \dots, \hat{\beta}_p)^T$ be a vector of regression estimates that follows a multivariate Normal distribution:
+$$\vec{\hat{\beta}} \sim MVN(\vec{\beta}, Cov[\beta])$$
+
+. . .
+
+- Also let $L = (0,1,0,1,0,\dots,0)$ such that $L\vec{\hat{\beta}}L= (\hat{\beta}_1 + \hat{\beta}_3)$
+
+   - We call this a [linear contrast]{.alert}
+
+. . .
+
+- Then:
+$$L\vec{\hat{\beta}} \sim N\left(L\vec{\beta}, LCov[\beta]L^T\right)$$
+$$(\hat{\beta}_1 + \hat{\beta}_3) \sim N\left([\beta_1 + \beta_3], LCov[\beta]L^T\right)$$
+---
+
+## Inference for combinations of parameters
+
+[How do we do inference on $(\hat{\beta}_1 + \hat{\beta}_3)$?]{.alert}
+
+$$\vec{\hat{\beta}} \sim MVN(\vec{\beta}, Cov[\beta])$$
+$$L\vec{\hat{\beta}} \sim N\left(L\vec{\beta}, LCov[\beta]L^T\right)$$
+$$(\hat{\beta}_1 + \hat{\beta}_3) \sim N\left([\beta_1 + \beta_3], L^TCov[\beta]L\right)$$
+
+. . .
+
+This means a $(1-\alpha)\times100$% model-based confidence interval for $(\hat{\beta}_1 + \hat{\beta}_3)$ is:
+$$(\hat{\beta}_1 + \hat{\beta}_3) \pm L^TCov[\beta]L \times Z_{1-\alpha/2}$$
+
+---
+
+## Inference for combinations of parameters
+
+[How do we do inference on $(\hat{\beta}_1 + \hat{\beta}_3)$?]{.alert}
+
+$$\vec{\hat{\beta}} \sim MVN(\vec{\beta}, Cov[\beta])$$
+$$L\vec{\hat{\beta}} \sim N\left(L\vec{\beta}, LCov[\beta]L^T\right)$$
+$$(\hat{\beta}_1 + \hat{\beta}_3) \sim N\left([\beta_1 + \beta_3], LCov[\beta]L^T\right)$$
+
+If we want to use robust variance estimates:
+$$(\hat{\beta}_1 + \hat{\beta}_3) \pm LCov^*[\beta]L^T \times Z_{1-\alpha/2}$$
+
+- Where $Cov^*[\beta]$ is the robust/sandwich-based covariance matrix
+
+---
+
+## Example: Exercise therapy trial
+
+If we fit a GEE with an autoregressive correlation structure:
+
+```{r exercise, echo=F}
+exercise <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/exercise-data.txt", sep="", na.strings=".")
+colnames(exercise) <- c("ID", "PROGRAM", "day0","day2", "day4", "day6", "day8", "day10", "day12")
+exercise_long <- exercise %>% 
+   pivot_longer(!(c("ID","PROGRAM")), names_to="time", values_to="strength") %>% 
+   mutate(time=parse_number(time))
+
+exercise_long_complete <- exercise_long %>% 
+   filter(complete.cases(.))
+```
+
+```{r gee, output=F}
+library(gee)
+
+# fitting an autoregression, distance 1 correlation structure #
+exercise_gee <- gee(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="AR-M", Mv=1)
+```
+```{r gee2}
+summary(exercise_gee)$coefficients
+```
+
+. . .
+
+We can also get the robust covariance matrix:
+```{r gee3}
+exercise_gee$robust.variance
+```
+
+---
+
+## Example: Exercise therapy trial
+
+We can create a linear contrast $L$ to look at $(\hat{\beta}_1 + \hat{\beta}_3)$:
+```{r contrast}
+L <- c(0,1,0,1)
+
+b1_b3 <- exercise_gee$coefficients %*% L
+b1_b3
+```
+
+. . .
+
+And use $L$ to get the robust SE for $(\hat{\beta}_1 + \hat{\beta}_3)$:
+```{r contrast2}
+b1_b3_SE <- t(L) %*% exercise_gee$robust.variance %*% L
+b1_b3_SE
+```
+
+. . .
+
+And create a 95% confidence interval with it:
+
+```{r contrast3}
+lowerCI <- b1_b3 - b1_b3_SE * qnorm(0.975)
+upperCI <- b1_b3 + b1_b3_SE * qnorm(0.975)
+
+paste0("(", round(lowerCI, 4), ", ", round(upperCI, 4), ")")
+```
+
+---
+
+## Example: Exercise therapy trial
+
+If this is our model
+
+$$E[\text{body strength}_{ij} | \text{Program}_{ij}, t_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})$$
+
+how do we interpret:
+
+```{r contrast4}
+b1_b3
+paste0("(", round(lowerCI, 4), ", ", round(upperCI, 4), ")")
+```
+
+---
+
+## Example: Exercise therapy trial
+
+If we fit a GLMM with random slopes and intercepts:
+```{r glmm}
+library(lme4)
+
+exercise_lme <- lmer( strength ~ PROGRAM*time + (time | ID),
+                      data = exercise_long )
+summary(exercise_lme)$coeff
+```
+
+. . .
+
+We could also get the model-based covariance matrix:
+```{r glmm2}
+summary(exercise_lme)$vcov
+```
+
+---
+
+## Example: Exercise therapy trial
+
+And create a 95% confidence interval using the same contrast vector $L$:
+
+```{r glmm contrast}
+b1_b3_lme <- summary(exercise_lme)$coeff[,1] %*% L
+
+b1_b3_lme
+
+b1_b3_SE_lme <- t(L) %*% summary(exercise_lme)$vcov %*% L
+
+lowerCI_lme <- b1_b3_lme - b1_b3_SE_lme * qnorm(0.975)
+upperCI_lme <- b1_b3_lme + b1_b3_SE_lme * qnorm(0.975)
+
+paste0("(", round(lowerCI_lme, 4), ", ", round(upperCI_lme, 4), ")")
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+::: {.fragment}
+[How do we interpret this?]{.alert}
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+Comparing to our GEE results:
+```{r contrast5, echo=F}
+b1_b3
+paste0("(", round(lowerCI, 4), ", ", round(upperCI, 4), ")")
+```
+:::
+:::
+::::

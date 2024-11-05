@@ -431,6 +431,8 @@ $$g(E[Y_{ij} | \boldsymbol{X} ]) = g(\mu_{ij}) = \beta_0 + \beta_1 U_{ij} + \bet
 
 ## Hands-on activity break! {.center}
 
+We'll return to the activity under Week 8 that we didn't get to last week
+
 ---
 
 ## Building a longitudinal model

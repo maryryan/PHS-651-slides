@@ -493,16 +493,43 @@ November 5, 2024
 <p>Confidence intervals for a single regression coefficients are still:</p>
 <ul>
 <li><p><span class="math inline">\(\hat{\beta} \pm SE_\beta \times Z_{1-\alpha/2}\)</span>, if using a Z critical value</p></li>
-<li><p><span class="math inline">\(\hat{\beta} \pm SE_\beta \times T_{DoF; ~1-\alpha/2}\)</span> if using a t critical value</p></li>
+<li><p><span class="math inline">\(\hat{\beta} \pm SE_\beta \times t_{DoF; ~1-\alpha/2}\)</span> if using a t critical value</p></li>
 </ul>
 </li>
 </ul>
 <div class="fragment">
+<p>Using a Z standard normal critical value may result in p-values being smaller or confidence intervals beeing narrower than “reality”</p>
+</div>
+<div class="fragment">
+<p>But using a t critical value requires determining the degrees of freedom… which is complicated in longitudinal data settings</p>
+</div>
+<div class="fragment">
+<ul>
+<li>
+<p>2 degrees of freedom approximations are:</p>
+<ul>
+<li><p>Satterthwaite approximation</p></li>
+<li><p>Kenward-Roger approximations</p></li>
+</ul>
+</li>
+<li><p>Both are available in <code>PROC GLIMMIX</code> in SAS and via the <code>lmer()</code> function from <code><a href="https://github.com/runehaubo/lmerTestR">library(lmerTest)</a></code></p></li>
+</ul>
+</div>
+</section><section id="inference-for-a-single-regression-parameter-1" class="slide level2"><h2>Inference for a single regression parameter</h2>
+<p>The fundamentals of statistical inference remain the same between non-longitudinal clustered data and longitudinal data models</p>
+<ul>
+<li>
+<p>Confidence intervals for a single regression coefficients are still:</p>
+<ul>
+<li><p><span class="math inline">\(\hat{\beta} \pm SE_\beta \times Z_{1-\alpha/2}\)</span>, if using a Z critical value</p></li>
+<li><p><span class="math inline">\(\hat{\beta} \pm SE_\beta \times t_{DoF; ~1-\alpha/2}\)</span> if using a t critical value</p></li>
+</ul>
+</li>
+</ul>
 <p>For GEE models, we generally always use <span class="alert">robust</span> or sandwich-based standard errors to account for any misspecification of the correlation structure or marginal variance</p>
 <ul>
 <li>Exceptions include when data are very unbalanced or the number of clusters/people is small</li>
 </ul>
-</div>
 <div class="fragment">
 <p>For GLMMs, we can use either model-based or robust standard errors</p>
 </div>

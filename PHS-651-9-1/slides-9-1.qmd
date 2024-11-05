@@ -168,9 +168,37 @@ The fundamentals of statistical inference remain the same between non-longitudin
 
    - $\hat{\beta} \pm SE_\beta \times Z_{1-\alpha/2}$, if using a Z critical value 
    
-   - $\hat{\beta} \pm SE_\beta \times T_{DoF; ~1-\alpha/2}$ if using a t critical value
+   - $\hat{\beta} \pm SE_\beta \times t_{DoF; ~1-\alpha/2}$ if using a t critical value
+   
+. . .
+
+Using a Z standard normal critical value may result in p-values being smaller or confidence intervals beeing narrower than "reality"
 
 . . .
+
+But using a t critical value requires determining the degrees of freedom... which is complicated in longitudinal data settings
+
+. . .
+
+- 2 degrees of freedom approximations are:
+
+   - Satterthwaite approximation
+   
+   - Kenward-Roger approximations
+   
+- Both are available in `PROC GLIMMIX` in SAS and via the `lmer()` function from `library(lmerTest)`
+
+---
+
+## Inference for a single regression parameter
+
+The fundamentals of statistical inference remain the same between non-longitudinal clustered data and longitudinal data models
+
+- Confidence intervals for a single regression coefficients are still:
+
+   - $\hat{\beta} \pm SE_\beta \times Z_{1-\alpha/2}$, if using a Z critical value 
+   
+   - $\hat{\beta} \pm SE_\beta \times t_{DoF; ~1-\alpha/2}$ if using a t critical value
    
 For GEE models, we generally always use [robust]{.alert} or sandwich-based standard errors to account for any misspecification of the correlation structure or marginal variance
 

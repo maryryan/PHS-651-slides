@@ -76,22 +76,41 @@ Last week we talked about how we can modify GEEs and GLMMs to handle longitudina
 
 For GEEs we can:
 
-- Include time as a variable in the mean model
+- [Include time]{.alert} as a variable in the mean model (and possibly a time-by-exposure interaction)
 
 - Choose between a [wider variety of correlation structures]{.alert} that might better reflect more complex relationships between observations with a cluster/person
 
    - Toeplitz, autoregression, exponential, etc.
    
+$$\begin{bmatrix}
+1 & \alpha_1 & \dots & \alpha_{n-1}\\
+\alpha_1 & \ddots & \dots & \alpha_{n-2}\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha_{n-1} & \dots & \alpha_1 & 1
+\end{bmatrix}~~~ \begin{bmatrix}
+1 & \alpha^1 & \dots & \alpha^{n-1}\\
+\alpha^1 & \ddots & \dots & \alpha^{n-2}\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha^{n-1} & \dots & \alpha^1 & 1
+\end{bmatrix}~~~ \begin{bmatrix}
+1 & \alpha^{|t_{i1} - t_{i2}|} & \dots & \alpha^{|t_{i1} - t_{in}|}\\
+\alpha^{|t_{i2} - t_{i1}|} & \ddots & \dots & \alpha^{|t_{i2} - t_{in}|}\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha^{|t_{in} - t_{i1}|} & \dots & \alpha^{|t_{in} - t_{i(n-1)}|} & 1
+\end{bmatrix}$$
+   
 ---
 
 ## Recall: Longitudinal data and GLMMs
+
+Last week we talked about how we can modify GEEs and GLMMs to handle longitudinal data
 
 For GLMMs we can:
 
 :::: {.columns}
 ::: {.column width="50%"}
 
-- Include time as a variable in the mean model
+- Include time as a variable in the mean model (and possibly a time-by-exposure interaction)
 
 - Include [random slope]{.alert} for time (or other variables) in model in addition to random intercept to allow for heterogeneity is trends over time
 
@@ -135,6 +154,10 @@ This attempts to get the same result that autoregressive or exponential correlat
 
 - Potentially decaying correlation between observations as the outcomes are measured further apart in time
 
+. . .
+
+[Once we've fit a model, though, how do we interpret its results?]{.alert}
+
 ---
 
 ## Inference for a single regression parameter
@@ -159,15 +182,19 @@ For GLMMs, we can use either model-based or robust standard errors
 
 . . .
 
-It's important to note that while GEEs only require the mean model to be correct for $\hat{\beta}$ to be a consistent estimator (fewer distributional assumptions)...
+It's important to note that while [GEEs only require the mean model to be correct]{.alert} for $\hat{\beta}$ to be a consistent estimator (fewer distributional assumptions)...
 
-... GLMMs require both the mean and distributional assumptions to be correct for $\hat{\beta}$ to be a consistent estimator (robust SEs can't fix everything)
+. . .
+
+... [GLMMs require both the mean and distributional assumptions to be correct]{.alert} for $\hat{\beta}$ to be a consistent estimator (robust SEs can't fix everything)
 
 ---
 
 ## Inference for combinations of parameters
 
-As we've seen the past few weeks, the introduction of time as a model covariate and and the introducton of time-by-exposure interaction effects impact the interpretation of our regression coefficients
+As we've seen the past few weeks, the [introduction of time]{.alert} as a model covariate and and the introduction of time-by-exposure interaction effects [impact the interpretation]{.alert} of our regression coefficients
+
+. . .
 
 Recall our exercise therapy example:
 
@@ -202,7 +229,7 @@ $$\vec{\hat{\beta}} \sim MVN(\vec{\beta}, Cov[\beta])$$
 
 . . .
 
-- Also let $L = (0,1,0,1,0,\dots,0)$ such that $L\vec{\hat{\beta}}L= (\hat{\beta}_1 + \hat{\beta}_3)$
+- Also let $L = (0,1,0,1,0,\dots,0)$ such that $L\vec{\hat{\beta}}= (\hat{\beta}_1 + \hat{\beta}_3)$
 
    - We call this a [linear contrast]{.alert}
 
@@ -240,6 +267,10 @@ If we want to use robust variance estimates:
 $$(\hat{\beta}_1 + \hat{\beta}_3) \pm LCov^*[\beta]L^T \times Z_{1-\alpha/2}$$
 
 - Where $Cov^*[\beta]$ is the robust/sandwich-based covariance matrix
+
+. . .
+
+[Let's try this with the exercise therapy trial]{.alert}
 
 ---
 
@@ -378,3 +409,98 @@ paste0("(", round(lowerCI, 4), ", ", round(upperCI, 4), ")")
 :::
 :::
 ::::
+
+---
+
+## A note on non-continous outcomes
+
+When talking about extending GEEs and GLMMs to longitudinal data, we've focused on continuous outcomes
+
+These same modifications can be made to GEEs and GLMMs with non-continuous outcomes
+
+- The main difference is needing to use a link function $g(\cdot)$ for the outcome
+
+$$g(E[Y_{ij} | \boldsymbol{X} ]) = g(\mu_{ij}) = \beta_0 + \beta_1 U_{ij} + \beta_2 t_{ij} + \beta_3 \left(U_{ij} \times t_{ij}\right)$$
+
+- and specifying a different marginal outcome variance $Var[Y_{ij}] = \varphi v(\mu_{ij})$
+
+   - Recall lectures 3 and 5.1!
+
+
+---
+
+## Hands-on activity break! {.center}
+
+---
+
+## Building a longitudinal model
+
+Over the last few weeks we've also touched on how we might explore the data to make some initial modeling decisions
+
+. . .
+
+- Should we include a time-by-exposure interaction in the mean model?
+
+<br>
+<br>
+
+- What correlation structures might be appropriate for a GEE?
+
+<br>
+<br>
+
+- If we're running a GLMM, should we include random slopes/serial correlation?
+
+<br>
+<br>
+
+---
+
+## Building a longitudinal model
+
+Over the last few weeks we've also touched on how we might explore the data to make some initial modeling decisions
+
+- Should we include a time-by-exposure interaction in the mean model?
+
+   - First, ask if this is part of our research question
+   
+      - If yes, should include it regardless
+   
+   - Second, plot outcome over time by exposure group to look for evidence of non-parallel trends
+
+- What correlation structures might be appropriate for a GEE?
+
+   - Calculate a matrix of the raw correlations between outcomes and different time points and observe behavior
+
+- If we're running a GLMM, should we include random slopes/serial correlation?
+
+   - Calculate correlation matrix
+   
+   - Create "spaghetti plot" of a random sample of individuals and observe differences in trends
+   
+---
+
+## Building longitudinal model(s?)
+
+However, even after we perform these exploratory steps, we might still be left with multiple plausible model specifications
+
+- Is there a way to compare multiple model specifications or assess the appropriateness of our modeling decisions?
+
+. . .
+
+[Yes!]{.alert}
+
+. . .
+
+There are 2 general approaches to compare GLMMs: likelihood ratios tests and AIC
+
+- We can't use these for GEEs because GEEs don't have a likelihood
+
+. . .
+
+For GEEs, we can use a modification of AIC called QIC
+
+. . .
+
+We'll cover these on Thursday :)
+

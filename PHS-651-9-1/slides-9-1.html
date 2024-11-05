@@ -426,7 +426,7 @@ November 5, 2024
 <div class="fragment">
 <p>For GEEs we can:</p>
 <ul>
-<li><p>Include time as a variable in the mean model</p></li>
+<li><p><span class="alert">Include time</span> as a variable in the mean model (and possibly a time-by-exposure interaction)</p></li>
 <li>
 <p>Choose between a <span class="alert">wider variety of correlation structures</span> that might better reflect more complex relationships between observations with a cluster/person</p>
 <ul>
@@ -434,13 +434,30 @@ November 5, 2024
 </ul>
 </li>
 </ul>
+<p><span class="math display">\[\begin{bmatrix}
+1 &amp; \alpha_1 &amp; \dots &amp; \alpha_{n-1}\\
+\alpha_1 &amp; \ddots &amp; \dots &amp; \alpha_{n-2}\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\alpha_{n-1} &amp; \dots &amp; \alpha_1 &amp; 1
+\end{bmatrix}~~~ \begin{bmatrix}
+1 &amp; \alpha^1 &amp; \dots &amp; \alpha^{n-1}\\
+\alpha^1 &amp; \ddots &amp; \dots &amp; \alpha^{n-2}\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\alpha^{n-1} &amp; \dots &amp; \alpha^1 &amp; 1
+\end{bmatrix}~~~ \begin{bmatrix}
+1 &amp; \alpha^{|t_{i1} - t_{i2}|} &amp; \dots &amp; \alpha^{|t_{i1} - t_{in}|}\\
+\alpha^{|t_{i2} - t_{i1}|} &amp; \ddots &amp; \dots &amp; \alpha^{|t_{i2} - t_{in}|}\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\alpha^{|t_{in} - t_{i1}|} &amp; \dots &amp; \alpha^{|t_{in} - t_{i(n-1)}|} &amp; 1
+\end{bmatrix}\]</span></p>
 </div>
 </section><section id="recall-longitudinal-data-and-glmms" class="slide level2"><h2>Recall: Longitudinal data and GLMMs</h2>
+<p>Last week we talked about how we can modify GEEs and GLMMs to handle longitudinal data</p>
 <p>For GLMMs we can:</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li><p>Include time as a variable in the mean model</p></li>
+<li><p>Include time as a variable in the mean model (and possibly a time-by-exposure interaction)</p></li>
 <li><p>Include <span class="alert">random slope</span> for time (or other variables) in model in addition to random intercept to allow for heterogeneity is trends over time</p></li>
 </ul>
 <p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + b_{0i}Z_{i0} + b_{1i}t_{ij} + \epsilon_{ij}\]</span></p>
@@ -466,6 +483,9 @@ November 5, 2024
 <li>Potentially decaying correlation between observations as the outcomes are measured further apart in time</li>
 </ul>
 </div>
+<div class="fragment">
+<p><span class="alert">Once we’ve fit a model, though, how do we interpret its results?</span></p>
+</div>
 </section><section id="inference-for-a-single-regression-parameter" class="slide level2"><h2>Inference for a single regression parameter</h2>
 <p>The fundamentals of statistical inference remain the same between non-longitudinal clustered data and longitudinal data models</p>
 <ul>
@@ -487,11 +507,14 @@ November 5, 2024
 <p>For GLMMs, we can use either model-based or robust standard errors</p>
 </div>
 <div class="fragment">
-<p>It’s important to note that while GEEs only require the mean model to be correct for <span class="math inline">\(\hat{\beta}\)</span> to be a consistent estimator (fewer distributional assumptions)…</p>
-<p>… GLMMs require both the mean and distributional assumptions to be correct for <span class="math inline">\(\hat{\beta}\)</span> to be a consistent estimator (robust SEs can’t fix everything)</p>
+<p>It’s important to note that while <span class="alert">GEEs only require the mean model to be correct</span> for <span class="math inline">\(\hat{\beta}\)</span> to be a consistent estimator (fewer distributional assumptions)…</p>
+</div>
+<div class="fragment">
+<p>… <span class="alert">GLMMs require both the mean and distributional assumptions to be correct</span> for <span class="math inline">\(\hat{\beta}\)</span> to be a consistent estimator (robust SEs can’t fix everything)</p>
 </div>
 </section><section id="inference-for-combinations-of-parameters" class="slide level2"><h2>Inference for combinations of parameters</h2>
-<p>As we’ve seen the past few weeks, the introduction of time as a model covariate and and the introducton of time-by-exposure interaction effects impact the interpretation of our regression coefficients</p>
+<p>As we’ve seen the past few weeks, the <span class="alert">introduction of time</span> as a model covariate and and the introduction of time-by-exposure interaction effects <span class="alert">impact the interpretation</span> of our regression coefficients</p>
+<div class="fragment">
 <p>Recall our exercise therapy example:</p>
 <p><span class="math display">\[E[\text{body strength}_{ij} | \text{Program}_{ij}, t_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})\]</span></p>
 <ul>
@@ -502,6 +525,7 @@ November 5, 2024
 <li><p><span class="math inline">\((\beta_1 + \beta_3)\)</span>: Difference in strength between Program 2 and Program 1 at the same timepoint</p></li>
 <li><p><span class="math inline">\(\beta_3\)</span>: Difference in Program 1’s strength change rate and Program 2’s strength change rate</p></li>
 </ul>
+</div>
 <div class="fragment">
 <p>This means we may actually be interested in inference on <span class="alert">combinations</span> of regression coefficients instead of the singular coefficients by themselves</p>
 </div>
@@ -516,7 +540,7 @@ November 5, 2024
 <div class="fragment">
 <ul>
 <li>
-<p>Also let <span class="math inline">\(L = (0,1,0,1,0,\dots,0)\)</span> such that <span class="math inline">\(L\vec{\hat{\beta}}L= (\hat{\beta}_1 + \hat{\beta}_3)\)</span></p>
+<p>Also let <span class="math inline">\(L = (0,1,0,1,0,\dots,0)\)</span> such that <span class="math inline">\(L\vec{\hat{\beta}}= (\hat{\beta}_1 + \hat{\beta}_3)\)</span></p>
 <ul>
 <li>We call this a <span class="alert">linear contrast</span>
 </li>
@@ -542,7 +566,11 @@ November 5, 2024
 <p>If we want to use robust variance estimates: <span class="math display">\[(\hat{\beta}_1 + \hat{\beta}_3) \pm LCov^*[\beta]L^T \times Z_{1-\alpha/2}\]</span></p>
 <ul>
 <li>Where <span class="math inline">\(Cov^*[\beta]\)</span> is the robust/sandwich-based covariance matrix</li>
-</ul></section><section id="example-exercise-therapy-trial" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+</ul>
+<div class="fragment">
+<p><span class="alert">Let’s try this with the exercise therapy trial</span></p>
+</div>
+</section><section id="example-exercise-therapy-trial" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <p>If we fit a GEE with an autoregressive correlation structure:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(gee)</span>
@@ -694,9 +722,88 @@ PROGRAM:time  0.009520441 -0.006127660 -0.007099189  0.004548954</code></pre>
 </div>
 </div>
 </div>
+</section><section id="a-note-on-non-continous-outcomes" class="slide level2"><h2>A note on non-continous outcomes</h2>
+<p>When talking about extending GEEs and GLMMs to longitudinal data, we’ve focused on continuous outcomes</p>
+<p>These same modifications can be made to GEEs and GLMMs with non-continuous outcomes</p>
+<ul>
+<li>The main difference is needing to use a link function <span class="math inline">\(g(\cdot)\)</span> for the outcome</li>
+</ul>
+<p><span class="math display">\[g(E[Y_{ij} | \boldsymbol{X} ]) = g(\mu_{ij}) = \beta_0 + \beta_1 U_{ij} + \beta_2 t_{ij} + \beta_3 \left(U_{ij} \times t_{ij}\right)\]</span></p>
+<ul>
+<li>
+<p>and specifying a different marginal outcome variance <span class="math inline">\(Var[Y_{ij}] = \varphi v(\mu_{ij})\)</span></p>
+<ul>
+<li>Recall lectures 3 and 5.1!</li>
+</ul>
+</li>
+</ul></section><section id="hands-on-activity-break" class="slide level2 center"><h2>Hands-on activity break!</h2>
+</section><section id="building-a-longitudinal-model" class="slide level2"><h2>Building a longitudinal model</h2>
+<p>Over the last few weeks we’ve also touched on how we might explore the data to make some initial modeling decisions</p>
+<div class="fragment">
+<ul>
+<li>Should we include a time-by-exposure interaction in the mean model?</li>
+</ul>
+<p><br><br></p>
+<ul>
+<li>What correlation structures might be appropriate for a GEE?</li>
+</ul>
+<p><br><br></p>
+<ul>
+<li>If we’re running a GLMM, should we include random slopes/serial correlation?</li>
+</ul>
+<p><br><br></p>
+</div>
+</section><section id="building-a-longitudinal-model-1" class="slide level2"><h2>Building a longitudinal model</h2>
+<p>Over the last few weeks we’ve also touched on how we might explore the data to make some initial modeling decisions</p>
+<ul>
+<li>
+<p>Should we include a time-by-exposure interaction in the mean model?</p>
+<ul>
+<li>
+<p>First, ask if this is part of our research question</p>
+<ul>
+<li>If yes, should include it regardless</li>
+</ul>
+</li>
+<li><p>Second, plot outcome over time by exposure group to look for evidence of non-parallel trends</p></li>
+</ul>
+</li>
+<li>
+<p>What correlation structures might be appropriate for a GEE?</p>
+<ul>
+<li>Calculate a matrix of the raw correlations between outcomes and different time points and observe behavior</li>
+</ul>
+</li>
+<li>
+<p>If we’re running a GLMM, should we include random slopes/serial correlation?</p>
+<ul>
+<li><p>Calculate correlation matrix</p></li>
+<li><p>Create “spaghetti plot” of a random sample of individuals and observe differences in trends</p></li>
+</ul>
+</li>
+</ul></section><section id="building-longitudinal-models" class="slide level2"><h2>Building longitudinal model(s?)</h2>
+<p>However, even after we perform these exploratory steps, we might still be left with multiple plausible model specifications</p>
+<ul>
+<li>Is there a way to compare multiple model specifications or assess the appropriateness of our modeling decisions?</li>
+</ul>
+<div class="fragment">
+<p><span class="alert">Yes!</span></p>
+</div>
+<div class="fragment">
+<p>There are 2 general approaches to compare GLMMs: likelihood ratios tests and AIC</p>
+<ul>
+<li>We can’t use these for GEEs because GEEs don’t have a likelihood</li>
+</ul>
+</div>
+<div class="fragment">
+<p>For GEEs, we can use a modification of AIC called QIC</p>
+</div>
+<div class="fragment">
+<p>We’ll cover these on Thursday :)</p>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
+</div>
 </div>
 </section>
 </div>

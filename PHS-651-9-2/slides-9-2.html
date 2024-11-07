@@ -616,6 +616,10 @@ $ time         &lt;dbl&gt; 0.0000000, 0.5583333, 0.7883333, 1.0950000, 1.4208333
 <p><span class="math display">\[AIC = -2(\text{maximized log-likelihood}) + 2(\text{number of covariance parameters})\]</span></p>
 <div class="fragment">
 <p>According to AIC, we want a model that fits the data well, but not at the price of having to estimate a ton of extra covariance parameters</p>
+<ul>
+<li>SAS reports AIC automatically in <code>PROC GLIMMIX</code>
+</li>
+</ul>
 </div>
 <div class="fragment">
 <p>Let’s try this with the exercise therapy trial</p>
@@ -653,7 +657,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="fragment">
 <p><span class="alert">What can we conclude?</span></p>
 </div>
-</section><section id="model-comparison-via-qic" class="slide level2"><h2>Model comparison via QIC</h2>
+</section><section id="model-comparison-via-qiccic" class="slide level2"><h2>Model comparison via QIC/CIC</h2>
 <p>Neither LRTs nor AIC works for GEEs because GEEs do not have a likelihood that is needed to calculate those statistics</p>
 <ul>
 <li>
@@ -662,13 +666,17 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <li>Its calculation is somewhat complicated, but it’s interpretation is similar to the AIC: you want to minimize it</li>
 </ul>
 </li>
+<li><p>There is also the <span class="alert">Correlation Information Criterion (CIC)</span> that may be more robust than the QIC</p></li>
 </ul>
+<div class="fragment">
+<p>If QIC and CIC give conflicting results, it might be best to choose the model whose model-based SEs are closest to their estimated robust SEs</p>
+</div>
 <div class="fragment">
 <p>Let’s test this in the exercise trial</p>
 </div>
 </section><section id="example-exercise-therapy-trial-1" class="slide level2"><h2>Example: Exercise therapy trial</h2>
-<p>We’ve been using <code>gee()</code> from <code><a href="https://rdrr.io/r/base/library.html">library(gee)</a></code> to fit GEEs so far</p>
-<p>However, <code>QIC()</code> is only available for models run with the <code>geeglm()</code> function from <code><a href="https://rdrr.io/r/base/library.html">library(geepack)</a></code></p>
+<p>In SAS, QIC is automatically reported as part of <code>PROC GENMOD</code></p>
+<p>For R, <code>QIC()</code> is only available for models run with the <code>geeglm()</code> function from <code><a href="https://rdrr.io/r/base/library.html">library(geepack)</a></code></p>
 <div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(geepack)</span>

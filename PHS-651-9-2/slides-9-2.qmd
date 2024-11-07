@@ -305,6 +305,8 @@ $$AIC = -2(\text{maximized log-likelihood}) + 2(\text{number of covariance param
 
 According to AIC, we want a model that fits the data well, but not at the price of having to estimate a ton of extra covariance parameters
 
+- SAS reports AIC automatically in `PROC GLIMMIX`
+
 . . .
 
 Let's try this with the exercise therapy trial
@@ -335,13 +337,19 @@ anova(exercise_lme_slopes, exercise_lme_int)
 
 ---
 
-## Model comparison via QIC
+## Model comparison via QIC/CIC
 
 Neither LRTs nor AIC works for GEEs because GEEs do not have a likelihood that is needed to calculate those statistics
 
 - Instead, we can use a modified AIC called the [Quasi-likelihood Information Criterion (QIC)]{.alert}
 
    - Its calculation is somewhat complicated, but it's interpretation is similar to the AIC: you want to minimize it
+   
+- There is also the [Correlation Information Criterion (CIC)]{.alert} that may be more robust than the QIC
+
+. . .
+
+If QIC and CIC give conflicting results, it might be best to choose the model whose model-based SEs are closest to their estimated robust SEs
 
 . . .
 
@@ -351,9 +359,9 @@ Let's test this in the exercise trial
 
 ## Example: Exercise therapy trial
 
-We've been using `gee()` from `library(gee)` to fit GEEs so far
+In SAS, QIC is automatically reported as part of `PROC GENMOD`
 
-However, `QIC()` is only available for models run with the `geeglm()` function from `library(geepack)`
+For R, `QIC()` is only available for models run with the `geeglm()` function from `library(geepack)`
 
 . . .
 

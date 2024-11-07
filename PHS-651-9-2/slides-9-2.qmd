@@ -223,6 +223,25 @@ $$Corr[C_i(t_{ij}), C_i(t_{ik})] = \exp\{-|t_{ij} - t_{ik}|\}$$
 :::
 ::::
 
+
+---
+
+## Variograms
+
+![](variogram-examp.png){width=45%}
+
+::: {.absolute width=40% top=200 right=150}
+Random intercepts
+:::
+
+::: {.absolute width=40% top=500 right=150}
+Random intercepts + slopes
+:::
+
+::: {.absolute width=40% bottom=150 right=150}
+Random intercepts + serial correlation
+:::
+
 ---
 
 ## Example: CD4+ count

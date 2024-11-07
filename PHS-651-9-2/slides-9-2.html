@@ -421,6 +421,32 @@ November 7, 2024
 </div>
 </div>
 </div>
+</section><section id="update-inference-for-a-single-regression-parameter" class="slide level2"><h2>Update: Inference for a single regression parameter</h2>
+<p>The fundamentals of statistical inference remain the same between non-longitudinal clustered data and longitudinal data models</p>
+<ul>
+<li>
+<p>Confidence intervals for a single regression coefficients are still:</p>
+<ul>
+<li><p><span class="math inline">\(\hat{\beta} \pm SE_\beta \times Z_{1-\alpha/2}\)</span>, if using a Z critical value</p></li>
+<li><p><span class="math inline">\(\hat{\beta} \pm SE_\beta \times t_{DoF; ~1-\alpha/2}\)</span> if using a t critical value</p></li>
+</ul>
+</li>
+</ul>
+<p>Using a Z standard normal critical value may result in p-values being smaller or confidence intervals beeing narrower than “reality”</p>
+<p>But using a t critical value requires determining the degrees of freedom… which is complicated in longitudinal data settings</p>
+<ul>
+<li>
+<p>2 degrees of freedom approximations are:</p>
+<ul>
+<li><p>Satterthwaite approximation</p></li>
+<li><p>Kenward-Roger approximations</p></li>
+</ul>
+</li>
+<li><p>Both are available in <code>PROC GLIMMIX</code> in SAS and via the <code>lmer()</code> function from <code><a href="https://github.com/runehaubo/lmerTestR">library(lmerTest)</a></code></p></li>
+</ul>
+<div class="absolute" style="bottom: 300px; right: 100px; width: 45%; ">
+<p><span class="alert">These approximations are appropriate when the number of clusters is “small” (rule of thumb: fewer than 40)</span></p>
+</div>
 </section><section id="building-a-longitudinal-model" class="slide level2"><h2>Building a longitudinal model</h2>
 <p>Over the last few weeks we’ve touched on how we might explore the data to make some initial modeling decisions</p>
 <div class="fragment">
@@ -429,7 +455,7 @@ November 7, 2024
 <ul>
 <li>Should we include a time-by-exposure interaction in the mean model?</li>
 </ul>
-<p><br></p>
+<p><br><br></p>
 <ul>
 <li>What correlation structures might be appropriate for a GEE?</li>
 </ul>
@@ -437,7 +463,7 @@ November 7, 2024
 <ul>
 <li>If we’re running a GLMM, should we include random slopes?</li>
 </ul>
-<p><br></p>
+<p><br><br></p>
 <ul>
 <li>If we’re running a GLMM, should we include serial correlation?</li>
 </ul>
@@ -490,7 +516,7 @@ November 7, 2024
 <p>If we’re running a GLMM, should we include serial correlation?</p>
 <ul>
 <li><p>Calculate correlation matrix</p></li>
-<li><p><span class="fragment alert">We could also create a variogram plot specifically</span></p></li>
+<li><p><span class="fragment alert">We could also create a variogram plot</span></p></li>
 </ul>
 </li>
 </ul>
@@ -504,18 +530,28 @@ November 7, 2024
 <p><span class="math display">\[Y_{ij} = \beta_0 + \beta_1 U_{i0} + \beta_3 t_{ij} + b_{0i}Z_i + C_i(t_{ij}) + \epsilon_{ij}\]</span></p>
 <p><span class="math display">\[b_{0i} \sim N(0,\sigma^2_{0})~~~C_i(t_{ij}) \sim N(0, \sigma^2_c)~~~ \epsilon_{ij} \sim (0, \sigma^2_\epsilon)\]</span> <span class="math display">\[Corr[C_i(t_{ij}), C_i(t_{ik})] = \exp\{-|t_{ij} - t_{ik}|\}\]</span></p>
 </div><div class="column" style="width:40%;">
-<p><span class="alert">Empirical variogram plots</span> are one way to assess the presence/strength of serial correlation, and whether random intercepts are needed</p>
+<div class="fragment">
+<p><span class="alert">Sample or empirical variogram plots</span> are one way to assess the presence/strength of serial correlation, and whether random intercepts are needed</p>
 </div>
 </div>
+</div>
+<div class="fragment">
 <p><img data-src="variogram-edit.png" class="absolute" style="bottom: -80px; width: 65%; "></p>
+</div>
 </section><section id="variograms-1" class="slide level2"><h2>Variograms</h2>
 <div class="columns">
 <div class="column" style="width:65%;">
-<p><img data-src="variogram-evidence.png" style="width:150.0%"></p>
+<p><img data-src="variogram-evidence.png" style="width:170.0%"></p>
 </div><div class="column" style="width:35%;">
 <ul>
 <li><p>The more the curve is stretched out horizontally (“wide S”), the slower it takes correlation between observations to decay</p></li>
 <li><p>The taller the curve, the faster it takes correlation between observations to decay</p></li>
+<li>
+<p>These plots are more useful when each cluster has enough repeated measures</p>
+<ul>
+<li>Software often won’t compute this for fewer than 4 time points</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -526,7 +562,7 @@ November 7, 2024
 <pre><code>Rows: 675
 Columns: 9
 $ VISIT        &lt;int&gt; 1, 4, 7, 10, 13, 16, 19, 1, 4, 7, 10, 13, 16, 19, 1, 4, 7…
-$ newpid       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, …
+$ newpid       &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, …
 $ VDATE        &lt;chr&gt; "6/29/1988 ", "1/19/1989 ", "4/13/1989 ", "", "11/30/1989…
 $ CD4PCT       &lt;dbl&gt; 18, 37, 13, NA, 13, NA, 12, 28, 28, 33, 33, 37, 35, 28, 3…
 $ arv          &lt;int&gt; 0, 0, 0, 0, 0, NA, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
@@ -539,20 +575,40 @@ $ time         &lt;dbl&gt; 0.0000000, 0.5583333, 0.7883333, 1.0950000, 1.4208333
 <ul>
 <li>We want to see how the square-root of CD4+ cell counts behaves over time for each child</li>
 </ul></section><section id="example-cd4-count-1" class="slide level2"><h2>Example: CD4+ count</h2>
+<p>First, a spaghetti plot of 20 random participants</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>cd4_sample <span class="ot">&lt;-</span> <span class="fu">sample</span>(cd4<span class="sc">$</span>newpid, <span class="dv">20</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a>cd4 <span class="sc">%&gt;%</span> </span>
+<span id="cb2-3"><a href="#cb2-3"></a>   dplyr<span class="sc">::</span><span class="fu">filter</span>(newpid <span class="sc">%in%</span> cd4_sample) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-4"><a href="#cb2-4"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(time, <span class="fu">sqrt</span>(CD4CNT), <span class="at">group =</span> newpid, <span class="at">color =</span> newpid)) <span class="sc">+</span> </span>
+<span id="cb2-5"><a href="#cb2-5"></a>   <span class="fu">geom_line</span>(<span class="at">size=</span><span class="fl">1.2</span>)<span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>   <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a>   <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="slides-9-2_files/figure-revealjs/cd4%20plot-1.png" style="width:60.0%"></p>
+</div>
+</div>
+<div class="absolute" style="bottom: 500px; right: -30px; width: 40%; ">
+<p><span class="alert">What’s our instinct on appropriateness of random intercepts/slopes?</span></p>
+</div>
+</section><section id="example-cd4-count-2" class="slide level2"><h2>Example: CD4+ count</h2>
 <p>Unfortunately, I haven’t been able to find appropriate code to plot (time) variograms in SAS</p>
 <p>In R, we can create these plots using the <code>variogram()</code> function from <code><a href="https://github.com/graemeleehickey/joineR/">library(joineR)</a></code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="fu">library</span>(joineR)</span>
-<span id="cb2-2"><a href="#cb2-2"></a>vario <span class="ot">&lt;-</span> <span class="fu">variogram</span>( <span class="at">indv =</span> cd4<span class="sc">$</span>newpid,</span>
-<span id="cb2-3"><a href="#cb2-3"></a>                    <span class="at">time =</span> cd4<span class="sc">$</span>time,</span>
-<span id="cb2-4"><a href="#cb2-4"></a>                    <span class="at">Y =</span> <span class="fu">sqrt</span>(cd4<span class="sc">$</span>CD4CNT) )</span>
-<span id="cb2-5"><a href="#cb2-5"></a>vario<span class="sc">$</span>svar <span class="ot">&lt;-</span> vario<span class="sc">$</span>svar[<span class="fu">complete.cases</span>(vario<span class="sc">$</span>svar),]</span>
-<span id="cb2-6"><a href="#cb2-6"></a></span>
-<span id="cb2-7"><a href="#cb2-7"></a></span>
-<span id="cb2-8"><a href="#cb2-8"></a><span class="fu">plot</span>(vario, <span class="at">smooth=</span>T, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">400</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(joineR)</span>
+<span id="cb3-2"><a href="#cb3-2"></a>vario <span class="ot">&lt;-</span> <span class="fu">variogram</span>( <span class="at">indv =</span> cd4<span class="sc">$</span>newpid,</span>
+<span id="cb3-3"><a href="#cb3-3"></a>                    <span class="at">time =</span> cd4<span class="sc">$</span>time,</span>
+<span id="cb3-4"><a href="#cb3-4"></a>                    <span class="at">Y =</span> <span class="fu">sqrt</span>(cd4<span class="sc">$</span>CD4CNT) )</span>
+<span id="cb3-5"><a href="#cb3-5"></a>vario<span class="sc">$</span>svar <span class="ot">&lt;-</span> vario<span class="sc">$</span>svar[<span class="fu">complete.cases</span>(vario<span class="sc">$</span>svar),]</span>
+<span id="cb3-6"><a href="#cb3-6"></a></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>, <span class="fl">0.5</span>, <span class="dv">2</span>))</span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="fu">plot</span>(vario, <span class="at">smooth=</span>T, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">300</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="slides-9-2_files/figure-revealjs/variogram-1.png" width="960"></p>
+<p><img data-src="slides-9-2_files/figure-revealjs/variogram-1.png" style="width:55.0%"></p>
 </div>
+</div>
+<div class="absolute" style="bottom: 450px; right: -500px; width: 50%; ">
+<p><span class="alert">What can we conclude?</span></p>
 </div>
 </section><section id="building-longitudinal-models" class="slide level2"><h2>Building longitudinal model(s?)</h2>
 <p>However, even after we perform these exploratory steps, we might still be left with multiple plausible model specifications</p>
@@ -579,7 +635,7 @@ $ time         &lt;dbl&gt; 0.0000000, 0.5583333, 0.7883333, 1.0950000, 1.4208333
 <p>An LRT is obtained by taking twice the difference in the respective maximized REML log-likelihoods, <span class="math display">\[G^2 = 2(\hat{l}_{full} - \hat{l}_{reduced})\]</span> and comparing statistic to a chi-squared distribution with degrees-of-freedom equal to difference between the number of covariance parameters in full and reduced models</p>
 <ul>
 <li><p>“Full” here would be the most complicated covariance structure, while “reduced” would be a simpler one</p></li>
-<li><p>Sometimes it’s also written as <span class="math inline">\(G^2 = -2(\hat{l}_{reduced} - \hat{l}_full)\)</span></p></li>
+<li><p>Sometimes it’s also written as <span class="math inline">\(G^2 = -2(\hat{l}_{reduced} - \hat{l}_{full})\)</span></p></li>
 </ul>
 </li>
 </ul>
@@ -607,7 +663,8 @@ $ time         &lt;dbl&gt; 0.0000000, 0.5583333, 0.7883333, 1.0950000, 1.4208333
 </ul>
 <p>For GLMMs, this means comparing models with <span class="alert">the same fixed effects</span> but “nested” random effects</p>
 <ul>
-<li>i.e., random intercepts vs random slopes + random intercepts</li>
+<li><p>i.e., random intercepts vs random slopes + random intercepts; random slopes vs random slopes + random intercepts</p></li>
+<li><p>NOT random intercepts vs random slopes</p></li>
 </ul></section><section id="model-comparison-via-aic" class="slide level2"><h2>Model comparison via AIC</h2>
 <p>An alternative approach is the <span class="alert">Akaike Information Criterion (AIC)</span></p>
 <ul>
@@ -617,8 +674,8 @@ $ time         &lt;dbl&gt; 0.0000000, 0.5583333, 0.7883333, 1.0950000, 1.4208333
 <div class="fragment">
 <p>According to AIC, we want a model that fits the data well, but not at the price of having to estimate a ton of extra covariance parameters</p>
 <ul>
-<li>SAS reports AIC automatically in <code>PROC GLIMMIX</code>
-</li>
+<li><p>You can use this to compare either nested or non-nested models</p></li>
+<li><p>SAS reports AIC automatically in <code>PROC GLIMMIX</code></p></li>
 </ul>
 </div>
 <div class="fragment">
@@ -631,13 +688,13 @@ $ time         &lt;dbl&gt; 0.0000000, 0.5583333, 0.7883333, 1.0950000, 1.4208333
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>exercise_lme_slopes <span class="ot">&lt;-</span> <span class="fu">lmer</span>( strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time <span class="sc">+</span> (time <span class="sc">|</span> ID),</span>
-<span id="cb3-2"><a href="#cb3-2"></a>                      <span class="at">data =</span> exercise_long )</span>
-<span id="cb3-3"><a href="#cb3-3"></a></span>
-<span id="cb3-4"><a href="#cb3-4"></a>exercise_lme_int <span class="ot">&lt;-</span> <span class="fu">lmer</span>( strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ID),</span>
-<span id="cb3-5"><a href="#cb3-5"></a>                      <span class="at">data =</span> exercise_long )</span>
-<span id="cb3-6"><a href="#cb3-6"></a></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="fu">anova</span>(exercise_lme_slopes, exercise_lme_int)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>exercise_lme_slopes <span class="ot">&lt;-</span> <span class="fu">lmer</span>( strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time <span class="sc">+</span> (time <span class="sc">|</span> ID),</span>
+<span id="cb4-2"><a href="#cb4-2"></a>                      <span class="at">data =</span> exercise_long )</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a>exercise_lme_int <span class="ot">&lt;-</span> <span class="fu">lmer</span>( strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ID),</span>
+<span id="cb4-5"><a href="#cb4-5"></a>                      <span class="at">data =</span> exercise_long )</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="fu">anova</span>(exercise_lme_slopes, exercise_lme_int)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Data: exercise_long
 Models:
@@ -658,7 +715,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p><span class="alert">What can we conclude?</span></p>
 </div>
 </section><section id="model-comparison-via-qiccic" class="slide level2"><h2>Model comparison via QIC/CIC</h2>
-<p>Neither LRTs nor AIC works for GEEs because GEEs do not have a likelihood that is needed to calculate those statistics</p>
+<p>Neither LRTs nor AIC work for GEEs because GEEs do not have a likelihood that is needed to calculate those statistics</p>
 <ul>
 <li>
 <p>Instead, we can use a modified AIC called the <span class="alert">Quasi-likelihood Information Criterion (QIC)</span></p>
@@ -679,22 +736,22 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p>For R, <code>QIC()</code> is only available for models run with the <code>geeglm()</code> function from <code><a href="https://rdrr.io/r/base/library.html">library(geepack)</a></code></p>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(geepack)</span>
-<span id="cb5-2"><a href="#cb5-2"></a></span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># fitting an unstructured correlation structure #</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a>exercise_gee_un <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
-<span id="cb5-5"><a href="#cb5-5"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"unstructured"</span>)</span>
-<span id="cb5-6"><a href="#cb5-6"></a></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="co"># fitting an autoregression, distance 1 correlation structure #</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a>exercise_gee_AR <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
-<span id="cb5-9"><a href="#cb5-9"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"ar1"</span>)</span>
-<span id="cb5-10"><a href="#cb5-10"></a></span>
-<span id="cb5-11"><a href="#cb5-11"></a><span class="co"># fitting an exchangeable correlation structure #</span></span>
-<span id="cb5-12"><a href="#cb5-12"></a>exercise_gee_exch <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
-<span id="cb5-13"><a href="#cb5-13"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"exchangeable"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">library</span>(geepack)</span>
+<span id="cb6-2"><a href="#cb6-2"></a></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co"># fitting an unstructured correlation structure #</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>exercise_gee_un <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
+<span id="cb6-5"><a href="#cb6-5"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"unstructured"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6"></a></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co"># fitting an autoregression, distance 1 correlation structure #</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>exercise_gee_AR <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
+<span id="cb6-9"><a href="#cb6-9"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"ar1"</span>)</span>
+<span id="cb6-10"><a href="#cb6-10"></a></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co"># fitting an exchangeable correlation structure #</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>exercise_gee_exch <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
+<span id="cb6-13"><a href="#cb6-13"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"exchangeable"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">QIC</span>(exercise_gee_un, exercise_gee_AR, exercise_gee_exch)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">QIC</span>(exercise_gee_un, exercise_gee_AR, exercise_gee_exch)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                       QIC     QICu Quasi Lik      CIC params     QICC
 exercise_gee_un   2844.884 2786.481 -1389.240 33.20135      4 2963.065
@@ -706,6 +763,41 @@ exercise_gee_exch 2672.038 2654.145 -1323.073 12.94616      4 2673.973</code></p
 <div class="fragment">
 <p><span class="alert">What can we conclude?</span></p>
 </div>
+</section><section id="example-exercise-therapy-trial-2" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<p>Let’s try comparing their model-based and robust SEs. First we need to refit the models with <code>gee()</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">library</span>(gee)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>exercise_gee_un2 <span class="ot">&lt;-</span> <span class="fu">gee</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
+<span id="cb9-3"><a href="#cb9-3"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"unstructured"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4"></a></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="co"># fitting an autoregression, distance 1 correlation structure #</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a>exercise_gee_AR2 <span class="ot">&lt;-</span> <span class="fu">gee</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
+<span id="cb9-7"><a href="#cb9-7"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"AR-M"</span>, <span class="at">Mv=</span><span class="dv">1</span>)</span>
+<span id="cb9-8"><a href="#cb9-8"></a></span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="co"># fitting an exchangeable correlation structure #</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a>exercise_gee_exch2 <span class="ot">&lt;-</span> <span class="fu">gee</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
+<span id="cb9-11"><a href="#cb9-11"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"exchangeable"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="example-exercise-therapy-trial-3" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<p>Then we can compare the distance between the SEs within each model</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="fu">summary</span>(exercise_gee_un2)<span class="sc">$</span>coeff[,<span class="dv">2</span>] <span class="sc">-</span> <span class="fu">summary</span>(exercise_gee_un2)<span class="sc">$</span>coeff[,<span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> (Intercept)      PROGRAM         time PROGRAM:time 
+  0.11569326   0.07859974   0.04802520   0.03741343 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="fu">summary</span>(exercise_gee_AR2)<span class="sc">$</span>coeff[,<span class="dv">2</span>] <span class="sc">-</span> <span class="fu">summary</span>(exercise_gee_AR2)<span class="sc">$</span>coeff[,<span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> (Intercept)      PROGRAM         time PROGRAM:time 
+  0.04362785   0.05176057  -0.02992846  -0.01053647 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">summary</span>(exercise_gee_exch2)<span class="sc">$</span>coeff[,<span class="dv">2</span>] <span class="sc">-</span> <span class="fu">summary</span>(exercise_gee_exch2)<span class="sc">$</span>coeff[,<span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> (Intercept)      PROGRAM         time PROGRAM:time 
+  0.08836276   0.04048312  -0.04944752  -0.02418467 </code></pre>
+</div>
+</div>
+<p><span class="alert">What can we conclude?</span></p>
 </section><section id="model-justification" class="slide level2"><h2>Model justification</h2>
 <p>We can use these metrics in a couple of different ways</p>
 <div class="fragment">

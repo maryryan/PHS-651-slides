@@ -30,6 +30,18 @@ library(dagitty)
 library(gridExtra)
 library(qrcode)
 library(corrr)
+library(lme4)
+```
+
+```{r exercise, echo=F}
+exercise <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/exercise-data.txt", sep="", na.strings=".")
+colnames(exercise) <- c("ID", "PROGRAM", "day0","day2", "day4", "day6", "day8", "day10", "day12")
+exercise_long <- exercise %>% 
+   pivot_longer(!(c("ID","PROGRAM")), names_to="time", values_to="strength") %>% 
+   mutate(time=parse_number(time))
+
+exercise_long_complete <- exercise_long %>% 
+   filter(complete.cases(.))
 ```
 
 <h1>Lecture 9.2: Comparing longitudinal models & other diganostics</h1>
@@ -68,10 +80,38 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-9-2/slides-9-2")
 
 ---
 
-## Recall: Building a longitudinal model
+## Building a longitudinal model
 
-Over the last few weeks we've also touched on how we might explore the data to make some initial modeling decisions
+Over the last few weeks we've touched on how we might explore the data to make some initial modeling decisions
 
+. . .
+
+:::: {.columns}
+::: {.column width="50%"}
+- Should we include a time-by-exposure interaction in the mean model?
+
+<br>
+
+- What correlation structures might be appropriate for a GEE?
+:::
+
+::: {.column width="50%"}
+- If we're running a GLMM, should we include random slopes?
+
+<br>
+
+- If we're running a GLMM, should we include serial correlation?
+:::
+::::
+
+---
+
+## Building a longitudinal model
+
+Over the last few weeks we've touched on how we might explore the data to make some initial modeling decisions
+
+:::: {.columns}
+::: {.column width="50%"}
 - Should we include a time-by-exposure interaction in the mean model?
 
    - First, ask if this is part of our research question
@@ -79,20 +119,116 @@ Over the last few weeks we've also touched on how we might explore the data to m
       - If yes, should include it regardless
    
    - Second, plot outcome over time by exposure group to look for evidence of non-parallel trends
-
+   
+::: {.fragment}
 - What correlation structures might be appropriate for a GEE?
 
    - Calculate a matrix of the raw correlations between outcomes and different time points and observe behavior
+:::
+:::
 
-- If we're running a GLMM, should we include random slopes/serial correlation?
+::: {.column width="50%"}
+::: {.fragment}
+- If we're running a GLMM, should we include random slopes?
 
    - Calculate correlation matrix
    
    - Create "spaghetti plot" of a random sample of individuals and observe differences in trends
+:::
+
+::: {.fragment}
+- If we're running a GLMM, should we include serial correlation?
+
+   - Calculate correlation matrix
    
+   - [We could also create a variogram plot specifically]{.fragment .alert}
+:::
+:::
+::::
+
 ---
 
-## Recall: Building longitudinal model(s?)
+## Variograms
+
+:::: {.columns}
+::: {.column width="60%"}
+Recall our hybrid random effects model from last week:
+
+$$Y_{ij} = \beta_0 + \beta_1 U_{i0} + \beta_3 t_{ij} + b_{0i}Z_i + C_i(t_{ij}) + \epsilon_{ij}$$
+
+$$b_{0i} \sim N(0,\sigma^2_{0})~~~C_i(t_{ij}) \sim N(0, \sigma^2_c)~~~ \epsilon_{ij} \sim (0, \sigma^2_\epsilon)$$
+$$Corr[C_i(t_{ij}), C_i(t_{ik})] = \exp\{-|t_{ij} - t_{ik}|\}$$
+:::
+
+::: {.column width="40%"}
+[Empirical variogram plots]{.alert} are one way to assess the presence/strength of serial correlation, and whether random intercepts are needed
+:::
+::::
+
+
+![](variogram-edit.png){.absolute bottom=-80 width=65%}
+
+---
+
+## Variograms
+
+:::: {.columns}
+::: {.column width="65%"}
+![](variogram-evidence.png){width=150%}
+:::
+
+::: {.column width="35%"}
+- The more the curve is stretched out horizontally ("wide S"), the slower it takes correlation between observations to decay
+
+- The taller the curve, the faster it takes correlation between observations to decay
+:::
+::::
+
+---
+
+## Example: CD4+ count
+
+As an example, we'll use a longitudinal dataset of CD4+ cell counts among children with HIV:
+
+```{r cd4, echo=F}
+cd4 <- read.csv("~/Desktop/teaching/PHS-651/data/Gelman-data/cd4/allvar.csv",header=T)
+
+cd4 <- cd4 %>% 
+   as.data.frame() %>% 
+   dplyr::filter(treatmnt==1) %>% 
+   rename(age_baseline = baseage,
+          age = visage) %>% 
+   mutate(time = age - age_baseline) %>%
+   select(!(treatmnt))
+
+glimpse(cd4)
+```
+
+- We want to see how the square-root of CD4+ cell counts behaves over time for each child
+
+
+---
+
+## Example: CD4+ count
+
+Unfortunately, I haven't been able to find appropriate code to plot (time) variograms in SAS
+
+In R, we can create these plots using the `variogram()` function from `library(joineR)`
+
+```{r variogram}
+library(joineR)
+vario <- variogram( indv = cd4$newpid,
+                    time = cd4$time,
+                    Y = sqrt(cd4$CD4CNT) )
+vario$svar <- vario$svar[complete.cases(vario$svar),]
+
+
+plot(vario, smooth=T, ylim=c(0,400))
+```
+
+---
+
+## Building longitudinal model(s?)
 
 However, even after we perform these exploratory steps, we might still be left with multiple plausible model specifications
 
@@ -249,18 +385,26 @@ QIC(exercise_gee_un, exercise_gee_AR, exercise_gee_exch)
 
 ---
 
-## Example: Exercise therapy trial
-
----
-
 ## Model justification
 
-We can use LRTs and AIC/QIC to help us make a decision between two competing models
+We can use these metrics in a couple of different ways
+
+. . .
+
+We can use LRTs and AIC/QIC to help us [make a decision]{.alert} between two competing models
 
 - We've interally justified both to ourselves and just need to make a decision
 
-They can also help us justify a modeling decision we've already made
+. . .
+
+They can also help us [justify a modeling decision]{.alert} we've already made
 
 - Want to show the model we've picked is just as good or better than another specification someone else might suggest
 
 While the mechanics of both of these are the same, the motivations are different
+
+---
+
+## Hands-on activity break! {.center}
+
+Let's try these out on the dental data

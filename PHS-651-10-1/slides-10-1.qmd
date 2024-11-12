@@ -69,6 +69,56 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-10-1/slides-10-1
 
 ---
 
+## The road ahead
+
+We're almost at the end of the semester 🥳
+
+:::: {.columns}
+::: {.column width="50%"}
+[Some reminders:]{.alert}
+
+- Homework 7 due 11/14
+
+- Milestone 5: Create Table 1 due 11/21
+
+- Homework 8 due 12/03
+
+   - Goes live 11/19
+
+- Final project oral presentations 12/05 & 12/10
+
+   - Time-slot sign-up sheet will go live 11/19
+
+- Final papers due 12/16
+
+[I'm aiming to get you feedback on Milestone 4 by 11/22]{.alert}
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+[Lecture topics through the end of the term:]{.alert}
+
+- 11/12 (Today): Intro to time-to-event data
+
+- 11/14: Kaplan-Meier survival function estimator and logrank tests
+
+- 11/19: Cox proportional hazards model
+
+- 11/21: Time-dependent covariates and time-varying coefficients in survival analysis
+
+- 11/26: Hands-on tutorial day
+
+- 12/03: Special topics (multi-level models and confounding issues)/project work/buffer day
+:::
+:::
+::::
+
+::: {.fragment .alert}
+We have 1 hands-on day right before Thanksgiving. I'll try to develop additional stand-alone tutorial notes before then to help walk you through 11/12 and 11/14 topics.
+:::
+
+---
+
 ## A new type of longitudinal data
 
 Previously we've dealt with longitudinal data that was focused on [repeated measures]{.alert}
@@ -99,15 +149,18 @@ In time-to-event data, the outcome we are interested in is actually a combinatio
 ::: {.column width="50%"}
 [The Worcester Heart Attack study]{.alert} considered the length of time from hospital discharge for acute myocardial infarction to death as a function of cohort year
 
+::: {.fragment}
 - Event of interest: mortality (general)
 
 - Covariate/exposure of interest: year of discharge
+:::
 
 <br>
 
 ::: {.fragment}
 A [study of Welsh nickel refiners]{.alert} considered the time from 1st employment to death from nasal cancer as a function of age at 1st employment
-
+:::
+::: {.fragment}
 - Event of interest: death from nasal cancer
 
 - Covariate/exposure of interest: age at 1st employment
@@ -117,7 +170,8 @@ A [study of Welsh nickel refiners]{.alert} considered the time from 1st employme
 ::: {.column width="50%"}
 ::: {.fragment}
 A trial of the leukemia drug [6-MP]{.alert} compared the time to relapse between placebo and 6-MP treamtnet groups among children in leukemia remission
-
+:::
+::: {.fragment}
 - Event of interest: cancer relapse
 
 - Covariate/exposure of interest: treatment with 6-MP
@@ -127,7 +181,8 @@ A trial of the leukemia drug [6-MP]{.alert} compared the time to relapse between
 
 ::: {.fragment}
 A [hemodialysis study]{.alert} looked at time to access failure as a function of access type and the number of previous accesses
-
+:::
+::: {.fragment}
 - Event of interest: access failure
 
 - Covariate/exposure of interest: type of access, number of previous accesses
@@ -191,9 +246,9 @@ This creates 2 types of "start time"
 
 ## Examples
 
-[Is it possible to line up time origin and study entry on these studies prospectively or retrospectively?]{.alert .fragment fragment-index=5}
+[How might we get information on time origin, prospectively or retrospectively?]{.alert .fragment fragment-index=5}
 
-[The Worcester Heart Attack study]{.alert} considered the length of time from hospital discharge for acute myocardial infarction  to death as a function of cohort year
+[The Worcester Heart Attack study]{.alert} considered the length of time from hospital discharge for acute myocardial infarction to death as a function of cohort year
 
 - Time origin: [discharge from hospital]{.fragment fragment-index=1}
 
@@ -217,8 +272,10 @@ The concepts of time-to-event outcomes, time origin, and study entry combine to 
 
 . . .
 
-The first occurs because we can't observe people for every second of every day [of their whole lives]{.alert}, and therefore we end up excluding them from analysis
-   
+The first, [truncation]{.alert}, occurs because we can't observe people for every second of every day [of their whole lives]{.alert}, and therefore we end up [excluding]{.alert} them from analysis
+
+. . .
+
 1.1. [Left truncation]{.alert}: when, for some or all individuals, there is a delay between the time origin of the study and the entry time
 
    - If a individual's event occurred *before* entry time, they're excluded from analysis
@@ -233,11 +290,11 @@ The first occurs because we can't observe people for every second of every day [
 
 The concepts of time-to-event outcomes, time origin, and study entry combine to create the opportunity for several types of "missing" data
 
-The first occurs because we can't observe people for every second of every day [of their whole lives]{.alert}, and therefore we end up excluding them from analysis
-   
+The first, [truncation]{.alert}, occurs because we can't observe people for every second of every day [of their whole lives]{.alert}, and therefore we end up [excluding]{.alert} them from analysis
+
 1.1. [Left truncation]{.alert}: when, for some or all individuals, there is a delay between the time origin of the study and the entry time
 
-   - If a participant's event occurred *before* entry time, they're excluded from analysis
+   - If a individual's event occurred *before* entry time, they're excluded from analysis
    
 We exclude people who have already experienced their event prior to the study from our analysis because [we're interested in studying people's time at risk]{.alert}
 
@@ -300,8 +357,8 @@ Three common types of censoring:
 
    - Example: A PCP assesses their patient for a medical condition during periodic exams. When the condition is present, the time when the condition developed is only known to be between the previous exam and the current exam
    
-::: {.alert .fragment .absolute right=200 top=30}
-We can have censoring and truncation at the same time!
+::: {.alert .fragment .absolute right=-10 top=0 width=67%}
+In most analyses, we need to assume that censoring happens *randomly* and unrelated to their event risk (non-informative censoring assumption)
 :::
 
 ---
@@ -356,11 +413,11 @@ Consider an artificial study of the survival of heart-lung transplant patients w
 ![](censoring-edit.png){width=65%}
 
 ::: {.absolute top=200 right=-50 width="37%"}
-- [Subject 5: never enrolled in study; unobserved death at month 2]{.fragment}
+- [Subject 5: never enrolled in study; unobserved death at month 2. [Left truncation, left censoring]{.alert}]{.fragment}
 
 - [Subject 6: enrolled in the study 6 months after transplant, observed until 12 months after transplant; unobserved death at month 15. [Left truncation, fixed right censoring]{.alert}]{.fragment}
 
-- [Subject 7: enrolled directly after transplant; misses visit months 3-6, returns to study in month 7; observed death at month 11]{.fragment}
+- [Subject 7: enrolled directly after transplant; misses visit months 3-6, returns to study in month 7; observed death at month 11.]{.fragment}
 :::
 
 ---
@@ -375,8 +432,10 @@ Consider an artificial study of the survival of heart-lung transplant patients w
 
 ![](censoring-edit.png){width=65%}
 
-::: {.alert .absolute top=200 right=90 width="30%"}
-We can't analyze what we don't observe!
+::: {.absolute top=200 right=90 width="30%"}
+[We can't analyze what we don't observe!]{.alert}
+
+- But we can still use information about a person who we *partially* observe, even if we don't observe their event
 :::
 
 ---
@@ -387,7 +446,7 @@ We can't analyze what we don't observe!
 
 - $C$: the time at which someone is censored/lost to follow up (censoring time)
 
-- $T = \min(T^*, X)$: the observed time is equal to whichever happens first: the event or censoring
+- $T = \min(T^*, C)$: the observed time is equal to whichever happens first: the event or censoring
 
    - We only see this!
 
@@ -401,9 +460,11 @@ In analyzing time-to-event data, what would we want to know?
 
 There are several ways we can describe the survival time:
 
-- The survival function: the probability of the event occurring after a time
+- The [survival]{.alert} function: the probability of the event occurring after a time $t$
 
-- The hazard function: the number of events (among a population) we can expect to occur at any given moment
+- The [hazard]{.alert} function/rate: the number of events (among a population) we can expect to occur at any given moment
+
+- The [cumulative hazard]{.alert} function/rate: the number of events (among a population) we can expect to occur over a given time interval
 
 ---
 

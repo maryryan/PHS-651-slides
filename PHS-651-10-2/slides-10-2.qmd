@@ -1,0 +1,399 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+library(corrr)
+library(lme4)
+```
+
+<h1>Lecture 10.2: Kaplan-Meier estimator & logrank tests</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>November 14, 2024</h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=50 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-10-2/slides-10-2>
+
+:::
+
+::: {.absolute bottom=0 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-10-2/slides-10-2"))
+```
+:::
+
+---
+
+## Recap: Time-to-event data
+
+:::: {.columns}
+::: {.column width="50%"}
+Last time we introduced the idea of [time-to-event data]{.alert}, which is characterized by:
+
+- Whether an individual experience an event
+
+- If yes, the time that event happened
+
+- The presence of [censoring]{.alert}
+:::
+
+::: {.column width="50%"}
+![](timeOrigin.png){width=100%}
+:::
+::::
+
+---
+
+## Recap: Describing time-to-event data
+
+We also talked about the ways we can describe survival time
+
+- The [survival function]{.alert} $S(t) = P(T>t)$: the probability that a event happens after time $t$
+
+- The [hazard function]{.alert} $\lambda(t) = \lambda(t) = \lim_{\delta \rightarrow 0} \frac{P(t\le T < t + \delta | T \ge t)}{\delta}$: the instantaneous rate of an event happening
+
+- The [cumulative hazard function]{.alert} $\Lambda(t) = \int_0^t \lambda(u) du$: the rate of event occurrence over a period of time
+
+. . . 
+
+We noted that we could assume that the survival time $T$ follows a probability distribution, and use that assumption to determine $S(t)$, $\lambda(t)$, and $\Lambda(t)$
+
+- We specifically looked at the exponential and Weibull distributions
+
+. . .
+
+However, if our assumption about the distribution is [incorrect]{.alert}, this can lead to a [biased and inconsistent]{.alert} estimate of $S(t)$
+
+- This is bad because $S(t)$ is the main things we're trying to estimate in survival analysis!
+
+. . .
+
+Because of this, we want to try to estimate $S(t)$ in a non-parametric way...
+
+---
+
+## Estimating $S(t)$
+
+Using this data, how would we estimate $S(t)$ at t=1 and t=2?
+
+:::: {.columns}
+::: {.column width="50%"}
+![](estimating-S.png){width=1000px}
+:::
+
+::: {.column width="50%"}
+
+[$P(T>1) = \frac{\text{# alive at 1 year}}{\text{# "at risk"}} = 8/10=0.8$]{.fragment}
+
+::: {.fragment}
+What about $P(T>2)$?
+
+- Do we use the "full" sample and look at $\frac{\text{# alive at 2 year}}{\text{# "at risk" since time 0}}$?
+
+- Or do we use a "reduced" sample that only looks at $\frac{\text{# alive past 2 year}}{\text{# with complete data at 2 years}}$?
+:::
+
+::: {.fragment}
+|  | P(T>1) | P(T>2) |  |
+|---------|-----|----|----------|
+| Full sample | 8/10 = 0.8 | 6/10 = 0.6 | (too high) |
+| "Reduced" sample | 8/10 = 0.8  | 4/8 = 0.5 | (too variable) |
+:::
+:::
+::::
+
+---
+
+## Estimating $S(t)$
+:::: {.columns}
+::: {.column width="50%"}
+![](estimating-S.png){width=1000px}
+:::
+
+::: {.column width="50%"}
+We could use conditional probability!
+
+$$\begin{align*}P(T>2) &= P(T>2 | T>1) \times P(T>1)\\
+&=\frac{\text{# alive past 2 years}}{\text{# observed > 2 years, alive at 1 year}}\\
+&~~~~~~~\times \frac{\text{# alive at 1 year}}{\text{# observed at 1 year}}\\
+&= \frac{4}{6} \times \frac{8}{10}\\
+&= 0.53\end{align*}$$
+:::
+::::
+
+---
+
+## Life table estimates
+
+---
+
+## Kaplan-Meier estimator of $S(t)$
+
+The [Kaplan-Meier estimator]{.alert} of $S(t)$ considers the probability of survival a (very small) interval of time, given that an individual is at risk at the beginning of the interval
+
+- Say we have $D$ total event times in a sample, and we can put them in order: $t_1 < t_2 < \dots < t_D$
+
+- Let $d_i$ be the total number of events at time $t_i$
+
+- Let $s_i$ be the total number who haven't failed by time $t_i$
+
+- Let $Y_i$ be the total number at risk at time $t_i$ (under observation, not failed)
+
+- $d_i = Y_i - s_i$
+
+. . .
+
+Instead of looking at neatly-spaced calendar time intervals, the KM estimator calculates a conditional survival probability for each time interval in which only 1 event occurs, and then multiplies them together:
+
+$$\begin{align*}\hat{S}_{KM}(t) &= P(T>t)\\
+&= P(T>t | T > t_k) \times P(T>t_k | T>t_{k-1})\times \dots \times P(T>t_1)\\
+&= \prod_{t_i \le t}\left[1-\frac{d_i}{Y_i}\right]\end{align*}$$
+
+---
+
+## KM estimator
+
+$$\hat{S}_{KM}(t) = \prod_{t_i \le t}\left[1-\frac{d_i}{Y_i}\right]$$
+
+- We can just focus on the intervals where an event occurs because if the interval contains no event, the conditional surivival probability is approximately 1
+
+:::: {.columns}
+::: {.column width="60%"}
+::: {.fragment}
+We can also estimate the variance and standard error of the KM estimator by:
+
+$$\widehat{Var}\left[\hat{S}_{KM}(t)\right] = \hat{S}_{KM}(t)^2 \sum_{t_i \le t}\frac{d_i}{Y_i(Y_i - d_i)}$$
+
+$$\widehat{SE}\left[\hat{S}_{KM}(t)\right] = \sqrt{\widehat{Var}\left[\hat{S}_{KM}(t)\right]} = \hat{S}_{KM}(t) \sqrt{\sum_{t_i \le t}\frac{d_i}{Y_i(Y_i - d_i)}}$$
+:::
+:::
+
+::: {.column width="40%"}
+::: {.fragment}
+This means we can construct $(1-\alpha)\times 100$% confidence intervals for $S(t)$:
+$$\hat{S}_{KM}(t) \pm Z_{1-\alpha/2} \times \widehat{SE}_{KM}(t)$$
+:::
+:::
+::::
+
+---
+
+## Example
+
+---
+
+## Nelson-Aalen estimator of $\Lambda(t)$
+
+We can use the KM estimator $\hat{S}_{KM}(t)$ to get an estimate of the cumulative hazard function:
+$$\hat{\Lambda}(t) = -\log\left[\hat{S}_{KM}(t)\right]$$
+
+. . .
+
+- This estimator can perform poorly when the sample size is small, though
+
+. . .
+
+An alternative estimator of $\Lambda(t)$ is the [Nelson-Aalen estimator]{.alert}:
+
+$$\tilde{\Lambda}_{NA}(t) = \sum_{t_i \le t}\frac{d_i}{Y_i}$$
+
+:::: {.columns}
+::: {.column width="60%"}
+::: {.fragment}
+The variance and standard error of the NA estimator is given by:
+$$\widehat{Var}[\tilde{\Lambda}_{NA}(t)] = \sum_{t_i \le t}\frac{d_i}{Y_i^2}$$
+
+$$\widehat{SE}[\tilde{\Lambda}_{NA}(t)] =  \sqrt{\widehat{Var}[\tilde{\Lambda}_{NA}(t)]} = \sqrt{\sum_{t_i \le t}\frac{d_i}{Y_i^2}}$$
+:::
+:::
+
+::: {.column width="40%"}
+::: {.fragment}
+This means we can construct $(1-\alpha)\times 100$% confidence intervals for $\Lambda(t)$:
+$$\tilde{\Lambda}_{NA}(t) \pm Z_{1-\alpha/2} \times \widehat{SE}_{NA}(t)$$
+:::
+:::
+::::
+
+---
+
+## NA estimator of $\Lambda(t)$ and $S(t)$
+
+$$\tilde{\Lambda}_{NA}(t) = \sum_{t_i \le t}\frac{d_i}{Y_i}$$
+
+Using the NA estimator of $\Lambda(t)$, we can also construct an alternative estimator of the survival function:
+$$\tilde{S}_{NA}(t) = e^{-\tilde{\Lambda}_{NA}(t)}$$
+
+---
+
+## Example
+
+
+---
+
+## Survival curves
+
+We've estimated all these survival probabilities but what do we... do with them?
+
+- We could do like we've been doing and put them in a table and track how the probabilities change with time
+
+. . .
+
+- ... but that can get complicated quickly, and it's not very easy to compare how the probabilities change across multiple groups
+
+. . .
+
+Solution: plot the probabilities as curves!
+
+---
+
+## Example
+
+---
+
+## Comparing survival curves
+
+If we would like to formally compare the survival functions for multiple groups, we can perform a statistical test
+
+$$\begin{align*}&H_0: S_1(t) = S_2(t) \text{ for all } t\\
+&H_1: S_1(t) \ne S_2(t) \text{ for at least one } t\end{align*}$$
+
+. . .
+
+Let $t_1 < t_2 < \dots < t_D$ denote the distinct event times in the pooled sample
+
+- At time $t_i$, we observe $d_{1i}$ the $Y_{1i}$ subjects at risk in the first group, $d_{2i}$ events from the $Y_{2i}$ subjects at risk in the second group and $d_i = d_{1i} + d_{2i}$ events from the $U_i = Y_{1i} + Y_{2i}$ subjects at risk in the two groups combined
+
+---
+
+## Comparing survival curves
+
+Consider the following contingency table at time $t_i$:
+
+![](logrank-table.png)
+
+
+Under $H_0$, every subject at risk at time $t_i$ has the same probability of experiencing an event at time $t_i$ regardless of group
+
+- Under $H_0$, the expected number of subjects in group 1 who experience an event at time $t_i$ is $E_{1i} = E[d_{1i}] = d_i \frac{Y_{1i}}{Y_i}$
+
+   - The variance is then $V_{1i} = Var[d_{1i}] = d_i \frac{Y_{1i}}{Y_i}\frac{Y_{2i}}{Y_i}\frac{Y_i - d_i}{Y_i - 1}$
+
+
+---
+
+## Logrank tests
+
+We can use $d_{1i}$, $E_{1i}$, $V_{1i}$, and a weight function $W(t_i)$ to construct a weighted test statistic:
+
+$$Z = \frac{\sum_{i=1}^D W(t_i)(d_{1i} - E_{1i})}{\sqrt{\sum_{i=1}^D W(t_i)^2 V_{1i}}}$$
+
+. . .
+
+If we choose $W(t_i) = 1$ for all $t$, we get the [Mantel-Haenszel]{.alert} or [logrank]{.alert} test statistic:
+
+$$Z = \frac{\sum_{i=1}^D (d_{1i} - E_{1i})}{\sqrt{\sum_{i=1}^D V_{1i}}}$$
+
+- We can compare this test statistic to a standard Normal distribution to determine whether we should reject $H_0$
+
+---
+
+## Proportional hazards
+
+:::: {.columns}
+::: {.column width="50%"}
+The logrank test is [most powerful]{.alert} when the alternative looks at a hazard for group 2 that is [different but proportional]{.alert} to the group 1 hazard: $\lambda_2(t) = \alpha \lambda_1(t)$
+:::
+
+::: {.column width="50%"}
+![](prop-hazards.png){width=1000px}
+
+:::
+::::
+
+---
+
+## Proportional hazards
+
+:::: {.columns}
+::: {.column width="50%"}
+The logrank test is [most powerful]{.alert} when the alternative looks at a hazard for group 2 that is [different but proportional]{.alert} to the group 1 hazard: $\lambda_2(t) = \alpha \lambda_1(t)$
+
+- Can also rewrite this in terms of survival functions: $S_2(t) = S_1(t)^\alpha$
+
+<br>
+
+- Or in terms of the log cumulative hazards: $\log[\Lambda_2(t)] = \log[\alpha] + \log[\Lambda_1(t)]$
+
+<br>
+
+This means that the logrank test will be most powerful if the log cumulative hazards are (roughly) [parallel]{.alert}
+:::
+
+::: {.column width="50%"}
+![](parallel-log-hazards.png){width=1000px}
+:::
+::::
+
+---
+
+## Weighted logrank tests
+
+While the logrank test will still work work under non-proportional hazards, we might want to choose a different weight function $W(t_i)$ that would allow us to weight differences in the observed and expected number of events ($d_{1i} - E_{1i}$) differently over time
+
+. . .
+
+- [Gehan-Breslow]{.alert} weights: $W(t_i) = Y_i$ applies more weight to early failure times
+
+- [Generalized Wilcoxon]{.alert} weights: $W(t_i) = \hat{S}_{KM}(t_k-) = \prod_{t_i \le t}\left[1-\frac{d_i}{Y_i + 1}\right]$ also applies greater weight to early failure times
+
+- [Fleming & Harrington]{.alert} weights: $W_{p,q}(t_i) = \left[\hat{S}_{KM}(t_{i-1})\right]^p\left[1-\hat{S}_{KM}(t_{i-1})\right]^q$
+
+   - $p=q=0$ gives the unweighted logrank statistic
+   
+   - $p=1$, $q=0$ gives the generalized Wilcoxon logrank statistic

@@ -389,6 +389,8 @@ We can't analyze what we don't observe!
 
 - $T = \min(T^*, X)$: the observed time is equal to whichever happens first: the event or censoring
 
+   - We only see this!
+
 - $t$: some arbitrary time point
 
 . . .

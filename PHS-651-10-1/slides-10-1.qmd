@@ -33,18 +33,7 @@ library(corrr)
 library(lme4)
 ```
 
-```{r exercise, echo=F}
-exercise <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/exercise-data.txt", sep="", na.strings=".")
-colnames(exercise) <- c("ID", "PROGRAM", "day0","day2", "day4", "day6", "day8", "day10", "day12")
-exercise_long <- exercise %>% 
-   pivot_longer(!(c("ID","PROGRAM")), names_to="time", values_to="strength") %>% 
-   mutate(time=parse_number(time))
-
-exercise_long_complete <- exercise_long %>% 
-   filter(complete.cases(.))
-```
-
-<h1>Lecture 10: Time-to-event data</h1>
+<h1>Lecture 10.1: Time-to-event data</h1>
 
 <h2>PHS 651: Advanced regression methods</h2>
 
@@ -68,13 +57,13 @@ exercise_long_complete <- exercise_long %>%
 
 ::: {.absolute bottom=50 left=260 width=1500}
 
-Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-10/slides-10>
+Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-10-1/slides-10-1>
 
 :::
 
 ::: {.absolute bottom=0 left=100 width=150}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
-plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-10/slides-10"))
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-10-1/slides-10-1"))
 ```
 :::
 

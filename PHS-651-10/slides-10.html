@@ -362,7 +362,7 @@ November 12, 2024
 <li><p>An outcome is measured for an individual multiple times across time</p></li>
 <li><p>Analysis focus was on how the outcome trend changes through time</p></li>
 </ul>
-<p>A different type of longitudinal question, though, may instead ask about the <span class="alert">time</span> it takes for individuals to experience a particular <span class="alert">event</span></p>
+<p>A different type of longitudinal question, though, may instead ask about the <span class="alert">time</span> it takes for individuals to experience a particular <span class="alert">event</span> and how factors influence that time</p>
 <ul>
 <li><p>i.e., Time to: diagnosis, remission, graduation, death, etc</p></li>
 <li><p>This is known as <span class="alert">time-to-event</span> or <span class="alert">survival</span> data</p></li>
@@ -373,6 +373,40 @@ November 12, 2024
 <li><p>Did an individual experience an event?</p></li>
 <li><p>At what time did that event happen?</p></li>
 </ul>
+</div>
+</section><section id="examples" class="slide level2"><h2>Examples</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="alert">The Worcester Heart Attack study</span> considered the length of time from hospital discharge for acute myocardial infarction to death as a function of cohort year</p>
+<ul>
+<li><p>Event of interest: mortality (general)</p></li>
+<li><p>Covariate/exposure of interest: year of discharge</p></li>
+</ul>
+<p><br></p>
+<div class="fragment">
+<p>A <span class="alert">study of Welsh nickel refiners</span> considered the time from 1st employment to death from nasal cancer as a function of age at 1st employment</p>
+<ul>
+<li><p>Event of interest: death from nasal cancer</p></li>
+<li><p>Covariate/exposure of interest: age at 1st employment</p></li>
+</ul>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p>A trial of the leukemia drug <span class="alert">6-MP</span> compared the time to relapse between placebo and 6-MP treamtnet groups among children in leukemia remission</p>
+<ul>
+<li><p>Event of interest: cancer relapse</p></li>
+<li><p>Covariate/exposure of interest: treatment with 6-MP</p></li>
+</ul>
+</div>
+<p><br></p>
+<div class="fragment">
+<p>A <span class="alert">hemodialysis study</span> looked at time to access failure as a function of access type and the number of previous accesses</p>
+<ul>
+<li><p>Event of interest: access failure</p></li>
+<li><p>Covariate/exposure of interest: type of access, number of previous accesses</p></li>
+</ul>
+</div>
+</div>
 </div>
 </section><section id="time-from-when" class="slide level2"><h2>Time from when?</h2>
 <p>In studies dealing with time-to-event outcomes, we can’t just think about what (calendar) time that event happened - we must think about when that event happened <span class="alert">in relation to something else</span></p>
@@ -398,13 +432,13 @@ November 12, 2024
 </ul>
 <p>This creates 2 types of “start time”</p>
 <ol start="2" type="1">
-<li>
-<p>Entry to study (study time 0)</p>
+<li>Entry to study (study time 0)</li>
+</ol>
 <ul>
 <li>For randomized studies, the time origin of the study and the point of entry for every patient into the study is <span class="alert">the same</span>: the point of randomization</li>
 </ul>
-</li>
-</ol>
+<div class="columns">
+<div class="column" style="width:60%;">
 <div class="fragment">
 <ul>
 <li>
@@ -417,49 +451,77 @@ November 12, 2024
 </li>
 </ul>
 </div>
+</div><div class="column" style="width:40%;">
 <div class="fragment">
 <ul>
 <li>In observational studies, the time origin of the study and the beginning of the period of observation of the patient typically <span class="alert">do not coincide</span> (the patient may come under observation before or after the time origin of the study)</li>
 </ul>
 </div>
-</section><section id="missing-data-truncation" class="slide level2"><h2>“Missing” data: truncation</h2>
+</div>
+</div>
+</section><section id="examples-1" class="slide level2"><h2>Examples</h2>
+<p><span class="alert fragment" data-fragment-index="5">Is it possible to line up time origin and study entry on these studies prospectively or retrospectively?</span></p>
+<p><span class="alert">The Worcester Heart Attack study</span> considered the length of time from hospital discharge for acute myocardial infarction to death as a function of cohort year</p>
+<ul>
+<li>Time origin: <span class="fragment" data-fragment-index="1">discharge from hospital</span>
+</li>
+</ul>
+<p><span class="alert">Welsh nickel refiners</span> considered the time from 1st employment to death from nasal cancer as a function of age at 1st employment</p>
+<ul>
+<li>Time origin: <span class="fragment" data-fragment-index="2">date of 1st employment</span>
+</li>
+</ul>
+<p><span class="alert">6-MP</span> compared the time to relapse between placebo and 6-MP treamtnet groups among children in leukemia remission</p>
+<ul>
+<li>Time origin: <span class="fragment" data-fragment-index="3">entry into the study (clinical trial)</span>
+</li>
+</ul>
+<p><span class="alert">Hemodialysis study</span> looked at time to access failure as a function of access type and the number of previous accesses</p>
+<ul>
+<li>Time origin: <span class="fragment" data-fragment-index="4">placement of access (could be multiple accesses)</span>
+</li>
+</ul></section><section id="missing-data-truncation" class="slide level2"><h2>“Missing” data: truncation</h2>
 <p>The concepts of time-to-event outcomes, time origin, and study entry combine to create the opportunity for several types of “missing” data</p>
 <div class="fragment">
-<p>The first occurs because we can’t observe people for every second of every day <span class="alert">of their whole lives</span></p>
-<ol type="1">
-<li>
-<p><span class="alert">Left truncation</span>: when, for some or all participants, there is a delay between the time origin of the study and the entry time</p>
+<p>The first occurs because we can’t observe people for every second of every day <span class="alert">of their whole lives</span>, and therefore we end up excluding them from analysis</p>
+<p>1.1. <span class="alert">Left truncation</span>: when, for some or all individuals, there is a delay between the time origin of the study and the entry time</p>
 <ul>
 <li>
-<p>If a participant’s event occurred <em>before</em> entry time, they’re excluded from analysis</p>
+<p>If a individual’s event occurred <em>before</em> entry time, they’re excluded from analysis</p>
 <ul>
 <li>i.e., Someone comes to baseline visit of time-to-diagnosis study having already been diagnosed with condition</li>
 </ul>
 </li>
 <li><p>Common in observational studies</p></li>
 </ul>
-</li>
-</ol>
 </div>
 </section><section id="missing-data-truncation-1" class="slide level2"><h2>“Missing” data: truncation</h2>
 <p>The concepts of time-to-event outcomes, time origin, and study entry combine to create the opportunity for several types of “missing” data</p>
-<p>The first occurs because we can’t observe people for every second of every day <span class="alert">of their whole lives</span></p>
-<ol type="1">
-<li>
-<p><span class="alert">Left truncation</span>: when, for some or all participants, there is a delay between the time origin of the study and the entry time</p>
+<p>The first occurs because we can’t observe people for every second of every day <span class="alert">of their whole lives</span>, and therefore we end up excluding them from analysis</p>
+<p>1.1. <span class="alert">Left truncation</span>: when, for some or all individuals, there is a delay between the time origin of the study and the entry time</p>
 <ul>
 <li>If a participant’s event occurred <em>before</em> entry time, they’re excluded from analysis</li>
 </ul>
-</li>
-</ol>
 <p>We exclude people who have already experienced their event prior to the study from our analysis because <span class="alert">we’re interested in studying people’s time at risk</span></p>
 <ul>
 <li><p>Everyone who has not experienced their event yet is considered to be “at risk” for experiencing that event in the future</p></li>
 <li><p>We can have <span class="alert">observed periods at risk</span> when we are observing a participant prior to an event</p></li>
 <li><p>We can also have <span class="alert">unobserved periods at risk</span> when someone has still not experienced an even but we are not directly observing them</p></li>
-</ul></section><section id="missing-data-censoring" class="slide level2"><h2>“Missing” data: censoring</h2>
+</ul></section><section id="missing-data-truncation-2" class="slide level2"><h2>“Missing” data: truncation</h2>
 <p>The concepts of time-to-event outcomes, time origin, and study entry combine to create the opportunity for several types of “missing” data</p>
-<p>The second occurs because we can’t observe people for every second of every day <span class="alert">of the study</span></p>
+<p>The first occurs because we can’t observe people for every second of every day <span class="alert">of their whole lives</span>, and therefore we end up excluding them from analysis</p>
+<p>1.1. <span class="alert">Left truncation</span>: when, for some or all individuals, there is a delay between the time origin of the study and the entry time</p>
+<p>1.2. <span class="alert">Right truncation</span>: when people who have not had an event are not recorded</p>
+<ul>
+<li><p>i.e., We don’t know to identify you before it’s a problem</p></li>
+<li><p>Much less common than left truncation</p></li>
+</ul>
+<div class="fragment">
+<p>If we’re not careful, truncation can create <span class="alert">survival bias</span> in our analyses</p>
+</div>
+</section><section id="missing-data-censoring" class="slide level2"><h2>“Missing” data: censoring</h2>
+<p>The concepts of time-to-event outcomes, time origin, and study entry combine to create the opportunity for several types of “missing” data</p>
+<p>The second occurs because we can’t observe people for every second of every day <span class="alert">of the study</span>, but we can still include the information we have in the analysis</p>
 <ol start="2" type="1">
 <li>
 <span class="alert">Censoring</span>: we have some information about individual survival time, but don’t know what that survival time is exactly</li>
@@ -467,17 +529,24 @@ November 12, 2024
 <p>Three common types of censoring:</p>
 <ul>
 <li>
-<p><span class="alert">Right censoring</span>: the event is known to have occurred <em>after</em> a certain observation time, but we don’t know when</p>
+<p><span class="alert">Right censoring</span>: if it occurred, the event must have happened <em>after</em> a certain observation time, but we don’t know when</p>
 <ul>
 <li>Example: Everyone experiences death eventually. We last saw Individual 1 alive at time 10 but have since lost contact with them; so though we don’t know their current status, we know they can’t have died before time 10.</li>
 </ul>
 </li>
+</ul>
+<div class="fragment">
+<ul>
 <li>
-<p><span class="alert">Left censoring</span>: an event is known to have occurred <em>before</em> a certain observation time, but we don’t know when</p>
+<p><span class="alert">Left censoring</span>: if it occurred, an event must have happened <em>before</em> a certain observation time, but we don’t know when</p>
 <ul>
 <li>Example: Someone comes to a new urgent care clinic with a sinus infection. We know they developed the sinus infection before coming to the clinic, but we don’t know when.</li>
 </ul>
 </li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
 <li>
 <p><span class="alert">Interval censoring</span>: an event is known to have occurred <em>between</em> two certain times</p>
 <ul>
@@ -485,11 +554,12 @@ November 12, 2024
 </ul>
 </li>
 </ul>
-<div class="fragment">
-<p><span class="alert">We can have censoring and truncation at the same time!</span></p>
+<div class="alert fragment absolute" style="top: 30px; right: 200px; ">
+<p>We can have censoring and truncation at the same time!</p>
+</div>
 </div>
 </section><section id="an-example" class="slide level2"><h2>An example</h2>
-<p><span class="fragment">We don’t know when we’re enrolling people in their event cycle!</span></p>
+<p>Even when we know the time origin, we don’t always know when in someone’s event cycle we’re enrolling them</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p><img data-src="studyEntry.png" style="width:90.0%"></p>
@@ -503,11 +573,11 @@ November 12, 2024
 <li><p>A = non-event observed month; a = non-event non-observed month</p></li>
 <li><p>D = observed death; d = non-observed death</p></li>
 </ul>
-<p><img data-src="censoring.png" style="width:60.0%"></p>
-<div class="absolute" style="top: 200px; right: -50px; width: 37%; ">
+<p><img data-src="censoring-edit.png" style="width:65.0%"></p>
+<div class="absolute" style="top: 150px; right: -50px; width: 37%; ">
 <ul>
 <li><p><span class="fragment">Subject 1: enrolled directly after transplant (time origin), no missing visits; observed death at month 6</span></p></li>
-<li><p><span class="fragment">Subject 2: enrolled directly after transplant, observed for full study time (12 months); unobserved death at month 21. <span class="alert">Fixed right censoring</span></span></p></li>
+<li><p><span class="fragment">Subject 2: enrolled directly after transplant, observed for full study time (12 months); unobserved death at month 21. <span class="alert">Fixed/administrative right censoring</span></span></p></li>
 <li><p><span class="fragment">Subject 3: enrolled directly after transplant, lost to follow up after month 7; unobserved death at month 11. <span class="alert">Random right censoring</span></span></p></li>
 <li><p><span class="fragment">Subject 4: enrolled in the study 4 months after transplant; observed death 9 months after transplant. <span class="alert">Left truncation</span></span></p></li>
 </ul>
@@ -518,7 +588,7 @@ November 12, 2024
 <li><p>A = non-event observed month; a = non-event non-observed month</p></li>
 <li><p>D = observed death; d = non-observed death</p></li>
 </ul>
-<p><img data-src="censoring.png" style="width:60.0%"></p>
+<p><img data-src="censoring-edit.png" style="width:65.0%"></p>
 <div class="absolute" style="top: 200px; right: -50px; width: 37%; ">
 <ul>
 <li><p><span class="fragment">Subject 5: never enrolled in study; unobserved death at month 2</span></p></li>
@@ -532,14 +602,14 @@ November 12, 2024
 <li><p>A = non-event observed month; a = non-event non-observed month</p></li>
 <li><p>D = observed death; d = non-observed death</p></li>
 </ul>
-<p><img data-src="censoring.png" style="width:65.0%"></p>
+<p><img data-src="censoring-edit.png" style="width:65.0%"></p>
 <div class="alert absolute" style="top: 200px; right: 90px; width: 30%; ">
 <p>We can’t analyze what we don’t observe!</p>
 </div>
 </section><section id="some-notation" class="slide level2"><h2>Some notation</h2>
 <ul>
-<li><p><span class="math inline">\(T^*\)</span>: someone’s true event time</p></li>
-<li><p><span class="math inline">\(X\)</span>: the time at which someone is censored/lost to follow up (censoring time)</p></li>
+<li><p><span class="math inline">\(T^*\)</span>: someone’s true time to failure (from origin)</p></li>
+<li><p><span class="math inline">\(C\)</span>: the time at which someone is censored/lost to follow up (censoring time)</p></li>
 <li><p><span class="math inline">\(T = \min(T^*, X)\)</span>: the observed time is equal to whichever happens first: the event or censoring</p></li>
 <li><p><span class="math inline">\(t\)</span>: some arbitrary time point</p></li>
 </ul>
@@ -564,14 +634,27 @@ November 12, 2024
 <li><p>We call <span class="math inline">\(f(u)\)</span> the <span class="alert">probability density function</span> (pdf)</p></li>
 </ul>
 </li>
+<li><p>This means we can probably assume that someone’s survival time follows some kind of <span class="alert">probability distribution</span> (more on that in a few slides…)</p></li>
 </ul>
 </div>
-<div class="fragment">
+</section><section id="the-survival-function-1" class="slide level2"><h2>The survival function</h2>
+<p>We say that the <span class="alert">survival function</span> <span class="math inline">\(S(t)\)</span> is a function that will give the probability that someone’s true event time <span class="math inline">\(T\)</span> is greater than some time <span class="math inline">\(t\)</span>: <span class="math display">\[S(t) = P(T&gt;t)\]</span></p>
+<p>Some other characteristics of <span class="math inline">\(S(t)\)</span>:</p>
 <ul>
-<li>This means we can probably assume that someone’s survival time follows some kind of <span class="alert">probability distribution</span> (more on that in a few slides…)</li>
+<li>
+<p><span class="math inline">\(S(0) = 1\)</span></p>
+<ul>
+<li>All observations are “at risk” at time 0</li>
 </ul>
-</div>
-</section><section id="the-hazard-function" class="slide level2"><h2>The hazard function</h2>
+</li>
+<li>
+<p><span class="math inline">\(S(\infty) = \lim_{t \rightarrow \infty} S(t) = 0\)</span></p>
+<ul>
+<li>We assume all observations will fail eventually (with infinite time)</li>
+</ul>
+</li>
+<li><p><span class="math inline">\(S(t)\)</span> cannot increase with time</p></li>
+</ul></section><section id="the-hazard-function" class="slide level2"><h2>The hazard function</h2>
 <p>The <span class="alert">hazard function</span> <span class="math inline">\(\lambda(t)\)</span> is the instantaneous rate of an event happening</p>
 <p><span class="math display">\[\lambda(t) = \lim_{\delta \rightarrow 0} \frac{P(t\le T &lt; t + \delta | T \ge t)}{\delta}\]</span></p>
 <div class="fragment">
@@ -620,13 +703,17 @@ November 12, 2024
 <p><span class="math display">\[S(t) = e^{-\Lambda(t)}\]</span></p>
 <p><span class="math display">\[\Lambda(t) = -\log\{S(t)\}\]</span></p>
 </div>
-<div class="fragment">
+</section><section id="some-notes-on-survivalhazard-functions" class="slide level2"><h2>Some notes on survival/hazard functions</h2>
+<p>The hazard function <span class="alert">is not a probability</span></p>
+<ul>
+<li>It can be greater than 1</li>
+</ul>
 <p>So given the survival function, we can find that hazards; given the hazard function, we can find the survival function</p>
 <ul>
-<li>Why do we care? Because it lets us calculate these functions when we assume a survival distribution!</li>
-</ul>
-</div>
-</section><section id="survival-time-and-the-exponential-distribution" class="slide level2"><h2>Survival time and the exponential distribution</h2>
+<li><p>When the hazard is high, the cumulative hazard increases and survival decreases faster with time</p></li>
+<li><p>When the hazard is low, the cumulative hazard and survival change very little</p></li>
+<li><p>Why do we care? Because it lets us calculate these functions when we assume a survival distribution!</p></li>
+</ul></section><section id="survival-time-and-the-exponential-distribution" class="slide level2"><h2>Survival time and the exponential distribution</h2>
 <p>The simplest survival distribution is the <span class="alert">exponential</span> distribution with parameter <span class="math inline">\(\lambda\)</span></p>
 <p>The exponential distribution assumes <span class="alert">constant hazard</span> over time: <span class="math inline">\(\lambda(t) = \lambda\)</span></p>
 <ul>
@@ -664,6 +751,21 @@ November 12, 2024
 <p><img data-src="weibull.png" width="800"></p>
 </div>
 </div>
+</section><section id="survival-time-and-other-distributions" class="slide level2"><h2>Survival time and other distributions</h2>
+<p>Exponential and Weibull are not the only distributions we can assume</p>
+<ul>
+<li>
+<p>Other include:</p>
+<ul>
+<li><p>Gamma</p></li>
+<li><p>Log-normal</p></li>
+<li><p>Log-logistic</p></li>
+<li><p>Gompertz</p></li>
+<li><p>Generalized gamma</p></li>
+</ul>
+</li>
+</ul>
+<p>Exponential and Weibull are by far the most common, though</p>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 

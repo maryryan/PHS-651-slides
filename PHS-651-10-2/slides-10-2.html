@@ -28,6 +28,71 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #767676;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #767676;  padding-left: 4px; }
+    div.sourceCode
+      { color: #545454; background-color: #fefefe; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #545454; } /* Normal */
+    code span.al { color: #7928a1; } /* Alert */
+    code span.an { color: #696969; } /* Annotation */
+    code span.at { color: #a55a00; } /* Attribute */
+    code span.bn { color: #7928a1; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #d91e18; } /* ControlFlow */
+    code span.ch { color: #008000; } /* Char */
+    code span.cn { color: #d91e18; } /* Constant */
+    code span.co { color: #696969; } /* Comment */
+    code span.cv { color: #696969; font-style: italic; } /* CommentVar */
+    code span.do { color: #696969; font-style: italic; } /* Documentation */
+    code span.dt { color: #7928a1; } /* DataType */
+    code span.dv { color: #7928a1; } /* DecVal */
+    code span.er { color: #7928a1; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #a55a00; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #696969; } /* Information */
+    code span.kw { color: #d91e18; } /* Keyword */
+    code span.op { color: #00769e; } /* Operator */
+    code span.ot { color: #d91e18; } /* Other */
+    code span.pp { color: #7928a1; } /* Preprocessor */
+    code span.sc { color: #00769e; } /* SpecialChar */
+    code span.ss { color: #008000; } /* SpecialString */
+    code span.st { color: #008000; } /* String */
+    code span.va { color: #a55a00; } /* Variable */
+    code span.vs { color: #008000; } /* VerbatimString */
+    code span.wa { color: #696969; font-style: italic; } /* Warning */
   </style>
 <link rel="stylesheet" href="slides-10-2_files/libs/revealjs/dist/theme/quarto.css">
 <link href="slides-10-2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -484,7 +549,7 @@ November 14, 2024
 </table>
 </div>
 </section><section id="life-table-estimates" class="slide level2"><h2>Life table estimates</h2>
-<p>Consider some data from the 6MP leukemia trial</p>
+<p>Consider some data from the 6-MP leukemia trial</p>
 <ul>
 <li>The essential data are the 21 ordered times (in months) to relapse or censoring: 6, 6, 6, 7, 10, 13, 16, 22, 23, 6+, 9+, 10+, 11+, 17+, 19+, 20+, 25+, 32+, 32+, 34+, 35+</li>
 </ul>
@@ -747,34 +812,151 @@ November 14, 2024
 <li><p><span class="math inline">\(d_i = Y_i - s_i\)</span></p></li>
 </ul>
 </div>
-<div class="fragment">
+</section><section id="km-estimator" class="slide level2"><h2>KM estimator</h2>
 <p>Instead of looking at neatly-spaced calendar time intervals, the KM estimator calculates a conditional survival probability for each time interval in which only 1 event occurs, and then multiplies them together:</p>
 <p><span class="math display">\[\begin{align*}\hat{S}_{KM}(t) &amp;= P(T&gt;t)\\
 &amp;= P(T&gt;t | T &gt; t_k) \times P(T&gt;t_k | T&gt;t_{k-1})\times \dots \times P(T&gt;t_1)\\
 &amp;= \prod_{t_i \le t}\left[1-\frac{d_i}{Y_i}\right]\end{align*}\]</span></p>
-</div>
-</section><section id="km-estimator" class="slide level2"><h2>KM estimator</h2>
-<p><span class="math display">\[\hat{S}_{KM}(t) = \prod_{t_i \le t}\left[1-\frac{d_i}{Y_i}\right]\]</span></p>
 <ul>
 <li>We can just focus on the intervals where an event occurs because if the interval contains no event, the conditional surivival probability is approximately 1</li>
-</ul>
+</ul></section><section id="example-6-mp" class="slide level2"><h2>Example: 6-MP</h2>
+<p>Recall the 6-MP event and censoring times: 6, 6, 6, 7, 10, 13, 16, 22, 23, 6+, 9+, 10+, 11+, 17+, 19+, 20+, 25+, 32+, 32+, 34+, 35+</p>
+<table>
+<colgroup>
+<col style="width: 30%">
+<col style="width: 26%">
+<col style="width: 21%">
+<col style="width: 21%">
+</colgroup>
+<thead><tr class="header">
+<th><span class="math inline">\(t_i\)</span></th>
+<th><span class="math inline">\(d_i\)</span></th>
+<th><span class="math inline">\(Y_i\)</span></th>
+<th><span class="math inline">\(\hat{S}_{KM}(t)\)</span></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>6</td>
+<td>3</td>
+<td>21</td>
+<td><span class="fragment" data-fragment-index="1"><span class="math inline">\(1-\frac{3}{21}=0.857\)</span></span></td>
+</tr>
+<tr class="even">
+<td>7</td>
+<td>1</td>
+<td>17</td>
+<td><span class="fragment" data-fragment-index="2"><span class="math inline">\(0.857(1-\frac{1}{17})=0.807\)</span></span></td>
+</tr>
+<tr class="odd">
+<td>10</td>
+<td>1</td>
+<td>15</td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.807(1-\frac{1}{15})=0.753\)</span></span></td>
+</tr>
+<tr class="even">
+<td>13</td>
+<td>1</td>
+<td>12</td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.753(1-\frac{1}{12})=0.690\)</span></span></td>
+</tr>
+<tr class="odd">
+<td>16</td>
+<td>1</td>
+<td>11</td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.690(1-\frac{1}{11})=0.628\)</span></span></td>
+</tr>
+<tr class="even">
+<td>22</td>
+<td>1</td>
+<td>7</td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.628(1-\frac{1}{7})=0.538\)</span></span></td>
+</tr>
+<tr class="odd">
+<td>23</td>
+<td>1</td>
+<td>6</td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.538(1-\frac{1}{16})=0.448\)</span></span></td>
+</tr>
+</tbody>
+</table></section><section id="example-6-mp-1" class="slide level2"><h2>Example: 6-MP</h2>
+<p>This means our KM life table would look like:</p>
+<table>
+<thead><tr class="header">
+<th><span class="math inline">\(t\)</span></th>
+<th><span class="math inline">\(\hat{S}_{KM}(t)\)</span></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>[0 - 6)</td>
+<td>0.857</td>
+</tr>
+<tr class="even">
+<td>[6 - 7)</td>
+<td>0.807</td>
+</tr>
+<tr class="odd">
+<td>[7 - 10)</td>
+<td>0.753</td>
+</tr>
+<tr class="even">
+<td>[10 - 13)</td>
+<td>0.690</td>
+</tr>
+<tr class="odd">
+<td>[13 - 16)</td>
+<td>0.628</td>
+</tr>
+<tr class="even">
+<td>[16 - 22)</td>
+<td>0.538</td>
+</tr>
+<tr class="odd">
+<td>[22 - 23)</td>
+<td>0.448</td>
+</tr>
+</tbody>
+</table></section><section id="km-confidence-intervals" class="slide level2"><h2>KM confidence intervals</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div class="fragment">
 <p>We can also estimate the variance and standard error of the KM estimator by:</p>
 <p><span class="math display">\[\widehat{Var}\left[\hat{S}_{KM}(t)\right] = \hat{S}_{KM}(t)^2 \sum_{t_i \le t}\frac{d_i}{Y_i(Y_i - d_i)}\]</span></p>
 <p><span class="math display">\[\widehat{SE}\left[\hat{S}_{KM}(t)\right] = \sqrt{\widehat{Var}\left[\hat{S}_{KM}(t)\right]} = \hat{S}_{KM}(t) \sqrt{\sum_{t_i \le t}\frac{d_i}{Y_i(Y_i - d_i)}}\]</span></p>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="fragment">
 <p>This means we can construct <span class="math inline">\((1-\alpha)\times 100\)</span>% confidence intervals for <span class="math inline">\(S(t)\)</span>: <span class="math display">\[\hat{S}_{KM}(t) \pm Z_{1-\alpha/2} \times \widehat{SE}_{KM}(t)\]</span></p>
 </div>
 </div>
 </div>
-</section><section id="example-6mp" class="slide level2"><h2>Example: 6MP</h2>
+<div class="fragment">
+<p>This formulation of a confidence interval for <span class="math inline">\(S(t)\)</span> could produce upper and lower bounds outside of [0,1]</p>
+<ul>
+<li>
+<span class="math inline">\(S(t)\)</span> is a probability, so this is a problem!</li>
+</ul>
+</div>
+</section><section id="km-confidence-intervals-1" class="slide level2"><h2>KM confidence intervals</h2>
+<p>One way to avoid this is by using the <span class="alert">complementary log-log transformation</span></p>
+<p><span class="math display">\[\log\left[-\log S(t)\right] = \log\left[\Lambda(t)\right]\]</span></p>
+<div class="fragment">
+<ul>
+<li>We’ll build a confidence interval for <span class="math inline">\(\log\left[\hat\Lambda(t)\right]\)</span> first, and then we’ll back-transform it to get the interval for <span class="math inline">\(\hat{S}(t)\)</span>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<p>The variance for <span class="math inline">\(\log\left[\hat{\Lambda}(t)\right]\)</span> is: <span class="math display">\[Var\left[\log\left[\hat{\Lambda}(t)\right]\right] = \frac{Var\left[\hat S(t)\right]}{\left(\hat S(t) \log\left[\hat S(t)\right]\right)^2}\]</span></p>
+</div>
+<div class="fragment">
+<p>This means the confidence interval for <span class="math inline">\(\log\left[\hat{\Lambda}(t)\right]\)</span> is: <span class="math display">\[\hat \Lambda(t) \pm Z_{1-\alpha/2} \times \sqrt{\frac{Var\left[\hat S(t)\right]}{\left(\hat S(t) \log\left[\hat S(t)\right]\right)^2}} \Rightarrow\hat \Lambda(t) \pm Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\]</span></p>
+</div>
+</section><section id="km-confidence-intervals-2" class="slide level2"><h2>KM confidence intervals</h2>
+<p>One way to avoid this is by using the <span class="alert">complementary log-log transformation</span></p>
+<p><span class="math display">\[\log\left[-\log S(t)\right] = \log\left[\Lambda(t)\right]\]</span></p>
+<p>This means the confidence interval for <span class="math inline">\(\log\left[\hat{\Lambda}(t)\right]\)</span> is: <span class="math display">\[\hat \Lambda(t) \pm Z_{1-\alpha/2} \times \frac{Var\left[\hat S_{KM}(t)\right]}{\left(\hat S_{KM}(t) \log\left[\hat S_{KM}(t)\right]\right)^2} \Rightarrow\hat \Lambda(t) \pm Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\]</span></p>
+<p>Back-transforming this to <span class="math inline">\(\hat S_{KM}(t)\)</span> gets us the confidence interval: <span class="math display">\[\left(\hat S_{KM}(t)^{\exp\left\{Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\right\}}, ~ \hat S_{KM}(t)^{\exp\left\{-Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\right\}}\right)\]</span></p>
 </section><section id="nelson-aalen-estimator-of-lambdat" class="slide level2"><h2>Nelson-Aalen estimator of <span class="math inline">\(\Lambda(t)\)</span>
 </h2>
-<p>We can use the KM estimator <span class="math inline">\(\hat{S}_{KM}(t)\)</span> to get an estimate of the cumulative hazard function: <span class="math display">\[\hat{\Lambda}(t) = -\log\left[\hat{S}_{KM}(t)\right]\]</span></p>
+<p>We can use the KM estimator <span class="math inline">\(\hat{S}_{KM}(t)\)</span> to get an estimate of the cumulative hazard function: <span class="math display">\[\hat{\Lambda}_{KM}(t) = -\log\left[\hat{S}_{KM}(t)\right]\]</span></p>
 <div class="fragment">
 <ul>
 <li>This estimator can perform poorly when the sample size is small, though</li>
@@ -783,16 +965,17 @@ November 14, 2024
 <div class="fragment">
 <p>An alternative estimator of <span class="math inline">\(\Lambda(t)\)</span> is the <span class="alert">Nelson-Aalen estimator</span>:</p>
 <p><span class="math display">\[\tilde{\Lambda}_{NA}(t) = \sum_{t_i \le t}\frac{d_i}{Y_i}\]</span></p>
+</div>
+</section><section id="na-estimator" class="slide level2"><h2>NA estimator</h2>
+<p>An alternative estimator of <span class="math inline">\(\Lambda(t)\)</span> is the <span class="alert">Nelson-Aalen estimator</span>:</p>
+<p><span class="math display">\[\tilde{\Lambda}_{NA}(t) = \sum_{t_i \le t}\frac{d_i}{Y_i}\]</span></p>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div class="fragment">
 <p>The variance and standard error of the NA estimator is given by: <span class="math display">\[\widehat{Var}[\tilde{\Lambda}_{NA}(t)] = \sum_{t_i \le t}\frac{d_i}{Y_i^2}\]</span></p>
 <p><span class="math display">\[\widehat{SE}[\tilde{\Lambda}_{NA}(t)] =  \sqrt{\widehat{Var}[\tilde{\Lambda}_{NA}(t)]} = \sqrt{\sum_{t_i \le t}\frac{d_i}{Y_i^2}}\]</span></p>
-</div>
 </div><div class="column" style="width:40%;">
 <div class="fragment">
 <p>This means we can construct <span class="math inline">\((1-\alpha)\times 100\)</span>% confidence intervals for <span class="math inline">\(\Lambda(t)\)</span>: <span class="math display">\[\tilde{\Lambda}_{NA}(t) \pm Z_{1-\alpha/2} \times \widehat{SE}_{NA}(t)\]</span></p>
-</div>
 </div>
 </div>
 </div>
@@ -800,8 +983,162 @@ November 14, 2024
 </h2>
 <p><span class="math display">\[\tilde{\Lambda}_{NA}(t) = \sum_{t_i \le t}\frac{d_i}{Y_i}\]</span></p>
 <p>Using the NA estimator of <span class="math inline">\(\Lambda(t)\)</span>, we can also construct an alternative estimator of the survival function: <span class="math display">\[\tilde{S}_{NA}(t) = e^{-\tilde{\Lambda}_{NA}(t)}\]</span></p>
-</section><section id="example" class="slide level2"><h2>Example</h2>
-</section><section id="survival-curves" class="slide level2"><h2>Survival curves</h2>
+</section><section id="example-6-mp-2" class="slide level2"><h2>Example: 6-MP</h2>
+<p><span class="math display">\[\hat \Lambda_{KM}(t) = -\log[\hat S_{KM}(t)], ~~ \tilde \Lambda_{NA}(t) = \tilde{\Lambda}_{NA}(t) = \sum_{t_i \le t}\frac{d_i}{Y_i}, ~~ \tilde S_{NA}(t) = e^{-\tilde{\Lambda}_{NA}(t)}\]</span></p>
+<p>Recall the 6-MP event and censoring times: 6, 6, 6, 7, 10, 13, 16, 22, 23, 6+, 9+, 10+, 11+, 17+, 19+, 20+, 25+, 32+, 32+, 34+, 35+</p>
+<table>
+<colgroup>
+<col style="width: 17%">
+<col style="width: 15%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 15%">
+<col style="width: 12%">
+<col style="width: 12%">
+</colgroup>
+<thead><tr class="header">
+<th><span class="math inline">\(t_i\)</span></th>
+<th><span class="math inline">\(d_i\)</span></th>
+<th><span class="math inline">\(Y_i\)</span></th>
+<th><span class="math inline">\(\hat{S}_{KM}(t)\)</span></th>
+<th><span class="math inline">\(\hat\Lambda_{KM}(t)\)</span></th>
+<th><span class="math inline">\(\tilde\Lambda_{NA}(t)\)</span></th>
+<th><span class="math inline">\(\tilde S_{NA}(t)\)</span></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>6</td>
+<td>3</td>
+<td>21</td>
+<td>0.857</td>
+<td><span class="fragment" data-fragment-index="1"><span class="math inline">\(-\log(0.857)=0.154\)</span></span></td>
+<td><span class="fragment" data-fragment-index="1"><span class="math inline">\(\frac{3}{21}=0.1428\)</span></span></td>
+<td><span class="fragment" data-fragment-index="1"><span class="math inline">\(e^{0.1428}=0.887\)</span></span></td>
+</tr>
+<tr class="even">
+<td>7</td>
+<td>1</td>
+<td>17</td>
+<td>0.807</td>
+<td><span class="fragment" data-fragment-index="2"><span class="math inline">\(-\log(0.807)=0.214\)</span></span></td>
+<td><span class="fragment" data-fragment-index="2"><span class="math inline">\(0.1428 + \frac{1}{17}=0.2017\)</span></span></td>
+<td><span class="fragment" data-fragment-index="2"><span class="math inline">\(e^{0.2017}=0.8173\)</span></span></td>
+</tr>
+<tr class="odd">
+<td>10</td>
+<td>1</td>
+<td>15</td>
+<td>0.753</td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(-\log(0.753)=0.284\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.2017 + \frac{1}{15}=0.2683\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(e^{0.2683}=0.7647\)</span></span></td>
+</tr>
+<tr class="even">
+<td>13</td>
+<td>1</td>
+<td>12</td>
+<td>0.690</td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(-\log(0.690)=0.371\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.2683 + \frac{1}{12}=0.3517\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(e^{0.3517}=0.7035\)</span></span></td>
+</tr>
+<tr class="odd">
+<td>16</td>
+<td>1</td>
+<td>11</td>
+<td>0.628</td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(-\log(0.628)=0.465\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.3517 + \frac{1}{11}=0.4426\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(e^{0.4426}=0.6424\)</span></span></td>
+</tr>
+<tr class="even">
+<td>22</td>
+<td>1</td>
+<td>7</td>
+<td>0.538</td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(-\log(0.538)=0.620\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.4426 + \frac{1}{7}=0.5854\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(e^{0.5854}=0.5569\)</span></span></td>
+</tr>
+<tr class="odd">
+<td>23</td>
+<td>1</td>
+<td>6</td>
+<td>0.448</td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(-\log(0.448)=0.803\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.5854 + \frac{1}{6}=0.7521\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(e^{0.7521}=0.4714\)</span></span></td>
+</tr>
+</tbody>
+</table></section><section id="example-6-mp-3" class="slide level2"><h2>Example: 6-MP</h2>
+<p>This means our life table would look like:</p>
+<table>
+<colgroup>
+<col style="width: 21%">
+<col style="width: 18%">
+<col style="width: 21%">
+<col style="width: 18%">
+<col style="width: 18%">
+</colgroup>
+<thead><tr class="header">
+<th><span class="math inline">\(t\)</span></th>
+<th><span class="math inline">\(\hat{S}_{KM}(t)\)</span></th>
+<th><span class="math inline">\(\tilde S_{NA}(t)\)</span></th>
+<th><span class="math inline">\(\hat\Lambda_{KM}(t)\)</span></th>
+<th><span class="math inline">\(\tilde\Lambda_{NA}(t)\)</span></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>[0 - 6)</td>
+<td>0.857</td>
+<td>0.887</td>
+<td>0.154</td>
+<td>0.143</td>
+</tr>
+<tr class="even">
+<td>[6 - 7)</td>
+<td>0.807</td>
+<td>0.817</td>
+<td>0.214</td>
+<td>0.202</td>
+</tr>
+<tr class="odd">
+<td>[7 - 10)</td>
+<td>0.753</td>
+<td>0.765</td>
+<td>0.284</td>
+<td>0.268</td>
+</tr>
+<tr class="even">
+<td>[10 - 13)</td>
+<td>0.690</td>
+<td>0.704</td>
+<td>0.371</td>
+<td>0.352</td>
+</tr>
+<tr class="odd">
+<td>[13 - 16)</td>
+<td>0.628</td>
+<td>0.342</td>
+<td>0.465</td>
+<td>0.443</td>
+</tr>
+<tr class="even">
+<td>[16 - 22)</td>
+<td>0.538</td>
+<td>0.557</td>
+<td>0.620</td>
+<td>0.585</td>
+</tr>
+<tr class="odd">
+<td>[22 - 23)</td>
+<td>0.448</td>
+<td>0.471</td>
+<td>0.803</td>
+<td>0.752</td>
+</tr>
+</tbody>
+</table></section><section id="survival-curves" class="slide level2"><h2>Survival curves</h2>
 <p>We’ve estimated all these survival probabilities but what do we… do with them?</p>
 <ul>
 <li>We could do like we’ve been doing and put them in a table and track how the probabilities change with time</li>
@@ -814,7 +1151,14 @@ November 14, 2024
 <div class="fragment">
 <p>Solution: plot the probabilities as curves!</p>
 </div>
-</section><section id="example-1" class="slide level2"><h2>Example</h2>
+</section><section id="example-6-mp-4" class="slide level2"><h2>Example: 6-MP</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>km<span class="fl">.6</span>mp <span class="ot">&lt;-</span> <span class="fu">survfit</span>( <span class="fu">Surv</span>(t2, relapse) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data=</span>drug6mp )</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">plot</span>(km<span class="fl">.6</span>mp, <span class="at">mark.time=</span>T, <span class="at">xlab=</span><span class="st">"Months since study start"</span>, <span class="at">ylab=</span><span class="st">"Survival"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="slides-10-2_files/figure-revealjs/survival%20curve-1.png" style="width:90.0%"></p>
+</div>
+</div>
 </section><section id="comparing-survival-curves" class="slide level2"><h2>Comparing survival curves</h2>
 <p>If we would like to formally compare the survival functions for multiple groups, we can perform a statistical test</p>
 <p><span class="math display">\[\begin{align*}&amp;H_0: S_1(t) = S_2(t) \text{ for all } t\\
@@ -875,7 +1219,38 @@ November 14, 2024
 <p><img data-src="parallel-log-hazards.png" width="1000"></p>
 </div>
 </div>
-</section><section id="weighted-logrank-tests" class="slide level2"><h2>Weighted logrank tests</h2>
+</section><section id="example-6-mp-5" class="slide level2"><h2>Example: 6-MP</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>km<span class="fl">.6</span>mp2 <span class="ot">&lt;-</span> <span class="fu">survfit</span>( <span class="fu">Surv</span>(time, relapse) <span class="sc">~</span> sixmp, <span class="at">data=</span>drug6mp_long )</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="fu">plot</span>(km<span class="fl">.6</span>mp2, <span class="at">mark.time=</span>T, <span class="at">xlab=</span><span class="st">"Months since study start"</span>, <span class="at">ylab=</span><span class="st">"Survival"</span>, <span class="at">lty=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="fu">legend</span>( <span class="dv">1</span>, .<span class="dv">6</span>, <span class="at">lty=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">legend=</span><span class="fu">c</span>(<span class="st">"Placebo"</span>, <span class="st">"6-MP"</span>), <span class="at">bty=</span><span class="st">"n"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="slides-10-2_files/figure-revealjs/cancer%20curves-1.png" style="width:80.0%"></p>
+</div>
+</div>
+<div class="fragment">
+<div class="absolute" style="top: 300px; right: 0px; width: 20%; ">
+<p>Curves look pretty proportional… Let’s do a logrank test to see if these curves are (significantly) different</p>
+</div>
+</div>
+</section><section id="example-6-mp-6" class="slide level2"><h2>Example: 6-MP</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">survdiff</span>( <span class="fu">Surv</span>(time, relapse) <span class="sc">~</span> sixmp, <span class="at">data=</span>drug6mp_long )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+survdiff(formula = Surv(time, relapse) ~ sixmp, data = drug6mp_long)
+
+         N Observed Expected (O-E)^2/E (O-E)^2/V
+sixmp=0 21       21     10.7      9.77      16.8
+sixmp=1 21        9     19.3      5.46      16.8
+
+ Chisq= 16.8  on 1 degrees of freedom, p= 4e-05 </code></pre>
+</div>
+</div>
+<p>A test statistic of 16.8 with a p-value of 0.00004… probably pretty different!</p>
+<ul>
+<li>Can conclude that 6-MP group has higher relapse-free survival than placebo</li>
+</ul></section><section id="weighted-logrank-tests" class="slide level2"><h2>Weighted logrank tests</h2>
 <p>While the logrank test will still work work under non-proportional hazards, we might want to choose a different weight function <span class="math inline">\(W(t_i)\)</span> that would allow us to weight differences in the observed and expected number of events (<span class="math inline">\(d_{1i} - E_{1i}\)</span>) differently over time</p>
 <div class="fragment">
 <ul>

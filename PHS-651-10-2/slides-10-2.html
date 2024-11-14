@@ -361,8 +361,8 @@ November 14, 2024
 <div class="column" style="width:50%;">
 <p>Last time we introduced the idea of <span class="alert">time-to-event data</span>, which is characterized by:</p>
 <ul>
-<li><p>Whether an individual experience an event</p></li>
-<li><p>If yes, the time that event happened</p></li>
+<li><p>Whether an individual experience an <span class="alert">event</span></p></li>
+<li><p>If yes, the <span class="alert">time</span> that event happened</p></li>
 <li><p>The presence of <span class="alert">censoring</span></p></li>
 </ul>
 </div><div class="column" style="width:50%;">
@@ -393,17 +393,23 @@ November 14, 2024
 </div>
 </section><section id="estimating-st" class="slide level2"><h2>Estimating <span class="math inline">\(S(t)\)</span>
 </h2>
-<p>Using this data, how would we estimate <span class="math inline">\(S(t)\)</span> at t=1 and t=2?</p>
+<p>Using this data, how would we estimate <span class="math inline">\(S(t) = P(T&gt;t)\)</span> at t=1 and t=2?</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p><img data-src="estimating-S.png" width="1000"></p>
 </div><div class="column" style="width:50%;">
-<p><span class="fragment"><span class="math inline">\(P(T&gt;1) = \frac{\text{# alive at 1 year}}{\text{# "at risk"}} = 8/10=0.8\)</span></span></p>
+<p><span class="fragment"><span class="math inline">\(P(T&gt;1) = \frac{\text{# alive at 1 year}}{\text{# "at risk"}}=\)</span></span><span class="fragment"><span class="math inline">\(8/10=0.8\)</span></span></p>
 <div class="fragment">
 <p>What about <span class="math inline">\(P(T&gt;2)\)</span>?</p>
 <ul>
-<li><p>Do we use the “full” sample and look at <span class="math inline">\(\frac{\text{# alive at 2 year}}{\text{# "at risk" since time 0}}\)</span>?</p></li>
-<li><p>Or do we use a “reduced” sample that only looks at <span class="math inline">\(\frac{\text{# alive past 2 year}}{\text{# with complete data at 2 years}}\)</span>?</p></li>
+<li>We could use the “full” sample and look at <span class="math inline">\(\frac{\text{# with no event at 2 year}}{\text{# "at risk" since time 0}}\)</span>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Or we could use a “reduced” sample that only looks at <span class="math inline">\(\frac{\text{# alive past 2 year}}{\text{# with complete data at 2 years}}\)</span>
+</li>
 </ul>
 </div>
 <div class="fragment">
@@ -416,7 +422,7 @@ November 14, 2024
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>Full sample</td>
+<td>“Full” sample</td>
 <td>8/10 = 0.8</td>
 <td>6/10 = 0.6</td>
 <td>(too high)</td>
@@ -432,13 +438,18 @@ November 14, 2024
 </div>
 </div>
 </div>
+<div class="fragment absolute" style="left: -10px; bottom: 100px; width: 50%; ">
+<p>The “full” sample takes anyone who was censored and <span class="alert">carries their last observation forward</span></p>
+<p>The “reduced” sample <span class="alert">ignores</span> anyone who dropped out</p>
+</div>
 </section><section id="estimating-st-1" class="slide level2"><h2>Estimating <span class="math inline">\(S(t)\)</span>
 </h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p><img data-src="estimating-S.png" width="1000"></p>
 </div><div class="column" style="width:50%;">
-<p>We could use conditional probability!</p>
+<p>We could also use conditional probability!</p>
+<div class="fragment">
 <p><span class="math display">\[\begin{align*}P(T&gt;2) &amp;= P(T&gt;2 | T&gt;1) \times P(T&gt;1)\\
 &amp;=\frac{\text{# alive past 2 years}}{\text{# observed &gt; 2 years, alive at 1 year}}\\
 &amp;~~~~~~~\times \frac{\text{# alive at 1 year}}{\text{# observed at 1 year}}\\
@@ -446,10 +457,288 @@ November 14, 2024
 &amp;= 0.53\end{align*}\]</span></p>
 </div>
 </div>
+</div>
+<div class="fragment absolute" style="bottom: 75px; right: 0px; width: 75%; ">
+<p>Compared to:</p>
+<table>
+<thead><tr class="header">
+<th></th>
+<th>P(T&gt;1)</th>
+<th>P(T&gt;2)</th>
+<th></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>“Full” sample</td>
+<td>8/10 = 0.8</td>
+<td>6/10 = 0.6</td>
+<td>(too high)</td>
+</tr>
+<tr class="even">
+<td>“Reduced” sample</td>
+<td>8/10 = 0.8</td>
+<td>4/8 = 0.5</td>
+<td>(too variable)</td>
+</tr>
+</tbody>
+</table>
+</div>
 </section><section id="life-table-estimates" class="slide level2"><h2>Life table estimates</h2>
+<p>Consider some data from the 6MP leukemia trial</p>
+<ul>
+<li>The essential data are the 21 ordered times (in months) to relapse or censoring: 6, 6, 6, 7, 10, 13, 16, 22, 23, 6+, 9+, 10+, 11+, 17+, 19+, 20+, 25+, 32+, 32+, 34+, 35+</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<ul>
+<li>We can organize these times into intervals:</li>
+</ul>
+<table>
+<thead><tr class="header">
+<th>Interval</th>
+<th>Beginning total</th>
+<th># lost</th>
+<th># relapsed</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>(0 - 5]</td>
+<td>21</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>(5 - 10]</td>
+<td>21</td>
+<td>3</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>(10 - 15]</td>
+<td>13</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>(15 - 20]</td>
+<td>11</td>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>(20 - 25]</td>
+<td>7</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>(25 - 30]</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>(30 - 35]</td>
+<td>4</td>
+<td>4</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p>How do we account for censoring when estimating <span class="math inline">\(S(t)\)</span>?</p>
+</div>
+<div class="fragment">
+<ul>
+<li>
+<p>Could adjust the beginning totals for censoring</p>
+<ul>
+<li>Assume censoring occurs <span class="alert">uniformly</span> throughout the interval <span class="math inline">\(\Rightarrow\)</span> censored participants are at risk for half the interval (on average)</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>
+<span class="alert">Adjusted total at risk</span> in an interval is then: <span class="math display">\[\begin{align*}\text{Adju. total} &amp;= (\text{Uncens. total}) + (\text{# lost})/2\\
+&amp; = (\text{Beg. total}) - (\text{# lost}) + (\text{# lost})/2\\
+&amp; = (\text{Beg. total}) - (\text{# lost})/2\end{align*}\]</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</section><section id="life-table-estimates-1" class="slide level2"><h2>Life table estimates</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>This gets us:</p>
+<table>
+<thead><tr class="header">
+<th>Interval</th>
+<th>Beginning total</th>
+<th># lost</th>
+<th>Adju. total</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>(0 - 5]</td>
+<td>21</td>
+<td>0</td>
+<td>21</td>
+</tr>
+<tr class="even">
+<td>(5 - 10]</td>
+<td>21</td>
+<td>3</td>
+<td>19.5</td>
+</tr>
+<tr class="odd">
+<td>(10 - 15]</td>
+<td>13</td>
+<td>1</td>
+<td>12.5</td>
+</tr>
+<tr class="even">
+<td>(15 - 20]</td>
+<td>11</td>
+<td>3</td>
+<td>9.5</td>
+</tr>
+<tr class="odd">
+<td>(20 - 25]</td>
+<td>7</td>
+<td>1</td>
+<td>6.5</td>
+</tr>
+<tr class="even">
+<td>(25 - 30]</td>
+<td>4</td>
+<td>0</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>(30 - 35]</td>
+<td>4</td>
+<td>4</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p>Can then compute the survival proportion for each interval: <span class="math display">\[(0 - 5]: \frac{21-0}{21} = 1\]</span> <span class="math display">\[(5 - 10]: \frac{19.5-5}{19.5} = 14.5/19.5 = 0.74 \Rightarrow \]</span> 75% of those not relapsed at the end of month 5 have not relapsed by the end of the 10th month</p>
+</div>
+<div class="fragment">
+<p><span class="math display">\[(10 - 15]: \frac{12.5-1}{12.5} = 11.5/12.5 = 0.92 \Rightarrow \]</span> 92% of those not relapsed at the end of month 10 have not relapsed by the end of the 15th month</p>
+</div>
+</div>
+</div>
+</section><section id="life-table-estimates-2" class="slide level2"><h2>Life table estimates</h2>
+<p>Then we can use conditional probability to compute the surviving proportions</p>
+<p><span class="math display">\[P(T &gt; 10) = P(T&gt;5) \times \frac{P(T&gt;10)}{P(T&gt;5)} = 1 \times 0.74 = 0.74\]</span></p>
+<p><span class="math display">\[P(T &gt; 15) = P(T&gt;5) \times \frac{P(T&gt;10)}{P(T&gt;5)} \times \frac{P(T&gt;15)}{P(T&gt;10)} = 1 \times 0.74 \times 0.92 = 0.68\]</span></p>
+</section><section id="life-table-estimates-3" class="slide level2"><h2>Life table estimates</h2>
+<p>Which gets us:</p>
+<table>
+<colgroup>
+<col style="width: 17%">
+<col style="width: 15%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
+<thead><tr class="header">
+<th>Interval</th>
+<th>Beginning total</th>
+<th># lost</th>
+<th>Adju. total</th>
+<th># relapsed</th>
+<th>Cond. interval survival</th>
+<th>Marg. survival</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>(0 - 5]</td>
+<td>21</td>
+<td>0</td>
+<td>21</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>(5 - 10]</td>
+<td>21</td>
+<td>3</td>
+<td>19.5</td>
+<td>5</td>
+<td>0.7436</td>
+<td>0.7436</td>
+</tr>
+<tr class="odd">
+<td>(10 - 15]</td>
+<td>13</td>
+<td>1</td>
+<td>12.5</td>
+<td>1</td>
+<td>0.92</td>
+<td>0.6841</td>
+</tr>
+<tr class="even">
+<td>(15 - 20]</td>
+<td>11</td>
+<td>3</td>
+<td>9.5</td>
+<td>1</td>
+<td>0.8947</td>
+<td>0.6121</td>
+</tr>
+<tr class="odd">
+<td>(20 - 25]</td>
+<td>7</td>
+<td>1</td>
+<td>6.5</td>
+<td>2</td>
+<td>0.6923</td>
+<td>0.4236</td>
+</tr>
+<tr class="even">
+<td>(25 - 30]</td>
+<td>4</td>
+<td>0</td>
+<td>4</td>
+<td>0</td>
+<td>1</td>
+<td>0.4236</td>
+</tr>
+<tr class="odd">
+<td>(30 - 35]</td>
+<td>4</td>
+<td>4</td>
+<td>2</td>
+<td>0</td>
+<td>1</td>
+<td>0.4236</td>
+</tr>
+</tbody>
+</table>
+<div class="fragment">
+<p>This method requires us to come up with the intervals on our own</p>
+<ul>
+<li><p>Some of these intervals have no events or censoring, some have multiple</p></li>
+<li><p>Who’s to say what’s the correct interval? <span class="fragment">… or is there a better way?</span></p></li>
+</ul>
+</div>
 </section><section id="kaplan-meier-estimator-of-st" class="slide level2"><h2>Kaplan-Meier estimator of <span class="math inline">\(S(t)\)</span>
 </h2>
 <p>The <span class="alert">Kaplan-Meier estimator</span> of <span class="math inline">\(S(t)\)</span> considers the probability of survival a (very small) interval of time, given that an individual is at risk at the beginning of the interval</p>
+<div class="fragment">
 <ul>
 <li><p>Say we have <span class="math inline">\(D\)</span> total event times in a sample, and we can put them in order: <span class="math inline">\(t_1 &lt; t_2 &lt; \dots &lt; t_D\)</span></p></li>
 <li><p>Let <span class="math inline">\(d_i\)</span> be the total number of events at time <span class="math inline">\(t_i\)</span></p></li>
@@ -457,6 +746,7 @@ November 14, 2024
 <li><p>Let <span class="math inline">\(Y_i\)</span> be the total number at risk at time <span class="math inline">\(t_i\)</span> (under observation, not failed)</p></li>
 <li><p><span class="math inline">\(d_i = Y_i - s_i\)</span></p></li>
 </ul>
+</div>
 <div class="fragment">
 <p>Instead of looking at neatly-spaced calendar time intervals, the KM estimator calculates a conditional survival probability for each time interval in which only 1 event occurs, and then multiplies them together:</p>
 <p><span class="math display">\[\begin{align*}\hat{S}_{KM}(t) &amp;= P(T&gt;t)\\
@@ -481,7 +771,7 @@ November 14, 2024
 </div>
 </div>
 </div>
-</section><section id="example" class="slide level2"><h2>Example</h2>
+</section><section id="example-6mp" class="slide level2"><h2>Example: 6MP</h2>
 </section><section id="nelson-aalen-estimator-of-lambdat" class="slide level2"><h2>Nelson-Aalen estimator of <span class="math inline">\(\Lambda(t)\)</span>
 </h2>
 <p>We can use the KM estimator <span class="math inline">\(\hat{S}_{KM}(t)\)</span> to get an estimate of the cumulative hazard function: <span class="math display">\[\hat{\Lambda}(t) = -\log\left[\hat{S}_{KM}(t)\right]\]</span></p>
@@ -510,7 +800,7 @@ November 14, 2024
 </h2>
 <p><span class="math display">\[\tilde{\Lambda}_{NA}(t) = \sum_{t_i \le t}\frac{d_i}{Y_i}\]</span></p>
 <p>Using the NA estimator of <span class="math inline">\(\Lambda(t)\)</span>, we can also construct an alternative estimator of the survival function: <span class="math display">\[\tilde{S}_{NA}(t) = e^{-\tilde{\Lambda}_{NA}(t)}\]</span></p>
-</section><section id="example-1" class="slide level2"><h2>Example</h2>
+</section><section id="example" class="slide level2"><h2>Example</h2>
 </section><section id="survival-curves" class="slide level2"><h2>Survival curves</h2>
 <p>We’ve estimated all these survival probabilities but what do we… do with them?</p>
 <ul>
@@ -524,7 +814,7 @@ November 14, 2024
 <div class="fragment">
 <p>Solution: plot the probabilities as curves!</p>
 </div>
-</section><section id="example-2" class="slide level2"><h2>Example</h2>
+</section><section id="example-1" class="slide level2"><h2>Example</h2>
 </section><section id="comparing-survival-curves" class="slide level2"><h2>Comparing survival curves</h2>
 <p>If we would like to formally compare the survival functions for multiple groups, we can perform a statistical test</p>
 <p><span class="math display">\[\begin{align*}&amp;H_0: S_1(t) = S_2(t) \text{ for all } t\\

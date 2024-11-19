@@ -447,29 +447,39 @@ November 19, 2024
 </li>
 </ul>
 <div class="fragment">
-<p>These methods work well when we’re looking at separate distinct groups. But what happens when we want to look at the impact of multiple covariates?</p>
+<p>These methods work well when we’re looking at a finite number of separate distinct groups. But what happens when we want to look at the impact of multiple covariates?</p>
 <ul>
 <li><p>Much like in other types of statistical analysis, stratified hypothesis tests can only get us so far</p></li>
 <li><p>Sounds like we need a regression method…</p></li>
 </ul>
 </div>
 </section><section id="parametric-proportional-hazards-regression" class="slide level2"><h2>Parametric proportional hazards regression</h2>
-<p>Models for survival times are specified in terms of the (log) hazard function</p>
+<p>Models for survival times are commonly specified in terms of the <span class="alert">(log) hazard function</span> for an individual <span class="math inline">\(i\)</span>: <span class="math inline">\(\log[\lambda_i(t)]\)</span></p>
 <ul>
-<li>A parametric regression model for the (log) hazard based on an exponential distribution for the survival times gets us:</li>
+<li>A parametric regression model for the (log) hazard based on an <span class="alert">exponential distribution</span> for the survival times gets us:</li>
 </ul>
 <p><span class="math display">\[\log\left[\lambda_i(t)\right] = \beta_0 + \beta_1 x_{i1} + \dots + \beta_k x_{ik}\]</span></p>
-<p><span class="math inline">\(\beta_0\)</span> is called the <span class="alert">baseline hazard</span>, or the hazard when all covariates are 0</p>
+<div class="fragment">
+<p>This model is <span class="alert">parametric</span> because <span class="math inline">\(\lambda_i(t)\)</span> is fully characterized by the regression coefficients <span class="math inline">\(\beta_0, \dots, \beta_k\)</span> we’re estimating</p>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(e^{\beta_0}\)</span> is called the <span class="alert">baseline hazard</span>, or the hazard when all covariates are 0</p>
 <ul>
 <li>We also denote this as <span class="math inline">\(\lambda_0(t)\)</span>
 </li>
-</ul></section><section id="parametric-proportional-hazards-regression-1" class="slide level2"><h2>Parametric proportional hazards regression</h2>
+</ul>
+</div>
+</section><section id="parametric-proportional-hazards-regression-1" class="slide level2"><h2>Parametric proportional hazards regression</h2>
 <p><span class="math display">\[\log\left[\lambda_i(t)\right] = \beta_0 + \beta_1 x_{i1} + \dots + \beta_k x_{ik}\]</span></p>
-<p>We call this a <span class="alert">proportional hazards</span> regression since the hazard for participant <span class="math inline">\(i\)</span> is a constant multiple of the baseline hazard for all times <span class="math inline">\(t\)</span>: <span class="math inline">\(\lambda_i(t) = \lambda_0(t)e^{\beta_1 x_{i1} + \dots \beta_k x_{ik}}\)</span></p>
+<p>We call this a <span class="alert">proportional hazards</span> regression since the hazard for participant <span class="math inline">\(i\)</span> is a constant multiple of the baseline hazard for all times <span class="math inline">\(t\)</span></p>
+<p><span class="math display">\[\lambda_i(t) = \lambda_0(t)e^{\beta_1 x_{i1} + \dots \beta_k x_{ik}}\]</span></p>
 <ul>
-<li>The <span class="alert">hazard ratio</span> for participant <span class="math inline">\(i\)</span> with respect to participant <span class="math inline">\(j\)</span> is: <span class="math display">\[\frac{\lambda_i(t)}{\lambda_j(t)} = e^{\beta_1(x_{i1} - x_{j1}) + \dots + \beta_k (x_{ik} - x_{jk})}\]</span>
-</li>
-</ul></section><section id="distributions-for-parametric-regression" class="slide level2"><h2>Distributions for parametric regression</h2>
+<li>Model does not incorporate the possibility for curve-crossing</li>
+</ul>
+<div class="fragment">
+<p>The estimand of interest from this model is the <span class="alert">hazard ratio</span> for participant <span class="math inline">\(i\)</span> with respect to participant <span class="math inline">\(j\)</span>: <span class="math display">\[\frac{\lambda_i(t)}{\lambda_j(t)} = e^{\beta_1(x_{i1} - x_{j1}) + \dots + \beta_k (x_{ik} - x_{jk})}\]</span></p>
+</div>
+</section><section id="distributions-for-parametric-regression" class="slide level2"><h2>Distributions for parametric regression</h2>
 <p>Under an <span class="alert">exponential</span> model, the baseline hazard is equal to: <span class="math inline">\(h_0(t) = e^{\beta_0}\)</span></p>
 <p>There are other distributions we could assume:</p>
 <ul>
@@ -478,7 +488,9 @@ November 19, 2024
 <li><p>Pareto: <span class="math inline">\(h_0(t) = \theta/t\)</span></p></li>
 </ul>
 <div class="fragment">
-<p>But again, to get valid inference from a parametric regression model is highly dependent on choosing the correct probability distribution</p>
+<p>But again, getting valid inference from a parametric regression model is highly dependent on choosing the correct probability distribution to correctly model how the (baseline) hazard behaves over time</p>
+</div>
+<div class="fragment">
 <ul>
 <li>Is there a less parametric way we can construct a regression?</li>
 </ul>
@@ -487,13 +499,17 @@ November 19, 2024
 <p>The <span class="alert">Cox proportional hazards model</span> leaves the baseline hazard function <span class="math inline">\(\lambda_0(t)\)</span> unspecified: <span class="math display">\[\log\left[\lambda_i(t)\right] = \beta_0(t) + \beta_1 x_{i1} + \dots + \beta_k x_{ik}\]</span></p>
 <p><span class="math display">\[\lambda_i(t) = \lambda_0(t)e^{\beta_1 x_{i1} + \dots + \beta_k x_{ik}}\]</span></p>
 <ul>
-<li><p>We call this a <span class="alert">semi-parametric</span> approach because we are only assuming a parametric form for the covariate effects</p></li>
+<li><p>We call this a <span class="alert">semi-parametric</span> approach because we are only assuming a parametric form for the covariate effects <span class="math inline">\(\beta_1, \dots \beta_k\)</span></p></li>
 <li><p>The traditional regression “intercept” is absorbed into the baseline hazard</p></li>
 </ul></section><section id="cox-proportional-hazards-model-1" class="slide level2"><h2>Cox proportional hazards model</h2>
 <p><span class="math display">\[\log\left[\lambda_i(t)\right] = \beta_0(t) + \beta_1 x_{i1} + \dots + \beta_k x_{ik}\]</span> <span class="math display">\[\lambda_i(t) = \lambda_0(t)e^{\beta_1 x_{i1} + \dots + \beta_k x_{ik}}\]</span></p>
 <p>Cox models are another example of a <span class="alert">proportional hazards</span> regression since the hazard for participant <span class="math inline">\(i\)</span> is a constant multiple of the baseline hazard for all times <span class="math inline">\(t\)</span></p>
 <ul>
-<li>This means that any <span class="math inline">\(\beta_k\)</span> can be interpreted as the <span class="alert">log hazard ratio</span> comparing an individual <span class="math inline">\(i\)</span> with <span class="math inline">\(x_{ik}\)</span> that is 1 unit larger than an individual <span class="math inline">\(j\)</span>, all else held constant <span class="math display">\[\log\left[\frac{\lambda_i(t)}{\lambda_j(t)}\right] = \beta_k(x_{i1} - x_{j1}) = \beta_k\]</span>
+<li>
+<p>This means that any <span class="math inline">\(\beta_k\)</span> can be interpreted as the <span class="alert">log hazard ratio</span> comparing an individual <span class="math inline">\(i\)</span> with <span class="math inline">\(x_{ik}\)</span> that is 1 unit larger than an individual <span class="math inline">\(j\)</span>, all else held constant <span class="math display">\[\log\left[\frac{\lambda_i(t)}{\lambda_j(t)}\right] = \beta_k(x_{i1} - x_{j1}) = \beta_k\]</span></p>
+<ul>
+<li><em>“Compared to an individual with <span class="math inline">\(x_{k}\)</span> that is one unit smaller, we estimate that an individual with <span class="math inline">\(x_{k}\)</span> that is one unit larger will have a hazard that is approximately <span class="math inline">\(e^{\beta_k}\)</span> times larger, all other covariates held constant”</em></li>
+</ul>
 </li>
 </ul>
 <div class="fragment">
@@ -508,7 +524,8 @@ November 19, 2024
 </div>
 </section><section id="cox-model-partial-likelihood" class="slide level2"><h2>Cox model partial likelihood</h2>
 <p>Because Cox models are semi-parametric, we estimate model parameters by maximizing the <span class="alert">partial likelihood</span></p>
-<p><span class="math display">\[L_p(\beta_1, \dots, \beta_k) = \prod_{i=1}^N \left[\frac{\exp(\beta_1 x_{i1} + \beta_k x_{ik})}{\sum_{j\in R(t_i)}\exp(\beta_1 x_{j1} + \beta_k x_{jk})}\right]^{c_i}\]</span></p>
+<p><span class="math display">\[L_p(\beta_1, \dots, \beta_k) = \prod_{i=1}^N \left[\frac{\exp(\beta_1 x_{i1} + \beta_k x_{ik})}{\sum_{j\in R(t_i)}\exp(\beta_1 x_{j1} + \beta_k x_{jk})}\right]^{c_i}\]</span> which does not depend on correct specification of the baseline hazard</p>
+<div class="fragment">
 <ul>
 <li><p><span class="math inline">\(c_i\)</span> denotes a censoring indicator function</p></li>
 <li>
@@ -518,7 +535,19 @@ November 19, 2024
 <li><p>Once someone has their event (or is censored), they no longer contribute to the risk set in the denominator</p></li>
 </ul>
 </li>
-</ul></section><section id="cox-model-partial-likelihood-1" class="slide level2"><h2>Cox model partial likelihood</h2>
+</ul>
+</div>
+</section><section id="cox-model-partial-likelihood-1" class="slide level2"><h2>Cox model partial likelihood</h2>
+<p>Because Cox models are semi-parametric, we estimate model parameters by maximizing the <span class="alert">partial likelihood</span></p>
+<p><span class="math display">\[L_p(\beta_1, \dots, \beta_k) = \prod_{i=1}^N \left[\frac{\exp(\beta_1 x_{i1} + \beta_k x_{ik})}{\sum_{j\in R(t_i)}\exp(\beta_1 x_{j1} + \beta_k x_{jk})}\right]^{c_i}\]</span> which does not depend on correct specification of the baseline hazard</p>
+<ul>
+<li><p><span class="math inline">\(c_i\)</span> denotes a censoring indicator function</p></li>
+<li><p><span class="math inline">\(R(t_i)\)</span> denotes <span class="alert">risk set</span>, or the set of subjects who were at risk for an event at time <span class="math inline">\(t_i\)</span></p></li>
+</ul>
+<p>A partial likelihood is <span class="alert">less efficient</span> (produces larger variance) than using a regression with a full (parametric) likelihood that is correctly specified</p>
+<ul>
+<li>But the partial likelihood is <span class="alert">more robust</span> than a parametric regression to misspecification - and we are very likely to misspecify the parametric regression</li>
+</ul></section><section id="cox-model-partial-likelihood-2" class="slide level2"><h2>Cox model partial likelihood</h2>
 <p>The <span class="alert">conditional probability</span> that participant <span class="math inline">\(i\)</span> with covariate values <span class="math inline">\(x_{i1}, \dots, x_{ik}\)</span> experiences an event at time <span class="math inline">\(t_i\)</span> given that exactly one person in the risk set experiences an event at that time is: <span class="math display">\[\frac{\exp(\beta_1 x_{i1} + \beta_k x_{ik})}{\sum_{j\in R(t_i)}\exp(\beta_1 x_{j1} + \beta_k x_{jk})}\]</span></p>
 <ul>
 <li><p>The partial likelihood is just multiplying up conditional probabilities over all (observed) events!</p></li>
@@ -528,10 +557,12 @@ November 19, 2024
 <ul>
 <li>i.e., no two people have their event at the exact same moment</li>
 </ul>
+<div class="fragment">
 <p>While this makes sense theoretically, we usually end up with at least some tied times in practice because we can’t accurately observe everyone continuously</p>
 <ul>
 <li>Sometimes we get interval censoring!</li>
 </ul>
+</div>
 <div class="fragment">
 <p>Two main types of methods are used to account for ties</p>
 <div class="columns">
@@ -560,16 +591,34 @@ November 19, 2024
 </section><section id="assumptions-of-the-cox-model" class="slide level2"><h2>Assumptions of the Cox model</h2>
 <p>The Cox model doesn’t make many assumptions but it’s main ones are:</p>
 <ul>
-<li><p>Correct functional form of the covariates (correct “mean” model)</p></li>
-<li><p>Observations from each participant are independent (no “clustering”)</p></li>
-<li><p>Non-informative censoring</p></li>
-<li><p>Proportional hazards</p></li>
+<li><p>Correct functional form of the covariates (<span class="alert">correct “mean” model</span>)</p></li>
+<li>
+<p>Observations from each participant are <span class="alert">independent</span> (no “clustering”)</p>
+<ul>
+<li>You can relax this assumption… more on this later</li>
 </ul>
+</li>
+<li>
+<p><span class="alert">Non-informative</span> censoring (all non-administrative censoring is random)</p>
+<ul>
+<li>Common across most survival analysis methods</li>
+</ul>
+</li>
+<li><p><span class="alert">Proportional</span> hazards</p></li>
+</ul>
+<div class="fragment">
 <p>The main assumption we tend to focus on is the proportional hazards assumption</p>
 <ul>
-<li>We can assess this by plotting KM curves, or by calculating and plotting Schoenfeld residuals</li>
-</ul></section><section id="example-larynx" class="slide level2"><h2>Example: Larynx</h2>
-<p>We have data on 90 men diagnosed with cancer of the larynx between 1970-1978. Men entered the study when they began their first treatment. We are interested how disease stage impacts time to death, conditional on age at diagnosis</p>
+<li>We can assess this by plotting KM curves, or by calculating and plotting Schoenfeld residuals (more on this on tutorial day next week)</li>
+</ul>
+</div>
+</section><section id="example-laryngeal-cancer" class="slide level2"><h2>Example: Laryngeal cancer</h2>
+<p>We have data on 90 men diagnosed with cancer of the larynx between 1970-1978</p>
+<ul>
+<li><p>Men entered the study when they began their first treatment (time origin)</p></li>
+<li><p>We are interested how disease stage impacts time to death (in years), conditional on age at diagnosis</p></li>
+</ul>
+<div class="fragment">
 <p>First let’s plot the unconditional KM curves:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(survival)</span>
@@ -578,13 +627,17 @@ November 19, 2024
 <span id="cb1-4"><a href="#cb1-4"></a><span class="fu">legend</span>( <span class="dv">10</span>, .<span class="dv">9</span>, <span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, </span>
 <span id="cb1-5"><a href="#cb1-5"></a>        <span class="at">legend=</span><span class="fu">c</span>(<span class="st">"Stage I"</span>, <span class="st">"Stage II"</span>,<span class="st">"Stage III"</span>,<span class="st">"Stage IV"</span>), <span class="at">bty=</span><span class="st">"n"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="example-larynx-1" class="slide level2"><h2>Example: Larynx</h2>
+</div>
+</section><section id="example-laryngeal-cancer-1" class="slide level2"><h2>Example: Laryngeal cancer</h2>
 <div class="cell">
 <div class="cell-output-display">
 <p><img data-src="slides-11-1_files/figure-revealjs/KM%20curves2-1.png" style="width:200.0%"></p>
 </div>
 </div>
-</section><section id="example-larynx-2" class="slide level2"><h2>Example: Larynx</h2>
+</section><section id="example-laryngeal-cancer-2" class="slide level2"><h2>Example: Laryngeal cancer</h2>
+<p>Our Cox model for this relationship would then look like:</p>
+<p><span class="math display">\[\log\left[\lambda_i(t)\right] = \beta_0(t) + \beta_1 (\text{Age}_i) + \beta_2 (\text{Stage II}_i) + \beta_3 (\text{Stage III}_i) + \beta_4 (\text{Stage IV}_i)\]</span></p>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>cox.model <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(time, delta) <span class="sc">~</span> age <span class="sc">+</span> <span class="fu">factor</span>(stage), <span class="at">data=</span>larynx )</span>
 <span id="cb2-2"><a href="#cb2-2"></a><span class="fu">summary</span>(cox.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -614,36 +667,8 @@ Wald test            = 21.15  on 4 df,   p=3e-04
 Score (logrank) test = 24.78  on 4 df,   p=6e-05</code></pre>
 </div>
 </div>
-<div class="fragment">
-<ul>
-<li><p><span class="math inline">\(e^{\beta_2(\text{Stage II})} = 1.15\)</span>: Compared to those with Stage I cancer who were the same age at diagnosis, patients with Stage II cancer are expected to have a 15% higher hazard</p></li>
-<li><p><span class="math inline">\(e^{\beta_2(\text{Stage III})} = 1.90\)</span>: Compared to those with Stage I cancer who were the same age at diagnosis, patients with Stage III cancer are expected to have a 90% higher hazard</p></li>
-<li><p><span class="math inline">\(e^{\beta_2(\text{Stage IV})} = 5.51\)</span>: Patients with Stage IV cancer are expected to have a hazard that is 5.51 times higher compared to those with Stage I cancer who were the same age at diagnosis</p></li>
-</ul>
 </div>
-</section><section id="cox-model-coefficient-inference" class="slide level2"><h2>Cox model coefficient inference</h2>
-<p>Just like any regression model, it’s not enough to just get esimates of the regression coefficients</p>
-<ul>
-<li>We need a way to perform <span class="alert">inference</span> to understand how much uncertainty we have around that estimate</li>
-</ul>
-<p>A <span class="math inline">\((1-\alpha/2)\times 100\)</span>% confidence interval for a regression estimate takes the usual form: <span class="math display">\[\hat{\beta} \pm Z_{1-\alpha/2} \times SE(\hat \beta)\]</span></p>
-<div class="fragment">
-<p>Much like with logistic regression, though, it is more interpretable to perform inference on the hazard ratio <span class="math inline">\(e^\beta\)</span> than the log hazard ratio</p>
-<ul>
-<li>This just means we need to exponentiate the upper and lower limits of the log hazard ratio confidence interval:</li>
-</ul>
-<p><span class="math display">\[\left(\exp\left\{\hat{\beta} - Z_{1-\alpha/2} \times SE(\hat \beta)\right\}, \exp\left\{\hat{\beta} + Z_{1-\alpha/2} \times SE(\hat \beta)\right\}\right)\]</span></p>
-</div>
-</section><section id="cox-model-standard-errors" class="slide level2"><h2>Cox model standard errors</h2>
-<p><span class="math display">\[\hat{\beta} \pm Z_{1-\alpha/2} \times SE(\hat \beta)\]</span></p>
-<p>How do we get <span class="math inline">\(SE(\hat \beta)\)</span> though?</p>
-<p>We can get the variance of <span class="math inline">\(\hat \beta\)</span> by taking the negative second-derivative of the log-partial likelihood: <span class="math display">\[Var(\hat \beta) = \frac{- \partial^2 \log(L_p)}{\partial\beta^2}\]</span></p>
-<ul>
-<li>The standard error is then: <span class="math inline">\(SE(\hat \beta) = \sqrt{Var(\hat \beta)}\)</span>
-</li>
-</ul>
-<p>The standard error is also reported in any Cox model output</p>
-</section><section id="example-larynx-3" class="slide level2"><h2>Example: Larynx</h2>
+</section><section id="example-laryngeal-cancer-3" class="slide level2"><h2>Example: Laryngeal cancer</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>cox.model <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(time, delta) <span class="sc">~</span> age <span class="sc">+</span> <span class="fu">factor</span>(stage), <span class="at">data=</span>larynx )</span>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="fu">summary</span>(cox.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -672,13 +697,53 @@ Likelihood ratio test= 18.31  on 4 df,   p=0.001
 Wald test            = 21.15  on 4 df,   p=3e-04
 Score (logrank) test = 24.78  on 4 df,   p=6e-05</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>se.cox <span class="ot">&lt;-</span> <span class="fu">summary</span>(cox.model)<span class="sc">$</span>coef[,<span class="dv">3</span>]</span>
-<span id="cb6-2"><a href="#cb6-2"></a></span>
-<span id="cb6-3"><a href="#cb6-3"></a>CI.lower <span class="ot">&lt;-</span> <span class="fu">exp</span>( <span class="fu">summary</span>(cox.model)<span class="sc">$</span>coef[,<span class="dv">1</span>] <span class="sc">-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)<span class="sc">*</span>se.cox )</span>
-<span id="cb6-4"><a href="#cb6-4"></a>CI.upper <span class="ot">&lt;-</span> <span class="fu">exp</span>( <span class="fu">summary</span>(cox.model)<span class="sc">$</span>coef[,<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)<span class="sc">*</span>se.cox )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
-<li><p>95% CI for <span class="math inline">\(e^{\beta_2}\)</span>: We are 95% confident that the true hazard ratio comparing patients with Stage II cancer to similarly-aged patients with Stage I cancer is between 0.4647 and 2.8477.</p></li>
+<li><p><span class="math inline">\(e^{\beta_2(\text{Stage II})} = 1.15\)</span>: <span class="fragment">Compared to those with Stage I cancer who were the same age at diagnosis, patients with Stage II cancer are expected to have a 15% higher hazard</span></p></li>
+<li><p><span class="math inline">\(e^{\beta_2(\text{Stage III})} = 1.90\)</span>: <span class="fragment">Compared to those with Stage I cancer who were the same age at diagnosis, patients with Stage III cancer are expected to have a 90% higher hazard</span></p></li>
+<li><p><span class="math inline">\(e^{\beta_2(\text{Stage IV})} = 5.51\)</span>: <span class="fragment">Patients with Stage IV cancer are expected to have a hazard that is 5.51 times higher compared to those with Stage I cancer who were the same age at diagnosis</span></p></li>
+</ul></section><section id="cox-model-coefficient-inference" class="slide level2"><h2>Cox model coefficient inference</h2>
+<p>Just like any regression model, it’s not enough to just get esimates of the regression coefficients</p>
+<ul>
+<li>We need a way to perform <span class="alert">inference</span> to understand how much uncertainty we have around that estimate</li>
+</ul>
+<p>A <span class="math inline">\((1-\alpha/2)\times 100\)</span>% confidence interval for a regression estimate takes the usual form: <span class="math display">\[\hat{\beta} \pm Z_{1-\alpha/2} \times SE(\hat \beta)\]</span></p>
+<div class="fragment">
+<p>Much like with logistic regression, though, it is more interpretable to <span class="alert">perform inference on the hazard ratio</span> <span class="math inline">\(e^\beta\)</span> than the log hazard ratio</p>
+<ul>
+<li>This just means we need to exponentiate the upper and lower limits of the log hazard ratio confidence interval:</li>
+</ul>
+<p><span class="math display">\[\left(\exp\left\{\hat{\beta} - Z_{1-\alpha/2} \times SE(\hat \beta)\right\}, \exp\left\{\hat{\beta} + Z_{1-\alpha/2} \times SE(\hat \beta)\right\}\right)\]</span></p>
+</div>
+</section><section id="cox-model-standard-errors" class="slide level2"><h2>Cox model standard errors</h2>
+<p><span class="math display">\[\hat{\beta} \pm Z_{1-\alpha/2} \times SE(\hat \beta)\]</span></p>
+<p>How do we get <span class="math inline">\(SE(\hat \beta)\)</span> though?</p>
+<div class="fragment">
+<p>We can get the variance of <span class="math inline">\(\hat \beta\)</span> by taking the negative second-derivative of the log-partial likelihood: <span class="math display">\[Var(\hat \beta) = \frac{- \partial^2 \log(L_p)}{\partial\beta^2}\]</span></p>
+<ul>
+<li>The standard error is then: <span class="math inline">\(SE(\hat \beta) = \sqrt{Var(\hat \beta)}\)</span>
+</li>
+</ul>
+<p>This doesn’t have a nice formulaic equation… but the standard error is also reported in any Cox model output</p>
+</div>
+</section><section id="example-laryngeal-cancer-4" class="slide level2"><h2>Example: Laryngeal cancer</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>cox.model <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(time, delta) <span class="sc">~</span> age <span class="sc">+</span> <span class="fu">factor</span>(stage), <span class="at">data=</span>larynx )</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="fu">summary</span>(cox.model)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    coef exp(coef)   se(coef)         z     Pr(&gt;|z|)
+age            0.0190311  1.019213 0.01425842 1.3347274 1.819656e-01
+factor(stage)2 0.1400402  1.150320 0.46248610 0.3027986 7.620433e-01
+factor(stage)3 0.6423817  1.901003 0.35611056 1.8038828 7.124967e-02
+factor(stage)4 1.7059796  5.506778 0.42191333 4.0434361 5.267351e-05</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>se.cox <span class="ot">&lt;-</span> <span class="fu">summary</span>(cox.model)<span class="sc">$</span>coef[,<span class="dv">3</span>]</span>
+<span id="cb8-2"><a href="#cb8-2"></a></span>
+<span id="cb8-3"><a href="#cb8-3"></a>CI.lower <span class="ot">&lt;-</span> <span class="fu">exp</span>( <span class="fu">summary</span>(cox.model)<span class="sc">$</span>coef[,<span class="dv">1</span>] <span class="sc">-</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)<span class="sc">*</span>se.cox )</span>
+<span id="cb8-4"><a href="#cb8-4"></a>CI.upper <span class="ot">&lt;-</span> <span class="fu">exp</span>( <span class="fu">summary</span>(cox.model)<span class="sc">$</span>coef[,<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">qnorm</span>(<span class="fl">0.975</span>)<span class="sc">*</span>se.cox )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p>95% CI for <span class="math inline">\(e^{\beta_2}\)</span>: (0.4647, 2.8477) <span class="fragment">We are 95% confident that the true hazard ratio comparing patients with Stage II cancer to similarly-aged patients with Stage I cancer is between 0.4647 and 2.8477.</span></p></li>
 <li><p>95% CI for <span class="math inline">\(e^{\beta_3}\)</span>: (0.9459, 3.8204)</p></li>
 <li><p>95% CI for <span class="math inline">\(e^{\beta_4}\)</span>: (2.4086, 12.5901)</p></li>
 </ul></section><section id="cox-model-hypothesis-tests" class="slide level2"><h2>Cox model hypothesis tests</h2>
@@ -696,22 +761,24 @@ Score (logrank) test = 24.78  on 4 df,   p=6e-05</code></pre>
 <p>A <span class="alert">partial likelihood ratio test</span> allows us to test whether multiple parameter estimates are 0</p>
 <ul>
 <li><p>Full model: <span class="math inline">\(\lambda(t | x_1, \dots, x_p) = \lambda_0(t)e^{\beta_1 x_1 + \dots + \beta_p x_p}\)</span></p></li>
-<li><p>Reduced model: <span class="math inline">\(\lambda(t | x_1, \dots, x_k) = \lambda_0(t)e^{\beta_1 x_1 + \dots + \beta_p x_k}\)</span></p></li>
+<li><p>Reduced model: <span class="math inline">\(\lambda(t | x_1, \dots, x_k) = \lambda_0(t)e^{\beta_1 x_1 + \dots + \beta_k x_k}\)</span></p></li>
 </ul>
 </li>
 </ul>
 <p><span class="math display">\[H_0: \beta_{k+1} = \dots = \beta_p = 0\]</span> <span class="math display">\[H_A: \text{at least one of }\beta_{k+1}, \dots, \beta_p \ne 0\]</span></p>
 <p><span class="math display">\[T = 2\times \left\{\log(L_{p,full}) - \log(L_{p,reduced})\right\} \sim \chi^2_{p-k}\]</span></p>
-</section><section id="example-larynx-4" class="slide level2"><h2>Example: Larynx</h2>
-<p>What if we were interested in the effect of age on time to death, conditional on disease stage?</p>
-<p>Let’s compare the model that adjusts for cancer stage against a model that only adjusts for age:</p>
+</section><section id="example-laryngeal-cancer-5" class="slide level2"><h2>Example: Laryngeal cancer</h2>
+<p>Let’s return to the question of how disease stage impacts time to death, conditional on age at diagnosis</p>
+<ul>
+<li>We can compare the model that adjusts for cancer stage + age against a model that only adjusts for age:</li>
+</ul>
 <p><span class="math display">\[H_0: \beta_2 = \beta_3 = \beta_4 = 0\]</span> <span class="math display">\[H_A: \text{at least one of }\beta_2, \beta_3, \beta_4 \ne 0\]</span></p>
 <div class="cell columns column-output-location">
 <div class="column">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>cox.red <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(time, delta) <span class="sc">~</span> age,</span>
-<span id="cb7-2"><a href="#cb7-2"></a>                  <span class="at">data=</span>larynx)</span>
-<span id="cb7-3"><a href="#cb7-3"></a></span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="fu">anova</span>(cox.red, cox.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>cox.red <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(time, delta) <span class="sc">~</span> age,</span>
+<span id="cb9-2"><a href="#cb9-2"></a>                  <span class="at">data=</span>larynx)</span>
+<span id="cb9-3"><a href="#cb9-3"></a></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="fu">anova</span>(cox.red, cox.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column">
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Deviance Table
@@ -734,28 +801,111 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <ul>
 <li>Let <span class="math inline">\(t_1 &lt; \dots&lt; t_D\)</span> denote the event times and <span class="math inline">\(d_i\)</span> denote the number of events at time <span class="math inline">\(t_i\)</span>. Then:</li>
 </ul>
-<p><span class="math display">\[\hat \Lambda_0(t) = \sum_{t_i \le t} \frac{d_i}{\sum_{j\in R(t_i)}\exp(\hat\beta_1 x_{j1} + \hat\beta_k x_{jk})}\]</span></p>
+<p><span class="math display">\[\hat \Lambda_{0B}(t) = \sum_{t_i \le t} \frac{d_i}{\sum_{j\in R(t_i)}\exp(\hat\beta_1 x_{j1} + \hat\beta_k x_{jk})}\]</span></p>
 <p>is the <span class="alert">Breslow estimator</span> of the baseline cumulative hazard</p>
 <ul>
 <li>Reduces to the Nelson-Aalen estimator of the cumulative hazard function when no covariates are present</li>
 </ul>
 <div class="fragment">
 <p>We can then transform the Breslow estimator to get an estimate of the baseline survival function:</p>
-<p><span class="math display">\[\hat S_0(t) = \exp\left[-\hat \Lambda_0(t)\right]\]</span></p>
+<p><span class="math display">\[\hat S_{0B}(t) = \exp\left[-\hat \Lambda_{0B}(t)\right]\]</span></p>
+</div>
+</section><section id="interpreting-estimates-of-baseline-survival-function" class="slide level2"><h2>Interpreting estimates of baseline survival function</h2>
+<p><span class="math inline">\(\hat S_{0B}(t)\)</span> is the <span class="alert">fitted</span> survival function for:</p>
+<ul>
+<li><p><span class="math inline">\(\vec{x}_{i}=0\)</span></p></li>
+<li><p>proportional hazards assumption</p></li>
+</ul>
+<p>If the proportional hazards assumption is correct, <span class="math inline">\(\hat S_{0B}(t)\)</span> can be though of as an adjusted survival function, where the adjustment is to the case where all subjects have <span class="math inline">\(\vec{x}_{i}=0\)</span></p>
+<div class="fragment">
+<p>What if there are no observations where <span class="math inline">\(\vec{x}_i=0\)</span>?</p>
+<ul>
+<li><p>Then <span class="math inline">\(\hat S_{0B}(t)\)</span> is <span class="alert">meaningless extrapolation</span></p></li>
+<li><p>In that case, it might be a good idea to <span class="alert">center your covariates</span></p></li>
+</ul>
 </div>
 </section><section id="estimating-non-baseline-hazard-and-survival-functions" class="slide level2"><h2>Estimating non-baseline hazard and survival functions</h2>
 <p>Once we’ve estimated the baseline hazard and survival functions, we can use those to estimate cumulative hazard and survival functions for individuals with particular covariate values:</p>
-<p><span class="math display">\[\hat \Lambda_*(t) = e^{(\hat \beta_1 x_1^* + \hat \beta_k x_k^*)}\hat \Lambda_0(t)\]</span></p>
-<p><span class="math display">\[\hat S_*(t) = \left[\hat S_0(t)\right]^{\exp(\hat \beta_1 x_1^* + \hat \beta_k x_k^*)}\]</span></p>
-</section><section id="example-larynx-5" class="slide level2"><h2>Example: Larynx</h2>
-<p>Let’s see what the survival curve would look like for someone with stage III cancer who was 45 years old at diagnosis, and compare that to baseline (a 0-year-old with stage I cancer);</p>
+<p><span class="math display">\[\hat \Lambda_*(t) = e^{(\hat \beta_1 x_1^* + \hat \beta_k x_k^*)}\hat \Lambda_{0B}(t)\]</span></p>
+<p><span class="math display">\[\hat S_*(t) = \left[\hat S_{0B}(t)\right]^{\exp(\hat \beta_1 x_1^* + \hat \beta_k x_k^*)}\]</span></p>
+<div class="fragment">
+<p>Note that because these estimates of <span class="math inline">\(\Lambda(t)\)</span> and <span class="math inline">\(S(t)\)</span> are based on a proportional hazards model, <span class="alert">the proportional hazards assumption will be forced onto whatever survival curves you estimate</span></p>
+<ul>
+<li>This may or may not be accurate to what’s observed in the data!</li>
+</ul>
+</div>
+</section><section id="example-laryngeal-cancer-6" class="slide level2"><h2>Example: Laryngeal cancer</h2>
+<p>Let’s say we want to see what the survival curve would look like for someone with stage III cancer who was 45 years old at diagnosis, and compare this to the baseline hazard</p>
+<ul>
+<li><p>Issue: baseline hazard would be for 0-year-olds with stage I cancer <span class="math inline">\(\Rightarrow\)</span> these don’t exist</p></li>
+<li>
+<p>Solution: mean center age (avg age is 64.61)</p>
+<ul>
+<li>This means we want to look at someone with stage III cancer who is -19.61 years below the mean and compare this to the baseline hazard (which is for 64.61-year-olds with stage I cancer)</li>
+</ul>
+</li>
+</ul></section><section id="example-laryngeal-cancer-7" class="slide level2"><h2>Example: Laryngeal cancer</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>estSurv <span class="ot">&lt;-</span> <span class="fu">survfit</span>( cox.model, <span class="at">newdata=</span><span class="fu">data.frame</span>(<span class="at">stage=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>), <span class="at">age=</span><span class="fu">c</span>(<span class="dv">45</span>,<span class="dv">0</span>)))</span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="fu">plot</span>(estSurv, <span class="at">lty=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
-<span id="cb9-3"><a href="#cb9-3"></a><span class="fu">legend</span>( <span class="dv">1</span>, .<span class="dv">4</span>, <span class="at">lty=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
-<span id="cb9-4"><a href="#cb9-4"></a>        <span class="at">legend=</span><span class="fu">c</span>(<span class="st">"Stage I, 45yo"</span>, <span class="st">"Baseline"</span>), <span class="at">bty=</span><span class="st">"n"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>cox.model.center <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(time, delta) <span class="sc">~</span> age_center <span class="sc">+</span> <span class="fu">factor</span>(stage), <span class="at">data=</span>larynx )</span>
+<span id="cb11-2"><a href="#cb11-2"></a>estSurv <span class="ot">&lt;-</span> <span class="fu">survfit</span>( cox.model.center, <span class="at">newdata=</span><span class="fu">data.frame</span>(<span class="at">stage=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>), <span class="at">age_center=</span><span class="fu">c</span>(<span class="sc">-</span><span class="fl">19.61</span>,<span class="dv">0</span>)))</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="fu">plot</span>(estSurv, <span class="at">lty=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="fu">legend</span>( <span class="dv">1</span>, .<span class="dv">4</span>, <span class="at">lty=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb11-5"><a href="#cb11-5"></a>        <span class="at">legend=</span><span class="fu">c</span>(<span class="st">"Stage III, 45yo"</span>, <span class="st">"Baseline (64yo, stage I)"</span>), <span class="at">bty=</span><span class="st">"n"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="slides-11-1_files/figure-revealjs/est%20S-1.png" style="width:80.0%"></p>
+</div>
+</div>
+</section><section id="example-laryngeal-cancer-8" class="slide level2"><h2>Example: Laryngeal cancer</h2>
+<p>Instead of plotting, we can also use this to get the survival function estimates of these 2 groups at each event time point</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="fu">summary</span>( estSurv )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call: survfit(formula = cox.model.center, newdata = data.frame(stage = c(3, 
+    1), age_center = c(-19.61, 0)))
+
+ time n.risk n.event survival1 survival2
+  0.1     90       1     0.993     0.995
+  0.2     89       1     0.985     0.989
+  0.3     88       3     0.963     0.972
+  0.4     85       1     0.955     0.966
+  0.5     84       1     0.948     0.960
+  0.6     83       1     0.940     0.954
+  0.7     82       1     0.932     0.947
+  0.8     81       3     0.907     0.928
+  1.0     78       2     0.890     0.915
+  1.3     76       2     0.872     0.901
+  1.5     74       1     0.864     0.894
+  1.6     73       1     0.854     0.887
+  1.8     72       2     0.836     0.872
+  1.9     70       2     0.818     0.858
+  2.0     68       2     0.799     0.842
+  2.3     65       1     0.789     0.835
+  2.4     64       1     0.779     0.826
+  3.2     60       2     0.757     0.808
+  3.3     57       1     0.746     0.799
+  3.5     54       3     0.712     0.771
+  3.6     51       2     0.689     0.752
+  3.8     47       1     0.676     0.742
+  4.0     46       3     0.635     0.706
+  4.3     43       1     0.621     0.695
+  5.0     34       1     0.603     0.679
+  5.3     30       1     0.583     0.662
+  6.0     26       1     0.561     0.643
+  6.2     24       1     0.539     0.623
+  6.3     22       1     0.516     0.603
+  6.4     21       2     0.468     0.559
+  6.5     19       1     0.443     0.537
+  7.0     15       1     0.414     0.510
+  7.4     13       1     0.383     0.481
+  7.8      9       1     0.347     0.445</code></pre>
+</div>
+</div>
+<p>And we could use this to estimate the probability that each of these groups survives to 5 years</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">summary</span>(estSurv)<span class="sc">$</span>surv[<span class="fu">length</span>(<span class="fu">which</span>(<span class="fu">summary</span>(estSurv)<span class="sc">$</span>time<span class="sc">&lt;</span><span class="dv">5</span>)),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        1         2 
+0.6207366 0.6946729 </code></pre>
 </div>
 </div>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>

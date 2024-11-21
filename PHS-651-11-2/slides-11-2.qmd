@@ -440,6 +440,8 @@ $$\log[\lambda_i(t)] = \beta_0(t) + \beta_k x_{ik} + \beta_I(x_{ik} \times \text
 
 ## Time-varying coefficients
 
+We can think of time-varying coefficients as a sort of [interaction]{.alert} between covariate and time:
+
 $$\log[\lambda_i(t)] = \beta_0(t) + \beta_k x_{ik} + \beta_t(x_{ik} \times \text{time}_i)$$
 
 There are different ways to interact time with a covariate $X_k$. You might consider:
@@ -467,6 +469,31 @@ When adding time-varying coefficients to a Cox model, it's not just interacting 
 In R, there is a slightly easier way to do this via the time-transform argument in the `coxph()` function
 
 ```{r varying}
-summary( coxph( Surv(tstart, tstop, death) ~ age + surgery + tt(trt), data=sdata,tt=function(x,t, ...) x * log(t+1)) )$coef
-
+summary( coxph( Surv(tstart, tstop, death) ~ age + surgery + trt + tt(trt), data=sdata,
+                tt=function(x,t, ...) x * log(t+1)) )$coef
 ```
+
+---
+
+## Time-varying coefficients
+
+When time-varying coefficents are added, it's most help to compare individuals at 2 different time points such as $time=1$ and $time=365$ ) to understand how the hazard ratio changes with time
+
+```{r contrasts}
+heart.tt <- coxph( Surv(tstart, tstop, death) ~ age + surgery + trt + tt(trt), data=sdata,
+                tt=function(x,t, ...) x * log(t+1))
+
+time1 <- c(0,0,1,log(1))
+time365 <- c(0,0,1,log(365))
+
+time1.exp <- exp(t(summary(heart.tt)$coef[,1]) %*% time1)
+time365.exp <- exp(t(summary(heart.tt)$coef[,1]) %*% time365)
+```
+
+Ignoring the fact that neither the transplant nor the time-varying coefficients were statistically significant...
+
+- $e^{\beta_{trt}(1) +\beta_{tt}(1\times \log(1))}$: `r round(time1.exp, 4)`
+
+- $e^{\beta_{trt}(1) +\beta_{tt}(1\times \log(365))}$: `r round(time365.exp, 4)`
+
+The hazard for death for heart transplant patients is high early in time, but reduces later on

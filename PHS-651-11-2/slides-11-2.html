@@ -1515,6 +1515,7 @@ GLOBAL         5.24  4 0.26</code></pre>
 <li>Much like an exposure-by-time interaction in longitudinal GEEs and GLMMs, but the main-effect for time is absorbed into <span class="math inline">\(\beta_0(t)\)</span>
 </li>
 </ul></section><section id="time-varying-coefficients-3" class="slide level2"><h2>Time-varying coefficients</h2>
+<p>We can think of time-varying coefficients as a sort of <span class="alert">interaction</span> between covariate and time:</p>
 <p><span class="math display">\[\log[\lambda_i(t)] = \beta_0(t) + \beta_k x_{ik} + \beta_t(x_{ik} \times \text{time}_i)\]</span></p>
 <p>There are different ways to interact time with a covariate <span class="math inline">\(X_k\)</span>. You might consider:</p>
 <ul>
@@ -1531,18 +1532,38 @@ GLOBAL         5.24  4 0.26</code></pre>
 <div class="fragment">
 <p>In R, there is a slightly easier way to do this via the time-transform argument in the <code>coxph()</code> function</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="fu">summary</span>( <span class="fu">coxph</span>( <span class="fu">Surv</span>(tstart, tstop, death) <span class="sc">~</span> age <span class="sc">+</span> surgery <span class="sc">+</span> <span class="fu">tt</span>(trt), <span class="at">data=</span>sdata,<span class="at">tt=</span><span class="cf">function</span>(x,t, ...) x <span class="sc">*</span> <span class="fu">log</span>(t<span class="sc">+</span><span class="dv">1</span>)) )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="fu">summary</span>( <span class="fu">coxph</span>( <span class="fu">Surv</span>(tstart, tstop, death) <span class="sc">~</span> age <span class="sc">+</span> surgery <span class="sc">+</span> trt <span class="sc">+</span> <span class="fu">tt</span>(trt), <span class="at">data=</span>sdata,</span>
+<span id="cb27-2"><a href="#cb27-2"></a>                <span class="at">tt=</span><span class="cf">function</span>(x,t, ...) x <span class="sc">*</span> <span class="fu">log</span>(t<span class="sc">+</span><span class="dv">1</span>)) )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                coef exp(coef)   se(coef)           z   Pr(&gt;|z|)
-age      0.030793200 1.0312722 0.01399995  2.19952280 0.02784077
-surgery -0.772192278 0.4619991 0.35995083 -2.14527157 0.03193114
-tt(trt) -0.002775932 0.9972279 0.07459266 -0.03721455 0.97031394</code></pre>
+<pre><code>               coef exp(coef)   se(coef)          z   Pr(&gt;|z|)
+age      0.03110734 1.0315962 0.01407288  2.2104461 0.02707421
+surgery -0.76523121 0.4652264 0.36088815 -2.1204110 0.03397140
+trt      0.27662675 1.3186741 0.99927825  0.2768265 0.78191330
+tt(trt) -0.06683126 0.9353530 0.24230006 -0.2758202 0.78268615</code></pre>
 </div>
 </div>
+</div>
+</section><section id="time-varying-coefficients-5" class="slide level2"><h2>Time-varying coefficients</h2>
+<p>When time-varying coefficents are added, it’s most help to compare individuals at 2 different time points such as <span class="math inline">\(time=1\)</span> and <span class="math inline">\(time=365\)</span> ) to understand how the hazard ratio changes with time</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>heart.tt <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(tstart, tstop, death) <span class="sc">~</span> age <span class="sc">+</span> surgery <span class="sc">+</span> trt <span class="sc">+</span> <span class="fu">tt</span>(trt), <span class="at">data=</span>sdata,</span>
+<span id="cb29-2"><a href="#cb29-2"></a>                <span class="at">tt=</span><span class="cf">function</span>(x,t, ...) x <span class="sc">*</span> <span class="fu">log</span>(t<span class="sc">+</span><span class="dv">1</span>))</span>
+<span id="cb29-3"><a href="#cb29-3"></a></span>
+<span id="cb29-4"><a href="#cb29-4"></a>time1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="fu">log</span>(<span class="dv">1</span>))</span>
+<span id="cb29-5"><a href="#cb29-5"></a>time365 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="fu">log</span>(<span class="dv">365</span>))</span>
+<span id="cb29-6"><a href="#cb29-6"></a></span>
+<span id="cb29-7"><a href="#cb29-7"></a>time1.exp <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">t</span>(<span class="fu">summary</span>(heart.tt)<span class="sc">$</span>coef[,<span class="dv">1</span>]) <span class="sc">%*%</span> time1)</span>
+<span id="cb29-8"><a href="#cb29-8"></a>time365.exp <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">t</span>(<span class="fu">summary</span>(heart.tt)<span class="sc">$</span>coef[,<span class="dv">1</span>]) <span class="sc">%*%</span> time365)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ignoring the fact that neither the transplant nor the time-varying coefficients were statistically significant…</p>
+<ul>
+<li><p><span class="math inline">\(e^{\beta_{trt}(1) +\beta_{tt}(1\times \log(1))}\)</span>: 1.3187</p></li>
+<li><p><span class="math inline">\(e^{\beta_{trt}(1) +\beta_{tt}(1\times \log(365))}\)</span>: 0.889</p></li>
+</ul>
+<p>The hazard for death for heart transplant patients is high early in time, but reduces later on</p>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
-</div>
 </div>
 </section>
 </div>

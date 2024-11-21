@@ -426,7 +426,13 @@ November 21, 2024
 <ul>
 <li><p>It is <span class="alert">semi-parametric</span> because it leaves the baseline hazard <span class="math inline">\(\beta_0(t)\)</span> unspecified (only <span class="math inline">\(\beta_1, \dots, \beta_k\)</span> have parametric forms)</p></li>
 <li><p><span class="math inline">\(\beta\)</span> is interpreted as a <span class="alert">log hazard ratio</span> - but we usually like to interpret <span class="math inline">\(e^\beta\)</span> to get regular hazard ratios</p></li>
-</ul></section><section id="time-to-event-regression-data-format" class="slide level2"><h2>Time-to-event regression data format</h2>
+</ul>
+<div class="fragment">
+<p>Together with the <span class="alert">Breslow estimator</span> of the baseline cumulative hazard,</p>
+<p><span class="math display">\[\hat \Lambda_{0B}(t) = \sum_{t_i \le t} \frac{d_i}{\sum_{j\in R(t_i)}\exp(\hat\beta_1 x_{j1} + \hat\beta_k x_{jk})}\]</span></p>
+<p>we can use the coefficients from a Cox model to estimate the survival and hazard functions of individuals with specific covariate values, as well as probabilities of survival at particular timepoints</p>
+</div>
+</section><section id="time-to-event-regression-data-format" class="slide level2"><h2>Time-to-event regression data format</h2>
 <p>The data we use for these models usually includes 3 essential elements:</p>
 <ul>
 <li><p>Whether an individual experience an event (event indicator)</p></li>
@@ -435,49 +441,539 @@ November 21, 2024
 </ul>
 <p>If an individual experiences an event while we’re observing them, the time variable will represent the time at which that event occurred (<span class="alert">“event time”</span>)</p>
 <p>If an individual does not experience an event while we’re observing the, the time variable will represent the last timepoint at which we observed that individual (<span class="alert">“censoring time”</span>)</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">glimpse</span>(larynx)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>larynx</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 90
-Columns: 5
-$ stage  &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
-$ time   &lt;dbl&gt; 0.6, 1.3, 2.4, 2.5, 3.2, 3.2, 3.3, 3.3, 3.5, 3.5, 4.0, 4.0, 4.3…
-$ age    &lt;int&gt; 77, 53, 45, 57, 58, 51, 76, 63, 43, 60, 52, 63, 86, 48, 68, 81,…
-$ diagyr &lt;int&gt; 76, 71, 71, 78, 74, 77, 74, 77, 71, 73, 71, 76, 74, 76, 76, 72,…
-$ delta  &lt;int&gt; 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, …</code></pre>
+<pre><code>   stage time age diagyr delta
+1      1  0.6  77     76     1
+2      1  1.3  53     71     1
+3      1  2.4  45     71     1
+4      1  2.5  57     78     0
+5      1  3.2  58     74     1
+6      1  3.2  51     77     0
+7      1  3.3  76     74     1
+8      1  3.3  63     77     0
+9      1  3.5  43     71     1
+10     1  3.5  60     73     1
+11     1  4.0  52     71     1
+12     1  4.0  63     76     1
+13     1  4.3  86     74     1
+14     1  4.5  48     76     0
+15     1  4.5  68     76     0
+16     1  5.3  81     72     1
+17     1  5.5  70     75     0
+18     1  5.9  58     75     0
+19     1  5.9  47     75     0
+20     1  6.0  75     73     1
+21     1  6.1  77     75     0
+22     1  6.2  64     75     0
+23     1  6.4  77     72     1
+24     1  6.5  67     70     1
+25     1  6.5  79     74     0
+26     1  6.7  61     74     0
+27     1  7.0  66     74     0
+28     1  7.4  68     71     1
+29     1  7.4  73     73     0
+30     1  8.1  56     73     0
+31     1  8.1  73     73     0
+32     1  9.6  58     71     0
+33     1 10.7  68     70     0
+34     2  0.2  86     74     1
+35     2  1.8  64     77     1
+36     2  2.0  63     75     1
+37     2  2.2  71     78     0
+38     2  2.6  67     78     0
+39     2  3.3  51     77     0
+40     2  3.6  70     77     1
+41     2  3.6  72     77     0
+42     2  4.0  81     71     1
+43     2  4.3  47     76     0
+44     2  4.3  64     76     0
+45     2  5.0  66     76     0
+46     2  6.2  74     72     1
+47     2  7.0  62     73     1
+48     2  7.5  50     73     0
+49     2  7.6  53     73     0
+50     2  9.3  61     71     0
+51     3  0.3  49     72     1
+52     3  0.3  71     76     1
+53     3  0.5  57     74     1
+54     3  0.7  79     77     1
+55     3  0.8  82     74     1
+56     3  1.0  49     76     1
+57     3  1.3  60     76     1
+58     3  1.6  64     72     1
+59     3  1.8  74     71     1
+60     3  1.9  72     74     1
+61     3  1.9  53     74     1
+62     3  3.2  54     75     1
+63     3  3.5  81     74     1
+64     3  3.7  52     77     0
+65     3  4.5  66     76     0
+66     3  4.8  54     76     0
+67     3  4.8  63     76     0
+68     3  5.0  59     73     1
+69     3  5.0  49     76     0
+70     3  5.1  69     76     0
+71     3  6.3  70     72     1
+72     3  6.4  65     72     1
+73     3  6.5  65     74     0
+74     3  7.8  68     72     1
+75     3  8.0  78     73     0
+76     3  9.3  69     71     0
+77     3 10.1  51     71     0
+78     4  0.1  65     72     1
+79     4  0.3  71     76     1
+80     4  0.4  76     77     1
+81     4  0.8  65     76     1
+82     4  0.8  78     77     1
+83     4  1.0  41     77     1
+84     4  1.5  68     73     1
+85     4  2.0  69     76     1
+86     4  2.3  62     71     1
+87     4  2.9  74     78     0
+88     4  3.6  71     75     1
+89     4  3.8  84     74     1
+90     4  4.3  48     76     0</code></pre>
+</div>
+</div>
+</div>
+</section><section id="time-to-event-regression-data-format-1" class="slide level2"><h2>Time-to-event regression data format</h2>
+<p>If an individual experiences an event while we’re observing them, the time variable will represent the time at which that event occurred (<span class="alert">“event time”</span>)</p>
+<p>If an individual does not experience an event while we’re observing the, the time variable will represent the last timepoint at which we observed that individual (<span class="alert">“censoring time”</span>)</p>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>larynx</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>   stage time age diagyr delta
+1      1  0.6  77     76     1
+2      1  1.3  53     71     1
+3      1  2.4  45     71     1
+4      1  2.5  57     78     0
+5      1  3.2  58     74     1
+6      1  3.2  51     77     0
+7      1  3.3  76     74     1
+8      1  3.3  63     77     0
+9      1  3.5  43     71     1
+10     1  3.5  60     73     1
+11     1  4.0  52     71     1
+12     1  4.0  63     76     1
+13     1  4.3  86     74     1
+14     1  4.5  48     76     0
+15     1  4.5  68     76     0
+16     1  5.3  81     72     1
+17     1  5.5  70     75     0
+18     1  5.9  58     75     0
+19     1  5.9  47     75     0
+20     1  6.0  75     73     1
+21     1  6.1  77     75     0
+22     1  6.2  64     75     0
+23     1  6.4  77     72     1
+24     1  6.5  67     70     1
+25     1  6.5  79     74     0
+26     1  6.7  61     74     0
+27     1  7.0  66     74     0
+28     1  7.4  68     71     1
+29     1  7.4  73     73     0
+30     1  8.1  56     73     0
+31     1  8.1  73     73     0
+32     1  9.6  58     71     0
+33     1 10.7  68     70     0
+34     2  0.2  86     74     1
+35     2  1.8  64     77     1
+36     2  2.0  63     75     1
+37     2  2.2  71     78     0
+38     2  2.6  67     78     0
+39     2  3.3  51     77     0
+40     2  3.6  70     77     1
+41     2  3.6  72     77     0
+42     2  4.0  81     71     1
+43     2  4.3  47     76     0
+44     2  4.3  64     76     0
+45     2  5.0  66     76     0
+46     2  6.2  74     72     1
+47     2  7.0  62     73     1
+48     2  7.5  50     73     0
+49     2  7.6  53     73     0
+50     2  9.3  61     71     0
+51     3  0.3  49     72     1
+52     3  0.3  71     76     1
+53     3  0.5  57     74     1
+54     3  0.7  79     77     1
+55     3  0.8  82     74     1
+56     3  1.0  49     76     1
+57     3  1.3  60     76     1
+58     3  1.6  64     72     1
+59     3  1.8  74     71     1
+60     3  1.9  72     74     1
+61     3  1.9  53     74     1
+62     3  3.2  54     75     1
+63     3  3.5  81     74     1
+64     3  3.7  52     77     0
+65     3  4.5  66     76     0
+66     3  4.8  54     76     0
+67     3  4.8  63     76     0
+68     3  5.0  59     73     1
+69     3  5.0  49     76     0
+70     3  5.1  69     76     0
+71     3  6.3  70     72     1
+72     3  6.4  65     72     1
+73     3  6.5  65     74     0
+74     3  7.8  68     72     1
+75     3  8.0  78     73     0
+76     3  9.3  69     71     0
+77     3 10.1  51     71     0
+78     4  0.1  65     72     1
+79     4  0.3  71     76     1
+80     4  0.4  76     77     1
+81     4  0.8  65     76     1
+82     4  0.8  78     77     1
+83     4  1.0  41     77     1
+84     4  1.5  68     73     1
+85     4  2.0  69     76     1
+86     4  2.3  62     71     1
+87     4  2.9  74     78     0
+88     4  3.6  71     75     1
+89     4  3.8  84     74     1
+90     4  4.3  48     76     0</code></pre>
+</div>
+</div>
+</div>
+<p>This is why when we code models for time to event endpoints, we “bundle” the time and event indicator variables together in the outcome:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">coxph</span>( <span class="fu">Surv</span>(time, event) <span class="sc">~</span> covariate )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource sas number-lines code-with-copy"><code class="sourceCode"><span id="cb6-1"><a href="#cb6-1"></a>PROC PHREG DATA=data;</span>
+<span id="cb6-2"><a href="#cb6-2"></a>  MODEL time*event(0) = covariate/ TIES=EFRON;</span>
+<span id="cb6-3"><a href="#cb6-3"></a>RUN;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 </div>
 </section><section id="time-dependent-covariates" class="slide level2"><h2>Time-dependent covariates</h2>
 <p>Note that in this data there is only 1 row per individual</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">glimpse</span>(larynx)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>larynx</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 90
-Columns: 5
-$ stage  &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
-$ time   &lt;dbl&gt; 0.6, 1.3, 2.4, 2.5, 3.2, 3.2, 3.3, 3.3, 3.5, 3.5, 4.0, 4.0, 4.3…
-$ age    &lt;int&gt; 77, 53, 45, 57, 58, 51, 76, 63, 43, 60, 52, 63, 86, 48, 68, 81,…
-$ diagyr &lt;int&gt; 76, 71, 71, 78, 74, 77, 74, 77, 71, 73, 71, 76, 74, 76, 76, 72,…
-$ delta  &lt;int&gt; 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, …</code></pre>
+<pre><code>   stage time age diagyr delta
+1      1  0.6  77     76     1
+2      1  1.3  53     71     1
+3      1  2.4  45     71     1
+4      1  2.5  57     78     0
+5      1  3.2  58     74     1
+6      1  3.2  51     77     0
+7      1  3.3  76     74     1
+8      1  3.3  63     77     0
+9      1  3.5  43     71     1
+10     1  3.5  60     73     1
+11     1  4.0  52     71     1
+12     1  4.0  63     76     1
+13     1  4.3  86     74     1
+14     1  4.5  48     76     0
+15     1  4.5  68     76     0
+16     1  5.3  81     72     1
+17     1  5.5  70     75     0
+18     1  5.9  58     75     0
+19     1  5.9  47     75     0
+20     1  6.0  75     73     1
+21     1  6.1  77     75     0
+22     1  6.2  64     75     0
+23     1  6.4  77     72     1
+24     1  6.5  67     70     1
+25     1  6.5  79     74     0
+26     1  6.7  61     74     0
+27     1  7.0  66     74     0
+28     1  7.4  68     71     1
+29     1  7.4  73     73     0
+30     1  8.1  56     73     0
+31     1  8.1  73     73     0
+32     1  9.6  58     71     0
+33     1 10.7  68     70     0
+34     2  0.2  86     74     1
+35     2  1.8  64     77     1
+36     2  2.0  63     75     1
+37     2  2.2  71     78     0
+38     2  2.6  67     78     0
+39     2  3.3  51     77     0
+40     2  3.6  70     77     1
+41     2  3.6  72     77     0
+42     2  4.0  81     71     1
+43     2  4.3  47     76     0
+44     2  4.3  64     76     0
+45     2  5.0  66     76     0
+46     2  6.2  74     72     1
+47     2  7.0  62     73     1
+48     2  7.5  50     73     0
+49     2  7.6  53     73     0
+50     2  9.3  61     71     0
+51     3  0.3  49     72     1
+52     3  0.3  71     76     1
+53     3  0.5  57     74     1
+54     3  0.7  79     77     1
+55     3  0.8  82     74     1
+56     3  1.0  49     76     1
+57     3  1.3  60     76     1
+58     3  1.6  64     72     1
+59     3  1.8  74     71     1
+60     3  1.9  72     74     1
+61     3  1.9  53     74     1
+62     3  3.2  54     75     1
+63     3  3.5  81     74     1
+64     3  3.7  52     77     0
+65     3  4.5  66     76     0
+66     3  4.8  54     76     0
+67     3  4.8  63     76     0
+68     3  5.0  59     73     1
+69     3  5.0  49     76     0
+70     3  5.1  69     76     0
+71     3  6.3  70     72     1
+72     3  6.4  65     72     1
+73     3  6.5  65     74     0
+74     3  7.8  68     72     1
+75     3  8.0  78     73     0
+76     3  9.3  69     71     0
+77     3 10.1  51     71     0
+78     4  0.1  65     72     1
+79     4  0.3  71     76     1
+80     4  0.4  76     77     1
+81     4  0.8  65     76     1
+82     4  0.8  78     77     1
+83     4  1.0  41     77     1
+84     4  1.5  68     73     1
+85     4  2.0  69     76     1
+86     4  2.3  62     71     1
+87     4  2.9  74     78     0
+88     4  3.6  71     75     1
+89     4  3.8  84     74     1
+90     4  4.3  48     76     0</code></pre>
+</div>
 </div>
 </div>
 <p>What happens if we were to collect a variable that <span class="alert">changes over time</span>?</p>
-</section><section id="time-dependent-covariates-1" class="slide level2"><h2>Time-dependent covariates</h2>
-<p>Below is data on patients who are on the wait list for the Standard heart transplant program:</p>
+<ul>
+<li><p>Do we just include baseline value? Value at event/censoring time? Average value?</p></li>
+<li><p>None of these solutions is very satisfying… would be nice if we could just record how that variable changes like with repeated measures data</p></li>
+</ul></section><section id="time-dependent-covariates-1" class="slide level2"><h2>Time-dependent covariates</h2>
+<p>Below is data on patients who are on the wait list for the Standard heart transplant program, where we want to see if receiving a transplant reduces hazard of death:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">glimpse</span>(jasa_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>jasa_subset</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 103
-Columns: 9
-$ accept.dt  &lt;date&gt; 1967-11-15, 1968-01-02, 1968-01-06, 1968-03-28, 1968-05-10…
-$ tx.date    &lt;date&gt; NA, NA, 1968-01-06, 1968-05-02, NA, NA, 1968-08-31, NA, NA…
-$ fu.date    &lt;date&gt; 1968-01-03, 1968-01-07, 1968-01-21, 1968-05-05, 1968-05-27…
-$ fustat     &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
-$ surgery    &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,…
-$ age        &lt;dbl&gt; 30.84463, 51.83573, 54.29706, 40.26283, 20.78576, 54.59548,…
-$ futime     &lt;dbl&gt; 49, 5, 15, 38, 17, 2, 674, 39, 84, 57, 152, 7, 80, 1386, 0,…
-$ wait.time  &lt;dbl&gt; NA, NA, 0, 35, NA, NA, 50, NA, NA, 11, 25, NA, 16, 36, NA, …
-$ transplant &lt;dbl&gt; 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1,…</code></pre>
+<pre><code>     accept.dt    tx.date    fu.date fustat surgery       age futime wait.time
+1   1967-11-15       &lt;NA&gt; 1968-01-03      1       0 30.844627     49        NA
+2   1968-01-02       &lt;NA&gt; 1968-01-07      1       0 51.835729      5        NA
+3   1968-01-06 1968-01-06 1968-01-21      1       0 54.297057     15         0
+4   1968-03-28 1968-05-02 1968-05-05      1       0 40.262834     38        35
+5   1968-05-10       &lt;NA&gt; 1968-05-27      1       0 20.785763     17        NA
+6   1968-06-13       &lt;NA&gt; 1968-06-15      1       0 54.595483      2        NA
+7   1968-07-12 1968-08-31 1970-05-17      1       0 50.869268    674        50
+8   1968-08-01       &lt;NA&gt; 1968-09-09      1       0 45.349760     39        NA
+9   1968-08-09       &lt;NA&gt; 1968-11-01      1       0 47.162218     84        NA
+10  1968-08-11 1968-08-22 1968-10-07      1       0 42.502396     57        11
+11  1968-08-15 1968-09-09 1969-01-14      1       0 47.980835    152        25
+12  1968-09-17       &lt;NA&gt; 1968-09-24      1       0 53.193703      7        NA
+13  1968-09-19 1968-10-05 1968-12-08      1       0 54.573580     80        16
+14  1968-09-20 1968-10-26 1972-07-07      1       0 54.012320   1386        36
+15  1968-09-27       &lt;NA&gt; 1968-09-27      1       1 53.815195      0        NA
+16  1968-10-26 1968-11-22 1969-08-29      1       0 49.448323    307        27
+17  1968-10-28       &lt;NA&gt; 1968-12-02      1       0 20.331280     35        NA
+18  1968-11-01 1968-11-20 1968-12-13      1       0 56.848734     42        19
+19  1968-11-18       &lt;NA&gt; 1968-12-24      1       0 59.123888     36        NA
+20  1969-01-29 1969-02-15 1969-02-25      1       0 55.279945     27        17
+21  1969-02-01 1969-02-08 1971-11-29      1       0 43.342916   1031         7
+22  1969-03-18 1969-03-29 1969-05-07      1       0 42.784394     50        11
+23  1969-04-11 1969-04-13 1971-04-13      1       0 58.357290    732         2
+24  1969-04-25 1969-07-16 1969-11-29      1       0 51.800137    218        82
+25  1969-04-28 1969-05-22 1974-04-01      0       0 33.223819   1799        24
+26  1969-05-01       &lt;NA&gt; 1973-03-01      0       0 30.535250   1400        NA
+27  1969-05-04       &lt;NA&gt; 1970-01-21      1       0  8.785763    262        NA
+28  1969-06-07 1969-08-16 1969-08-17      1       0 54.023272     71        70
+29  1969-07-14       &lt;NA&gt; 1969-08-17      1       0 50.433949     34        NA
+30  1969-08-19 1969-09-03 1971-12-18      1       0 44.911704    851        15
+31  1969-08-23       &lt;NA&gt; 1969-09-07      1       0 54.885695     15        NA
+32  1969-08-29 1969-09-14 1969-11-13      1       0 64.407940     76        16
+33  1969-11-27 1970-01-16 1974-04-01      0       0 48.903491   1586        50
+34  1969-12-12 1970-01-03 1974-04-01      0       0 40.553046   1571        22
+35  1970-01-21       &lt;NA&gt; 1970-02-01      1       0 43.466119     11        NA
+36  1970-04-04 1970-05-19 1970-07-12      1       0 48.925394     99        45
+37  1970-04-25 1970-05-13 1970-06-29      1       0 61.500342     65        18
+38  1970-05-05 1970-05-09 1970-05-09      1       0 41.470226      4         4
+39  1970-05-20 1970-05-21 1970-07-11      1       0 50.518823     52         1
+40  1970-05-25 1970-07-04 1974-04-01      0       1 48.481862   1407        40
+41  1970-08-19 1970-10-15 1974-04-01      0       1 45.303217   1321        57
+42  1970-08-21       &lt;NA&gt; 1970-08-23      1       0 36.440794      2        NA
+43  1970-10-22       &lt;NA&gt; 1970-10-23      1       1 43.392197      1        NA
+44  1970-11-30       &lt;NA&gt; 1971-01-08      1       1 42.579055     39        NA
+45  1971-01-05 1971-01-05 1971-02-18      1       0 36.183436     44         0
+46  1971-01-10 1971-01-11 1973-10-01      1       1 48.610541    995         1
+47  1971-02-02 1971-02-22 1971-04-14      1       0 47.099247     71        20
+48  1971-02-05       &lt;NA&gt; 1971-02-13      1       0 56.035592      8        NA
+49  1971-02-15 1971-03-22 1974-04-01      0       1 36.654346   1141        35
+50  1971-02-15 1971-05-08 1973-10-21      1       1 45.886379    979        82
+51  1971-03-24 1971-04-24 1972-01-02      1       0 48.733744    284        31
+52  1971-04-25       &lt;NA&gt; 1971-08-04      1       0 41.248460    101        NA
+53  1971-07-02 1971-08-11 1972-01-05      1       0 47.342916    187        40
+54  1971-07-02       &lt;NA&gt; 1971-07-04      1       0 47.791923      2        NA
+55  1971-08-09 1971-08-18 1971-10-08      1       0 52.454483     60         9
+56  1971-09-03 1971-11-08 1974-04-01      0       0 38.743326    941        66
+57  1971-09-13       &lt;NA&gt; 1972-02-08      1       0 41.264887    148        NA
+58  1971-09-23 1971-10-13 1972-08-30      1       1 48.016427    342        20
+59  1971-09-29 1971-12-15 1974-04-01      0       1 41.382615    915        77
+60  1971-11-18 1971-11-20 1972-01-24      1       0 49.054073     67         2
+61  1971-12-04       &lt;NA&gt; 1971-12-05      1       0 52.563997      1        NA
+62  1971-12-09       &lt;NA&gt; 1972-02-15      1       0 39.353867     68        NA
+63  1971-12-12 1972-01-07 1974-04-01      0       0 32.659822    841        26
+64  1972-02-01 1972-03-04 1973-09-06      1       1 48.815880    583        32
+65  1972-03-06 1972-03-17 1972-05-22      1       0 51.293634     77        11
+66  1972-03-20       &lt;NA&gt; 1972-04-20      1       0 53.212868     31        NA
+67  1972-03-23 1972-05-18 1973-01-01      1       0 19.550992    284        56
+68  1972-04-07 1972-04-09 1972-06-13      1       0 45.240246     67         2
+69  1972-06-01 1972-06-10 1974-04-01      0       0 47.989049    669         9
+70  1972-06-17 1972-06-21 1972-07-16      1       0 53.002053     29         4
+71  1972-07-21 1972-08-20 1974-04-01      0       0 47.408624    619        30
+72  1972-08-14 1972-08-17 1974-04-01      0       0 26.726899    595         3
+73  1972-09-11 1972-10-07 1972-12-09      1       0 56.331280     89        26
+74  1972-09-18 1972-09-22 1972-10-04      1       0 29.166324     16         4
+75  1972-09-29       &lt;NA&gt; 1972-09-30      1       0 52.180698      1        NA
+76  1972-10-04 1972-11-18 1974-04-01      0       1 52.084873    544        45
+77  1972-10-06       &lt;NA&gt; 1972-10-26      1       0 41.111567     20        NA
+78  1972-11-03 1973-05-31 1974-04-01      0       0 48.703628    514       209
+79  1972-11-30 1973-02-04 1973-03-05      1       0 53.782341     95        66
+80  1972-12-06 1972-12-31 1974-04-01      0       1 46.444901    481        25
+81  1973-01-12 1973-01-17 1974-04-01      0       0 52.892539    444         5
+82  1971-11-01       &lt;NA&gt; 1973-01-01      0       0 29.201916    427        NA
+83  1973-01-24 1973-02-24 1973-04-13      1       0 53.308693     79        31
+84  1973-01-30 1973-03-07 1973-12-29      1       0 42.718686    333        36
+85  1973-02-06       &lt;NA&gt; 1973-02-10      1       0 47.980835      4        NA
+86  1973-03-01 1973-03-08 1974-04-01      0       0 48.919918    396         7
+87  1973-03-21 1973-05-19 1973-07-08      1       0 46.253251    109        59
+88  1973-03-28 1973-04-27 1974-04-01      0       0 54.362765    369        30
+89  1973-04-05 1973-08-21 1973-10-28      1       0 51.047228    206       138
+90  1973-04-06 1973-09-12 1973-10-08      1       1 52.032854    185       159
+91  1973-04-13       &lt;NA&gt; 1974-03-18      1       0 47.594798    339        NA
+92  1973-04-27 1974-03-02 1974-04-01      0       0 44.982888    339       309
+93  1973-07-11 1973-08-07 1974-04-01      0       0 47.750856    264        27
+94  1973-09-14 1973-09-17 1974-02-25      1       1 43.841205    164         3
+95  1973-09-22 1973-09-23 1973-10-07      1       0 40.281999     15         1
+96  1973-10-04 1973-10-16 1974-04-01      0       0 26.650240    179        12
+97  1973-11-22 1973-12-12 1974-04-01      0       0 23.616701    130        20
+98  1973-12-14 1974-03-19 1974-04-01      0       0 28.629706    108        95
+99  1973-12-25       &lt;NA&gt; 1974-01-14      1       0 49.834360     20        NA
+100 1974-02-22 1974-03-31 1974-04-01      0       1 35.060917     38        37
+101 1974-03-02       &lt;NA&gt; 1974-04-01      0       0 49.516769     30        NA
+102 1974-03-22       &lt;NA&gt; 1974-04-01      0       0 40.391513     10        NA
+103 1967-09-13       &lt;NA&gt; 1967-09-18      1       0 39.315537      5        NA
+    transplant
+1            0
+2            0
+3            1
+4            1
+5            0
+6            0
+7            1
+8            0
+9            0
+10           1
+11           1
+12           0
+13           1
+14           1
+15           0
+16           1
+17           0
+18           1
+19           0
+20           1
+21           1
+22           1
+23           1
+24           1
+25           1
+26           0
+27           0
+28           1
+29           0
+30           1
+31           0
+32           1
+33           1
+34           1
+35           0
+36           1
+37           1
+38           1
+39           1
+40           1
+41           1
+42           0
+43           0
+44           0
+45           1
+46           1
+47           1
+48           0
+49           1
+50           1
+51           1
+52           0
+53           1
+54           0
+55           1
+56           1
+57           0
+58           1
+59           1
+60           1
+61           0
+62           0
+63           1
+64           1
+65           1
+66           0
+67           1
+68           1
+69           1
+70           1
+71           1
+72           1
+73           1
+74           1
+75           0
+76           1
+77           0
+78           1
+79           1
+80           1
+81           1
+82           0
+83           1
+84           1
+85           0
+86           1
+87           1
+88           1
+89           1
+90           1
+91           0
+92           1
+93           1
+94           1
+95           1
+96           1
+97           1
+98           1
+99           0
+100          1
+101          0
+102          0
+103          0</code></pre>
 </div>
 </div>
 <ul>
@@ -490,7 +986,7 @@ $ transplant &lt;dbl&gt; 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0
 </section><section id="time-dependent-covariates-2" class="slide level2"><h2>Time-dependent covariates</h2>
 <p>Below is data on patients who are on the wait list for the Standard heart transplant program:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">glimpse</span>(jasa_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">glimpse</span>(jasa_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 103
 Columns: 9
@@ -507,42 +1003,344 @@ $ transplant &lt;dbl&gt; 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0
 </div>
 <p>Because transplant status changes with time, we need to transform this data into a new format in order to analyze it</p>
 <ul>
-<li>We call this new format the <span class="alert">counting process format</span>
-</li>
-</ul></section><section id="counting-process-format" class="slide level2"><h2>Counting process format</h2>
-<p>Counting process formatted data will have potentially <span class="alert">multiple rows</span> for each individual</p>
-<ul>
-<li><p>Each row represents a time interval that corresponds to a particular value for their time-dependent variable</p></li>
+<li><p>We call this new format the <span class="alert">counting process format</span>, which has potentially <span class="alert">multiple rows</span> for each individual</p></li>
+<li><p>Each row represents a <span class="alert">time interval</span> that corresponds to a particular value for their time-dependent variable</p></li>
 <li><p>If they only have one row, that means none of the values for their covariates changed over the observation period</p></li>
-</ul></section><section id="counting-process-format-1" class="slide level2"><h2>Counting process format</h2>
+</ul></section><section id="counting-process-format" class="slide level2"><h2>Counting process format</h2>
 <p>Below is an example of what the heart transplant data would look like in counting process format:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>sdata <span class="sc">%&gt;%</span> </span>
-<span id="cb9-2"><a href="#cb9-2"></a>   <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">"accept.dt"</span>,<span class="st">"tx.date"</span>,<span class="st">"fu.date"</span>,<span class="st">"futime"</span>,<span class="st">"wait.time"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb9-3"><a href="#cb9-3"></a>   <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>sdata <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2"></a>   <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">"accept.dt"</span>,<span class="st">"tx.date"</span>,<span class="st">"fu.date"</span>,<span class="st">"futime"</span>,<span class="st">"wait.time"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 170
-Columns: 9
-$ id         &lt;int&gt; 1, 2, 3, 4, 4, 5, 6, 7, 7, 8, 9, 10, 10, 11, 11, 12, 13, 13…
-$ fustat     &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
-$ surgery    &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
-$ age        &lt;dbl&gt; 30.84463, 51.83573, 54.29706, 40.26283, 40.26283, 20.78576,…
-$ transplant &lt;dbl&gt; 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1,…
-$ tstart     &lt;dbl&gt; 0, 0, 0, 0, 35, 0, 0, 0, 50, 0, 0, 0, 11, 0, 25, 0, 0, 16, …
-$ tstop      &lt;dbl&gt; 49.0, 5.0, 15.0, 35.0, 38.0, 17.0, 2.0, 50.0, 674.0, 39.0, …
-$ death      &lt;dbl&gt; 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1,…
-$ trt        &lt;int&gt; 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1,…</code></pre>
+<pre><code>     id fustat_ever surgery       age transplant_ever tstart  tstop death trt
+1     1           1       0 30.844627               0    0.0   49.0     1   0
+2     2           1       0 51.835729               0    0.0    5.0     1   0
+3     3           1       0 54.297057               1    0.0   15.0     1   1
+4     4           1       0 40.262834               1    0.0   35.0     0   0
+5     4           1       0 40.262834               1   35.0   38.0     1   1
+6     5           1       0 20.785763               0    0.0   17.0     1   0
+7     6           1       0 54.595483               0    0.0    2.0     1   0
+8     7           1       0 50.869268               1    0.0   50.0     0   0
+9     7           1       0 50.869268               1   50.0  674.0     1   1
+10    8           1       0 45.349760               0    0.0   39.0     1   0
+11    9           1       0 47.162218               0    0.0   84.0     1   0
+12   10           1       0 42.502396               1    0.0   11.0     0   0
+13   10           1       0 42.502396               1   11.0   57.0     1   1
+14   11           1       0 47.980835               1    0.0   25.0     0   0
+15   11           1       0 47.980835               1   25.0  152.0     1   1
+16   12           1       0 53.193703               0    0.0    7.0     1   0
+17   13           1       0 54.573580               1    0.0   16.0     0   0
+18   13           1       0 54.573580               1   16.0   80.0     1   1
+19   14           1       0 54.012320               1    0.0   36.0     0   0
+20   14           1       0 54.012320               1   36.0 1386.0     1   1
+21   15           1       1 53.815195               0    0.0    0.5     1   0
+22   16           1       0 49.448323               1    0.0   27.0     0   0
+23   16           1       0 49.448323               1   27.0  307.0     1   1
+24   17           1       0 20.331280               0    0.0   35.0     1   0
+25   18           1       0 56.848734               1    0.0   19.0     0   0
+26   18           1       0 56.848734               1   19.0   42.0     1   1
+27   19           1       0 59.123888               0    0.0   36.0     1   0
+28   20           1       0 55.279945               1    0.0   17.0     0   0
+29   20           1       0 55.279945               1   17.0   27.0     1   1
+30   21           1       0 43.342916               1    0.0    7.0     0   0
+31   21           1       0 43.342916               1    7.0 1031.0     1   1
+32   22           1       0 42.784394               1    0.0   11.0     0   0
+33   22           1       0 42.784394               1   11.0   50.0     1   1
+34   23           1       0 58.357290               1    0.0    2.0     0   0
+35   23           1       0 58.357290               1    2.0  732.0     1   1
+36   24           1       0 51.800137               1    0.0   82.0     0   0
+37   24           1       0 51.800137               1   82.0  218.0     1   1
+38   25           0       0 33.223819               1    0.0   24.0     0   0
+39   25           0       0 33.223819               1   24.0 1799.0     0   1
+40   26           0       0 30.535250               0    0.0 1400.0     0   0
+41   27           1       0  8.785763               0    0.0  262.0     1   0
+42   28           1       0 54.023272               1    0.0   70.0     0   0
+43   28           1       0 54.023272               1   70.0   71.0     1   1
+44   29           1       0 50.433949               0    0.0   34.0     1   0
+45   30           1       0 44.911704               1    0.0   15.0     0   0
+46   30           1       0 44.911704               1   15.0  851.0     1   1
+47   31           1       0 54.885695               0    0.0   15.0     1   0
+48   32           1       0 64.407940               1    0.0   16.0     0   0
+49   32           1       0 64.407940               1   16.0   76.0     1   1
+50   33           0       0 48.903491               1    0.0   50.0     0   0
+51   33           0       0 48.903491               1   50.0 1586.0     0   1
+52   34           0       0 40.553046               1    0.0   22.0     0   0
+53   34           0       0 40.553046               1   22.0 1571.0     0   1
+54   35           1       0 43.466119               0    0.0   11.0     1   0
+55   36           1       0 48.925394               1    0.0   45.0     0   0
+56   36           1       0 48.925394               1   45.0   99.0     1   1
+57   37           1       0 61.500342               1    0.0   18.0     0   0
+58   37           1       0 61.500342               1   18.0   65.0     1   1
+59   38           1       0 41.470226               1    0.0    3.5     0   0
+60   38           1       0 41.470226               1    3.5    4.0     1   1
+61   39           1       0 50.518823               1    0.0    1.0     0   0
+62   39           1       0 50.518823               1    1.0   52.0     1   1
+63   40           0       1 48.481862               1    0.0   40.0     0   0
+64   40           0       1 48.481862               1   40.0 1407.0     0   1
+65   41           0       1 45.303217               1    0.0   57.0     0   0
+66   41           0       1 45.303217               1   57.0 1321.0     0   1
+67   42           1       0 36.440794               0    0.0    2.0     1   0
+68   43           1       1 43.392197               0    0.0    1.0     1   0
+69   44           1       1 42.579055               0    0.0   39.0     1   0
+70   45           1       0 36.183436               1    0.0   44.0     1   1
+71   46           1       1 48.610541               1    0.0    1.0     0   0
+72   46           1       1 48.610541               1    1.0  995.0     1   1
+73   47           1       0 47.099247               1    0.0   20.0     0   0
+74   47           1       0 47.099247               1   20.0   71.0     1   1
+75   48           1       0 56.035592               0    0.0    8.0     1   0
+76   49           0       1 36.654346               1    0.0   35.0     0   0
+77   49           0       1 36.654346               1   35.0 1141.0     0   1
+78   50           1       1 45.886379               1    0.0   82.0     0   0
+79   50           1       1 45.886379               1   82.0  979.0     1   1
+80   51           1       0 48.733744               1    0.0   31.0     0   0
+81   51           1       0 48.733744               1   31.0  284.0     1   1
+82   52           1       0 41.248460               0    0.0  101.0     1   0
+83   53           1       0 47.342916               1    0.0   40.0     0   0
+84   53           1       0 47.342916               1   40.0  187.0     1   1
+85   54           1       0 47.791923               0    0.0    2.0     1   0
+86   55           1       0 52.454483               1    0.0    9.0     0   0
+87   55           1       0 52.454483               1    9.0   60.0     1   1
+88   56           0       0 38.743326               1    0.0   66.0     0   0
+89   56           0       0 38.743326               1   66.0  941.0     0   1
+90   57           1       0 41.264887               0    0.0  148.0     1   0
+91   58           1       1 48.016427               1    0.0   20.0     0   0
+92   58           1       1 48.016427               1   20.0  342.0     1   1
+93   59           0       1 41.382615               1    0.0   77.0     0   0
+94   59           0       1 41.382615               1   77.0  915.0     0   1
+95   60           1       0 49.054073               1    0.0    2.0     0   0
+96   60           1       0 49.054073               1    2.0   67.0     1   1
+97   61           1       0 52.563997               0    0.0    1.0     1   0
+98   62           1       0 39.353867               0    0.0   68.0     1   0
+99   63           0       0 32.659822               1    0.0   26.0     0   0
+100  63           0       0 32.659822               1   26.0  841.0     0   1
+101  64           1       1 48.815880               1    0.0   32.0     0   0
+102  64           1       1 48.815880               1   32.0  583.0     1   1
+103  65           1       0 51.293634               1    0.0   11.0     0   0
+104  65           1       0 51.293634               1   11.0   77.0     1   1
+105  66           1       0 53.212868               0    0.0   31.0     1   0
+106  67           1       0 19.550992               1    0.0   56.0     0   0
+107  67           1       0 19.550992               1   56.0  284.0     1   1
+108  68           1       0 45.240246               1    0.0    2.0     0   0
+109  68           1       0 45.240246               1    2.0   67.0     1   1
+110  69           0       0 47.989049               1    0.0    9.0     0   0
+111  69           0       0 47.989049               1    9.0  669.0     0   1
+112  70           1       0 53.002053               1    0.0    4.0     0   0
+113  70           1       0 53.002053               1    4.0   29.0     1   1
+114  71           0       0 47.408624               1    0.0   30.0     0   0
+115  71           0       0 47.408624               1   30.0  619.0     0   1
+116  72           0       0 26.726899               1    0.0    3.0     0   0
+117  72           0       0 26.726899               1    3.0  595.0     0   1
+118  73           1       0 56.331280               1    0.0   26.0     0   0
+119  73           1       0 56.331280               1   26.0   89.0     1   1
+120  74           1       0 29.166324               1    0.0    4.0     0   0
+121  74           1       0 29.166324               1    4.0   16.0     1   1
+122  75           1       0 52.180698               0    0.0    1.0     1   0
+123  76           0       1 52.084873               1    0.0   45.0     0   0
+124  76           0       1 52.084873               1   45.0  544.0     0   1
+125  77           1       0 41.111567               0    0.0   20.0     1   0
+126  78           0       0 48.703628               1    0.0  209.0     0   0
+127  78           0       0 48.703628               1  209.0  514.0     0   1
+128  79           1       0 53.782341               1    0.0   66.0     0   0
+129  79           1       0 53.782341               1   66.0   95.0     1   1
+130  80           0       1 46.444901               1    0.0   25.0     0   0
+131  80           0       1 46.444901               1   25.0  481.0     0   1
+132  81           0       0 52.892539               1    0.0    5.0     0   0
+133  81           0       0 52.892539               1    5.0  444.0     0   1
+134  82           0       0 29.201916               0    0.0  427.0     0   0
+135  83           1       0 53.308693               1    0.0   31.0     0   0
+136  83           1       0 53.308693               1   31.0   79.0     1   1
+137  84           1       0 42.718686               1    0.0   36.0     0   0
+138  84           1       0 42.718686               1   36.0  333.0     1   1
+139  85           1       0 47.980835               0    0.0    4.0     1   0
+140  86           0       0 48.919918               1    0.0    7.0     0   0
+141  86           0       0 48.919918               1    7.0  396.0     0   1
+142  87           1       0 46.253251               1    0.0   59.0     0   0
+143  87           1       0 46.253251               1   59.0  109.0     1   1
+144  88           0       0 54.362765               1    0.0   30.0     0   0
+145  88           0       0 54.362765               1   30.0  369.0     0   1
+146  89           1       0 51.047228               1    0.0  138.0     0   0
+147  89           1       0 51.047228               1  138.0  206.0     1   1
+148  90           1       1 52.032854               1    0.0  159.0     0   0
+149  90           1       1 52.032854               1  159.0  185.0     1   1
+150  91           1       0 47.594798               0    0.0  339.0     1   0
+151  92           0       0 44.982888               1    0.0  309.0     0   0
+152  92           0       0 44.982888               1  309.0  339.0     0   1
+153  93           0       0 47.750856               1    0.0   27.0     0   0
+154  93           0       0 47.750856               1   27.0  264.0     0   1
+155  94           1       1 43.841205               1    0.0    3.0     0   0
+156  94           1       1 43.841205               1    3.0  164.0     1   1
+157  95           1       0 40.281999               1    0.0    1.0     0   0
+158  95           1       0 40.281999               1    1.0   15.0     1   1
+159  96           0       0 26.650240               1    0.0   12.0     0   0
+160  96           0       0 26.650240               1   12.0  179.0     0   1
+161  97           0       0 23.616701               1    0.0   20.0     0   0
+162  97           0       0 23.616701               1   20.0  130.0     0   1
+163  98           0       0 28.629706               1    0.0   95.0     0   0
+164  98           0       0 28.629706               1   95.0  108.0     0   1
+165  99           1       0 49.834360               0    0.0   20.0     1   0
+166 100           0       1 35.060917               1    0.0   37.0     0   0
+167 100           0       1 35.060917               1   37.0   38.0     0   1
+168 101           0       0 49.516769               0    0.0   30.0     0   0
+169 102           0       0 40.391513               0    0.0   10.0     0   0
+170 103           1       0 39.315537               0    0.0    5.0     1   0</code></pre>
 </div>
 </div>
 <ul>
 <li><p><code>tstart</code>, <code>tstop</code>: variables for the beginning and end of an observation interval</p></li>
-<li><p><code>trt</code>: indicator for whether the patient had gotten a transplant in that interval</p></li>
+<li><p><code>trt</code>: indicator for whether the patient is “on treatment” (has a transplaneted heart) in the interval</p></li>
 <li><p><code>death</code>: whether the patient has died by the end of the interval</p></li>
-</ul></section><section id="time-dependent-cox-model" class="slide level2"><h2>Time-dependent Cox model</h2>
-<p>With counting process format data, our time variable is now 2: interval start time and interval stop time. We bundle both of these variable together with the event indicator to perform the regression:</p>
+</ul></section><section id="counting-process-format-1" class="slide level2"><h2>Counting process format</h2>
+<p>Looking just at the people who received a transplant:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>time.cox <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(tstart, tstop, death) <span class="sc">~</span> trt <span class="sc">+</span> age <span class="sc">+</span> surgery, <span class="at">data=</span>sdata)</span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="fu">summary</span>(time.cox)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>sdata <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2"></a>   <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">"accept.dt"</span>,<span class="st">"tx.date"</span>,<span class="st">"fu.date"</span>,<span class="st">"futime"</span>,<span class="st">"wait.time"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="#cb15-3"></a>   <span class="fu">filter</span>(transplant_ever<span class="sc">==</span><span class="dv">1</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     id fustat_ever surgery      age transplant_ever tstart  tstop death trt
+1     3           1       0 54.29706               1    0.0   15.0     1   1
+2     4           1       0 40.26283               1    0.0   35.0     0   0
+3     4           1       0 40.26283               1   35.0   38.0     1   1
+4     7           1       0 50.86927               1    0.0   50.0     0   0
+5     7           1       0 50.86927               1   50.0  674.0     1   1
+6    10           1       0 42.50240               1    0.0   11.0     0   0
+7    10           1       0 42.50240               1   11.0   57.0     1   1
+8    11           1       0 47.98084               1    0.0   25.0     0   0
+9    11           1       0 47.98084               1   25.0  152.0     1   1
+10   13           1       0 54.57358               1    0.0   16.0     0   0
+11   13           1       0 54.57358               1   16.0   80.0     1   1
+12   14           1       0 54.01232               1    0.0   36.0     0   0
+13   14           1       0 54.01232               1   36.0 1386.0     1   1
+14   16           1       0 49.44832               1    0.0   27.0     0   0
+15   16           1       0 49.44832               1   27.0  307.0     1   1
+16   18           1       0 56.84873               1    0.0   19.0     0   0
+17   18           1       0 56.84873               1   19.0   42.0     1   1
+18   20           1       0 55.27995               1    0.0   17.0     0   0
+19   20           1       0 55.27995               1   17.0   27.0     1   1
+20   21           1       0 43.34292               1    0.0    7.0     0   0
+21   21           1       0 43.34292               1    7.0 1031.0     1   1
+22   22           1       0 42.78439               1    0.0   11.0     0   0
+23   22           1       0 42.78439               1   11.0   50.0     1   1
+24   23           1       0 58.35729               1    0.0    2.0     0   0
+25   23           1       0 58.35729               1    2.0  732.0     1   1
+26   24           1       0 51.80014               1    0.0   82.0     0   0
+27   24           1       0 51.80014               1   82.0  218.0     1   1
+28   25           0       0 33.22382               1    0.0   24.0     0   0
+29   25           0       0 33.22382               1   24.0 1799.0     0   1
+30   28           1       0 54.02327               1    0.0   70.0     0   0
+31   28           1       0 54.02327               1   70.0   71.0     1   1
+32   30           1       0 44.91170               1    0.0   15.0     0   0
+33   30           1       0 44.91170               1   15.0  851.0     1   1
+34   32           1       0 64.40794               1    0.0   16.0     0   0
+35   32           1       0 64.40794               1   16.0   76.0     1   1
+36   33           0       0 48.90349               1    0.0   50.0     0   0
+37   33           0       0 48.90349               1   50.0 1586.0     0   1
+38   34           0       0 40.55305               1    0.0   22.0     0   0
+39   34           0       0 40.55305               1   22.0 1571.0     0   1
+40   36           1       0 48.92539               1    0.0   45.0     0   0
+41   36           1       0 48.92539               1   45.0   99.0     1   1
+42   37           1       0 61.50034               1    0.0   18.0     0   0
+43   37           1       0 61.50034               1   18.0   65.0     1   1
+44   38           1       0 41.47023               1    0.0    3.5     0   0
+45   38           1       0 41.47023               1    3.5    4.0     1   1
+46   39           1       0 50.51882               1    0.0    1.0     0   0
+47   39           1       0 50.51882               1    1.0   52.0     1   1
+48   40           0       1 48.48186               1    0.0   40.0     0   0
+49   40           0       1 48.48186               1   40.0 1407.0     0   1
+50   41           0       1 45.30322               1    0.0   57.0     0   0
+51   41           0       1 45.30322               1   57.0 1321.0     0   1
+52   45           1       0 36.18344               1    0.0   44.0     1   1
+53   46           1       1 48.61054               1    0.0    1.0     0   0
+54   46           1       1 48.61054               1    1.0  995.0     1   1
+55   47           1       0 47.09925               1    0.0   20.0     0   0
+56   47           1       0 47.09925               1   20.0   71.0     1   1
+57   49           0       1 36.65435               1    0.0   35.0     0   0
+58   49           0       1 36.65435               1   35.0 1141.0     0   1
+59   50           1       1 45.88638               1    0.0   82.0     0   0
+60   50           1       1 45.88638               1   82.0  979.0     1   1
+61   51           1       0 48.73374               1    0.0   31.0     0   0
+62   51           1       0 48.73374               1   31.0  284.0     1   1
+63   53           1       0 47.34292               1    0.0   40.0     0   0
+64   53           1       0 47.34292               1   40.0  187.0     1   1
+65   55           1       0 52.45448               1    0.0    9.0     0   0
+66   55           1       0 52.45448               1    9.0   60.0     1   1
+67   56           0       0 38.74333               1    0.0   66.0     0   0
+68   56           0       0 38.74333               1   66.0  941.0     0   1
+69   58           1       1 48.01643               1    0.0   20.0     0   0
+70   58           1       1 48.01643               1   20.0  342.0     1   1
+71   59           0       1 41.38261               1    0.0   77.0     0   0
+72   59           0       1 41.38261               1   77.0  915.0     0   1
+73   60           1       0 49.05407               1    0.0    2.0     0   0
+74   60           1       0 49.05407               1    2.0   67.0     1   1
+75   63           0       0 32.65982               1    0.0   26.0     0   0
+76   63           0       0 32.65982               1   26.0  841.0     0   1
+77   64           1       1 48.81588               1    0.0   32.0     0   0
+78   64           1       1 48.81588               1   32.0  583.0     1   1
+79   65           1       0 51.29363               1    0.0   11.0     0   0
+80   65           1       0 51.29363               1   11.0   77.0     1   1
+81   67           1       0 19.55099               1    0.0   56.0     0   0
+82   67           1       0 19.55099               1   56.0  284.0     1   1
+83   68           1       0 45.24025               1    0.0    2.0     0   0
+84   68           1       0 45.24025               1    2.0   67.0     1   1
+85   69           0       0 47.98905               1    0.0    9.0     0   0
+86   69           0       0 47.98905               1    9.0  669.0     0   1
+87   70           1       0 53.00205               1    0.0    4.0     0   0
+88   70           1       0 53.00205               1    4.0   29.0     1   1
+89   71           0       0 47.40862               1    0.0   30.0     0   0
+90   71           0       0 47.40862               1   30.0  619.0     0   1
+91   72           0       0 26.72690               1    0.0    3.0     0   0
+92   72           0       0 26.72690               1    3.0  595.0     0   1
+93   73           1       0 56.33128               1    0.0   26.0     0   0
+94   73           1       0 56.33128               1   26.0   89.0     1   1
+95   74           1       0 29.16632               1    0.0    4.0     0   0
+96   74           1       0 29.16632               1    4.0   16.0     1   1
+97   76           0       1 52.08487               1    0.0   45.0     0   0
+98   76           0       1 52.08487               1   45.0  544.0     0   1
+99   78           0       0 48.70363               1    0.0  209.0     0   0
+100  78           0       0 48.70363               1  209.0  514.0     0   1
+101  79           1       0 53.78234               1    0.0   66.0     0   0
+102  79           1       0 53.78234               1   66.0   95.0     1   1
+103  80           0       1 46.44490               1    0.0   25.0     0   0
+104  80           0       1 46.44490               1   25.0  481.0     0   1
+105  81           0       0 52.89254               1    0.0    5.0     0   0
+106  81           0       0 52.89254               1    5.0  444.0     0   1
+107  83           1       0 53.30869               1    0.0   31.0     0   0
+108  83           1       0 53.30869               1   31.0   79.0     1   1
+109  84           1       0 42.71869               1    0.0   36.0     0   0
+110  84           1       0 42.71869               1   36.0  333.0     1   1
+111  86           0       0 48.91992               1    0.0    7.0     0   0
+112  86           0       0 48.91992               1    7.0  396.0     0   1
+113  87           1       0 46.25325               1    0.0   59.0     0   0
+114  87           1       0 46.25325               1   59.0  109.0     1   1
+115  88           0       0 54.36277               1    0.0   30.0     0   0
+116  88           0       0 54.36277               1   30.0  369.0     0   1
+117  89           1       0 51.04723               1    0.0  138.0     0   0
+118  89           1       0 51.04723               1  138.0  206.0     1   1
+119  90           1       1 52.03285               1    0.0  159.0     0   0
+120  90           1       1 52.03285               1  159.0  185.0     1   1
+121  92           0       0 44.98289               1    0.0  309.0     0   0
+122  92           0       0 44.98289               1  309.0  339.0     0   1
+123  93           0       0 47.75086               1    0.0   27.0     0   0
+124  93           0       0 47.75086               1   27.0  264.0     0   1
+125  94           1       1 43.84120               1    0.0    3.0     0   0
+126  94           1       1 43.84120               1    3.0  164.0     1   1
+127  95           1       0 40.28200               1    0.0    1.0     0   0
+128  95           1       0 40.28200               1    1.0   15.0     1   1
+129  96           0       0 26.65024               1    0.0   12.0     0   0
+130  96           0       0 26.65024               1   12.0  179.0     0   1
+131  97           0       0 23.61670               1    0.0   20.0     0   0
+132  97           0       0 23.61670               1   20.0  130.0     0   1
+133  98           0       0 28.62971               1    0.0   95.0     0   0
+134  98           0       0 28.62971               1   95.0  108.0     0   1
+135 100           0       1 35.06092               1    0.0   37.0     0   0
+136 100           0       1 35.06092               1   37.0   38.0     0   1</code></pre>
+</div>
+</div>
+<p>With counting process format data, our time variable is now 2 separate variables: interval start time and interval stop time</p>
+</section><section id="time-dependent-cox-model" class="slide level2"><h2>Time-dependent Cox model</h2>
+<p>To model this data, instead of just bundling together the event indicator and the event time, we’ll bundle both start and stop times together with the event indicator:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>time.cox <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(tstart, tstop, death) <span class="sc">~</span> trt <span class="sc">+</span> age <span class="sc">+</span> surgery, <span class="at">data=</span>sdata)</span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="fu">summary</span>(time.cox)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>               coef exp(coef)   se(coef)           z   Pr(&gt;|z|)
 trt      0.01405155 1.0141507 0.30822199  0.04558906 0.96363779
@@ -550,11 +1348,16 @@ age      0.03055399 1.0310256 0.01389288  2.19925537 0.02785977
 surgery -0.77326386 0.4615043 0.35966440 -2.14995943 0.03155842</code></pre>
 </div>
 </div>
+<ul>
+<li>
+<span class="math inline">\(e^{\beta_1(trt)}=\)</span> 1.0142: <span class="fragment">A patient who had a transplant by any given time <span class="math inline">\(t\)</span> are expected to have a 1.42% higher hazard of death compared to a non-transplant patient of similar age and prior surgery status (non-significant).</span>
+</li>
+</ul>
 <div class="fragment">
 <p>Let’s compare this to what the estimated model coefficients would look like if we weren’t looking at transplant status as a time-varying coefficient:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>heart.cox <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(futime, fustat) <span class="sc">~</span> transplant <span class="sc">+</span> age <span class="sc">+</span> surgery, <span class="at">data=</span>jasa)</span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="fu">summary</span>(heart.cox)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>heart.cox <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(futime, fustat) <span class="sc">~</span> transplant <span class="sc">+</span> age <span class="sc">+</span> surgery, <span class="at">data=</span>jasa)</span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="fu">summary</span>(heart.cox)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 coef exp(coef)   se(coef)         z     Pr(&gt;|z|)
 transplant -1.7171129 0.1795839 0.27852978 -6.164917 7.052018e-10
@@ -562,9 +1365,41 @@ age         0.0588863 1.0606546 0.01504927  3.912902 9.119349e-05
 surgery    -0.4190159 0.6576938 0.37117505 -1.128890 2.589442e-01</code></pre>
 </div>
 </div>
+<ul>
+<li>
+<span class="math inline">\(e^{\beta_1(trt)}=\)</span> 0.1796: A patient who had a transplant are expected to have a 82.04% <em>lower</em> hazard of death compared to a non-transplant patient of similar age and prior surgery status.</li>
+</ul>
 </div>
+</section><section id="time-dependent-cox-model-1" class="slide level2"><h2>Time-dependent Cox model</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>               coef exp(coef)   se(coef)           z   Pr(&gt;|z|)
+trt      0.01405155 1.0141507 0.30822199  0.04558906 0.96363779
+age      0.03055399 1.0310256 0.01389288  2.19925537 0.02785977
+surgery -0.77326386 0.4615043 0.35966440 -2.14995943 0.03155842</code></pre>
+</div>
+</div>
+<ul>
+<li>
+<span class="math inline">\(e^{\beta_1(trt)}=\)</span> 1.0142: A patient who had a transplant by any given time <span class="math inline">\(t\)</span> are expected to have a 1.42% <span class="alert">higher</span> hazard of death compared to a non-transplant patient of similar age and prior surgery status (non-significant).</li>
+</ul>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                 coef exp(coef)   se(coef)         z     Pr(&gt;|z|)
+transplant -1.7171129 0.1795839 0.27852978 -6.164917 7.052018e-10
+age         0.0588863 1.0606546 0.01504927  3.912902 9.119349e-05
+surgery    -0.4190159 0.6576938 0.37117505 -1.128890 2.589442e-01</code></pre>
+</div>
+</div>
+<ul>
+<li>
+<span class="math inline">\(e^{\beta_1(trt)}=\)</span> 0.1796: A patient who had a transplant are expected to have a 82.04% <span class="alert">lower</span> hazard of death compared to a non-transplant patient of similar age and prior surgery status.</li>
+</ul>
+<p>These are wildly different results! Why?</p>
 <div class="fragment">
-<p>These are wildly different results! In the non-time-dependent regression, transplant looks like it has such a large effect on time to death because the only people who receive transplants are those that live long enough to get them</p>
+<ul>
+<li>In the non-time-dependent regression, transplant looks like it has such a large effect on time to death because the only people who receive transplants are those that live long enough to get them and likely judged to be “not too sick” to be able to benefit from them</li>
+</ul>
 </div>
 </section><section id="time-varying-coefficients" class="slide level2"><h2>Time-varying coefficients</h2>
 <p>We may also be interested in whether the <span class="alert">effect</span> of a covariate changes with time</p>
@@ -579,35 +1414,52 @@ surgery    -0.4190159 0.6576938 0.37117505 -1.128890 2.589442e-01</code></pre>
 <div class="fragment">
 <p>Time-varying coefficients are an example of <span class="alert">non-proportional hazards</span></p>
 <ul>
+<li><p>When we model a truly time-varying coefficient as time-static <span class="math display">\[\log[\lambda_i(t)] = \beta_0(t) + \beta_k x_{ik}\]</span> <span class="math inline">\(e^{\beta_k}\)</span> represents the hazard for <span class="math inline">\(X_k\)</span> averaged over time</p></li>
+<li><p>If the hazard at early times is very different from that at late times, the average may not be of interest to us</p></li>
+</ul>
+</div>
+</section><section id="time-varying-coefficients-1" class="slide level2"><h2>Time-varying coefficients</h2>
+<p>We may also be interested in whether the <span class="alert">effect</span> of a covariate changes with time</p>
+<ul>
+<li>Known as a time-varying coefficient</li>
+</ul>
+<p>This is a separate concept from time-dependent covariates</p>
+<ul>
+<li><p>Time-dependent covariates - covariate values can change, but the effect of a particular value is constant across time: <span class="math inline">\(\log[\lambda_i(t)] = \beta_0(t) + \beta_k x_{ik}(t)\)</span></p></li>
+<li><p>Time-varying coefficients - covariate value is fixed, but its effect varyings with time: <span class="math inline">\(\log[\lambda_i(t)] = \beta_0(t) + \beta_k(t) x_{ik}\)</span></p></li>
+</ul>
+<p>Time-varying coefficients are an example of <span class="alert">non-proportional hazards</span></p>
+<ul>
 <li>
 <p>There are several ways we can formally look at this:</p>
 <ul>
 <li><p>Schoenfeld residual plot for a covariate</p></li>
-<li><p>Score test of correlation between a covariate and time</p></li>
+<li><p>Score test of correlation between a covariate’s Schoenfeld residual and time</p></li>
 </ul>
 </li>
-</ul>
-</div>
-</section><section id="graphically-assessing-proportional-hazards-assumption" class="slide level2"><h2>Graphically assessing proportional hazards assumption</h2>
+</ul></section><section id="graphically-assessing-proportional-hazards-assumption" class="slide level2"><h2>Graphically assessing proportional hazards assumption</h2>
 <p>A <span class="alert">Schoenfeld residual</span> is the difference between the covariate value for a subject and the weighted average of covariates in the risk set</p>
 <ul>
-<li><p>If the proportional hazards assumption holds and <span class="math inline">\(\beta\)</span> is the true regression coefficient, the resdiauls are uncorrelated and have mean zero</p></li>
+<li><p>If the proportional hazards assumption holds and <span class="math inline">\(\beta\)</span> is the true regression coefficient, the residuals are uncorrelated and have mean zero</p></li>
 <li><p>If a covariate has a time-varying coefficent <span class="math inline">\(\beta(t) = \beta + \gamma g(t)\)</span>, then we expect the scaled Schoenfeld residuals at a specific time will be <span class="math inline">\(\gamma g(t)\)</span></p></li>
-<li><p>If we plot the scaled Schoenfeld residuals for a covariate against time and see a trend, that indicates that we might have non-proportional hazards</p></li>
+</ul>
+<p>We usually <span class="alert">scale</span> the Schoenfeld residuals by the weighted covariance matrix of <span class="math inline">\(\hat \beta\)</span></p>
+<ul>
+<li>If we plot the scaled Schoenfeld residuals for a covariate against time and see a trend, that indicates that we might have non-proportional hazards</li>
 </ul></section><section id="schoenfeld-residuals-plot" class="slide level2"><h2>Schoenfeld residuals plot</h2>
 <p>For example, let’s look at the laryngeal cancer data again</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>larynx.cox <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(time, delta) <span class="sc">~</span> <span class="fu">factor</span>(stage) <span class="sc">+</span> age, <span class="at">data=</span>larynx)</span>
-<span id="cb15-2"><a href="#cb15-2"></a>sresid <span class="ot">&lt;-</span> <span class="fu">residuals</span>(larynx.cox, <span class="at">type=</span><span class="st">"scaledsch"</span>)</span>
-<span id="cb15-3"><a href="#cb15-3"></a>time <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>( <span class="fu">rownames</span>( sresid ) )</span>
-<span id="cb15-4"><a href="#cb15-4"></a>sresid <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">as.data.frame</span>(sresid), time)</span>
-<span id="cb15-5"><a href="#cb15-5"></a></span>
-<span id="cb15-6"><a href="#cb15-6"></a>sresid <span class="sc">%&gt;%</span> </span>
-<span id="cb15-7"><a href="#cb15-7"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>time, <span class="at">y=</span>age))<span class="sc">+</span></span>
-<span id="cb15-8"><a href="#cb15-8"></a>   <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb15-9"><a href="#cb15-9"></a>   <span class="fu">geom_smooth</span>(<span class="at">se=</span>F)<span class="sc">+</span></span>
-<span id="cb15-10"><a href="#cb15-10"></a>   <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>)<span class="sc">+</span></span>
-<span id="cb15-11"><a href="#cb15-11"></a>   <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>larynx.cox <span class="ot">&lt;-</span> <span class="fu">coxph</span>( <span class="fu">Surv</span>(time, delta) <span class="sc">~</span> <span class="fu">factor</span>(stage) <span class="sc">+</span> age, <span class="at">data=</span>larynx)</span>
+<span id="cb23-2"><a href="#cb23-2"></a>sresid <span class="ot">&lt;-</span> <span class="fu">residuals</span>(larynx.cox, <span class="at">type=</span><span class="st">"scaledsch"</span>)</span>
+<span id="cb23-3"><a href="#cb23-3"></a>time <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>( <span class="fu">rownames</span>( sresid ) )</span>
+<span id="cb23-4"><a href="#cb23-4"></a>sresid <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">as.data.frame</span>(sresid), time)</span>
+<span id="cb23-5"><a href="#cb23-5"></a></span>
+<span id="cb23-6"><a href="#cb23-6"></a>sresid <span class="sc">%&gt;%</span> </span>
+<span id="cb23-7"><a href="#cb23-7"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>time, <span class="at">y=</span>age))<span class="sc">+</span></span>
+<span id="cb23-8"><a href="#cb23-8"></a>   <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb23-9"><a href="#cb23-9"></a>   <span class="fu">geom_smooth</span>(<span class="at">se=</span>F)<span class="sc">+</span></span>
+<span id="cb23-10"><a href="#cb23-10"></a>   <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>)<span class="sc">+</span></span>
+<span id="cb23-11"><a href="#cb23-11"></a>   <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="slides-11-2_files/figure-revealjs/larynx%20resid-1.png" width="960"></p>
 </div>
@@ -624,7 +1476,7 @@ surgery    -0.4190159 0.6576938 0.37117505 -1.128890 2.589442e-01</code></pre>
 </ul>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="fu">cox.zph</span>( larynx.cox, <span class="at">transform=</span><span class="st">"identity"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">cox.zph</span>( larynx.cox, <span class="at">transform=</span><span class="st">"identity"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              chisq df    p
 factor(stage)  3.26  3 0.35
@@ -633,7 +1485,13 @@ GLOBAL         5.24  4 0.26</code></pre>
 </div>
 </div>
 <ul>
-<li>Test indicates that we have little evidence that proportional hazards is violated for either the disease stage or age variables</li>
+<li>
+<p>Test indicates that we don’t have strong evidence that proportional hazards is violated for either the disease stage or age variables</p>
+<ul>
+<li><p>Could be that proportional hazards actually holds</p></li>
+<li><p>Could be that we just don’t have a large enough sample size to have the precision needed to detect it</p></li>
+</ul>
+</li>
 </ul>
 </div>
 </section><section id="testing-proportional-hazards-assumption-1" class="slide level2"><h2>Testing proportional hazards assumption</h2>
@@ -645,18 +1503,18 @@ GLOBAL         5.24  4 0.26</code></pre>
 </ul>
 <p>We can also plot the <code>cox.zph()</code> object to get the Schoenfeld residual plots we made earlier:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="fu">plot</span>(<span class="fu">cox.zph</span>( larynx.cox, <span class="at">transform=</span><span class="st">"identity"</span> )[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="fu">plot</span>(<span class="fu">cox.zph</span>( larynx.cox, <span class="at">transform=</span><span class="st">"identity"</span> )[<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="slides-11-2_files/figure-revealjs/larynx%20zph2-1.png" width="960"></p>
 </div>
 </div>
-</section><section id="time-varying-coefficients-1" class="slide level2"><h2>Time-varying coefficients</h2>
+</section><section id="time-varying-coefficients-2" class="slide level2"><h2>Time-varying coefficients</h2>
 <p>If we did have evidence of non-proportional hazards, we could incorporate time-varying coefficeints into our Cox model</p>
 <p>We can think of time-varying coefficients as a sort of <span class="alert">interaction</span> between covariate and time: <span class="math display">\[\log[\lambda_i(t)] = \beta_0(t) + \beta_k x_{ik} + \beta_I(x_{ik} \times \text{time}_i)\]</span></p>
 <ul>
 <li>Much like an exposure-by-time interaction in longitudinal GEEs and GLMMs, but the main-effect for time is absorbed into <span class="math inline">\(\beta_0(t)\)</span>
 </li>
-</ul></section><section id="time-varying-coefficients-2" class="slide level2"><h2>Time-varying coefficients</h2>
+</ul></section><section id="time-varying-coefficients-3" class="slide level2"><h2>Time-varying coefficients</h2>
 <p><span class="math display">\[\log[\lambda_i(t)] = \beta_0(t) + \beta_k x_{ik} + \beta_t(x_{ik} \times \text{time}_i)\]</span></p>
 <p>There are different ways to interact time with a covariate <span class="math inline">\(X_k\)</span>. You might consider:</p>
 <ul>
@@ -664,7 +1522,7 @@ GLOBAL         5.24  4 0.26</code></pre>
 <li><p>Log time: <span class="math inline">\(\log[\lambda_i(t)] = \beta_0(t) + \beta_k x_{ik} + \beta_t(x_{ik} \times \log[\text{time}_i])\)</span> <span class="fragment alert">It’s common to go with log time</span></p></li>
 <li><p>Categorical time: <span class="math display">\[\begin{align*}\log[\lambda_i(t)] = &amp;\beta_0(t) + \beta_k x_{ik} + \beta_{t1}(x_{ik} \times I(0 &lt;\text{time}_i \le t_1)])\\
 &amp;+ \beta_{t2}(x_{ik} \times I(t_1 &lt;\text{time}_i \le t_2)]) + \dots + \beta_{tp}(x_{ik} \times I(t_{p-1} &lt;\text{time}_i \le t_p)])\end{align*}\]</span></p></li>
-</ul></section><section id="time-varying-coefficients-3" class="slide level2"><h2>Time-varying coefficients</h2>
+</ul></section><section id="time-varying-coefficients-4" class="slide level2"><h2>Time-varying coefficients</h2>
 <p>When adding time-varying coefficients to a Cox model, it’s not just interacting a covariate with someone’s end survival time – it’s interacting the covariate with <span class="alert">each unit of time in the observation window</span></p>
 <ul>
 <li><p>This is essentially putting the data in counting process format, but each time interval is the length 1 unit on the time scale (e.g., 1 day)</p></li>
@@ -673,19 +1531,12 @@ GLOBAL         5.24  4 0.26</code></pre>
 <div class="fragment">
 <p>In R, there is a slightly easier way to do this via the time-transform argument in the <code>coxph()</code> function</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">coxph</span>( <span class="fu">Surv</span>(futime, fustat) <span class="sc">~</span> age <span class="sc">+</span> surgery <span class="sc">+</span> <span class="fu">tt</span>(transplant), <span class="at">data=</span>jasa,<span class="at">tt=</span><span class="cf">function</span>(x,t, ...) x <span class="sc">*</span> <span class="fu">log</span>(t<span class="sc">+</span><span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="fu">summary</span>( <span class="fu">coxph</span>( <span class="fu">Surv</span>(tstart, tstop, death) <span class="sc">~</span> age <span class="sc">+</span> surgery <span class="sc">+</span> <span class="fu">tt</span>(trt), <span class="at">data=</span>sdata,<span class="at">tt=</span><span class="cf">function</span>(x,t, ...) x <span class="sc">*</span> <span class="fu">log</span>(t<span class="sc">+</span><span class="dv">1</span>)) )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Call:
-coxph(formula = Surv(futime, fustat) ~ age + surgery + tt(transplant), 
-    data = jasa, tt = function(x, t, ...) x * log(t + 1))
-
-                   coef exp(coef) se(coef)      z        p
-age             0.05293   1.05435  0.01539  3.438 0.000586
-surgery        -0.52114   0.59385  0.36869 -1.413 0.157520
-tt(transplant) -0.30302   0.73859  0.06894 -4.395 1.11e-05
-
-Likelihood ratio test=27.3  on 3 df, p=5.094e-06
-n= 103, number of events= 75 </code></pre>
+<pre><code>                coef exp(coef)   se(coef)           z   Pr(&gt;|z|)
+age      0.030793200 1.0312722 0.01399995  2.19952280 0.02784077
+surgery -0.772192278 0.4619991 0.35995083 -2.14527157 0.03193114
+tt(trt) -0.002775932 0.9972279 0.07459266 -0.03721455 0.97031394</code></pre>
 </div>
 </div>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>

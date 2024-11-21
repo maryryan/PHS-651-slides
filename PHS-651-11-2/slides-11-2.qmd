@@ -82,6 +82,16 @@ $$\log\left[\lambda_i(t)\right] = \beta_0(t) + \beta_1 x_{i1} + \dots + \beta_k 
 
 - $\beta$ is interpreted as a [log hazard ratio]{.alert} - but we usually like to interpret $e^\beta$ to get regular hazard ratios
 
+. . .
+
+Together with the [Breslow estimator]{.alert} of the baseline cumulative hazard, 
+
+$$\hat \Lambda_{0B}(t) = \sum_{t_i \le t} \frac{d_i}{\sum_{j\in R(t_i)}\exp(\hat\beta_1 x_{j1} + \hat\beta_k x_{jk})}$$
+
+we can use the coefficients from a Cox model to estimate the survival and hazard functions of individuals with specific covariate values, as well as probabilities of survival at particular timepoints
+
+---
+
 ## Time-to-event regression data format
 
 The data we use for these models usually includes 3 essential elements:
@@ -97,8 +107,40 @@ If an individual experiences an event while we're observing them, the time varia
 If an individual does not experience an event while we're observing the, the time variable will represent the last timepoint at which we observed that individual (["censoring time"]{.alert})
 
 ```{r larynx}
-glimpse(larynx)
+#| output-location: column
+larynx
 ```
+
+---
+
+## Time-to-event regression data format
+
+If an individual experiences an event while we're observing them, the time variable will represent the time at which that event occurred (["event time"]{.alert})
+
+If an individual does not experience an event while we're observing the, the time variable will represent the last timepoint at which we observed that individual (["censoring time"]{.alert})
+
+```{r larynx3}
+#| output-location: column
+larynx
+```
+
+This is why when we code models for time to event endpoints, we "bundle" the time and event indicator variables together in the outcome:
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r cox ex, eval=F}
+coxph( Surv(time, event) ~ covariate )
+```
+:::
+
+::: {.column width="50%"}
+```{sas cox ex2, eval=F}
+PROC PHREG DATA=data;
+  MODEL time*event(0) = covariate/ TIES=EFRON;
+RUN;
+```
+:::
+::::
 
 ---
 
@@ -106,22 +148,27 @@ glimpse(larynx)
 
 Note that in this data there is only 1 row per individual
 ```{r larynx2}
-glimpse(larynx)
+#| output-location: column
+larynx
 ```
 
 What happens if we were to collect a variable that [changes over time]{.alert}?
+
+- Do we just include baseline value? Value at event/censoring time? Average value?
+
+- None of these solutions is very satisfying... would be nice if we could just record how that variable changes like with repeated measures data
 
 ---
 
 ## Time-dependent covariates
 
-Below is data on patients who are on the wait list for the Standard heart transplant program:
+Below is data on patients who are on the wait list for the Standard heart transplant program, where we want to see if receiving a transplant reduces hazard of death:
 ```{r heart subset,echo=F}
 jasa_subset <-jasa %>% 
    select(-c("birth.dt", "hla.a2","mscore","reject","mismatch"))
 ```
 ```{r heart}
-glimpse(jasa_subset)
+jasa_subset
 ```
 
 - `transplant`: indicator for whether patient received a transplant
@@ -145,15 +192,9 @@ glimpse(jasa_subset)
 
 Because transplant status changes with time, we need to transform this data into a new format in order to analyze it
 
-- We call this new format the [counting process format]{.alert}
+- We call this new format the [counting process format]{.alert}, which has potentially [multiple rows]{.alert} for each individual
 
----
-
-## Counting process format
-
-Counting process formatted data will have potentially [multiple rows]{.alert} for each individual
-
-- Each row represents a time interval that corresponds to a particular value for their time-dependent variable
+- Each row represents a [time interval]{.alert} that corresponds to a particular value for their time-dependent variable
 
 - If they only have one row, that means none of the values for their covariates changed over the observation period
 
@@ -180,28 +221,49 @@ sdata <- tmerge(jasa2, tdata, id=id,
    death = event(futime, fustat),
    trt = tdc(txtime),
    options= list(idname="id"))
+sdata <- sdata %>% 
+   rename(fustat_ever=fustat,
+          transplant_ever=transplant)
 ```
 ```{r heart_long}
 sdata %>% 
-   select(-c("accept.dt","tx.date","fu.date","futime","wait.time")) %>% 
-   glimpse()
+   select(-c("accept.dt","tx.date","fu.date","futime","wait.time"))
 ```
 
 - `tstart`, `tstop`: variables for the beginning and end of an observation interval
 
-- `trt`: indicator for whether the patient had gotten a transplant in that interval
+- `trt`: indicator for whether the patient is "on treatment" (has a transplaneted heart) in the interval
 
 - `death`: whether the patient has died by the end of the interval
 
 ---
 
+## Counting process format
+
+Looking just at the people who received a transplant:
+
+```{r heart_long treaters}
+sdata %>% 
+   select(-c("accept.dt","tx.date","fu.date","futime","wait.time")) %>% 
+   filter(transplant_ever==1) 
+```
+
+With counting process format data, our time variable is now 2 separate variables: interval start time and interval stop time
+
+
+
+---
+
 ## Time-dependent Cox model
 
-With counting process format data, our time variable is now 2: interval start time and interval stop time. We bundle both of these variable together with the event indicator to perform the regression:
+To model this data, instead of just bundling together the event indicator and the event time, we'll bundle both start and stop times together with the event indicator:
+
 ```{r cox time}
 time.cox <- coxph( Surv(tstart, tstop, death) ~ trt + age + surgery, data=sdata)
 summary(time.cox)$coef
 ```
+
+- $e^{\beta_1(trt)}=$ `r round(summary(time.cox)$coef[1,2],4)`: [A patient who had a transplant by any given time $t$ are expected to have a `r (round(summary(time.cox)$coef[1,2],4)-1)*100`% higher hazard of death compared to a non-transplant patient of similar age and prior surgery status (non-significant).]{.fragment}
 
 . . .
 
@@ -211,9 +273,29 @@ heart.cox <- coxph( Surv(futime, fustat) ~ transplant + age + surgery, data=jasa
 summary(heart.cox)$coef
 ```
 
+- $e^{\beta_1(trt)}=$ `r round(summary(heart.cox)$coef[1,2],4)`: A patient who had a transplant are expected to have a `r (1-round(summary(heart.cox)$coef[1,2],4))*100`% *lower* hazard of death compared to a non-transplant patient of similar age and prior surgery status.
+
+---
+
+## Time-dependent Cox model
+
+```{r cox time2, echo=F}
+summary(time.cox)$coef
+```
+
+- $e^{\beta_1(trt)}=$ `r round(summary(time.cox)$coef[1,2],4)`: A patient who had a transplant by any given time $t$ are expected to have a `r (round(summary(time.cox)$coef[1,2],4)-1)*100`% [higher]{.alert} hazard of death compared to a non-transplant patient of similar age and prior surgery status (non-significant).
+
+```{r cox2, echo=F}
+summary(heart.cox)$coef
+```
+
+- $e^{\beta_1(trt)}=$ `r round(summary(heart.cox)$coef[1,2],4)`: A patient who had a transplant are expected to have a `r (1-round(summary(heart.cox)$coef[1,2],4))*100`% [lower]{.alert} hazard of death compared to a non-transplant patient of similar age and prior surgery status.
+
+These are wildly different results! Why?
+
 . . .
 
-These are wildly different results! In the non-time-dependent regression, transplant looks like it has such a large effect on time to death because the only people who receive transplants are those that live long enough to get them
+- In the non-time-dependent regression, transplant looks like it has such a large effect on time to death because the only people who receive transplants are those that live long enough to get them and likely judged to be "not too sick" to be able to benefit from them
 
 ---
 
@@ -233,11 +315,34 @@ This is a separate concept from time-dependent covariates
 
 Time-varying coefficients are an example of [non-proportional hazards]{.alert}
 
+- When we model a truly time-varying coefficient as time-static
+$$\log[\lambda_i(t)] = \beta_0(t) + \beta_k x_{ik}$$
+$e^{\beta_k}$ represents the hazard for $X_k$ averaged over time
+
+- If the hazard at early times is very different from that at late times, the average may not be of interest to us
+
+---
+
+## Time-varying coefficients
+
+We may also be interested in whether the [effect]{.alert} of a covariate changes with time
+
+- Known as a time-varying coefficient
+
+This is a separate concept from time-dependent covariates
+
+- Time-dependent covariates - covariate values can change, but the effect of a particular value is constant across time: $\log[\lambda_i(t)] = \beta_0(t) + \beta_k x_{ik}(t)$
+
+- Time-varying coefficients - covariate value is fixed, but its effect varyings with time: $\log[\lambda_i(t)] = \beta_0(t) + \beta_k(t) x_{ik}$
+
+
+Time-varying coefficients are an example of [non-proportional hazards]{.alert}
+
 - There are several ways we can formally look at this:
 
    - Schoenfeld residual plot for a covariate
    
-   - Score test of correlation between a covariate and time
+   - Score test of correlation between a covariate's Schoenfeld residual and time
 
 ---
 
@@ -245,9 +350,11 @@ Time-varying coefficients are an example of [non-proportional hazards]{.alert}
 
 A [Schoenfeld residual]{.alert} is the difference between the covariate value for a subject and the weighted average of covariates in the risk set
 
-- If the proportional hazards assumption holds and $\beta$ is the true regression coefficient, the resdiauls are uncorrelated and have mean zero
+- If the proportional hazards assumption holds and $\beta$ is the true regression coefficient, the residuals are uncorrelated and have mean zero
 
 - If a covariate has a time-varying coefficent $\beta(t) = \beta + \gamma g(t)$, then we expect the scaled Schoenfeld residuals at a specific time will be $\gamma g(t)$
+
+We usually [scale]{.alert} the Schoenfeld residuals by the weighted covariance matrix of $\hat \beta$
 
 - If we plot the scaled Schoenfeld residuals for a covariate against time and see a trend, that indicates that we might have non-proportional hazards
 
@@ -294,7 +401,11 @@ We can perform a hypothesis test for whether $\gamma=0$
 cox.zph( larynx.cox, transform="identity" )
 ```
 
-- Test indicates that we have little evidence that proportional hazards is violated for either the disease stage or age variables
+- Test indicates that we don't have strong evidence that proportional hazards is violated for either the disease stage or age variables
+
+   - Could be that proportional hazards actually holds
+   
+   - Could be that we just don't have a large enough sample size to have the precision needed to detect it
 
 ---
 
@@ -311,7 +422,7 @@ We can perform a hypothesis test for whether $\gamma=0$
 We can also plot the `cox.zph()` object to get the Schoenfeld residual plots we made earlier:
 
 ```{r larynx zph2}
-plot(cox.zph( larynx.cox, transform="identity" )[1])
+plot(cox.zph( larynx.cox, transform="identity" )[2])
 ```
 
 ---
@@ -356,6 +467,6 @@ When adding time-varying coefficients to a Cox model, it's not just interacting 
 In R, there is a slightly easier way to do this via the time-transform argument in the `coxph()` function
 
 ```{r varying}
-coxph( Surv(futime, fustat) ~ age + surgery + tt(transplant), data=jasa,tt=function(x,t, ...) x * log(t+1))
+summary( coxph( Surv(tstart, tstop, death) ~ age + surgery + tt(trt), data=sdata,tt=function(x,t, ...) x * log(t+1)) )$coef
 
 ```

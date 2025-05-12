@@ -352,7 +352,7 @@ violations of those assumptions, and estimate and interpret regression models to
 
 [Small assignments]{.alert} (40%)
 
-- Weekly homeworks assigned Tuesdays at end of class, due following Tuesday at beginning of class
+- Biweekly homeworks assigned Tuesdays at end of class, due on due-date at beginning of class
 
 - Some other small assignments to be completed over several weeks
 
@@ -360,7 +360,7 @@ violations of those assumptions, and estimate and interpret regression models to
 
 - In-class exam focused on understanding of concepts
 
-- Scheduled for Th 10/17
+- Scheduled for Th 10/09
 
    - If you have scheduling issues with this date, email me ASAP
 
@@ -378,13 +378,13 @@ violations of those assumptions, and estimate and interpret regression models to
 
 There's no single textbook for this course
 
-- I'll be pulling from several books for different topics
+- I'll be pulling from several books for different topics, as well as stand-alone journal articles
 
 - Any time there's a suggested reading, I'll put a copy of the corresponding sections in the module
 
 :::: {.columns}
 ::: {.column width="50%"}
-I've made the follow full e-books available on the Canvas site:
+I've made the following full e-books available on the Canvas site:
 
 - [Foundations of Liner and Generalized Linear Models]{.alert}. 2015. Agresti A. John Wiley & Sons: Hoboken, New Jersey. ISBN: 978-1-118-73030-0
 
@@ -401,14 +401,6 @@ I've also scanned several chapters from books I could not find electronic copies
 - [Data Analysis Using Regression and Multilevel/Hierarchical Models]{.alert}. 2007. Gelman A and Hill J. Cambridge University Press: New York. ISBN: 9780521686891
 :::
 ::::
-
----
-
-## Course rhythms
-
-We'll roughly follow this weekly workflow:
-
-![](course-rhythms.png){width="25%"}
 
 ---
 
@@ -444,15 +436,44 @@ Official stance of this course is that I don't condone the use of AI tools for a
 
 - It is my expectation that most questions can (and will) be answered by your fellow students
 
-[Peer feedback groups]{.alert}
+[Peer support groups]{.alert}
 
 - Randomly assigned groups of 3-4
 
-- Guarantees everyone with some continuing level of informal brainstorming/feedback through the semester
+- Guarantees everyone with some continuing level of informal brainstorming/feedback/support through the semester
 
-   - Last 20 minutes of Thursday classes will be reserved for this
+   - We'll periodically meet in peer groups throughout the semester to work on (individual) final projects
 
 - Also feel free to use as study/question groups
+
+---
+
+## Final data analysis project
+
+- Semester-long, semi-open-ended data analysis project
+
+- [Goal]{.alert}: appropriately use [any]{.underline} of the knowledge and skills you gain in this class to investigate [a research question of your choosing]{.alert}
+
+- [Data]{.alert}
+
+   - I've provided several appropriate datasets/data sources you can choose from
+   
+   - You may also use a dataset you have found, but you must schedule a brief appointment to discuss and have it approved by me
+
+   - Longitudinal data may be "converted" to cross-sectional data if the appropriate research question is of interest and the analysis uses methods from this course
+   
+- [Components]{.alert}
+
+   - Intermediate "milestone" assignments
+   
+      - Designed to keep you working on the project all semester long and provide you with preliminary feedback
+   
+   - Oral project presentation
+   
+   - Final written report
+   
+- If you want to use this as a chance to test-drive/further your dissertation research, please do!
+
 
 
 
@@ -604,6 +625,7 @@ We like to think of splitting our model into 2 parts:
 
 1. the [mean model]{.alert}
 $$E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}$$
+$$E[Y_i|U_i] = \beta_0 + \beta_1U_i$$
 
 . . .
 
@@ -613,18 +635,20 @@ $$E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}$$
 2. and the model of the [covariance]{.alert}
 $$Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\Sigma}$$
 
-- In OLS we usually assume these errors are:
+- In OLS we usually assume:
 
-   - Normally distributed $\vec{\epsilon} \sim N(0, \sigma^2)$
+   - The specified mean model is correct
    
-   - Have a constant variance across all observations ([homoskedasticity]{.alert} assumption)
+   - The errors are Normally distributed $\vec{\epsilon} \sim N(0, \sigma^2)$
+   
+   - The errors have a constant variance across all levels of $\boldsymbol{X}$ ([homoskedasticity]{.alert} assumption)
    
    - And that observations are completely independent (covariance of 0)
 :::
 
 ::: {.column width="30%"}
 ::: {.fragment}
-So $\boldsymbol{\Sigma}$ ends up being assumed to look like:
+So in OLS, $\boldsymbol{\Sigma}$ ends up being assumed to look like:
 
 $$\boldsymbol{\Sigma} = \begin{bmatrix}\sigma^2 & 0 & \dots & 0 \\
 0 & \ddots & \dots & 0 \\
@@ -738,9 +762,11 @@ which we estimate with
 
 ---
 
-## Review: weighted least squares {.smaller}
+## Review: robust variance {.smaller}
 
 What happens when $Var[\vec{Y}|\boldsymbol{X}]$ is [NOT the same]{.alert} across all observations? What if it varies by $u_i$?
+
+- This is different than assuming observations are no independent
 
 . . .
 
@@ -748,7 +774,46 @@ What happens when $Var[\vec{Y}|\boldsymbol{X}]$ is [NOT the same]{.alert} across
 
 . . .
 
-We can fixed this with [weighted least squares]{.alert} (WLS)
+- Under the equal variance assumption, we have:
+$$\begin{align*}Var[\widehat{\beta}] &= (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\{Var[\vec{Y}|\boldsymbol{X}]\}\boldsymbol{X}(\boldsymbol{X}^T\boldsymbol{X})^{-1}\\
+&=(\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\{\sigma^2\boldsymbol{I}\}\boldsymbol{X}(\boldsymbol{X}^T\boldsymbol{X})^{-1}\\
+&=\sigma^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\end{align*}$$
+
+. . .
+
+What if instead of assuming $Var[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{I}$, we estimate a residual for each observation $i$: $\widehat{\epsilon}_i$?
+
+. . .
+
+:::: {.columns}
+
+::: {.column width="55%"}
+
+- We then get
+$$\begin{align*}Var[\widehat{\beta}] &= (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\{Var[\vec{Y}|\boldsymbol{X}]\}\boldsymbol{X}(\boldsymbol{X}^T\boldsymbol{X})^{-1}\\
+&=(\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\{\widehat{\vec{\epsilon}}\widehat{\vec{\epsilon}}^T\}\boldsymbol{X}(\boldsymbol{X}^T\boldsymbol{X})^{-1}\end{align*}$$
+
+:::
+
+::: {.column width="45%"}
+::: {.fragment}
+<br>
+<br>
+We call this the [robust]{.alert} or [sandwich]{.alert} variance
+:::
+:::
+
+::::
+
+---
+
+## Review: weighted least squares {.smaller}
+
+The robust variance will fix the problem, but it's not statistically efficient
+
+. . .
+
+An alternative strategy is to use [weighted least squares]{.alert} (WLS)
 
 $$\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}$$
 
@@ -762,6 +827,18 @@ w_1 & 0 & \dots & 0\\
 \vdots& &\ddots &\vdots\\
 0 & 0 & \dots & w_n\\
 \end{bmatrix}$$
+
+. . .
+
+- Incorporating the weighting matrix is a little like applying  a linear transformation
+
+   - This transformation changes the regression equation to one with equal variance
+   
+. . .
+
+- But what do we use for $\boldsymbol{W}$?
+
+   - Common to have $w_i = 1/\widehat{\sigma_i^2}$
 
 ---
 
@@ -785,7 +862,7 @@ $$\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})
 
 ---
 
-## Review: robust variance
+## Review: robust variance (pt. 2)
 
 WLS can help if our assumptions are correct, but what if $Var[\vec{Y}|\boldsymbol{X}] \ne \sigma^2\boldsymbol{W}^{-1}$?
 
@@ -829,7 +906,7 @@ $$(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}(\boldsymbol{X}^T\boldsymbo
    
    - We call this a [robust variance]{.alert} estimate
    
-Robust variance is known as a [post hoc]{.alert} correction because it only affects inference of $\widehat{\beta}$, not how we construct the mean model
+Robust variance is known as a [post hoc]{.alert} correction because it only affects *inference* of $\widehat{\beta}$, not how we *estimate* $\widehat{\beta}$
 
 - Note that if $\boldsymbol{W} = \boldsymbol{1}$, then we're just applying the robust variance correction to OLS!
 

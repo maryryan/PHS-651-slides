@@ -63,21 +63,68 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-1/slides-1"))
 
 ## What is clustered/correlated data?
 
+When we talk about "correlated" or "clustered" data, we're most often talking about correlated/clustered [outcomes]{.alert}
+
+- This stems from one of our regression assumptions: that the *outcome values* for 2 observations will be independent
+
+. . .
+
 Informal definitions 
 
-- [Independent data]{.underline}: data where each observation of a variable are not meaningfully correlated with other observations of the same variable
+- [Independent data]{.underline}: data where each observation of an outcome are not meaningfully correlated with other observations of the same outcome (given other covariates $\boldsymbol{X}$)
 
-- [Clustered/Correlated data]{.underline}: data where each observation of a variable has some kind of relationship to another set of observations of that variable
+- [Clustered/Correlated data]{.underline}: data where each observation of an outcome has some kind of relationship to another set of observations of that outcome (given other covariates $\boldsymbol{X}$)
 
-. . .
+---
 
-"Clustered data arise when the data from the whole study [can be classified]{.alert} into a number of different groups, referred to as clusters. [Each cluster contains multiple observations, giving the data a “nested” or “hierarchical” structure]{.alert}, with individual observations nested within the cluster." (Galbraith et al, 2010, ["A Study of Clustered Data and Approaches to Its Analysis"](https://doi.org/10.1523/JNEUROSCI.0362-10.2010))
+## What is clustered/correlated data?
 
-. . .
-   
-"...we might reasonably expect that measurements on [units within a cluster are more similar]{.alert} than measurements on units in different clusters." (Applied Longitudinal Analysis pg. 4)
+When we talk about "correlated" or "clustered" data, we're most often talking about correlated/clustered [outcomes]{.alert}
+
+- This stems from one of our regression assumptions: that the *outcome values* for 2 observations will be independent
+
+In other words...
+
+- Outcomes are [independent]{.alert} if we can identify and adjust for all the covariates that would drive correlations between outcome observations to 0
+
+- Outcomes are [clustered/correlated]{.alert} if, for some reason or another, we *can't* identify or adjust for all the necessary covariates
+
+---
+
+## What is clustered/correlated data?
+
+Some more informal definitions/descriptions
+
+- "Clustered data arise when the data from the whole study [can be classified]{.alert} into a number of different groups, referred to as clusters. [Each cluster contains multiple observations, giving the data a “nested” or “hierarchical” structure]{.alert}, with individual observations nested within the cluster." (Galbraith et al, 2010, ["A Study of Clustered Data and Approaches to Its Analysis"](https://doi.org/10.1523/JNEUROSCI.0362-10.2010))
+
+
+- "...we might reasonably expect that measurements on [units within a cluster are more similar]{.alert} than measurements on units in different clusters." (Applied Longitudinal Analysis pg. 4)
    
 - AKA: nested/multilevel/hierarchical data
+
+---
+
+## What is clustered/correlated data?
+
+Remember in OLS where we assumed that observations were independent?
+
+- This meant that we assumed $Cov[Y_i, Y_j|\boldsymbol{X}]=0$ and:
+
+$$Cov[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{I} =  \begin{bmatrix}\sigma^2 & 0 & \dots & 0 \\
+0 & \ddots & \dots & 0 \\
+\vdots & \dots & \ddots & \vdots\\
+0 & \dots & 0 & \sigma^2\end{bmatrix} \text{ or   } Cov[\vec{Y}|\boldsymbol{X}] = \sigma_i^2\boldsymbol{I} =  \begin{bmatrix}\sigma_1^2 & 0 & \dots & 0 \\
+0 & \ddots & \dots & 0 \\
+\vdots & \dots & \ddots & \vdots\\
+0 & \dots & 0 & \sigma_n^2\end{bmatrix}$$
+
+. . .
+
+When data are [clustered]{.alert}, at least some $Cov[Y_i, Y_j|\boldsymbol{X}]\ne0$
+
+- This is like saying that some observations have [shared information]{.alert}
+
+- This impacts our variance estimates for $\widehat{\beta}$ and our inference
 
 ---
 

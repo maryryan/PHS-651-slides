@@ -446,7 +446,7 @@ September 5, 2024
 <li><p>Plan C: watch lecture recording on Canvas</p></li>
 </ul>
 </li>
-<li><p>Please don’t make me lecture to an empty room</p></li>
+<li><p>Please don’t make me lecture to an empty room, but know that there’s flexibility if and when you need it</p></li>
 </ul>
 </div>
 </div>
@@ -803,10 +803,8 @@ September 5, 2024
 </ol>
 </div>
 <div class="fragment">
-<div class="columns">
-<div class="column" style="width:70%;">
 <ol start="2" type="1">
-<li>and the model of the <span class="alert">covariance</span> <span class="math display">\[Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\Sigma}\]</span>
+<li>the model of the <span class="alert">covariance</span> <span class="math display">\[Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\Sigma}\]</span>
 </li>
 </ol>
 <ul>
@@ -820,17 +818,28 @@ September 5, 2024
 </ul>
 </li>
 </ul>
-</div><div class="column" style="width:30%;">
-<div class="fragment">
+</div>
+</section><section id="review-ordinary-linear-regression-5" class="slide level2 smaller"><h2>Review: ordinary linear regression</h2>
+<ol start="2" type="1">
+<li>the model of the <span class="alert">covariance</span> <span class="math display">\[Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\Sigma}\]</span>
+</li>
+</ol>
+<ul>
+<li>
+<p>In OLS we usually assume:</p>
+<ul>
+<li><p>The specified mean model is correct</p></li>
+<li><p>The errors are Normally distributed <span class="math inline">\(\vec{\epsilon} \sim N(0, \sigma^2)\)</span></p></li>
+<li><p>The errors have a constant variance across all levels of <span class="math inline">\(\boldsymbol{X}\)</span> (<span class="alert">homoskedasticity</span> assumption)</p></li>
+<li><p>And that observations are completely independent (covariance of 0)</p></li>
+</ul>
+</li>
+</ul>
 <p>So in OLS, <span class="math inline">\(\boldsymbol{\Sigma}\)</span> ends up being assumed to look like:</p>
 <p><span class="math display">\[\boldsymbol{\Sigma} = \begin{bmatrix}\sigma^2 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \ddots &amp; \dots &amp; 0 \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
 0 &amp; \dots &amp; 0 &amp; \sigma^2\end{bmatrix}\]</span></p>
-</div>
-</div>
-</div>
-</div>
 </section><section id="review-ols-estimation" class="slide level2"><h2>Review: OLS estimation</h2>
 <p>Model parameters are the “true” relationship between our independent variables and our response (given how we’re modeling the relationship…)</p>
 <ul>
@@ -879,7 +888,7 @@ September 5, 2024
 <div class="column" style="width:50%;">
 <div class="fragment">
 <ul>
-<li>The <span class="alert">covariance matrix</span> for <span class="math inline">\(\beta\)</span> is <span class="math display">\[V = \sigma^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\]</span>
+<li>The <span class="alert">covariance matrix</span> for <span class="math inline">\(\widehat{\beta}\)</span> is <span class="math display">\[V = \sigma^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\]</span>
 </li>
 </ul>
 <p>which we estimate with <span class="math display">\[\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\]</span></p>
@@ -918,7 +927,7 @@ September 5, 2024
 </ul>
 <div class="fragment">
 <ul>
-<li>Estimate of <span class="math inline">\(\beta\)</span> will be fine, but <span class="alert">inference</span> will be incorrect</li>
+<li>Estimate of <span class="math inline">\(\beta\)</span> will be fine, but <span class="alert">inference</span> (AKA standard errors) will be incorrect</li>
 </ul>
 </div>
 <div class="fragment">
@@ -930,30 +939,45 @@ September 5, 2024
 </ul>
 </div>
 <div class="fragment">
-<p>What if instead of assuming <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{I}\)</span>, we estimate a residual for each observation <span class="math inline">\(i\)</span>: <span class="math inline">\(\widehat{\epsilon}_i\)</span>?</p>
+<ul>
+<li>If we know <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}] \ne \sigma^2\boldsymbol{I}\)</span>, then obviously <span class="math inline">\(Var[\widehat{\beta}] \ne \sigma^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\)</span>
+</li>
+</ul>
+</div>
+</section><section id="review-robust-variance-1" class="slide level2 smaller"><h2>Review: robust variance</h2>
+<p>If we know <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}] \ne \sigma^2\boldsymbol{I}\)</span>, then obviously <span class="math inline">\(Var[\widehat{\beta}] \ne \sigma^2(\boldsymbol{X}^T\boldsymbol{X})^{-1}\)</span></p>
+<ul>
+<li>Then what to we assume for <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}]\)</span>?</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>What if instead of making assumptions (except for independence), we estimate the residual for each observation <span class="math inline">\(i\)</span> (<span class="math inline">\(\widehat{\epsilon}_i\)</span>) and use <span class="math inline">\(Var[Y_i|\vec{X}_i] = \widehat{\epsilon}_i\widehat{\epsilon}_i\)</span>?</li>
+</ul>
 </div>
 <div class="fragment">
-<div class="columns">
-<div class="column" style="width:55%;">
 <ul>
 <li>We then get <span class="math display">\[\begin{align*}Var[\widehat{\beta}] &amp;= (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\{Var[\vec{Y}|\boldsymbol{X}]\}\boldsymbol{X}(\boldsymbol{X}^T\boldsymbol{X})^{-1}\\
 &amp;=(\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\{\widehat{\vec{\epsilon}}\widehat{\vec{\epsilon}}^T\}\boldsymbol{X}(\boldsymbol{X}^T\boldsymbol{X})^{-1}\end{align*}\]</span>
 </li>
 </ul>
-</div><div class="column" style="width:45%;">
+</div>
 <div class="fragment">
-<p><br><br> We call this the <span class="alert">robust</span> or <span class="alert">sandwich</span> variance</p>
-</div>
-</div>
-</div>
+<ul>
+<li>We call this the <span class="alert">robust</span> or <span class="alert">sandwich</span> variance</li>
+</ul>
 </div>
 </section><section id="review-weighted-least-squares" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
 <p>The robust variance will fix the problem, but it’s not statistically efficient</p>
+<ul>
+<li><p>E.g., Not the best use of data to estimate the variance for each observation</p></li>
+<li><p>Doing so <em>increases</em> the available degrees of freedom that we use <span class="math inline">\(\Rightarrow\)</span> this can be a problem when we have a finite sample size</p></li>
+</ul>
 <div class="fragment">
 <p>An alternative strategy is to use <span class="alert">weighted least squares</span> (WLS)</p>
-<p><span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}\]</span></p>
 </div>
-<div class="fragment">
+</section><section id="review-weighted-least-squares-1" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
+<p>An alternative strategy is to use <span class="alert">weighted least squares</span> (WLS)</p>
+<p><span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}\]</span></p>
 <ul>
 <li>
 <span class="math inline">\(\boldsymbol{W}\)</span> is a diagonal matrix of weights</li>
@@ -964,7 +988,6 @@ w_1 &amp; 0 &amp; \dots &amp; 0\\
 \vdots&amp; &amp;\ddots &amp;\vdots\\
 0 &amp; 0 &amp; \dots &amp; w_n\\
 \end{bmatrix}\]</span></p>
-</div>
 <div class="fragment">
 <ul>
 <li>
@@ -976,89 +999,45 @@ w_1 &amp; 0 &amp; \dots &amp; 0\\
 </ul>
 </div>
 <div class="fragment">
-<ul>
-<li>
+<p>The variance of <span class="math inline">\(\widehat{\beta}\)</span> would then be <span class="math display">\[Var[\widehat{\beta}] = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\{Var[\vec{Y}|\boldsymbol{X}]\}\boldsymbol{W}\boldsymbol{X}^T(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
+</div>
+</section><section id="review-weighted-least-squares-2" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
 <p>But what do we use for <span class="math inline">\(\boldsymbol{W}\)</span>?</p>
 <ul>
-<li>Common to have <span class="math inline">\(w_i = 1/\widehat{\sigma_i^2}\)</span>
+<li>If we knew <span class="math inline">\(Var[Y_i|\vec{X}_i]\)</span>, we’d use some <span class="math inline">\(w_i\)</span> such that <span class="math display">\[w_i^2 \times Var[Y_i|\vec{X}_i] = w_i^2 \sigma^2_i = w_i^2 \frac{\sigma^2}{w_i^2} = \sigma^2\]</span> The variance of <span class="math inline">\(\widehat{\beta}\)</span> would then be</li>
+</ul>
+<p><span class="math display">\[\begin{align*}Var[\widehat{\beta}] &amp;= (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\{Var[\vec{Y}|\boldsymbol{X}]\}\boldsymbol{W}\boldsymbol{X}^T(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\\
+&amp;=(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\sigma^2\boldsymbol{W}^{-1}\boldsymbol{W}\boldsymbol{X}^T(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\\
+&amp;=\sigma^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\end{align*}\]</span></p>
+</section><section id="review-weighted-least-squares-3" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
+<p>There are some cases where we know <span class="math inline">\(Var[Y_i|\vec{X}_i]\)</span> or know what weights <span class="math inline">\(\boldsymbol{W}\)</span> we should use</p>
+<ul>
+<li>E.g., If <span class="math inline">\(y_i\)</span> is the average of <span class="math inline">\(n_i\)</span> equally-variable observations, then <span class="math inline">\(Var[Y_i|\vec{X}_i] = \sigma^2/n_i\)</span> and <span class="math inline">\(w_i = n_i\)</span>
 </li>
 </ul>
-</li>
-</ul>
-</div>
-</section><section id="review-weighted-least-squares-1" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
-<p>What happens when <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}]\)</span> is <span class="alert">NOT the same</span> across all of <span class="math inline">\(\vec{Y}\)</span>?</p>
-<ul>
-<li>Estimate of <span class="math inline">\(\beta\)</span> will be fine, but <span class="alert">inference</span> will be incorrect</li>
-</ul>
-<p>We can fixed this with <span class="alert">weighted least squares</span> (WLS)</p>
-<p><span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}\]</span></p>
-<ul>
-<li>Assumes variance of the outcomes is</li>
-</ul>
-<p><span class="math display">\[Var[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{W}^{-1}\]</span></p>
-<ul>
-<li>Which gives us an estimated variance for <span class="math inline">\(\widehat{\beta}\)</span> of</li>
-</ul>
-<p><span class="math display">\[\widehat{V} = \widehat{\sigma}^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
-</section><section id="review-robust-variance-pt.-2" class="slide level2"><h2>Review: robust variance (pt.&nbsp;2)</h2>
-<p>WLS can help if our assumptions are correct, but what if <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}] \ne \sigma^2\boldsymbol{W}^{-1}\)</span>?</p>
 <div class="fragment">
+<p>But often times we <em>don’t</em> know</p>
 <ul>
-<li>
-<p>Then true variance of <span class="math inline">\(\widehat{\beta}\)</span> is <span class="math display">\[(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{\Sigma}\boldsymbol{W}\boldsymbol{X})(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
-<ul>
-<li>
-<span class="math inline">\(\boldsymbol{\Sigma}\)</span> is the true variance of <span class="math inline">\(\vec{Y}\)</span>
-</li>
+<li>Could use <span class="math inline">\(\widehat{\epsilon}_i^2\)</span>:</li>
 </ul>
-<p><!-- - We empirically estimate $\boldsymbol{\Sigma}$ with $\widehat{\Sigma}=(Y_i - \vec{X}_i\widehat{\vec{\beta}})(Y_i - \vec{X}_i\widehat{\vec{\beta}})^T$ --></p>
+<p><span class="math display">\[(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\widehat{\vec{\epsilon}}\widehat{\vec{\epsilon}}^T\boldsymbol{W}\boldsymbol{X}(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
 <ul>
-<li>We call this a <span class="alert">robust variance</span> estimate</li>
-</ul>
+<li>In this case, <span class="math inline">\(w_i = \frac{1}{\widehat{\epsilon}_i^2}\)</span>
 </li>
 </ul>
 </div>
 <div class="fragment">
 <ul>
 <li>
-<p>If the WLS variance is correct (<span class="math inline">\(\boldsymbol{V} = \sigma^2\boldsymbol{W}^{-1}\)</span>) then this simplifies back to <span class="math inline">\(\sigma^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\)</span></p>
+<p>In 552, we assumed <span class="math inline">\(Cov[\vec{Y}|\boldsymbol{X}]=\boldsymbol{\Sigma}\)</span> was a diagonal matrix (because assume 0 covariance)</p>
 <ul>
-<li><p>That’s why we call it “robust” – it doesn’t penalize us if our assumptions about <span class="math inline">\(\boldsymbol{W}\)</span> are correct, but helps fix it if they’re wrong</p></li>
-<li><p>Also known as <span class="alert">sandwich variance</span> because it looks a bit like meat (<span class="math inline">\(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{\Sigma}\boldsymbol{W}\boldsymbol{X}\)</span>) between 2 slices of bread (<span class="math inline">\(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X}\)</span>)</p></li>
-</ul>
-</li>
-</ul>
-<p>We can estimate each element of <span class="math inline">\(\boldsymbol{\Sigma}\)</span> with the squared residual of our model: <span class="math inline">\(e_i^2 = (Y_i - \hat{Y}_i)^2\)</span></p>
-<ul>
-<li>
-<p>In 552, we assumed <span class="math inline">\(\boldsymbol{\Sigma}\)</span> was a diagonal matrix (because assume 0 covariance)</p>
-<ul>
-<li>We’ll break that assumption in this class</li>
+<li><p>So above, we assume <span class="math inline">\(\hat{\Sigma}=\widehat{\vec{\epsilon}}\widehat{\vec{\epsilon}}^T\)</span> is diagonal</p></li>
+<li><p>We’ll break that assumption in this class</p></li>
 </ul>
 </li>
 </ul>
 </div>
-</section><section id="review-robust-variance-1" class="slide level2"><h2>Review: robust variance</h2>
-<p>WLS can help if our assumptions are correct, but what if <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}] \ne \sigma^2\boldsymbol{W}^{-1}\)</span>?</p>
-<ul>
-<li>
-<p>Then true variance of <span class="math inline">\(\widehat{\beta}\)</span> is <span class="math display">\[(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{\Sigma}\boldsymbol{W}\boldsymbol{X})(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
-<ul>
-<li>
-<span class="math inline">\(\boldsymbol{\Sigma}\)</span> is the true variance of <span class="math inline">\(\vec{Y}\)</span>
-</li>
-</ul>
-<p><!-- - We empirically estimate $\boldsymbol{\Sigma}$ with $\widehat{\Sigma}=(Y_i - \vec{X}_i\widehat{\vec{\beta}})(Y_i - \vec{X}_i\widehat{\vec{\beta}})^T$ --></p>
-<ul>
-<li>We call this a <span class="alert">robust variance</span> estimate</li>
-</ul>
-</li>
-</ul>
-<p>Robust variance is known as a <span class="alert">post hoc</span> correction because it only affects <em>inference</em> of <span class="math inline">\(\widehat{\beta}\)</span>, not how we <em>estimate</em> <span class="math inline">\(\widehat{\beta}\)</span></p>
-<ul>
-<li>Note that if <span class="math inline">\(\boldsymbol{W} = \boldsymbol{1}\)</span>, then we’re just applying the robust variance correction to OLS!</li>
-</ul></section><section id="review-logistic-regression" class="slide level2"><h2>Review: logistic regression</h2>
+</section><section id="review-logistic-regression" class="slide level2"><h2>Review: logistic regression</h2>
 <p>Now what happens if <span class="math inline">\(\vec{Y}\)</span> is binary?</p>
 <div class="fragment">
 <ul>

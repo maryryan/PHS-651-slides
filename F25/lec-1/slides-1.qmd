@@ -122,6 +122,8 @@ $$Cov[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{I} =  \begin{bmatrix}\sigma^
 
 When data are [clustered]{.alert}, at least some $Cov[Y_i, Y_j|\boldsymbol{X}]\ne0$
 
+- All the off-diagonals might be non-0, or maybe only some
+
 - This is like saying that some observations have [shared information]{.alert}
 
 - This impacts our variance estimates for $\widehat{\beta}$ and our inference

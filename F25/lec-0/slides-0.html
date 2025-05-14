@@ -797,16 +797,23 @@ September 5, 2024
 </section><section id="review-ordinary-linear-regression-4" class="slide level2 smaller"><h2>Review: ordinary linear regression</h2>
 <p><span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon}\]</span> We like to think of splitting our model into 2 parts:</p>
 <div class="fragment">
+<div class="columns">
+<div class="column" style="width:40%;">
 <ol type="1">
 <li>the <span class="alert">mean model</span> <span class="math display">\[E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}\]</span> <span class="math display">\[E[Y_i|U_i] = \beta_0 + \beta_1U_i\]</span>
 </li>
 </ol>
-</div>
+</div><div class="column" style="width:60%;">
 <div class="fragment">
 <ol start="2" type="1">
 <li>the model of the <span class="alert">covariance</span> <span class="math display">\[Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\Sigma}\]</span>
 </li>
 </ol>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment">
 <ul>
 <li>
 <p>In OLS we usually assume:</p>

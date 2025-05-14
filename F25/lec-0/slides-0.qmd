@@ -623,14 +623,26 @@ We like to think of splitting our model into 2 parts:
 
 . . .
 
+:::: {.columns}
+::: {.column width="40%"}
+
 1. the [mean model]{.alert}
 $$E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}$$
 $$E[Y_i|U_i] = \beta_0 + \beta_1U_i$$
 
-. . .
+:::
+
+::: {.column width="60%"}
+::: {.fragment}
 
 2. the model of the [covariance]{.alert}
 $$Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\Sigma}$$
+
+:::
+:::
+::::
+
+. . .
 
 - In OLS we usually assume:
 

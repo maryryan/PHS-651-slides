@@ -13,6 +13,7 @@ format:
       width: 1920
       chalkboard: true
       auto-stretch: false
+      pdf-separate-fragments: true
 execute: 
    eval: true
    echo: true

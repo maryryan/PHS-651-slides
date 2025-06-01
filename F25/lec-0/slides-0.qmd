@@ -12,6 +12,7 @@ format:
       height: 1080
       width: 1920
       chalkboard: true
+      pdf-separate-fragments: true
 execute: 
    eval: true
    echo: true
@@ -53,7 +54,7 @@ Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-0/slides-0>
 
 :::
 
-::: {.absolute bottom=0 left=100 width=150}
+::: {.absolute bottom=25 left=100 width=150}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
 ```

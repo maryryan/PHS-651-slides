@@ -605,7 +605,7 @@ September 9, 2025
 </section><section id="clustering-in-individual-level-data-analysis" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
 <p>What is a way to handle clustering in an (individual-level) analysis?</p>
 <p><span class="alert">Could ignore it and perform regular regression/t-test</span></p>
-<p><span class="math display">\[Y_{j} = \beta_0 + \beta_1 U_{j} + \epsilon_{j}\]</span></p>
+<p><span class="math display">\[Y_{j} = \beta_0 + U_{j} \beta_1 + \epsilon_{j}\]</span></p>
 <ul>
 <li><p><span class="math inline">\(Y_{j}\)</span> is outcome for individual <span class="math inline">\(j\)</span></p></li>
 <li><p><span class="math inline">\(U_{j}\)</span> is exposure for individual <span class="math inline">\(j\)</span></p></li>
@@ -616,7 +616,7 @@ September 9, 2025
 </section><section id="clustering-in-individual-level-data-analysis-1" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
 <p>What is a way to handle clustering in an (individual-level) analysis?</p>
 <p><span class="alert">Could perform separate regressions/t-tests for each cluster</span></p>
-<p><span class="math display">\[Y_{ij} = \beta_{0i} + \beta_{1i} U_{ij} + \epsilon_{ij}\]</span></p>
+<p><span class="math display">\[Y_{ij} = \beta_{0i} + U_{ij} \beta_{1i} + \epsilon_{ij}\]</span></p>
 <ul>
 <li><p><span class="math inline">\(Y_{ij}\)</span> is outcome for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(U_{ij}\)</span> is exposure for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
@@ -627,7 +627,7 @@ September 9, 2025
 </section><section id="clustering-in-individual-level-data-analysis-2" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
 <p>What is a way to handle clustering in an (individual-level) regression?</p>
 <p><span class="alert">Could add cluster membership as model covariate</span></p>
-<p><span class="math display">\[Y_{ij} = \beta_0 + \beta_1 U_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}\]</span></p>
+<p><span class="math display">\[Y_{ij} = \beta_0 + U_{ij} \beta_1 + C^{(i)}_{ij} \gamma_i + \epsilon_{ij}\]</span></p>
 <ul>
 <li><p><span class="math inline">\(Y_{ij}\)</span> is outcome for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(U_{ij}\)</span> is exposure for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
@@ -640,7 +640,7 @@ September 9, 2025
 </section><section id="clustering-in-individual-level-data-analysis-3" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
 <p>What is a way to handle clustering in an (individual-level) regression?</p>
 <p><span class="alert">Could add cluster membership as model covariate (modified)</span></p>
-<p><span class="math display">\[Y_{ij} = \beta_1 U_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}\]</span></p>
+<p><span class="math display">\[Y_{ij} = U_{ij} \beta_1 + C^{(i)}_{ij} \gamma_i + \epsilon_{ij}\]</span></p>
 <ul>
 <li><p><span class="math inline">\(Y_{ij}\)</span> is outcome for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(U_{ij}\)</span> is exposure for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
@@ -652,7 +652,7 @@ September 9, 2025
 <li>Instead of individual-level outcomes/predictors, roll these up to <span class="alert">cluster-level averages</span>
 </li>
 </ul>
-<p><span class="math display">\[\bar{Y}_{i} = \beta_1 \bar{U}_{i} + \epsilon_{i}\]</span></p>
+<p><span class="math display">\[\bar{Y}_{i} = \bar{U}_{i} \beta_1 + \epsilon_{i}\]</span></p>
 <ul>
 <li><p><span class="math inline">\(\bar{Y}_{i}\)</span> is the mean outcome in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(\bar{U}_{i}\)</span> is mean exposure in cluster <span class="math inline">\(i\)</span></p></li>

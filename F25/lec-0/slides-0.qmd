@@ -790,6 +790,45 @@ which we estimate with
 
 ---
 
+## Review: simple slopes
+
+What if we want to compare subgroups that involve a combination of covariates?
+
+- We call these [simple slopes]{.alert} or [linear contrasts]{.alert}
+
+- Let's say we want to compare a group that has $U=X=Z=0$ to a group that has $U=X=1$
+
+$$Y_i = \beta_0 + U_i\beta_1 + X_i\beta_2 + Z_i\beta_3 + \epsilon_i$$
+
+Finding the estimate for this is relatively easy
+
+- Just combine the estimates of the individual regression parameters: $(\hat{\beta}_1 + \hat{\beta}_2)$
+
+- Could also do this in a linear algebra way:
+$$\begin{align*}
+&L=(0,1,1,0)\\
+&L \hat{\vec{\beta}} = (0,1,1,0) \begin{pmatrix}\hat{\beta}_0\\ \hat{\beta}_1\\ \hat{\beta}_2\\ \hat{\beta}_3\\\end{pmatrix} = (\hat{\beta}_1 + \hat{\beta}_2)
+\end{align*}$$
+---
+
+## Review: simple slopes
+
+$$Y_i = \beta_0 + U_i\beta_1 + X_i\beta_2 + Z_i\beta_3 + \epsilon_i$$
+
+However, we can't just add up the SE estimates to get the subgroup SE
+
+- We have to incorporate the covariance between the parameters
+
+- Easiest way to do this is with linear algebra:
+
+$$\begin{align*}SE &= \sqrt{\left(LCov[\hat{\beta}]L^T\right)}\\
+&= \sqrt{\sigma^2_{b1} + \sigma^2_{b2} + 2cov(\hat{\beta}_1, \hat{\beta}_2)}\end{align*}$$
+
+This means a $(1-\alpha)\times100$% model-based confidence interval for $(\hat{\beta}_1 + \hat{\beta}_3)$ is:
+$$(\hat{\beta}_1 + \hat{\beta}_2) \pm \sqrt{\left(LCov[\hat{\beta}]L^T\right)} \times Z_{1-\alpha/2}$$
+
+---
+
 ## Review: robust variance {.smaller}
 
 What happens when $Var[\vec{Y}|\boldsymbol{X}]$ is [NOT the same]{.alert} across all observations? What if it varies by $u_i$?

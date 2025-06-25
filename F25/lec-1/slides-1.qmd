@@ -330,7 +330,7 @@ What is a way to handle clustering in an (individual-level) analysis?
 
 [Could ignore it and perform regular regression/t-test]{.alert}
 
-$$Y_{j} = \beta_0 + \beta_1 U_{j} + \epsilon_{j}$$
+$$Y_{j} = \beta_0 + U_{j} \beta_1 + \epsilon_{j}$$
 
 -   $Y_{j}$ is outcome for individual $j$
 
@@ -348,7 +348,7 @@ What is a way to handle clustering in an (individual-level) analysis?
 
 [Could perform separate regressions/t-tests for each cluster]{.alert}
 
-$$Y_{ij} = \beta_{0i} + \beta_{1i} U_{ij} + \epsilon_{ij}$$
+$$Y_{ij} = \beta_{0i} + U_{ij} \beta_{1i} + \epsilon_{ij}$$
 
 -   $Y_{ij}$ is outcome for individual $j$ in cluster $i$
 
@@ -366,7 +366,7 @@ What is a way to handle clustering in an (individual-level) regression?
 
 [Could add cluster membership as model covariate]{.alert}
 
-$$Y_{ij} = \beta_0 + \beta_1 U_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
+$$Y_{ij} = \beta_0 + U_{ij} \beta_1 + C^{(i)}_{ij} \gamma_i + \epsilon_{ij}$$
 
 -   $Y_{ij}$ is outcome for individual $j$ in cluster $i$
 
@@ -388,7 +388,7 @@ What is a way to handle clustering in an (individual-level) regression?
 
 [Could add cluster membership as model covariate (modified)]{.alert}
 
-$$Y_{ij} = \beta_1 U_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
+$$Y_{ij} = U_{ij} \beta_1 + C^{(i)}_{ij} \gamma_i + \epsilon_{ij}$$
 
 -   $Y_{ij}$ is outcome for individual $j$ in cluster $i$
 
@@ -406,7 +406,7 @@ Another approach is to conduct the data analysis at the cluster level
 
 -   Instead of individual-level outcomes/predictors, roll these up to [cluster-level averages]{.alert}
 
-$$\bar{Y}_{i} = \beta_1 \bar{U}_{i} + \epsilon_{i}$$
+$$\bar{Y}_{i} = \bar{U}_{i} \beta_1 + \epsilon_{i}$$
 
 -   $\bar{Y}_{i}$ is the mean outcome in cluster $i$
 

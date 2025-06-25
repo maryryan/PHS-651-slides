@@ -939,6 +939,30 @@ September 5, 2024
 </div>
 </div>
 </div>
+</section><section id="review-simple-slopes" class="slide level2"><h2>Review: simple slopes</h2>
+<p>What if we want to compare subgroups that involve a combination of covariates?</p>
+<ul>
+<li><p>We call these <span class="alert">simple slopes</span> or <span class="alert">linear contrasts</span></p></li>
+<li><p>Let’s say we want to compare a group that has <span class="math inline">\(U=X=Z=0\)</span> to a group that has <span class="math inline">\(U=X=1\)</span></p></li>
+</ul>
+<p><span class="math display">\[Y_i = \beta_0 + U_i\beta_1 + X_i\beta_2 + Z_i\beta_3 + \epsilon_i\]</span></p>
+<p>Finding the estimate for this is relatively easy</p>
+<ul>
+<li><p>Just combine the estimates of the individual regression parameters: <span class="math inline">\((\hat{\beta}_1 + \hat{\beta}_2)\)</span></p></li>
+<li><p>Could also do this in a linear algebra way: <span class="math display">\[\begin{align*}
+&amp;L=(0,1,1,0)\\
+&amp;L \hat{\vec{\beta}} = (0,1,1,0) \begin{pmatrix}\hat{\beta}_0\\ \hat{\beta}_1\\ \hat{\beta}_2\\ \hat{\beta}_3\\\end{pmatrix} = (\hat{\beta}_1 + \hat{\beta}_2)
+\end{align*}\]</span></p></li>
+</ul></section><section id="review-simple-slopes-1" class="slide level2"><h2>Review: simple slopes</h2>
+<p><span class="math display">\[Y_i = \beta_0 + U_i\beta_1 + X_i\beta_2 + Z_i\beta_3 + \epsilon_i\]</span></p>
+<p>However, we can’t just add up the SE estimates to get the subgroup SE</p>
+<ul>
+<li><p>We have to incorporate the covariance between the parameters</p></li>
+<li><p>Easiest way to do this is with linear algebra:</p></li>
+</ul>
+<p><span class="math display">\[\begin{align*}SE &amp;= \sqrt{\left(LCov[\hat{\beta}]L^T\right)}\\
+&amp;= \sqrt{\sigma^2_{b1} + \sigma^2_{b2} + 2cov(\hat{\beta}_1, \hat{\beta}_2)}\end{align*}\]</span></p>
+<p>This means a <span class="math inline">\((1-\alpha)\times100\)</span>% model-based confidence interval for <span class="math inline">\((\hat{\beta}_1 + \hat{\beta}_3)\)</span> is: <span class="math display">\[(\hat{\beta}_1 + \hat{\beta}_2) \pm \sqrt{\left(LCov[\hat{\beta}]L^T\right)} \times Z_{1-\alpha/2}\]</span></p>
 </section><section id="review-robust-variance" class="slide level2 smaller"><h2>Review: robust variance</h2>
 <p>What happens when <span class="math inline">\(Var[\vec{Y}|\boldsymbol{X}]\)</span> is <span class="alert">NOT the same</span> across all observations? What if it varies by <span class="math inline">\(u_i\)</span>?</p>
 <ul>

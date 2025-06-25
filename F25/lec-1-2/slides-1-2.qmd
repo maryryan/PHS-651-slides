@@ -50,13 +50,13 @@ library(qrcode)
 
 ::: {.absolute bottom=50 left=260 width=1500}
 
-Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-2/slides-2>
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-1-2/slides-1-2>
 
 :::
 
 ::: {.absolute bottom=0 left=100 width=150}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
-plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-2/slides-2"))
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-1-2/slides-1-2"))
 ```
 :::
 

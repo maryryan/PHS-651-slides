@@ -1,0 +1,715 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      auto-stretch: false
+execute: 
+   eval: true
+   echo: true
+---
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+```
+<h1> Lecture 2.1: Non-normal outcomes, correlated data, and conditional models </h1>
+
+<h2> PHS 651: Advanced regression methods </h2>
+
+<hr>
+
+<h3> Mary Ryan Baumann, PhD </h3>
+
+<h3> September 16, 2025 </h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=50 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-3/slides-3>
+
+:::
+
+::: {.absolute bottom=0 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-3/slides-3"))
+```
+:::
+
+---
+
+## Recap: linear mixed effect models
+
+One way to account for clustering in analysis is with a [linear mixed effects]{.alert} model
+$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+- $\boldsymbol{X}_i\vec{\beta}$ are the [fixed effects]{.alert} representing the mean responses for cluster $i$
+
+- $\vec{Z}_ib_{0i}$ are the [random effects]{.alert} accounting for random between-cluster variation
+
+- $\vec{\epsilon}_i$ is the regular between-individual variation
+
+. . .
+
+The [fixed effects]{.alert} are shared across everyone in the sample, while the [random effects]{.alert} are unique to a particular cluster
+
+Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they are comparing 2 individuals with the same cluster membership
+
+- Often referred to as having individual-specific or cluster-specific interpretation
+
+. . .
+
+[We can also extend this model to non-continuous/non-Normal outcome data]{.alert}
+
+---
+
+## 552 review: logistic regression
+
+If our outcome for an individual $j$, $Y_{j}$, is [binary]{.alert}, we can model it using a logistic regression:
+$$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} = \beta_0 + U_j\beta_1 + \epsilon_j$$
+
+- We assume $Y_j \sim \text{Binomial}(p_j)$
+
+   - $E[Y_j] = p_j$
+   
+- The logit function $\log\left(\frac{x}{1-x}\right)$ acts as the [link]{.alert} between $E[Y_j]$ and the linear model $\boldsymbol{X}_j\vec{\beta}$
+
+   - $\left(\frac{p_j}{1-p_j}\right)$ are known as the [odds]{.alert} of $u=1$ compared to $u=0$
+
+---
+
+## 522 review: logistic regression
+
+If our outcome for an individual $j$, $Y_{j}$, is [binary]{.alert}, we can model it using a logistic regression:
+$$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} = \beta_0 + U_j\beta_1 + \epsilon_j$$
+
+- $\beta_1$ tells us about the [log odds]{.alert}:
+
+$$\beta_1 = \log\left(\frac{p(u=1)}{1-p(u=1)}\right) - \log\left(\frac{p(u=0)}{1-p(u=0)}\right)$$
+
+- $e^{\beta_1}$ tells us about the [odds ratio]{.alert}:
+
+$$e^{\beta_1} = \frac{\text{odds}(u=1)}{\text{odds}(u=0)}=\frac{\left(\frac{p(u=1)}{1-p(u=1)}\right)}{\left(\frac{p(u=0)}{1-p(u=0)}\right)}$$
+
+---
+
+## 522 review: logistic regression
+
+Logistic regression is solving 2 problems for us:
+
+1. Using our Binomial distribution assumptions to handle non-constant variance in binary data
+
+   - Remember, variance of binary data is a function of its mean!
+
+2. Transforms the outcome so we don't have to worry about predictions going beyond the range of binary data (above 1 or below 0)
+
+. . .
+
+These are common problems when analyzing many types of non-Normal data that OLS doesn't accommodate
+
+- Logistic regression is a specific example of a broader class of [generalized linear models]{.alert}
+
+
+---
+
+## Generalized linear models
+
+In the independent observation setting, many types of data are modeled using a common [generalized linear model]{.alert} (GLM) structure
+
+$$g(Y_j) = \boldsymbol{X}_j\vec{\beta} + \epsilon_j$$
+
+- $g(\cdot)$ is known as the [link function]{.alert} because it *links* a linear model on the righthand side to the outcome on the lefthand side
+
+- $\epsilon_j$ will still be Normally distributed, but its variance $\sigma^2_{\epsilon}$ will match the distribution of $Y_j$
+
+---
+
+## Generalized linear models
+
+In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
+$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0$$
+
+
+where
+
+- The mean of the outcome $E[Y_j]=\mu_j(\vec{\beta})$ is a function of $\vec{\beta}$
+
+- The variance of the outcome $Var[Y_j] = v_j$ is some function $v_j$
+
+. . .
+
+- The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ ($\partial f(y_j)/\partial \beta$)
+
+---
+
+## Generalized linear models
+
+In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
+$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0$$
+
+Look similar?
+
+$$\sum_{j=1}^n\boldsymbol{X}^T\sigma^2[Y_j - \boldsymbol{X}\vec{\beta}]=0 $$
+
+. . .
+
+OLS is a type of GLM!
+
+- $E[Y_j] = \mu_j(\beta) = \boldsymbol{X}\vec{\beta}$
+
+   - $\left(\frac{\partial \mu_j}{\partial \beta}\right) = \boldsymbol{X}$
+
+- $Var[Y_j] = v_j = \sigma^2$
+
+---
+
+## Generalized linear models
+
+In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
+$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \beta}\right)^T v_j^{-1}[Y_j - \mu_j(\beta)] = 0$$
+
+- This estimating equation is based on the [likelihood function]{.alert} associated with the distribution we assume the outcome is coming from
+
+   - Many types of data distributions have likelihoods with a similar form called the [exponential family form]{.alert} - GLMs exploits this
+   
+   - This is how we get types of regression models such as OLS, logistic, and log-linear (Poisson)
+
+---
+
+## Exponential family
+
+Exponential family distributions share some common statistical properties
+
+- The expectation of $Y_j$, $E[Y_j] = \mu_j(\beta)$ can be transformed by a link function $g(\cdot)$ so that it is *linearly* related to the covariates
+$$g(\mu_j) = \boldsymbol{X}\vec{\beta}$$
+
+   - Some types of exponential family distributions may have multiple link functions associated with it (i.e., Bernoulli)
+
+- Variance of $Y_j$ can be expressed in terms of
+$$\text{Var}[Y_j] = \phi v(\mu_j),$$
+
+   - $\phi$ is a scale parameter $>0$
+   
+   - $v(\mu_j)$ is the variance function that describes how the outcome variance $\text{Var}[Y_j]$ is related to the mean of the outcome $\mu_j$
+   
+      - If the mean and variance are independent, this will be 1
+   
+---
+
+## Exponential family and GLMs
+
+| Distribution | Var. function $v(\mu)$ | Link function                                                                     |
+|--------------|------------------------|-----------------------------------------------------------------------------------|
+| Normal       | $v(\mu)=1$             | Identity: $g(\mu) = \mu = \boldsymbol{X}_i\vec{\beta}$                            |
+| Bernoulli    | $v(\mu)=\mu(1-\mu)$    | Logit: $g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_i\vec{\beta}$ |
+| Poisson      | $v(\mu)=\mu$           | Log: $g(\mu) = \log(\mu)= \boldsymbol{X}_i\vec{\beta}$                            |
+
+. . .
+
+- We'll focus on binary/Bernoulli/Binomial data today and circle back to count/Poisson data later
+
+---
+
+## Exponential family and GLMs: examples
+
+Normal distribution
+
+- Assume that $g(\cdot)$ is the identity function $g(\mu) = \mu$
+
+- Model is then
+
+$$g(E[Y_i]) = \mu_i = \boldsymbol{X}_i\vec{\beta}$$
+
+a standard linear regression model
+
+- Variance is $\text{Var}[Y_i] = \phi = \sigma^2$ 
+
+   - $v(\mu_i) = 1$ (independent of mean)
+
+---
+
+## Exponential family and GLMs: examples
+
+Bernoulli distribution
+
+- Assume that $g(\cdot)$ is the logit function $g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)$
+
+- Model is then
+
+$$g(E[Y_i]) = \log\left(\frac{\mu_i}{1-\mu_i}\right) = \boldsymbol{X}_i\vec{\beta}$$
+
+a logistic regression model
+
+- Variance is $\text{Var}[Y_i] = v(\mu_i) = \mu_i(1-\mu_i)$ (*dependent* on mean)
+
+   - $\phi = 1$
+<!-- ## Exponential family -->
+
+<!-- Many common types of data distributions belong to a family called the [exponential family]{.alert} -->
+
+<!-- - Called such because their likelihoods can be written in a common form: -->
+<!-- $$f(y_i)= \exp\left\{\frac{[y_i\theta_i - \psi(\theta_i)]}{\varphi} + c(y_i,\varphi)\right\}$$ -->
+
+<!--    - $\theta_i$ is the natural parameter -->
+
+<!--    - $\psi(\cdot)$ related $\theta_i$ to $E[Y_i]$ through $E[Y_i]=\partial\psi(\theta_i)/\partial \theta_i$ -->
+
+<!--    - $\varphi$ is a variance scaling parameter -->
+
+<!--    - $c(y_i,\varphi)$ is a catch-all for everything else -->
+
+<!-- --- -->
+
+<!-- ## Exponential family examples -->
+
+<!-- Normal: $\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left\{-\frac{(y_i-\mu_i)^2}{2\sigma^2}\right\}=\exp\left\{\frac{y_i\mu_i - 1/2\mu_i^2}{\sigma^2} -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}\right\}$ -->
+
+<!-- - $\theta_i = \mu_i$ -->
+
+<!-- - $\psi(\theta_i) = 1/2 \mu_i^2$ -->
+
+<!-- - $\varphi = \sigma^2$ -->
+
+<!-- - $c(y_i,\varphi) = -\frac{1}{2} \log(2\pi\sigma^2)-\frac{y_i^2}{2\sigma^2}$ -->
+
+<!-- --- -->
+
+<!-- ## Exponential family examples -->
+
+<!-- Binomial: ${n_i\choose n_i y_i}\pi_i^{n_i y_i})(1-\pi_i)^{n_i - n_i y_i} = \exp\left\{\frac{y_i \theta_i - \log[1+\exp(\theta_i)]}{1/n_i} + \log\left[{n_i \choose n_i y_i} \right]\right\}$ -->
+
+<!-- - $\theta_i = \log\left[\frac{\pi_i}{1-\pi_i}\right]$ -->
+
+<!-- - $\psi(\theta_i) = \log[1+\exp(\theta_i)]$ -->
+
+<!-- - $\varphi = 1/n_i$ -->
+
+<!-- - $c(y_i,\theta_i) = \log\left[{n_i \choose n_i y_i} \right]$ -->
+
+<!-- --- -->
+
+<!-- ## Exponential family examples -->
+
+<!-- Poisson: $\frac{\exp\{-\mu_i\}\mu_i^{y_i}}{y_i!} = \exp\{y_i\log(\mu_i) - \mu_i - \log(y_i!)\}$ -->
+
+<!-- - $\theta_i = \log(\mu_i)$ -->
+
+<!-- - $psi(\theta_i) = \exp(\theta_i)$ -->
+
+<!-- - $\varphi = 1$ -->
+
+<!-- - $c(y_i, \theta_i) = -\log(y_i!)$ -->
+   
+---
+
+## Generalized linear mixed models {.smaller}
+
+We can also use the idea of GLMs in LMEs to model data that is both *clustered* and *non-Normal*
+
+- We call this hybrid a [generalized linear mixed model]{.alert} (GLMMs)
+
+. . .
+
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+- Assumes $[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]$ is distributed as a member of the exponential family
+   
+- We'll use a distribution assumption to assume link function $g(\cdot)$ and the form of within-cluster variance $Var[Y_{ij}|\boldsymbol{X}_i,b_{0i}]$
+
+---
+
+## Generalized linear mixed models {.smaller}
+
+We can also use the idea of GLMs in LMEs to model data that is both *clustered* and *non-Normal*
+
+- We call this hybrid a [generalized linear mixed model]{.alert} (GLMMs)
+
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+- Just as with Normally-distributed outcomes, the random intercepts will still give us an exchangeable covariance structure
+
+$$\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}$$
+
+   - The difference is that the form of $Var[Y_{ij}|\boldsymbol{X}_i,b_{0i}] = Var[\epsilon_{ij}] = \sigma^2_\epsilon$ will depend on the distribution of $Y_{ij}$
+
+```{r, eval=F, echo=F}
+library(MASS)
+
+## fit our GLMM ##
+glmm_fit <- glmmPQL( y ~ w, 
+                     random= ~ 1 | cluster_id,
+                     family=binomial,
+                     data=df )
+
+## get model summary ##
+summary(glmm_fit)
+```
+
+---
+
+## Logistic linear mixed models
+
+Let's be more specific
+
+- Say we have $\vec{Y}_i$ that is distributed Bernoulli with probability of success $p_i$
+
+- We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
+
+[What would our model look like?]{.alert}
+
+---
+
+## Logistic linear mixed models
+
+Let's be more specific
+
+- Say we have $\vec{Y}_i$ that is distributed Bernoulli with probability of success $p_{ij}$
+
+- We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
+
+[What would our model look like?]{.alert}
+
+$$\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \epsilon_{ij}$$
+
+where $b_{0i} \sim N(0, \sigma^2_b)$ and $\epsilon_{ij} \sim \left(0, p_{ij}(1-p_{ij})\right)$
+
+- We usually estimate $Var[\epsilon_{ij}]$ as $p(1-p)$
+
+---
+
+## Some notes
+
+In order to estimate regression coefficients from the likelihood function for a GLMM, we usually need to do some approximations
+
+- There are 2 ways to do this:
+
+   1. Approximate maximum likelihood (penalized quasi-likelihood)
+
+   2. Approximate the integral (Gaussian quadrature)
+
+. . .
+
+- Either method doesn't perform well when you have small number of events per cluster, better for count data
+
+   - Method 1 is the worse of the two in small event scenario
+   
+- Method 2 can be computationally intense/expensive
+
+---
+
+## Some notes
+
+There are 2 ways to approximate estimates:
+
+   1. Approximate maximum likelihood (penalized quasi-likelihood)
+   
+   - `glmmPQL()` in R and `PROC GLIMMIX` in SAS
+      
+      - Results can be especially unreliable (and different by software) if there are a small number of events per cluster
+
+   2. Approximate the integral (Gaussian quadrature)
+   
+   - `glmmML()`, `glmm()`, and `glmer()` in R
+      
+      - First 2 can't extend to the longitudinal models we'll get to later
+   
+   - `PROC NLMIXED`, `PROC GLIMMIX METHOD=QUAD(QPOINTS=50)` in SAS
+   
+      - Can extend to longitudinal models, but can take a while to run
+
+---
+
+## Example: cancer remission
+
+<!-- https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/ -->
+
+Say we want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment
+
+- simulated dummy data from [UCLA](https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/)
+
+- patients clustered by physician
+
+- adjust for cancer stage as confounding factor (more experienced physicians may get patients with more advanced cancer)
+
+. . .
+
+Our (loose) model structure is then:
+
+$$\text{logit}(E[\text{remission}_{ij}]) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij})$$
+
+---
+
+## Example: cancer remission
+
+```{r cancer data cleaning, echo=F}
+cancer <- read.csv("https://stats.idre.ucla.edu/stat/data/hdp.csv")
+
+cancer <- within(cancer, {
+  Married <- factor(Married, levels = 0:1, labels = c("no", "yes"))
+  DID <- factor(DID)
+  HID <- factor(HID)
+  CancerStage <- factor(CancerStage)
+})
+
+cancer <- cancer %>% 
+   as.data.frame() %>% 
+   rename(doc_ID=DID)
+```
+
+Let's get an idea of our data...
+
+```{r cancer glimpse}
+cancer %>% 
+   group_by(doc_ID) %>% 
+   summarize(n=n(), prop_remission=mean(remission, na.rm=T), mean_exp = mean(Experience, na.rm=T),
+             prop_stageI = mean(CancerStage=="I", na.rm=T), prop_stageII = mean(CancerStage=="II", na.rm=T),
+             prop_stageIII = mean(CancerStage=="III", na.rm=T), prop_stageIV = mean(CancerStage=="IV", na.rm=T))
+```
+
+---
+
+## Example: cancer remission
+
+Now we should see if there's any evidence of clustering
+
+```{r cancer icc, cache=TRUE}
+library(ICCbin)
+
+# get ICC for remission outcomes - this function can take a while to run #
+iccbin( cid = doc_ID, y = remission, data = cancer,
+        method = "rm", ci.type = "rm" )
+```
+
+. . .
+
+- Decent amount of clustering!
+
+---
+
+## Example: cancer remission
+
+Now let's see what a non-clustered logistic regression would get us:
+
+```{r cancer logistic}
+logistic_fit <- glm( remission ~ Experience + factor(CancerStage),
+         family = binomial(link="logit"),
+         data = cancer)
+
+summary(logistic_fit)
+
+```
+
+:::: {.columns}
+
+::: {.column width="70%"}
+- $e^{\beta_1}$: `r round(exp(summary(logistic_fit)$coefficients[2,1]), 4)`
+
+   - 95% CI: (`r round(exp(summary(logistic_fit)$coefficients[2,1] - summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary(logistic_fit)$coefficients[2,1] + summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)`)
+   
+   - [Interpretation]{.alert}: [Cancer patients have an estimated 8.75% increased odds of going into remission if they have a physician with 1 year of experience compared to 0 years, cancer stage held constant. We are 95% confident the true odds is between `r (round(exp(summary(logistic_fit)$coefficients[2,1] - summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100` and `r (round(exp(summary(logistic_fit)$coefficients[2,1] + summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100`%.]{.fragment}
+:::
+
+::: {.column width="30%"}
+::: {.fragment}
+[Can we trust this estimate?]{.alert}
+:::
+
+::: {.fragment}
+- Assumptions: correct mean model; [independent]{.alert} observations
+:::
+:::
+
+::::
+
+---
+
+## Example: cancer remission
+
+Now what about a logistic GLMM with random intercepts by physician:
+
+```{r cancer glmer}
+library(lme4)
+glmm_fit <- glmer( remission ~ Experience + CancerStage + (1 | doc_ID), family = binomial, data = cancer, 
+         control=glmerControl(optimizer="bobyqa") )
+summary( glmm_fit )$coefficients
+
+```
+
+:::: {.columns}
+
+::: {.column width="60%"}
+Logistic GLMM results:
+
+- $e^{\beta_1}$: `r round(exp(summary(glmm_fit)$coefficients[2,1]), 4)`
+
+   - 95% CI: (`r round(exp(summary(glmm_fit)$coefficients[2,1] - summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary(glmm_fit)$coefficients[2,1] + summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)`)
+   
+   - [Interpretation]{.alert}: [Cancer patients have an estimated 11.35% increased odds of going into remission if they have a physician with 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between `r (round(exp(summary(glmm_fit)$coefficients[2,1] - summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100` and `r (round(exp(summary(glmm_fit)$coefficients[2,1] + summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100`%.]{.fragment}
+
+:::
+
+::: {.column width="40%"}
+Compare to what we had with the unclustered logistic model:
+
+- $e^{\beta_1}$: `r round(exp(summary(logistic_fit)$coefficients[2,1]), 4)`
+
+   - 95% CI: (`r round(exp(summary(logistic_fit)$coefficients[2,1] - summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary(logistic_fit)$coefficients[2,1] + summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)`)
+:::
+
+::::
+
+---
+
+## Example: cancer remission
+
+A brief comparison of `glmmPQL` vs `glmer`:
+
+```{r cancer pql}
+library(MASS)
+pql_fit <- glmmPQL( remission ~ Experience + CancerStage,
+         random = ~ 1 | doc_ID, family = binomial, data = cancer, 
+         verbose = F )
+summary( pql_fit )$tTable
+
+```
+
+```{r cancer glmer2}
+summary(glmm_fit)$coefficients
+```
+
+---
+
+## Alternate link functions for binary data
+
+Binary outcomes are special in that there are several alternative link functions you can use
+
+- The [logit]{.alert} link is very common
+   
+   - Gives us odds ratios and log-odds ratios for $\beta_1$
+
+- The [probit]{.alert} link is sometimes used in certain fields for prediction
+   
+   - Function is the inverse Normal CDF
+   
+   - Coefficients are very difficult to interpret
+
+- The [log]{.alert} link and [identity]{.alert} links also get used
+
+   - The former gives us risk ratios for $\beta_1$, while the latter gives us risk differences for $\beta_1$
+
+---
+
+## Marginal effects in GLMMs
+
+Last week we noted that marginal and conditional effects are *identical* in LMEs
+
+- This is not the case for all GLMMs
+
+Take a logistic mixed effects model:
+
+$$\text{logit}(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i$$
+
+. . .
+
+- The conditional mean of our outcome is then:
+$$\text{logit}(\mu_i)=\text{logit}(E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}$$
+
+---
+
+## Marginal effects in GLMMs
+
+In order to get the marginal effects, we would need to inverse-transform the outcome (undo the logit function):
+$$E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}$$
+
+. . .
+
+and then take the marginal expectation of that:
+$$\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&=E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right]\end{align*}$$
+
+. . .
+
+- Clearly, $E[\vec{Y}_i|\boldsymbol{X}_i]$ [is not the same as]{.alert} $\frac{\exp(\boldsymbol{X}_i\vec{\beta})}{1+\exp(\boldsymbol{X}_i\vec{\beta})}$
+
+. . .
+
+This phenomenon is known as [non-collapsibility]{.alert}
+
+---
+
+## Marginal effects in (identity link) GLMMs
+
+But what if had a GLMM with a binary outcome and an identity link?
+
+$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i$$
+
+. . .
+
+- The conditional mean of our outcome is then:
+$$E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}$$
+
+. . .
+
+- Since $g(\vec{Y}_i) = \vec{Y}_i$, there's no function to "undo" to isolate $E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]$
+
+- So,
+
+$$\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&=E\left[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}\right]\\
+&=\boldsymbol{X}_i\vec{\beta}\end{align*}$$
+
+   - The conditional and marginal effects are identical again!
+
+---
+
+## Marginal effects in GLMMs
+
+So what happens when we have transformed outcomes and want marginal effects?
+
+. . .
+
+- You could integrate out the random effects:
+$$E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right] = \int_{-\infty}^{\infty}\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})} f(b_{0i})db_{0i}$$
+
+   - where $f(b_{0i})$ is the pdf for the random intercept
+   
+but this generally doesn't end up with a nice formulaic solution...
+
+. . .
+
+- You could use an approximation:
+$$\text{logit}(\vec{Y}_i) = \frac{\boldsymbol{X}_i\vec{\beta}}{\sqrt{(1+0.346\sigma^2_b)}}$$
+
+but this is very sensitive to any model misspecification and can be biased
+
+. . .
+
+Maybe what we need are specific [marginal models]{.alert} that incorporate clustering... (stay tuned for next week)

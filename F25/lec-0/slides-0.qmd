@@ -106,22 +106,22 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
 :::: {.columns}
 
 ::: {.column width="65%"}
-[Teaching assistant]{.alert}: xxx
+[Teaching assistant]{.alert}: Eugene Kahng
 
-- xxx
+- 3rd year Epidemiology PhD student
 
 - xxx
 :::
 
 ::: {.column width="30%"}
-![*TA*](emma.jpg){width="75%"}
+![*TA*](TA.jpg){width="75%"}
 :::
 ::::
 
 ::: {.absolute bottom=350}
 [Contact]{.alert}
 
-- Email: [xxx@wisc.edu](mailto:xxx@wisc.edu)
+- Email: [ekahng2@wisc.edu](mailto:ekahng2@wisc.edu)
 
 - Office hours: xxx
 :::
@@ -182,13 +182,13 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
 
 - I have an open-door policy - drop by any time my door is open to discuss class or not-class topics
 
-   - But email/schedule if you want to guarantee time (outside OH)
+   - But email/schedule if you want to guarantee time (outside OH): <https://calendly.com/mary-m-ryan/>
 
 ---
 
 ## Course logistics
 
-[Canvas site]{.alert}: <https://canvas.wisc.edu/courses/426488>
+[Canvas site]{.alert}: <https://canvas.wisc.edu/courses/475593>
 
 - Where you'll find basically all documents associated with this course
 
@@ -197,8 +197,10 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
 [Lecture slides]{.alert}
 
 - PDF copies of lecture slides found on Canvas
+   
+   - Clean ones available before class, annotated ones available after class
 
-- HTML versions (load in web browser) hosted on Github
+- HTML versions (load in web browser) hosted on Github (clean only)
 
    - I use a generic format for the web address:\
    [https://maryryan.github.io/PHS-651-slides/F25/lec-LectureNumber/slides-LectureNumber]{.alert}
@@ -290,16 +292,14 @@ Non-independence we [won't]{.alert} be getting into
 
 Upon successful completion of the course, students will be able to:
 
-1.	Extend the knowledge of regression analysis beyond ordinary linear and logistic regression models
+1. Understand the features of correlated data, their role in epidemiologic study, and their implications in drawing inference
 
-2.	Understand the features of correlated data, their role in epidemiologic study, and their implications in drawing inference
-
-3.	State the assumptions underlying linear mixed effect, generalized linear mixed effect, generalized estimating equation, and survival regression models, recognize and address
+2.	State the assumptions underlying linear mixed effect, generalized linear mixed effect, generalized estimating equation, and survival regression models, recognize and address
 violations of those assumptions, and estimate and interpret regression models to answer epidemiologic and public health research questions in correlated and longitudinal data settings
 
-4.	Implement the inference procedures to solve real-world problems using statistical packages such as SAS and R
+3.	Implement the inference procedures to solve real-world problems using statistical packages such as SAS and R
 
-5.	Interpret and present the analytic results to answer substantive questions
+4.	Interpret and present the analytic results to answer substantive questions
 
 ---
 
@@ -314,8 +314,6 @@ violations of those assumptions, and estimate and interpret regression models to
 - Marginal modeling : generalized estimationg equations (GEEs)
 
 - Modeling repeated measures: longitudinal data, multi-period cross-sectional data (panel data)
-
-- Multilevel modeling (hopefully)
 
 - Time-to-event/survival analysis
 
@@ -347,6 +345,8 @@ violations of those assumptions, and estimate and interpret regression models to
    
    - You can use whatever software you want for your assignments, just know there are softwares I may be less good at providing support in
    
+      - I can give you partial points if I can find where you went wrong in the code, but can't give partial points if you use software I can't read
+   
 ---
 
 ## How you'll be evaluated
@@ -367,11 +367,11 @@ violations of those assumptions, and estimate and interpret regression models to
 
 [Final data analysis project]{.alert} (45%)
 
-- Intermediate milestone assignments (10% / 40%)
+- Intermediate milestone assignments (10% / 45%)
 
-- 10-15 minute oral presentation (10% / 40%)
+- 8-10 minute oral presentation (10% / 45%)
 
-- Final written report (25% / 40%)
+- Final written report (25% / 45%)
 
 ---
 
@@ -392,6 +392,8 @@ I've made the following full e-books available on the Canvas site:
 - [Beyond Multiple Linear Regression: Applied Generalized Linear Models and Multilevel Models in R](https://bookdown.org/roback/bookdown-BeyondMLR/) (online textbook)
 
 - [Applied Longitudinal Analysis]{.alert}. 2011. Fitzmaurice GM, Laird NM, and Ware JH. John Wiley & Sons: Hoboken, New Jersey. ISBN: 9780470380277
+
+- [Survival Analysis: A Self-Learning Text]{.alert}. 2016. Moore, DF. Springer International Publishing: Switzerland. ISBN: 9783319312439
 :::
 
 ::: {.column width="50%"}
@@ -400,6 +402,8 @@ I've also scanned several chapters from books I could not find electronic copies
 - [Analysis of Longitudinal Data]{.alert}, 2nd edition. 2002. Diggle PJ, Heagerty P, Liang K, and Zeger SL. Oxford University Press: Oxford. ISBN: 9780198524847
 
 - [Data Analysis Using Regression and Multilevel/Hierarchical Models]{.alert}. 2007. Gelman A and Hill J. Cambridge University Press: New York. ISBN: 9780521686891
+
+- [Applied Survival Analysis Using R]{.alert}. 2012. Kleinbaum DG and Klein M. Springer Science+Business Media: New York. ISBN: 9781441966452
 :::
 ::::
 
@@ -474,6 +478,8 @@ Official stance of this course is that I don't condone the use of AI tools for a
    - Final written report
    
 - If you want to use this as a chance to test-drive/further your dissertation research, please do!
+
+- Note that pretty much any data used for this will require some cleaning -- don't leave this to the last minute!
 
 
 

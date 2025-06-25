@@ -26,90 +26,94 @@ library(dagitty)
 library(gridExtra)
 library(qrcode)
 ```
-<h1> Lecture 1: Correlated data </h1>
 
-<h2> PHS 651: Advanced regression methods </h2>
+<h1>Lecture 1: Correlated data</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
 
 <hr>
 
-<h3> Mary Ryan Baumann, PhD </h3>
+<h3>Mary Ryan Baumann, PhD</h3>
 
-<h3> September 9, 2025 </h3>
+<h3>September 9, 2025</h3>
 
 <br>
 
 ::: {style="font-size: 75%;"}
 **Recording disclosure**
 
-*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course's website.*
 
-*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click "stop video") so that Zoom does not record you.*
 
 *The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
 :::
 
-::: {.absolute bottom=50 left=260 width=1500}
-
+::: {.absolute bottom="50" left="260" width="1500"}
 Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-1/slides-1>
-
 :::
 
-::: {.absolute bottom=0 left=100 width=150}
+::: {.absolute bottom="0" left="100" width="150"}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-1/slides-1"))
 ```
 :::
 
----
+------------------------------------------------------------------------
 
 ## What is clustered/correlated data?
 
 When we talk about "correlated" or "clustered" data, we're most often talking about correlated/clustered [outcomes]{.alert}
 
-- This stems from one of our regression assumptions: that the *outcome values* for 2 observations will be independent
+-   This stems from one of our regression assumptions: that the *outcome values* for 2 observations will be independent
 
 . . .
 
-Informal definitions 
+Informal definitions
 
-- [Independent data]{.underline}: data where each observation of an outcome are not meaningfully correlated with other observations of the same outcome (given other covariates $\boldsymbol{X}$)
+-   [Independent data]{.underline}: data where each observation of an outcome are not meaningfully correlated with other observations of the same outcome (given other covariates $\boldsymbol{X}$)
 
-- [Clustered/Correlated data]{.underline}: data where each observation of an outcome has some kind of relationship to another set of observations of that outcome (given other covariates $\boldsymbol{X}$)
+-   [Clustered/Correlated data]{.underline}: data where each observation of an outcome has some kind of relationship to another set of observations of that outcome (given other covariates $\boldsymbol{X}$)
 
----
+------------------------------------------------------------------------
 
 ## What is clustered/correlated data?
 
 When we talk about "correlated" or "clustered" data, we're most often talking about correlated/clustered [outcomes]{.alert}
 
-- This stems from one of our regression assumptions: that the *outcome values* for 2 observations will be independent
+-   This stems from one of our regression assumptions: that the *outcome values* for 2 observations will be independent
 
-In other words...
+-   Outcomes with more than 1 dimension of sampling simultaneously
 
-- Outcomes are [independent]{.alert} if we can identify and adjust for all the covariates that would drive correlations between outcome observations to 0
+Can outcomes have more than one "level" of clustering?
 
-- Outcomes are [clustered/correlated]{.alert} if, for some reason or another, we *can't* identify or adjust for all the necessary covariates
+- Yes!
 
----
+- We'll focus on 2 levels for the most part
+
+------------------------------------------------------------------------
 
 ## What is clustered/correlated data?
 
 Some more informal definitions/descriptions
 
-- "Clustered data arise when the data from the whole study [can be classified]{.alert} into a number of different groups, referred to as clusters. [Each cluster contains multiple observations, giving the data a “nested” or “hierarchical” structure]{.alert}, with individual observations nested within the cluster." (Galbraith et al, 2010, ["A Study of Clustered Data and Approaches to Its Analysis"](https://doi.org/10.1523/JNEUROSCI.0362-10.2010))
+-   "Clustered data arise when the data from the whole study [can be classified]{.alert} into a number of different groups, referred to as clusters. [Each cluster contains multiple observations, giving the data a "nested" or "hierarchical" structure]{.alert}, with individual observations nested within the cluster." (Galbraith et al, 2010, ["A Study of Clustered Data and Approaches to Its Analysis"](https://doi.org/10.1523/JNEUROSCI.0362-10.2010))
 
+-   "...we might reasonably expect that measurements on [units within a cluster are more similar]{.alert} than measurements on units in different clusters." (Applied Longitudinal Analysis pg. 4)
 
-- "...we might reasonably expect that measurements on [units within a cluster are more similar]{.alert} than measurements on units in different clusters." (Applied Longitudinal Analysis pg. 4)
-   
-- AKA: nested/multilevel/hierarchical data
+-   AKA: nested/multilevel/hierarchical data
 
----
+Note that clustering is [different]{.alert} than a regular covariate
+
+- There are times where this distinction gets a little fuzzy
+
+------------------------------------------------------------------------
 
 ## What is clustered/correlated data?
 
 Remember in OLS where we assumed that observations were independent?
 
-- This meant that we assumed $Cov[Y_i, Y_j|\boldsymbol{X}]=0$ and:
+-   This meant that we assumed $Cov[Y_i, Y_j|\boldsymbol{X}]=0$ and:
 
 $$Cov[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{I} =  \begin{bmatrix}\sigma^2 & 0 & \dots & 0 \\
 0 & \ddots & \dots & 0 \\
@@ -123,41 +127,41 @@ $$Cov[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{I} =  \begin{bmatrix}\sigma^
 
 When data are [clustered]{.alert}, at least some $Cov[Y_i, Y_j|\boldsymbol{X}]\ne0$
 
-- All the off-diagonals might be non-0, or maybe only some
+-   All the off-diagonals might be non-0, or maybe only some
 
-- This is like saying that some observations have [shared information]{.alert}
+-   This is like saying that some observations have [shared information]{.alert}
 
-- This impacts our variance estimates for $\widehat{\beta}$ and our inference
+-   This impacts our variance estimates for $\widehat{\beta}$ and our inference
 
----
+------------------------------------------------------------------------
 
 ## Why is data clustered/correlated?
 
 Several potential reasons
 
-- Natural group membership
-   
-   - Physical/structural grouping
-   
-   - e.g., Household members, classroom students, eyes in a person's head
-   
-   - Things may be "done similarly" within each natural group
+-   Natural group membership
+
+    -   Physical/structural grouping
+
+    -   e.g., Household members, classroom students, eyes in a person's head
+
+    -   Things may be "done similarly" within each natural group
 
 . . .
 
-- Clustered by design
-   
-   - Exposure applied to entire group based on single characteristic
-   
-      - e.g., All residents of City X are exposed to a new policy
-   
-      - Exposure can be randomized or not
-   
-   - Cluster/multi-stage sampling
-      
-      - e.g., NHANES
+-   Clustered by design
 
----
+    -   Exposure applied to entire group based on single characteristic
+
+        -   e.g., All residents of City X are exposed to a new policy
+
+        -   Exposure can be randomized or not
+
+    -   Cluster/multi-stage sampling
+
+        -   e.g., NHANES
+
+------------------------------------------------------------------------
 
 ## How does clustering affect outcomes?
 
@@ -177,7 +181,7 @@ dagify(
   geom_dag_edges_diagonal()
 ```
 
----
+------------------------------------------------------------------------
 
 ## How does clustering affect outcomes?
 
@@ -199,7 +203,7 @@ dagify(
 
 ```
 
----
+------------------------------------------------------------------------
 
 ## How does clustering affect outcomes?
 
@@ -224,7 +228,7 @@ dagify(
 
 ```
 
----
+------------------------------------------------------------------------
 
 ## How does clustering affect outcomes?
 
@@ -248,29 +252,29 @@ dagify(
 
 <!-- Seaman S, Pavlou M, Copas A. Review of methods for handling confounding by cluster and informative cluster size in clustered data. Stat Med. 2014 Dec 30;33(30):5371-87. doi: 10.1002/sim.6277. Epub 2014 Aug 4. PMID: 25087978; PMCID: PMC4320764. -->
 
----
+------------------------------------------------------------------------
 
 ## Other issues from correlated data
 
 Even if clustering has no impact on the overall outcome or exposure averages:
 
-- Groups/clusters may not be the same size (informative cluster size)
+-   Groups/clusters may not be the same size (informative cluster size)
 
-- "Clustering" of data may also affect variance
+-   "Clustering" of data may also affect variance
 
-   - Some groups have higher/lower variation than others
-   
-   - Some groups may have higher/lower measurement error than others
+    -   Some groups have higher/lower variation than others
 
-   - This all breaks the [homoskedasticity]{.underline} assumption of OLS
+    -   Some groups may have higher/lower measurement error than others
 
-      - Recall PHS 552!
+    -   This all breaks the [homoskedasticity]{.underline} assumption of OLS
+
+        -   Recall PHS 552!
 
 Clustering also reduces the amount of [information]{.alert} we get from each individual data point
 
-- Means that we will need more data to draw conclusion with same level of precision
+-   Means that we will need more data to draw conclusion with same level of precision
 
----
+------------------------------------------------------------------------
 
 ## Measuring "clustered-ness"
 
@@ -278,49 +282,47 @@ How can we tell if data are clustered?
 
 . . .
 
-- Regular Pearson correlation only looks at variances between variables
+-   Regular Pearson correlation only looks at variances between variables
 
-   - Doesn't account for group means in any way
+    -   Doesn't account for group means in any way
 
-- Another metric we can use?
+-   Another metric we can use?
 
 . . .
 
 [Intracluster correlation coefficient]{.underline} (ICC): measure of within- vs. between-cluster variation
 
-- Cluster-specific mean: $\bar{y}_i = \frac{1}{n_i} \sum_{j=1}^{n_i} y_{ij}$
-   
-- Variation in cluster means: $\gamma^2 = \text{var}(\bar{y}_i)$
-   
-- Individual-level variation: $\sigma^2 = \text{var}(y_{ij})$
-   
-- ICC: $$\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}$$
+-   Cluster-specific mean: $\bar{y}_i = \frac{1}{n_i} \sum_{j=1}^{n_i} y_{ij}$
 
----
+-   Variation in cluster means: $\gamma^2 = \text{var}(\bar{y}_i)$
+
+-   Individual-level variation: $\sigma^2 = \text{var}(y_{ij})$
+
+-   ICC: $$\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}$$
+
+------------------------------------------------------------------------
 
 ## Measuring "clustered-ness"
 
 [Intracluster correlation coefficient]{.underline} (ICC): measure of within- vs. between-cluster variation
 
-- Cluster-specific mean: $\bar{y}_i = \frac{1}{n_i} \sum_{j=1}^{n_i} y_{ij}$
-   
-- Variation in cluster means: $\gamma^2 = \text{var}(\bar{y}_i)$
-   
-- Individual-level variation: $\sigma^2 = \text{var}(y_{ij})$
-   
-- ICC: $$\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}$$
+-   Cluster-specific mean: $\bar{y}_i = \frac{1}{n_i} \sum_{j=1}^{n_i} y_{ij}$
 
-In words:
-$$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}}= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}$$
+-   Variation in cluster means: $\gamma^2 = \text{var}(\bar{y}_i)$
 
----
+-   Individual-level variation: $\sigma^2 = \text{var}(y_{ij})$
+
+-   ICC: $$\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}$$
+
+In words: $$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}}= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}$$
+
+------------------------------------------------------------------------
 
 ## Clustering in data analysis
 
 What are some ideas about how we could handle clustering in an analysis?
 
-
----
+------------------------------------------------------------------------
 
 ## Clustering in individual-level data analysis
 
@@ -330,15 +332,15 @@ What is a way to handle clustering in an (individual-level) analysis?
 
 $$Y_{j} = \beta_0 + \beta_1 U_{j} + \epsilon_{j}$$
 
-   - $Y_{j}$ is outcome for individual $j$
-   
-   - $U_{j}$ is exposure for individual $j$
-   
+-   $Y_{j}$ is outcome for individual $j$
+
+-   $U_{j}$ is exposure for individual $j$
+
 . . .
 
 Do we see any issues with this approach?
 
----
+------------------------------------------------------------------------
 
 ## Clustering in individual-level data analysis
 
@@ -348,15 +350,15 @@ What is a way to handle clustering in an (individual-level) analysis?
 
 $$Y_{ij} = \beta_{0i} + \beta_{1i} U_{ij} + \epsilon_{ij}$$
 
-   - $Y_{ij}$ is outcome for individual $j$ in cluster $i$
-   
-   - $U_{ij}$ is exposure for individual $j$ in cluster $i$
-   
+-   $Y_{ij}$ is outcome for individual $j$ in cluster $i$
+
+-   $U_{ij}$ is exposure for individual $j$ in cluster $i$
+
 . . .
 
 Do we see any issues with this approach?
 
----
+------------------------------------------------------------------------
 
 ## Clustering in individual-level data analysis
 
@@ -366,19 +368,19 @@ What is a way to handle clustering in an (individual-level) regression?
 
 $$Y_{ij} = \beta_0 + \beta_1 U_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
 
-   - $Y_{ij}$ is outcome for individual $j$ in cluster $i$
-   
-   - $U_{ij}$ is exposure for individual $j$ in cluster $i$
-   
-   - $C^{(i)}_{ij}$ is whether individual $j$ in cluster $i$ is a member of cluster $i$
-   
-   - $\gamma_i$ is the effect of being in cluster $i$ on the outcome [compared to the reference group]{.alert}, for two individuals with the same level of exposure
-   
+-   $Y_{ij}$ is outcome for individual $j$ in cluster $i$
+
+-   $U_{ij}$ is exposure for individual $j$ in cluster $i$
+
+-   $C^{(i)}_{ij}$ is whether individual $j$ in cluster $i$ is a member of cluster $i$
+
+-   $\gamma_i$ is the effect of being in cluster $i$ on the outcome [compared to the reference group]{.alert}, for two individuals with the same level of exposure
+
 . . .
 
 Do we see any issues with this approach?
 
----
+------------------------------------------------------------------------
 
 ## Clustering in individual-level data analysis
 
@@ -388,27 +390,27 @@ What is a way to handle clustering in an (individual-level) regression?
 
 $$Y_{ij} = \beta_1 U_{ij} + \gamma_i C^{(i)}_{ij} + \epsilon_{ij}$$
 
-   - $Y_{ij}$ is outcome for individual $j$ in cluster $i$
-   
-   - $U_{ij}$ is exposure for individual $j$ in cluster $i$
-   
-   - $C^{(i)}_{ij}$ is whether individual $j$ in cluster $i$ is a member of cluster $i$
-   
-   - $\gamma_i$ is the mean outcome of cluster $i$ for those with exposure $=0$ 
+-   $Y_{ij}$ is outcome for individual $j$ in cluster $i$
 
----
+-   $U_{ij}$ is exposure for individual $j$ in cluster $i$
+
+-   $C^{(i)}_{ij}$ is whether individual $j$ in cluster $i$ is a member of cluster $i$
+
+-   $\gamma_i$ is the mean outcome of cluster $i$ for those with exposure $=0$
+
+------------------------------------------------------------------------
 
 ## Clustering in cluster-level data analysis
 
 Another approach is to conduct the data analysis at the cluster level
 
-- Instead of individual-level outcomes/predictors, roll these up to [cluster-level averages]{.alert}
+-   Instead of individual-level outcomes/predictors, roll these up to [cluster-level averages]{.alert}
 
 $$\bar{Y}_{i} = \beta_1 \bar{U}_{i} + \epsilon_{i}$$
 
-   - $\bar{Y}_{i}$ is the mean outcome in cluster $i$
-   
-   - $\bar{U}_{i}$ is mean exposure in cluster $i$
+-   $\bar{Y}_{i}$ is the mean outcome in cluster $i$
+
+-   $\bar{U}_{i}$ is mean exposure in cluster $i$
 
 . . .
 
@@ -416,21 +418,21 @@ Do we see any issues with this approach?
 
 . . .
 
-- Downside: removes ability of individual covariates to predict individual outcomes
+-   Downside: removes ability of individual covariates to predict individual outcomes
 
----
+------------------------------------------------------------------------
 
 ## Simpson's paradox
 
 Another issue with cluster-level analyses is the possibility for [Simpson's paradox]{.alert} ([BMLR 8.11](https://bookdown.org/roback/bookdown-BeyondMLR/ch-multilevelintro.html#multinecessary))
 
-- When trends seen among smaller groups disappear when groups are combined due to differences in group sizes
+-   When trends seen among smaller groups disappear when groups are combined due to differences in group sizes
 
-- We can't get a sense of the full picture if we only do an analysis at the cluster level
+-   We can't get a sense of the full picture if we only do an analysis at the cluster level
 
-[![*Illustration of Simpson's paradox, via Wikipedia*](Simpson's_paradox_continuous.svg){width="30%"}](https://en.wikipedia.org/wiki/File:Simpson%27s_paradox_continuous.svg)
+[![Illustration of Simpson\'s paradox, via Wikipedia](Simpson's_paradox_continuous.svg){width="30%"}](https://en.wikipedia.org/wiki/File:Simpson%27s_paradox_continuous.svg)
 
----
+------------------------------------------------------------------------
 
 ## Example: radon measurements in Minnesota
 
@@ -440,11 +442,11 @@ Let's see how these approaches differ with some actual data
 
 Say we're taking radon measurements in Minnesota houses and want to estimate whether the lowest floor we can measure on affects our readings
 
-- Basement measurements coded as `floor=0`; 1st floor measurements coded as `floor=1`
+-   Basement measurements coded as `floor=0`; 1st floor measurements coded as `floor=1`
 
 [Can we think of some ways in which this data might be clustered?]{.alert}
 
----
+------------------------------------------------------------------------
 
 ## Example: radon measurements in Minnesota
 
@@ -452,9 +454,9 @@ Let's see how these approaches differ with some actual data
 
 Say we're taking radon measurements in Minnesota houses and want to estimate whether the lowest floor we can measure on affects our readings
 
-- Basement measurements coded as `floor=0`; 1st floor measurements coded as `floor=1`
+-   Basement measurements coded as `floor=0`; 1st floor measurements coded as `floor=1`
 
-- Individual houses can be grouped in a number of ways, including [by county]{.alert}
+-   Individual houses can be grouped in a number of ways, including [by county]{.alert}
 
 . . .
 
@@ -480,8 +482,7 @@ radon.mn %>%
    print(n=85)
 ```
 
-
----
+------------------------------------------------------------------------
 
 ## Example: radon measurements in Minnesota
 
@@ -501,16 +502,15 @@ radon.mn %>%
    theme(text=element_text(size=30))
 ```
 
-- How do we think county membership might affect analysis of our question of interest?
+-   How do we think county membership might affect analysis of our question of interest?
 
----
+------------------------------------------------------------------------
 
 ## Example: radon measurements in Minnesota
 
 Let's see if we have any clustering...
 
-:::: {.columns}
-
+::: columns
 ::: {.column width="50%"}
 ```{r radon ICC}
 library(ICC)
@@ -521,36 +521,35 @@ ICCest(county,log_radon, data=radon.mn)
 :::
 
 ::: {.column width="50%"}
-::: {.fragment}
+::: fragment
 Breaking the output down:
 
-- Variation in cluster means (`vara`): `r round(ICCest(county,log_radon, data=radon.mn)$vara,4)`
+-   Variation in cluster means (`vara`): `r round(ICCest(county,log_radon, data=radon.mn)$vara,4)`
 
-- Individual-level (within-cluster) variation (`varw`): `r round(ICCest(county,log_radon, data=radon.mn)$varw, 4)`
+-   Individual-level (within-cluster) variation (`varw`): `r round(ICCest(county,log_radon, data=radon.mn)$varw, 4)`
 
-- Total variation: `r round((ICCest(county,log_radon, data=radon.mn)$varw+ICCest(county,log_radon, data=radon.mn)$vara),4)`
+-   Total variation: `r round((ICCest(county,log_radon, data=radon.mn)$varw+ICCest(county,log_radon, data=radon.mn)$vara),4)`
 
-- ICC = cluster mean variation/total variation: `r round((ICCest(county,log_radon, data=radon.mn)$vara/(ICCest(county,log_radon, data=radon.mn)$varw+ICCest(county,log_radon, data=radon.mn)$vara)),6)`
+-   ICC = cluster mean variation/total variation: `r round((ICCest(county,log_radon, data=radon.mn)$vara/(ICCest(county,log_radon, data=radon.mn)$varw+ICCest(county,log_radon, data=radon.mn)$vara)),6)`
 
-- 95% confidence interval: (`r round(ICCest(county,log_radon, data=radon.mn)$LowerCI,4)`, `r round(ICCest(county,log_radon, data=radon.mn)$Upper,4)`)
+-   95% confidence interval: (`r round(ICCest(county,log_radon, data=radon.mn)$LowerCI,4)`, `r round(ICCest(county,log_radon, data=radon.mn)$Upper,4)`)
 
-   - Not trivial...
+    -   Not trivial...
 :::
 :::
+:::
 
-::::
-
----
+------------------------------------------------------------------------
 
 ## Example: radon measurements in Minnesota
-:::: {.columns}
 
+::: columns
 ::: {.column width="60%"}
 We'll first fit without accounting for counties
 
-- AKA: "complete pooling" of data
+-   AKA: "complete pooling" of data
 
-::: {.fragment}
+::: fragment
 ```{r radon no cluster}
 # run OLS regression #
 radon_lm <- lm(log_radon ~ floor, data=radon.mn)
@@ -562,23 +561,21 @@ summary(radon_lm)
 :::
 
 ::: {.column width="40%"}
-::: {.fragment}
-- How would we interpret this result?
+::: fragment
+-   How would we interpret this result?
+:::
 :::
 :::
 
-::::
-
----
+------------------------------------------------------------------------
 
 ## Example: radon measurements in Minnesota
 
-:::: {.columns}
-
+::: columns
 ::: {.column width="60%"}
-Next we'll fit a separate regression for each county 
+Next we'll fit a separate regression for each county
 
-::: {.fragment}
+::: fragment
 ```{r radon stratified}
 
 # stratify dataset by county #
@@ -599,14 +596,13 @@ lapply(radon_seg_lm, function(x){
 :::
 
 ::: {.column width="40%"}
-::: {.fragment}
-- Is this helpful for us?
+::: fragment
+-   Is this helpful for us?
+:::
 :::
 :::
 
-::::
-
----
+------------------------------------------------------------------------
 
 ## Example: radon measurements in Minnesota
 
@@ -657,13 +653,13 @@ radon_seg_data %>%
 
 ```
 
----
+------------------------------------------------------------------------
 
 ## Example: radon measurements in Minnesota
 
 Now we'll look at fitting with counties, but without removing the intercept
 
-- AKA: "no pooling" of data
+-   AKA: "no pooling" of data
 
 . . .
 
@@ -674,15 +670,15 @@ summary(radon_cty_int_lm)
 
 ```
 
-- What changed from the last regression? The first regression?
+-   What changed from the last regression? The first regression?
 
----
+------------------------------------------------------------------------
 
 ## Example: radon measurements in Minnesota
 
 Finally we'll fit with counties, and without an intercept
 
-- Another example of a "no pooling" analysis
+-   Another example of a "no pooling" analysis
 
 . . .
 
@@ -692,9 +688,9 @@ radon_cty_lm <- lm(log_radon ~ floor + factor(county) - 1, data=radon.mn)
 summary(radon_cty_lm)
 ```
 
-- What changed from the last regression?
+-   What changed from the last regression?
 
----
+------------------------------------------------------------------------
 
 ## Example: radon measurements in Minnesota
 
@@ -719,9 +715,9 @@ radon.mn %>%
    theme(text=element_text(size=30))
 ```
 
-- Should we put the same level of trust in those county-specific effects?
+-   Should we put the same level of trust in those county-specific effects?
 
----
+------------------------------------------------------------------------
 
 ## Example: radon measurements in Minnesota
 
@@ -743,34 +739,34 @@ radon_ctylvl_lm <- lm(log_radon_mean ~ floor_prop, data=radon.mn.ctylvl)
 summary(radon_ctylvl_lm)
 ```
 
-- How would we interpret these results? How are they different from the results from our other strategies?
+-   How would we interpret these results? How are they different from the results from our other strategies?
 
----
+------------------------------------------------------------------------
 
 ## Problems
 
 What did we find?
 
-- Radon data clearly clustered by county, affecting distribution of log(radon) measurements, proportion of houses with/without basements, and number of observations
+-   Radon data clearly clustered by county, affecting distribution of log(radon) measurements, proportion of houses with/without basements, and number of observations
 
-- Effect of measurement floor changes depending on whether and how accounting for clustering
+-   Effect of measurement floor changes depending on whether and how accounting for clustering
+
+. . .
+
+-   Adding county as covariate to regression ("no pooling" analysis) seems like best solution... [or not...]{.fragment}
 
 . . .
 
-- Adding county as covariate to regression ("no pooling" analysis) seems like best solution... [or not...]{.fragment}
-   
-. . .
-   
-   - Violates a regression assumption that the number of parameters shouldn't be growing with the amount of data
-   
-      - Big issue when cluster sizes are small with respect to number of clusters
+-   Violates a regression assumption that the number of parameters shouldn't be growing with the amount of data
+
+    -   Big issue when cluster sizes are small with respect to number of clusters
 
 . . .
-      
-   - Each county-specific intercept estimated only using data from that count
-   
-      - Even if that county has very few observations
+
+-   Each county-specific intercept estimated only using data from that count
+
+    -   Even if that county has very few observations
 
 . . .
-   
-   - May need a different solution...
+
+-   May need a different solution...

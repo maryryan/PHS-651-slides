@@ -436,18 +436,23 @@ September 9, 2025
 </section><section id="what-is-clusteredcorrelated-data-1" class="slide level2"><h2>What is clustered/correlated data?</h2>
 <p>When we talk about “correlated” or “clustered” data, we’re most often talking about correlated/clustered <span class="alert">outcomes</span></p>
 <ul>
-<li>This stems from one of our regression assumptions: that the <em>outcome values</em> for 2 observations will be independent</li>
+<li><p>This stems from one of our regression assumptions: that the <em>outcome values</em> for 2 observations will be independent</p></li>
+<li><p>Outcomes with more than 1 dimension of sampling simultaneously</p></li>
 </ul>
-<p>In other words…</p>
+<p>Can outcomes have more than one “level” of clustering?</p>
 <ul>
-<li><p>Outcomes are <span class="alert">independent</span> if we can identify and adjust for all the covariates that would drive correlations between outcome observations to 0</p></li>
-<li><p>Outcomes are <span class="alert">clustered/correlated</span> if, for some reason or another, we <em>can’t</em> identify or adjust for all the necessary covariates</p></li>
+<li><p>Yes!</p></li>
+<li><p>We’ll focus on 2 levels for the most part</p></li>
 </ul></section><section id="what-is-clusteredcorrelated-data-2" class="slide level2"><h2>What is clustered/correlated data?</h2>
 <p>Some more informal definitions/descriptions</p>
 <ul>
-<li><p>“Clustered data arise when the data from the whole study <span class="alert">can be classified</span> into a number of different groups, referred to as clusters. <span class="alert">Each cluster contains multiple observations, giving the data a “nested” or “hierarchical” structure</span>, with individual observations nested within the cluster.” (Galbraith et al, 2010, <a href="https://doi.org/10.1523/JNEUROSCI.0362-10.2010">“A Study of Clustered Data and Approaches to Its Analysis”</a>)</p></li>
+<li><p>“Clustered data arise when the data from the whole study <span class="alert">can be classified</span> into a number of different groups, referred to as clusters. <span class="alert">Each cluster contains multiple observations, giving the data a ”nested” or ”hierarchical” structure</span>, with individual observations nested within the cluster.” (Galbraith et al, 2010, <a href="https://doi.org/10.1523/JNEUROSCI.0362-10.2010">“A Study of Clustered Data and Approaches to Its Analysis”</a>)</p></li>
 <li><p>“…we might reasonably expect that measurements on <span class="alert">units within a cluster are more similar</span> than measurements on units in different clusters.” (Applied Longitudinal Analysis pg. 4)</p></li>
 <li><p>AKA: nested/multilevel/hierarchical data</p></li>
+</ul>
+<p>Note that clustering is <span class="alert">different</span> than a regular covariate</p>
+<ul>
+<li>There are times where this distinction gets a little fuzzy</li>
 </ul></section><section id="what-is-clusteredcorrelated-data-3" class="slide level2"><h2>What is clustered/correlated data?</h2>
 <p>Remember in OLS where we assumed that observations were independent?</p>
 <ul>
@@ -668,7 +673,7 @@ September 9, 2025
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure><p><a href="https://en.wikipedia.org/wiki/File:Simpson%27s_paradox_continuous.svg"><img data-src="Simpson's_paradox_continuous.svg" style="width:30.0%"></a></p>
-<figcaption><em>Illustration of Simpson’s paradox, via Wikipedia</em></figcaption></figure>
+<figcaption>Illustration of Simpson's paradox, via Wikipedia</figcaption></figure>
 </div>
 </section><section id="example-radon-measurements-in-minnesota" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Let’s see how these approaches differ with some actual data</p>
@@ -1713,7 +1718,7 @@ F-statistic: 3.583 on 1 and 83 DF,  p-value: 0.06184</code></pre>
 'controlsAuto': true,
 'previewLinksAuto': false,
 'smaller': false,
-'pdfSeparateFragments': false,
+'pdfSeparateFragments': true,
 'autoAnimateEasing': "ease",
 'autoAnimateDuration': 1,
 'autoAnimateUnmatched': true,

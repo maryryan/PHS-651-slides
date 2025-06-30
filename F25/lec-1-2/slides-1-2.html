@@ -776,8 +776,13 @@ September 11, 2025
 <div class="fragment">
 <p>This means that <span class="alert">adding random intercepts does not account for confounding by cluster membership</span></p>
 <ul>
-<li><p>To account for confounding, we need to add additional (cluster-level) fixed effect variables to the mean model</p></li>
-<li><p>See Clark &amp; Linzer (2014) or McNeish &amp; Kelley (2019) in the suggested readings!</p></li>
+<li>To account for confounding, we need to add additional (cluster-level) fixed effect variables to the mean model <span class="fragment">… BUT this will not work if we already have a cluster-level covariate in the fixed portion of our model</span>
+</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>See Clark &amp; Linzer (2014) or McNeish &amp; Kelley (2019) in the suggested readings!</li>
 </ul>
 </div>
 </section><section id="example-radon-measurements-in-minnesota" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>

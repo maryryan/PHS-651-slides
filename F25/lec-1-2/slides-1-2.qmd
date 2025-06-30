@@ -525,7 +525,9 @@ Also assumes the random effects are independent of the fixed effect variables
 
 This means that [adding random intercepts does not account for confounding by cluster membership]{.alert}
 
-- To account for confounding, we need to add additional (cluster-level) fixed effect variables to the mean model
+- To account for confounding, we need to add additional (cluster-level) fixed effect variables to the mean model [... BUT this will not work if we already have a cluster-level covariate in the fixed portion of our model]{.fragment}
+
+. . .
 
 - See Clark & Linzer (2014) or McNeish & Kelley (2019) in the suggested readings!
 

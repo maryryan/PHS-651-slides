@@ -360,7 +360,7 @@ $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
 How is this different from adding groups as covariates?
 
-- Allows clusters with fewer observations to be more influenced by the rest of the data ("borrow" information), and clusters with more observations to be less influenced
+- By estimating a global $\sigma^2_b$, this allows clusters with fewer observations to be more influenced by the rest of the data ("borrow" information), and clusters with more observations to be less influenced
 
 . . .
 
@@ -526,6 +526,8 @@ Also assumes the random effects are independent of the fixed effect variables
 This means that [adding random intercepts does not account for confounding by cluster membership]{.alert}
 
 - To account for confounding, we need to add additional (cluster-level) fixed effect variables to the mean model
+
+- See Clark & Linzer (2014) or McNeish & Kelley (2019) in the suggested readings!
 
 ---
 

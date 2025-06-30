@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<script src="slides-2_files/libs/clipboard/clipboard.min.js"></script>
-<script src="slides-2_files/libs/quarto-html/tabby.min.js"></script>
-<script src="slides-2_files/libs/quarto-html/popper.min.js"></script>
-<script src="slides-2_files/libs/quarto-html/tippy.umd.min.js"></script>
-<link href="slides-2_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="slides-2_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="slides-2_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="slides-2_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="slides-1-2_files/libs/clipboard/clipboard.min.js"></script>
+<script src="slides-1-2_files/libs/quarto-html/tabby.min.js"></script>
+<script src="slides-1-2_files/libs/quarto-html/popper.min.js"></script>
+<script src="slides-1-2_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="slides-1-2_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="slides-1-2_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="slides-1-2_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="slides-1-2_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.3.353">
-<title>slides-2</title>
+<title>slides-1-2</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-<link rel="stylesheet" href="slides-2_files/libs/revealjs/dist/reset.css">
-<link rel="stylesheet" href="slides-2_files/libs/revealjs/dist/reveal.css">
+<link rel="stylesheet" href="slides-1-2_files/libs/revealjs/dist/reset.css">
+<link rel="stylesheet" href="slides-1-2_files/libs/revealjs/dist/reveal.css">
 <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -94,13 +94,13 @@
     code span.vs { color: #008000; } /* VerbatimString */
     code span.wa { color: #696969; font-style: italic; } /* Warning */
   </style>
-<link rel="stylesheet" href="slides-2_files/libs/revealjs/dist/theme/quarto.css">
-<link href="slides-2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-<link href="slides-2_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-<link href="slides-2_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-<link href="slides-2_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-<link href="slides-2_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-<link href="slides-2_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+<link rel="stylesheet" href="slides-1-2_files/libs/revealjs/dist/theme/quarto.css">
+<link href="slides-1-2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+<link href="slides-1-2_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+<link href="slides-1-2_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+<link href="slides-1-2_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+<link href="slides-1-2_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+<link href="slides-1-2_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
 <style type="text/css">
 
   .callout {
@@ -392,7 +392,7 @@
 
 
 <section class="slide level2"><h1>
-Lecture 2: Conditional models for correlated data
+Lecture 1.2: Conditional models for correlated data
 </h1>
 <h2>
 PHS 651: Advanced regression methods
@@ -412,12 +412,12 @@ September 11, 2025
 <p><em>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</em></p>
 </div>
 <div class="absolute" style="left: 260px; bottom: 50px; width: 1500px; ">
-<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/PHS-651-2/slides-2" class="uri">https://maryryan.github.io/PHS-651-slides/PHS-651-2/slides-2</a></p>
+<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/F25/lec-1-2/slides-1-2" class="uri">https://maryryan.github.io/PHS-651-slides/F25/lec-1-2/slides-1-2</a></p>
 </div>
 <div class="absolute" style="left: 100px; bottom: 0px; width: 150px; ">
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="slides-2_files/figure-revealjs/qr%20code-1.png" width="192"></p>
+<p><img data-src="slides-1-2_files/figure-revealjs/qr%20code-1.png" width="192"></p>
 </div>
 </div>
 </div>
@@ -655,7 +655,7 @@ September 11, 2025
 <div class="fragment">
 <p>How is this different from adding groups as covariates?</p>
 <ul>
-<li>Allows clusters with fewer observations to be more influenced by the rest of the data (“borrow” information), and clusters with more observations to be less influenced</li>
+<li>By estimating a global <span class="math inline">\(\sigma^2_b\)</span>, this allows clusters with fewer observations to be more influenced by the rest of the data (“borrow” information), and clusters with more observations to be less influenced</li>
 </ul>
 </div>
 <div class="fragment">
@@ -776,7 +776,8 @@ September 11, 2025
 <div class="fragment">
 <p>This means that <span class="alert">adding random intercepts does not account for confounding by cluster membership</span></p>
 <ul>
-<li>To account for confounding, we need to add additional (cluster-level) fixed effect variables to the mean model</li>
+<li><p>To account for confounding, we need to add additional (cluster-level) fixed effect variables to the mean model</p></li>
+<li><p>See Clark &amp; Linzer (2014) or McNeish &amp; Kelley (2019) in the suggested readings!</p></li>
 </ul>
 </div>
 </section><section id="example-radon-measurements-in-minnesota" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
@@ -973,7 +974,7 @@ F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="fragment">
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="slides-2_files/figure-revealjs/radon%20CI%20plot-1.png" width="960"></p>
+<p><img data-src="slides-1-2_files/figure-revealjs/radon%20CI%20plot-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -1026,7 +1027,7 @@ F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
   </div>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="slides-2_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="slides-2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="slides-2_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="slides-2_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="slides-2_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="slides-2_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="slides-2_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="slides-2_files/libs/revealjs/plugin/notes/notes.js"></script><script src="slides-2_files/libs/revealjs/plugin/search/search.js"></script><script src="slides-2_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="slides-2_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="slides-1-2_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="slides-1-2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="slides-1-2_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="slides-1-2_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="slides-1-2_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="slides-1-2_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="slides-1-2_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="slides-1-2_files/libs/revealjs/plugin/notes/notes.js"></script><script src="slides-1-2_files/libs/revealjs/plugin/search/search.js"></script><script src="slides-1-2_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="slides-1-2_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
 
       // Full list of configuration options available at:
       // https://revealjs.com/config/

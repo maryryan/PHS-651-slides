@@ -398,6 +398,12 @@ $$Y_{ij} = U_{ij} \beta_1 + C^{(i)}_{ij} \gamma_i + \epsilon_{ij}$$
 
 -   $\gamma_i$ is the mean outcome of cluster $i$ for those with exposure $=0$
 
+. . .
+
+This is called a [fixed effects]{.alert} model
+
+- See Clark & Linzer (2014) or McNeish & Kelley (2019) in the suggested readings!
+
 ------------------------------------------------------------------------
 
 ## Clustering in cluster-level data analysis
@@ -747,26 +753,27 @@ summary(radon_ctylvl_lm)
 
 What did we find?
 
--   Radon data clearly clustered by county, affecting distribution of log(radon) measurements, proportion of houses with/without basements, and number of observations
+Radon data clearly clustered by county, affecting distribution of log(radon) measurements, proportion of houses with/without basements, and number of observations
 
 -   Effect of measurement floor changes depending on whether and how accounting for clustering
 
 . . .
 
--   Adding county as covariate to regression ("no pooling" analysis) seems like best solution... [or not...]{.fragment}
+Adding county as covariate to regression ("no pooling" analysis) seems like best solution... [sometimes]{.fragment}
 
-. . .
-
--   Violates a regression assumption that the number of parameters shouldn't be growing with the amount of data
-
+::: {.fragment}
+- Violates a regression assumption that the number of parameters shouldn't be growing with the amount of data
+   
     -   Big issue when cluster sizes are small with respect to number of clusters
 
-. . .
+-   Each county-specific intercept estimated only using data from that county... even if that county has very few observations
 
--   Each county-specific intercept estimated only using data from that count
+- All leads to [larger SE estimates]{.alert}
 
-    -   Even if that county has very few observations
+:::
 
-. . .
+::: {.fragment}
 
 -   May need a different solution...
+
+:::

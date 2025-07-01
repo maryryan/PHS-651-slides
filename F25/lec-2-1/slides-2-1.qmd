@@ -14,6 +14,7 @@ format:
       chalkboard: true
       from: markdown+emoji
       auto-stretch: false
+      pdf-separate-fragments: true
 execute: 
    eval: true
    echo: true
@@ -405,45 +406,71 @@ where $b_{0i} \sim N(0, \sigma^2_b)$ and $\epsilon_{ij} \sim \left(0, p_{ij}(1-p
 
 ---
 
-## Some notes
+## Some notes on estimation
 
-In order to estimate regression coefficients from the likelihood function for a GLMM, we usually need to do some approximations
+In order to estimate regression coefficients/covariances from the likelihood function for a GLMM, we usually need to do some approximations
 
 - There are 2 ways to do this:
 
    1. Approximate maximum likelihood (penalized quasi-likelihood)
 
-   2. Approximate the integral (Gaussian quadrature)
+   2. Approximate the integral (Gaussian quadrature or Laplace approximation)
 
 . . .
 
-- Either method doesn't perform well when you have small number of events per cluster, better for count data
+- In the last 10-15 years, [Gaussian quadrature]{.alert}/Laplace approximation has become the preferred method (if you don't want to go Bayesian)
 
-   - Method 1 is the worse of the two in small event scenario
+   - However, GQ can get computationally expensive/intensive if you have lots of random effects
    
-- Method 2 can be computationally intense/expensive
+   - Laplace approximation is like GQ with only one quadrature point (less precise, but uses fewer computational resources)
 
 ---
 
-## Some notes
+## Software using Gassuain quadrature/Laplace approximation
 
-There are 2 ways to approximate estimates:
+There are several types of functions/procedures out there that use Gaussian quadrature/Laplace approximation, but I'm recommending
 
-   1. Approximate maximum likelihood (penalized quasi-likelihood)
+- In R: `glmer()`
    
-   - `glmmPQL()` in R and `PROC GLIMMIX` in SAS
+   - Other functions (like `glmmML()` and `glmm()` ) have trouble extending to longitudinal models
+   
+- In SAS
+   
+   - `PROC GLIMMIX METHOD=QUAD` and `PROC NLMIXED METHOD=GAUSS` use Gaussian quadrature
+   
+      - By default, they find the optimal number of quadrature points (adaptive Gaussian quadrature)
+   
+   - `PROC GLIMMIX METHOD=LAPLACE` uses Laplace approximation
       
-      - Results can be especially unreliable (and different by software) if there are a small number of events per cluster
+      - Not quite as "accurate" as GQ, but may converge in instances when GQ won't
 
-   2. Approximate the integral (Gaussian quadrature)
-   
-   - `glmmML()`, `glmm()`, and `glmer()` in R
+---
+
+## Troubleshooting convergence issues
+
+Because we need to use approximation to estimate regression coefficients/covariances, sometimes the algorithm won't converge. There are several possible ways to troubleshoot this.
+
+1. If using GQ, try changing the number of quadrature points
+
+   - In SAS, you can specify a specific number of points with the `(QPOINTS= )` argument
+
+   - In R, you can specify a specific number of points with the `nAGQ= ` argument (default is 1, resulting in Laplace approximation; can also specify 0 if even Laplace won't converge)
+
+   - Fewer quadrature points will be less precise, but will use fewer computational resources (more likely to converge)
+
+---
+
+## Troubleshooting convergence issues
+
+Because we need to use approximation to estimate regression coefficients/covariances, sometimes the algorithm won't converge. There are several possible ways to troubleshoot this.
+
+2. Change the optimizer and increase the number of max iterations
+
+   - In R, you can add the argument `control=glmerControl( optimizer="bobyqa", optCtrl=list(maxfun=200000) )` to change the optimizer to `bobyqa` and change the maximum bumber of iterations to 200,000
+
+      - More iterations = more computation time, so don't go ham (but should use at least 100,000 here)
       
-      - First 2 can't extend to the longitudinal models we'll get to later
-   
-   - `PROC NLMIXED`, `PROC GLIMMIX METHOD=QUAD(QPOINTS=50)` in SAS
-   
-      - Can extend to longitudinal models, but can take a while to run
+   - In SAS, you can add the argument `NLOPTIONS maxiter=1000;` to change the maximum number of iterations to 1,000 (no recommended min number here)
 
 ---
 

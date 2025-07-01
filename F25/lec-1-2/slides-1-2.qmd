@@ -572,12 +572,13 @@ library(lme4)
 
 # run an LME with random intercepts for county #
 radon_lme <- lmer(log_radon ~ floor + (1 | county), data=radon.mn)
+radon_lme_ci <- confint(radon_lme)
 summary(radon_lme)
 ```
 
 - LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
 
-   - 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`)
+   - 95% CI: (`r round(radon_lme_ci[4,1], 4)`, `r round(radon_lme_ci[4,2], 4)`)
 
    - How would we interpret this?
 
@@ -591,6 +592,7 @@ Let's compare the LME results to adding county as a regression coefficient
 
 ```{r radon lm cty}
 radon_cty_lm <- lm(log_radon ~ floor + factor(county) - 1, data=radon.mn)
+radon_cty_lm_ci <- confint(radon_cty_lm)
 summary(radon_cty_lm)
 ```
 
@@ -601,7 +603,7 @@ summary(radon_cty_lm)
 ::: {.fragment}
 - OLS $\beta_1$: `r round(summary(radon_cty_lm)$coef[1,1],4)`
 
-   - 95% CI: (`r round(summary(radon_cty_lm)$coef[1,1] - summary(radon_cty_lm)$coef[1,2]*qnorm(0.975), 4)`, `r round(summary(radon_cty_lm)$coef[1,1] + summary(radon_cty_lm)$coef[1,2]*qnorm(0.975), 4)`)
+   - 95% CI: (`r round(radon_cty_lm_ci[1,1], 4)`, `r round(radon_cty_lm_ci[1,2], 4)`)
 :::
 
 ::: {.fragment}
@@ -609,7 +611,7 @@ What differences can you see compared to the previous LME?
 
 - LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
 
-   - 95% CI: (`r round(summary(radon_lme)$coef[2,1] - summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_lme)$coef[2,1] + summary(radon_lme)$coef[2,2]*qnorm(0.975), 4)`)
+   - 95% CI: (`r round(radon_lme_ci[4,1], 4)`, `r round(radon_lme_ci[4,2], 4)`)
 
 :::
 :::

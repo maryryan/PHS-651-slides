@@ -803,7 +803,8 @@ September 11, 2025
 <span id="cb1-2"><a href="#cb1-2"></a></span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="co"># run an LME with random intercepts for county #</span></span>
 <span id="cb1-4"><a href="#cb1-4"></a>radon_lme <span class="ot">&lt;-</span> <span class="fu">lmer</span>(log_radon <span class="sc">~</span> floor <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> county), <span class="at">data=</span>radon.mn)</span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">summary</span>(radon_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5"></a>radon_lme_ci <span class="ot">&lt;-</span> <span class="fu">confint</span>(radon_lme)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">summary</span>(radon_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: log_radon ~ floor + (1 | county)
@@ -835,7 +836,7 @@ floor -0.288</code></pre>
 <li>
 <p>LME <span class="math inline">\(\beta_1\)</span>: -0.6629</p>
 <ul>
-<li><p>95% CI: (-0.7955, -0.5303)</p></li>
+<li><p>95% CI: (-0.7954, -0.5296)</p></li>
 <li><p>How would we interpret this?</p></li>
 </ul>
 </li>
@@ -846,7 +847,8 @@ floor -0.288</code></pre>
 <div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>radon_cty_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_radon <span class="sc">~</span> floor <span class="sc">+</span> <span class="fu">factor</span>(county) <span class="sc">-</span> <span class="dv">1</span>, <span class="at">data=</span>radon.mn)</span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="fu">summary</span>(radon_cty_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a href="#cb3-2"></a>radon_cty_lm_ci <span class="ot">&lt;-</span> <span class="fu">confint</span>(radon_cty_lm)</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="fu">summary</span>(radon_cty_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -959,7 +961,7 @@ F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 <li>
 <p>OLS <span class="math inline">\(\beta_1\)</span>: -0.6892</p>
 <ul>
-<li>95% CI: (-0.8276, -0.5508)</li>
+<li>95% CI: (-0.8278, -0.5506)</li>
 </ul>
 </li>
 </ul>
@@ -970,7 +972,7 @@ F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 <li>
 <p>LME <span class="math inline">\(\beta_1\)</span>: -0.6629</p>
 <ul>
-<li>95% CI: (-0.7955, -0.5303)</li>
+<li>95% CI: (-0.7954, -0.5296)</li>
 </ul>
 </li>
 </ul>

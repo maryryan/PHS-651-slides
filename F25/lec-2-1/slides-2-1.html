@@ -814,7 +814,9 @@ $ci
 <span id="cb5-2"><a href="#cb5-2"></a>         <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>),</span>
 <span id="cb5-3"><a href="#cb5-3"></a>         <span class="at">data =</span> cancer)</span>
 <span id="cb5-4"><a href="#cb5-4"></a></span>
-<span id="cb5-5"><a href="#cb5-5"></a><span class="fu">summary</span>(logistic_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-5"><a href="#cb5-5"></a>logistic_fit_ci <span class="ot">&lt;-</span> <span class="fu">confint</span>(logistic_fit)</span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="fu">summary</span>(logistic_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -847,7 +849,7 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <p><span class="math inline">\(e^{\beta_1}\)</span>: 1.0875</p>
 <ul>
 <li><p>95% CI: (1.0746, 1.1006)</p></li>
-<li><p><span class="alert">Interpretation</span>: <span class="fragment">Cancer patients have an estimated 8.75% increased odds of going into remission if they have a physician with 1 year of experience compared to 0 years, cancer stage held constant. We are 95% confident the true odds is between 7.46 and 10.06%.</span></p></li>
+<li><p><span class="alert">Interpretation</span>: <span class="fragment">Cancer patients have an estimated 8.75% increased odds of going into remission if they have a physician with 1 year of experience compared to 0 years, cancer stage held constant. We are 95% confident the true odds is between 7.46 and 7.46%.</span></p></li>
 </ul>
 </li>
 </ul>
@@ -868,7 +870,12 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">library</span>(lme4)</span>
 <span id="cb7-2"><a href="#cb7-2"></a>glmm_fit <span class="ot">&lt;-</span> <span class="fu">glmer</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> doc_ID), <span class="at">family =</span> binomial, <span class="at">data =</span> cancer, </span>
 <span id="cb7-3"><a href="#cb7-3"></a>         <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>) )</span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="fu">summary</span>( glmm_fit )<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-4"><a href="#cb7-4"></a></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co"># confint() can take a long time with glmer(), so usually just best to calculate CIs by hand</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>glmm_fit_ci_l <span class="ot">&lt;-</span> <span class="fu">exp</span>( <span class="fu">summary</span>(glmm_fit)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">1</span>] <span class="sc">-</span> <span class="fu">summary</span>(glmm_fit)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">*</span><span class="fu">qnorm</span>(<span class="fl">0.975</span>) )</span>
+<span id="cb7-7"><a href="#cb7-7"></a>glmm_fit_ci_u <span class="ot">&lt;-</span> <span class="fu">exp</span>( <span class="fu">summary</span>(glmm_fit)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">1</span>] <span class="sc">+</span> <span class="fu">summary</span>(glmm_fit)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">*</span><span class="fu">qnorm</span>(<span class="fl">0.975</span>) )</span>
+<span id="cb7-8"><a href="#cb7-8"></a></span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="fu">summary</span>( glmm_fit )<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 Estimate Std. Error    z value     Pr(&gt;|z|)
 (Intercept)    -2.9477893 0.48456845  -6.083329 1.177125e-09
@@ -903,7 +910,7 @@ CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
 </div>
 </div>
 </section><section id="example-cancer-remission-5" class="slide level2"><h2>Example: cancer remission</h2>
-<p>A brief comparison of <code>glmmPQL</code> vs <code>glmer</code>:</p>
+<p>A brief comparison of <code>glmmPQL</code> vs <code>glmer</code> (Laplace) vs <code>glmer</code> (GQ with 10 q-points):</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">library</span>(MASS)</span>
 <span id="cb9-2"><a href="#cb9-2"></a>pql_fit <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
@@ -928,6 +935,20 @@ Experience      0.1187726 0.02649019   4.483643 7.337924e-06
 CancerStageII  -0.4856890 0.07099432  -6.841238 7.851168e-12
 CancerStageIII -1.1208592 0.09006870 -12.444492 1.498347e-35
 CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>glmm_fit_agq <span class="ot">&lt;-</span> <span class="fu">glmer</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> doc_ID),<span class="at">family =</span> binomial, <span class="at">data =</span> cancer,</span>
+<span id="cb13-2"><a href="#cb13-2"></a>                       <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>), <span class="at">nAGQ=</span><span class="dv">10</span> )</span>
+<span id="cb13-3"><a href="#cb13-3"></a></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="fu">summary</span>(glmm_fit_agq)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 Estimate Std. Error    z value     Pr(&gt;|z|)
+(Intercept)    -2.9529558 0.50079175  -5.896574 3.711257e-09
+Experience      0.1189719 0.02730504   4.357139 1.317733e-05
+CancerStageII  -0.4867531 0.07279083  -6.687011 2.277741e-11
+CancerStageIII -1.1241823 0.09217574 -12.196076 3.261673e-34
+CancerStageIV  -2.4922475 0.15023385 -16.589121 8.353380e-62</code></pre>
 </div>
 </div>
 </section><section id="alternate-link-functions-for-binary-data" class="slide level2"><h2>Alternate link functions for binary data</h2>

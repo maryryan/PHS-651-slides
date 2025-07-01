@@ -550,8 +550,9 @@ logistic_fit <- glm( remission ~ Experience + factor(CancerStage),
          family = binomial(link="logit"),
          data = cancer)
 
-summary(logistic_fit)
+logistic_fit_ci <- confint(logistic_fit)
 
+summary(logistic_fit)
 ```
 
 :::: {.columns}
@@ -559,9 +560,9 @@ summary(logistic_fit)
 ::: {.column width="70%"}
 - $e^{\beta_1}$: `r round(exp(summary(logistic_fit)$coefficients[2,1]), 4)`
 
-   - 95% CI: (`r round(exp(summary(logistic_fit)$coefficients[2,1] - summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary(logistic_fit)$coefficients[2,1] + summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)`)
+   - 95% CI: (`r round(exp(logistic_fit_ci[2,1]), 4)`, `r round(exp(logistic_fit_ci[2,2]), 4)`)
    
-   - [Interpretation]{.alert}: [Cancer patients have an estimated 8.75% increased odds of going into remission if they have a physician with 1 year of experience compared to 0 years, cancer stage held constant. We are 95% confident the true odds is between `r (round(exp(summary(logistic_fit)$coefficients[2,1] - summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100` and `r (round(exp(summary(logistic_fit)$coefficients[2,1] + summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100`%.]{.fragment}
+   - [Interpretation]{.alert}: [Cancer patients have an estimated 8.75% increased odds of going into remission if they have a physician with 1 year of experience compared to 0 years, cancer stage held constant. We are 95% confident the true odds is between `r (round(exp(logistic_fit_ci[2,1]), 4)-1)*100` and `r (round(exp(logistic_fit_ci[2,1]), 4)-1)*100`%.]{.fragment}
 :::
 
 ::: {.column width="30%"}
@@ -586,6 +587,11 @@ Now what about a logistic GLMM with random intercepts by physician:
 library(lme4)
 glmm_fit <- glmer( remission ~ Experience + CancerStage + (1 | doc_ID), family = binomial, data = cancer, 
          control=glmerControl(optimizer="bobyqa") )
+
+# confint() can take a long time with glmer(), so usually just best to calculate CIs by hand
+glmm_fit_ci_l <- exp( summary(glmm_fit)$coefficients[2,1] - summary(glmm_fit)$coefficients[2,2]*qnorm(0.975) )
+glmm_fit_ci_u <- exp( summary(glmm_fit)$coefficients[2,1] + summary(glmm_fit)$coefficients[2,2]*qnorm(0.975) )
+
 summary( glmm_fit )$coefficients
 
 ```
@@ -597,9 +603,9 @@ Logistic GLMM results:
 
 - $e^{\beta_1}$: `r round(exp(summary(glmm_fit)$coefficients[2,1]), 4)`
 
-   - 95% CI: (`r round(exp(summary(glmm_fit)$coefficients[2,1] - summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary(glmm_fit)$coefficients[2,1] + summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)`)
+   - 95% CI: (`r round(glmm_fit_ci_l, 4)`, `r round(glmm_fit_ci_u, 4)`)
    
-   - [Interpretation]{.alert}: [Cancer patients have an estimated 11.35% increased odds of going into remission if they have a physician with 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between `r (round(exp(summary(glmm_fit)$coefficients[2,1] - summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100` and `r (round(exp(summary(glmm_fit)$coefficients[2,1] + summary(glmm_fit)$coefficients[2,2]*qnorm(0.975)), 4)-1)*100`%.]{.fragment}
+   - [Interpretation]{.alert}: [Cancer patients have an estimated 11.35% increased odds of going into remission if they have a physician with 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between `r (round(glmm_fit_ci_l, 4)-1)*100` and `r (round(glmm_fit_ci_u, 4)-1)*100`%.]{.fragment}
 
 :::
 
@@ -608,7 +614,7 @@ Compare to what we had with the unclustered logistic model:
 
 - $e^{\beta_1}$: `r round(exp(summary(logistic_fit)$coefficients[2,1]), 4)`
 
-   - 95% CI: (`r round(exp(summary(logistic_fit)$coefficients[2,1] - summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary(logistic_fit)$coefficients[2,1] + summary(logistic_fit)$coefficients[2,2]*qnorm(0.975)), 4)`)
+   - 95% CI: (`r round(exp(logistic_fit_ci[2,1]), 4)`, `r round(exp(logistic_fit_ci[2,2]), 4)`)
 :::
 
 ::::
@@ -617,7 +623,7 @@ Compare to what we had with the unclustered logistic model:
 
 ## Example: cancer remission
 
-A brief comparison of `glmmPQL` vs `glmer`:
+A brief comparison of `glmmPQL` vs `glmer` (Laplace) vs `glmer` (GQ with 10 q-points):
 
 ```{r cancer pql}
 library(MASS)
@@ -630,6 +636,13 @@ summary( pql_fit )$tTable
 
 ```{r cancer glmer2}
 summary(glmm_fit)$coefficients
+```
+
+```{r cancer glmer agq}
+glmm_fit_agq <- glmer( remission ~ Experience + CancerStage + (1 | doc_ID),family = binomial, data = cancer,
+                       control=glmerControl(optimizer="bobyqa"), nAGQ=10 )
+
+summary(glmm_fit_agq)$coefficients
 ```
 
 ---

@@ -15,6 +15,7 @@ format:
       from: markdown+emoji
       fragment: true
       auto-stretch: false
+      pdf-separate-fragments: true
 execute: 
    eval: true
    echo: true

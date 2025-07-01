@@ -94,7 +94,7 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
    
    - Zoom: xxx
 
-- Calendly: <https://calendly.com/mary-m-ryan/>
+- Doodle: <https://doodle.com/bp/marybaumann/651-oh>
 
    - For scheduling outside meeting time
 :::
@@ -182,7 +182,7 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
 
 - I have an open-door policy - drop by any time my door is open to discuss class or not-class topics
 
-   - But email/schedule if you want to guarantee time (outside OH): <https://calendly.com/mary-m-ryan/>
+   - But email/schedule if you want to guarantee time (outside OH): <https://doodle.com/bp/marybaumann/651-oh>
 
 ---
 

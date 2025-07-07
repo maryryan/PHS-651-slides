@@ -1,0 +1,470 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      auto-stretch: false
+      pdf-separate-fragments: true
+execute: 
+   eval: true
+   echo: true
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(gridExtra)
+library(qrcode)
+```
+
+<h1>Lecture 2.2: Correlated count data</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>September 30, 2025</h3>
+
+<br>
+
+
+::: {.absolute bottom=50 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-2-2/slides-2-2>
+
+:::
+
+::: {.absolute bottom=0 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-2-2/slides-2-2"))
+```
+:::
+
+---
+
+## Working with count data
+
+Up to this point we've focused on 2 types of outcome data:
+
+- Continuous
+
+- Binary
+
+There are many other types of outcome data we might be interested, including [count]{.alert} data
+
+- How many seizure events does a participant experience in a week?
+
+- How many serious falls does a resident of an assisted living facility experience in a month?
+
+- How many inclement weather events does a community experience in a year?
+
+There are several properties of count data that make it inappropriate for our previous modeling strategies
+
+---
+
+## 551/552 review: Distribution of count data
+
+In general, we think of count data for individual $j$, $Y_j$, collected during time $T_j$ as following a [Poisson distribution]{.alert}
+
+$$Y_j \sim \text{Poisson}(\lambda T_j)$$
+
+- Parameterized by [rate parameter]{.alert} $\lambda$: number of events per unit of time
+
+- Mean: $E[Y_j] = \lambda T_j$; Variance: $Var[Y_j] = \lambda T$
+
+---
+
+## 551/552 review: Distribution of count data
+
+We assume 3 things with a Poisson distribution:
+
+1. Stationarity: The expected number of events per unit time is the same throughout the entire time interval
+
+2. Independence: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval
+
+3. Rare events: For any very small time interval $h$:
+
+   - The probability of observing 1 event is directly proportional to the length of the time interval, e.g. $P(\text{1 event}) \approx \lambda h$
+   
+   - The probability of observing no events is approximately $1-\lambda h$
+   
+   - The probability of observing 2 or more events is essentially 0
+
+---
+
+## 552/551 review: Count data and time
+
+Ideally when we collect count data, we want to collect it on the *same time scale* for everyone
+
+- Count of events within 1 day, 1 month, 1 year
+
+- This may not always be the case, especially when combining data from multiple sources
+
+If we collect count data on different time scales, we can use the stationarity assumption to "standardize" the data to a common scale
+
+- e.g., "12 events in 1 year" translates to "1 event per month", or "2 events per day" translates to "14 events per week"
+
+- Note: this may not always match reality
+
+---
+
+## 552 review: Poisson regression
+
+One way to model count data is by using a Poisson regression:
+
+$$\log[\lambda(\boldsymbol{X})] = \boldsymbol{X}\vec{\beta}= \beta_0 + U_j\beta_1$$
+
+We will also sometimes model the mean of the count data, rather than the rate:
+
+$$\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)$$
+
+- $T_j$ is known as an [offset]{.alert}
+
+Both these regressions assume:
+
+1. The outcome data, $Y_j$, follow a Poisson distribution with mean $\lambda(\boldsymbol{X})T_j$ and variance $\lambda(\boldsymbol{X})T_j$
+
+2. We have correctly specified the linear predictors (isolating causal pathway) and the link function
+
+3. Each outcome observation is independent of one another
+
+---
+
+## 552 review: Negative Binomial regression
+
+In reality, we often have count data where $E[Y_j|\boldsymbol{X}] \ne Var[Y_j|\boldsymbol{X}]$
+
+- If $Var[Y_j | \boldsymbol{X}] > \lambda(\boldsymbol{X})T_j$ this is called [overdispersion]{.alert}
+
+- If $Var[Y_j | \boldsymbol{X}] < \lambda(\boldsymbol{X})T_j$ this is called [underdispersion]{.alert}
+
+:::: {.columns}
+::: {.column width="50%"}
+::: {.fragment}
+We can instead assume:
+
+$$Y_j | \theta \sim \text{Poisson}(\lambda T_j \theta)$$
+$$\theta \sim \text{Gamma}(\alpha, \beta)$$
+
+- Mean: $E[\theta] = \alpha/\beta = \mu_{\theta}$
+
+- Variance: $Var[\theta] = \alpha/\beta^2 = \sigma^2_{\theta}$
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+We combine these to create:
+
+$$Y_j \sim \text{Negative Binomial}(\lambda T_j, \theta)$$
+
+- Mean: $E[Y_j] = \lambda T_j \mu_{\theta}$
+
+- Variance: $Var[Y_j] = \lambda T_j (\mu_{\theta} + \lambda T_j \sigma^2_{\theta})$
+:::
+:::
+::::
+
+---
+
+## 552 review: Negative Binomial regression
+
+We can use this distribution to create a negative binomial regression:
+
+$$\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)$$
+
+This assumes:
+
+1. The outcome data, $Y_j$, follow a [Negative Binomial]{.alert} distribution with mean $\lambda(\boldsymbol{X})T_j \mu_\theta$ and variance $\lambda T_j (\mu_\theta + \lambda T_j \sigma^2_{\theta})$
+
+   - Often assume $\mu_{\theta}=1$ but allow $\sigma^2_{\theta}>0$
+
+2. We have correctly specified the linear predictors (isolating causal pathway) and the link function
+
+3. Each outcome observation is independent of one another
+
+Poisson regression is a special case of negative binomial regression, where we assume $\mu_{\theta}=1$ and $\sigma^2_{\theta}=0$
+
+---
+
+## Clustered count outcomes
+
+A common assumption across both of these regression methods is that all outcome observations are independent of one another
+
+Can we think of some examples where count outcomes might be clustered?
+
+---
+
+## Clustered count outcomes
+
+A common assumption across both of these regression methods is that all outcome observations are independent of one another
+
+Can we think of some examples where count outcomes might be clustered?
+
+- Residents' number of serious falls in one month may be clustered by living facility
+
+- Cancer incidence in a county for one year may be clustered by state
+
+- Number of disciplinary incidents per student in a school year may be clustered by school
+
+. . .
+
+This means that the Poisson and NB regression we've discussed won't give us correct inference for these data
+
+- Luckily, we can extend GLMMs to these cases!
+
+---
+
+## Count outcomes and Poisson GLMMs
+
+Say we have count outcome data for multiple individuals in a cluster $i$, $\vec{Y}_i$, that is distributed Poisson with event rate $\lambda_{ij}$
+
+- We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
+
+
+:::: {.columns}
+::: {.column width="50%"}
+
+[A GLMM representation for this would look like:]{.alert}
+
+$$\text{log}(\lambda_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})$$
+
+where $b_{0i} \sim N(0, \sigma^2_b)$
+
+- Also assumes individual-level variation: $Var[Y_{ij}|\boldsymbol{X}, b_{i0}] = \lambda(\boldsymbol{X})T_j$
+
+- Cluster-specific non-exposure group rate: $E[Y_{ij}|u_{ij}=0,b_{i0}] = \beta_0 + b_{i0} + \log(T_{ij})$
+
+- Global/population-averaged non-exposure group rate: $\beta_0$
+
+:::
+
+::: {.column width="50%"}
+
+Our covariance structure then looks like
+
+$$\begin{bmatrix}
+\sigma^2_b + \lambda(\boldsymbol{X})T_{ij} & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \lambda(\boldsymbol{X})T_{ij}
+\end{bmatrix}$$
+
+:::
+::::
+
+------------------------------------------------------------------------
+
+## Count outcomes and NB GLMMs
+
+When count data are over-dispersed, we can use a [negative-binomial]{.alert} regression model
+
+$$\text{log}(\lambda_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})$$
+
+where $b_{0i}\sim N(0,\sigma^2_b)$
+
+- Also assumes individual-level variation: $Var[Y_{ij}|\theta, \boldsymbol{X}, b_{i0}] = \lambda T_j (\mu_\theta + \lambda T_j \sigma^2_{\theta})$
+
+- Our covariance structure then looks like
+
+$$\begin{bmatrix}
+\sigma^2_b + \lambda T_{ij} (\mu_\theta + \lambda T_{ij} \sigma^2_{\theta}) & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \lambda T_{ij} (\mu_\theta + \lambda T_{ij} \sigma^2_{\theta})
+\end{bmatrix}$$
+
+
+---
+
+## Example: Student awards and writing scores
+
+We have a simulated dataset documenting the number of awards earned by individual students at 20 high schools. Let's say we want to say whether the number of awards a student receives is impacted by their score on a standardized writing test
+
+```{r awards}
+library(foreign)
+awards <- read.csv("~/Desktop/teaching/PHS-651/F25/assignments-F25/assignment-data/awards.csv", header=T)
+awards$cid <- factor(awards$cid)
+
+glimpse(awards)
+```
+
+- Student-level variables: gender, socioeconomic status, test scores (math, reading, writing, science, social studies), honors course enrollment status, program enrollment type (general, academic, vocational)
+
+- School-level variables: school ID, school type (public/private)
+
+---
+
+## Example: Student awards and writing scores
+
+Let's get an idea of our data...
+
+```{r awards table 1}
+awards %>% 
+   group_by(cid) %>% 
+   summarize(n=n(), mean_math=mean(write, na.rm=T), mean_awards = mean(awards), var_awards=var(awards))
+```
+
+---
+
+## Example: Student awards and writing scores
+
+First our Poisson mixed effects model:
+
+$$\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}(\text{school}_{i})$$
+
+- All data is on the per-year scale so $T_{ij}=1$, and $\log(T_{ij})=0$, so no need to add the time offset term
+
+```{r awards glmm quad}
+library(lme4)
+awards_quad <- glmer( awards ~ write + (1 | cid),
+                      family = poisson(link="log"), data = awards,
+                      control=glmerControl(optimizer="bobyqa") )
+summary( awards_quad )$coefficients
+
+```
+
+. . .
+
+- $\exp (\beta_1)$: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate `r round(exp(summary( awards_quad )$coef[2,1]),4)` times greater than the student whose writing score is 1 point lower
+
+- 95% CI: exp(`r round(summary( awards_quad )$coef[2,1],4)` $\pm$ `r round(summary( awards_quad )$coef[2,2],4)` $\times Z_{1-\alpha/2})$
+
+   - We are 95% confident the true award incidence ratio for writing scores is between `r round(exp(summary( awards_quad )$coef[2,1] - summary( awards_quad )$coef[2,2]*qnorm(0.975)), 4)` and `r round(exp(summary( awards_quad )$coef[2,1] + summary( awards_quad )$coef[2,2]*qnorm(0.975)), 4)`.
+
+---
+
+## Example: Student awards and writing scores
+
+For SAS, we would use PROC GLIMMIX
+```{sas glmm, eval=F}
+PROC GLIMMIX method=quad data=awards;
+        class cid;
+        model awards = write / dist = poisson link=log solution cl;
+        random intercept / subject=cid;
+run;
+   
+```
+
+---
+
+## Example: Student awards and writing scores
+
+Now our NB mixed effects model:
+
+```{r awards glmm NB quad}
+awards_NBquad <- glmer.nb( awards ~ write + (1 | cid),
+                           data = awards,
+                           control=glmerControl(optimizer="bobyqa") )
+summary( awards_NBquad )$coefficients
+```
+
+- $\exp (\beta_1)$: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate `r round(exp(summary( awards_NBquad )$coef[2,1]),4)` times greater than the student whose writing score is 1 point lower
+
+- 95% CI: (`r round(exp(summary( awards_NBquad )$coef[2,1] - summary( awards_NBquad )$coef[2,2]*qnorm(0.975)), 4)`, `r round(exp(summary( awards_NBquad )$coef[2,1] + summary( awards_NBquad )$coef[2,2]*qnorm(0.975)), 4)`)
+
+---
+
+## Example: Student awards and writing scores
+
+For SAS, we would just change the distribution on PROC GLIMMIX
+```{sas NBglmm, eval=F}
+PROC GLIMMIX method=quad data=awards;
+        class cid;
+        model awards = write / dist = negbin link=log solution cl;
+        random intercept / subject=cid;
+run;
+   
+```
+
+---
+
+## Investigating dispersion in Poisson models
+
+Recall that Poisson GLMMs assume that the mean and variance of the data are the same
+
+- When this assumption is broken, we say that [dispersion]{.alert} is present
+
+- If variance $>$ mean, we have [over]{.alert}dispersion
+
+- If variance $<$ mean, we have [under]{.alert}dispersion
+
+. . .
+
+If dispersion is present this is an indicator that we likely want to fit something like a Negative Binomial GLMM that allows variance $\ne$ mean
+
+- If that does not fix the issue, it may be that the dispersion is caused by "excess" zeros - in this case, something like a zero-inflated Poisson or NB model might work better
+
+---
+
+## Investigating dispersion in Poisson models
+
+To see if dispersion is present, we can calculate the dispersion parameter using the squared sum of Pearson residuals:
+$$\widehat\phi = \frac{\sum[\text{Pearson Residual}_{ij}^2]}{\text{Residual degrees of freedom}}$$
+
+- Pearson residuals correct for the unequal variance in the raw residuals by dividing by the standard deviation - this includes an estimate of the dispersion paramter (which we're extracting above)
+
+- $\hat\phi$ should be 1 if there is absolutely no dispersion
+
+- Will usually expect this not to be *exactly* 1, but major departures (rule of thumb: $<0.75$ or $>1.4$) indicate a NB model is likely better
+
+---
+
+## Investigating dispersion in Poisson models
+
+SAS calculates and displays $\hat\phi$ in its default result output
+
+- For `PROC GLIMMIX method=QUAD`, the dispersion parameter is listed under "Pearson Chi-Square / DF" in the "fit statistics for conditional distribution" table
+
+![](glimmix_quad.png){width=700}
+
+<!-- https://documentation.sas.com/doc/en/statcdc/14.2/statug/statug_glimmix_examples19.htm  -->
+
+---
+
+## Investigating dispersion in Poisson models
+
+In R, we can calculate the dispersion parameter by hand:
+```{r dispersion}
+library(lme4)
+awards_quad <- glmer( awards ~ write + (1 | cid),
+                      family = poisson(link="log"), data = awards,
+                      control=glmerControl(optimizer="bobyqa") )
+
+# estimate dispersion parameter #
+# pearson weighted residual sum of squares divided by degrees of freedom #
+# if not dispersion, we want this to be 1 #
+summary(awards_quad)$devcomp$cmp["pwrss"] / summary(awards_quad)$AICtab["df.resid"]
+# can also calculate the pearson RSS yourself #
+sum(resid(awards_quad, type="pearson")^2) / summary(awards_quad)$AICtab["df.resid"]
+```
+
+. . .
+
+This dispersion parameter is very small, so the data is likely very under-dispersed
+
+---
+
+## Investigating dispersion in Poisson models
+
+We can also use the `testDispersion()` function
+```{r testDispersion}
+# can use the testDisperson() function from DHARMa as well #
+library(DHARMa)
+testDispersion(awards_quad, type="PearsonChisq")
+```
+
+- This provides a formal test for whether $\hat{\phi} \ne 0$ in addition to calculating the estimated $\phi$
+
+- I would generally [not]{.alert} pay much attention to the p-value - focus on the estimated value for $\phi$

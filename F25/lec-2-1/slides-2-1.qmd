@@ -173,7 +173,7 @@ $$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-
 
 Look similar?
 
-$$\sum_{j=1}^n\boldsymbol{X}^T\sigma^2[Y_j - \boldsymbol{X}\vec{\beta}]=0 $$
+$$\sum_{j=1}^n\boldsymbol{X}^T\frac{1}{\sigma^2}[Y_j - \boldsymbol{X}\vec{\beta}]=0 $$
 
 . . .
 
@@ -190,7 +190,7 @@ OLS is a type of GLM!
 ## Generalized linear models
 
 In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
-$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \beta}\right)^T v_j^{-1}[Y_j - \mu_j(\beta)] = 0$$
+$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0$$
 
 - This estimating equation is based on the [likelihood function]{.alert} associated with the distribution we assume the outcome is coming from
 
@@ -433,7 +433,9 @@ There are several types of functions/procedures out there that use Gaussian quad
 - In R: `glmer()`
    
    - Other functions (like `glmmML()` and `glmm()` ) have trouble extending to longitudinal models
-   
+
+<br>
+
 - In SAS
    
    - `PROC GLIMMIX METHOD=QUAD` and `PROC NLMIXED METHOD=GAUSS` use Gaussian quadrature
@@ -474,11 +476,23 @@ Because we need to use approximation to estimate regression coefficients/covaria
 
 ---
 
+## Comparing results between SAS and R
+
+Fair warning: because we're using approximation algorithms to estimate our regression coefficients, SAS and R [may give you different results]{.alert}, even if both are using the same type of algorithm
+
+- Ideally these differences aren't large, but depends on how much and what type of data you have
+
+. . .
+
+... But now let's see these methods in action!
+
+---
+
 ## Example: cancer remission
 
 <!-- https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/ -->
 
-Say we want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment
+Say we want to see whether [years of physician experience]{.alert} impacts whether a patient’s lung cancer goes into [remission]{.alert} after treatment
 
 - simulated dummy data from [UCLA](https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/)
 
@@ -664,6 +678,16 @@ Binary outcomes are special in that there are several alternative link functions
 - The [log]{.alert} link and [identity]{.alert} links also get used
 
    - The former gives us risk ratios for $\beta_1$, while the latter gives us risk differences for $\beta_1$
+
+. . .
+
+In this case, we choose our link function based on 2 criteria:
+
+1. What quantity are we actually wanting to estimate?
+
+2. Do we have many observations with outcome probabilities very near 0 or 1?
+
+   - This will cause instability if you use log or identity link functions, but you should be okay if you're using a logit link
 
 ---
 

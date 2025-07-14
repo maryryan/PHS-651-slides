@@ -506,7 +506,7 @@ September 16, 2025
 </section><section id="generalized-linear-models-2" class="slide level2"><h2>Generalized linear models</h2>
 <p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0\]</span></p>
 <p>Look similar?</p>
-<p><span class="math display">\[\sum_{j=1}^n\boldsymbol{X}^T\sigma^2[Y_j - \boldsymbol{X}\vec{\beta}]=0 \]</span></p>
+<p><span class="math display">\[\sum_{j=1}^n\boldsymbol{X}^T\frac{1}{\sigma^2}[Y_j - \boldsymbol{X}\vec{\beta}]=0 \]</span></p>
 <div class="fragment">
 <p>OLS is a type of GLM!</p>
 <ul>
@@ -520,7 +520,7 @@ September 16, 2025
 </ul>
 </div>
 </section><section id="generalized-linear-models-3" class="slide level2"><h2>Generalized linear models</h2>
-<p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \beta}\right)^T v_j^{-1}[Y_j - \mu_j(\beta)] = 0\]</span></p>
+<p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0\]</span></p>
 <ul>
 <li>
 <p>This estimating equation is based on the <span class="alert">likelihood function</span> associated with the distribution we assume the outcome is coming from</p>
@@ -703,6 +703,9 @@ September 16, 2025
 <li>Other functions (like <code>glmmML()</code> and <code>glmm()</code> ) have trouble extending to longitudinal models</li>
 </ul>
 </li>
+</ul>
+<p><br></p>
+<ul>
 <li>
 <p>In SAS</p>
 <ul>
@@ -746,9 +749,17 @@ September 16, 2025
 <li><p>In SAS, you can add the argument <code>NLOPTIONS maxiter=1000;</code> to change the maximum number of iterations to 1,000 (no recommended min number here)</p></li>
 </ul>
 </li>
-</ol></section><section id="example-cancer-remission" class="slide level2"><h2>Example: cancer remission</h2>
+</ol></section><section id="comparing-results-between-sas-and-r" class="slide level2"><h2>Comparing results between SAS and R</h2>
+<p>Fair warning: because we’re using approximation algorithms to estimate our regression coefficients, SAS and R <span class="alert">may give you different results</span>, even if both are using the same type of algorithm</p>
+<ul>
+<li>Ideally these differences aren’t large, but depends on how much and what type of data you have</li>
+</ul>
+<div class="fragment">
+<p>… But now let’s see these methods in action!</p>
+</div>
+</section><section id="example-cancer-remission" class="slide level2"><h2>Example: cancer remission</h2>
 <!-- https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/ -->
-<p>Say we want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment</p>
+<p>Say we want to see whether <span class="alert">years of physician experience</span> impacts whether a patient’s lung cancer goes into <span class="alert">remission</span> after treatment</p>
 <ul>
 <li><p>simulated dummy data from <a href="https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/">UCLA</a></p></li>
 <li><p>patients clustered by physician</p></li>
@@ -975,7 +986,20 @@ CancerStageIV  -2.4922475 0.15023385 -16.589121 8.353380e-62</code></pre>
 </li>
 </ul>
 </li>
-</ul></section><section id="marginal-effects-in-glmms" class="slide level2"><h2>Marginal effects in GLMMs</h2>
+</ul>
+<div class="fragment">
+<p>In this case, we choose our link function based on 2 criteria:</p>
+<ol type="1">
+<li><p>What quantity are we actually wanting to estimate?</p></li>
+<li>
+<p>Do we have many observations with outcome probabilities very near 0 or 1?</p>
+<ul>
+<li>This will cause instability if you use log or identity link functions, but you should be okay if you’re using a logit link</li>
+</ul>
+</li>
+</ol>
+</div>
+</section><section id="marginal-effects-in-glmms" class="slide level2"><h2>Marginal effects in GLMMs</h2>
 <p>Last week we noted that marginal and conditional effects are <em>identical</em> in LMEs</p>
 <ul>
 <li>This is not the case for all GLMMs</li>

@@ -84,7 +84,13 @@ $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
 - We assume the outcome observations in cluster *i*, $\vec{Y}_i$, follow a [multivariate probability distribution]{.alert}
 
-. . .
+---
+
+## Recap: linear mixed effect models
+
+One way to account for clustering in analysis is with a [linear mixed
+effects]{.alert} model
+$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
 The [fixed effects]{.alert} are shared across everyone in the sample,
 while the [random effects]{.alert} are unique to a particular cluster
@@ -182,9 +188,11 @@ $U_{ij}$, we might have:
 
 . . .
 
-2.1.  $Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}$
+2.1.  $Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2$
 
-- Different variance for each cluster, which we assume is independent of $\mu_{ij}$
+- Clusters share a common variance, which we assume is independent of $\mu_{ij}$
+
+- Could also assume difference variances for each cluster, $\sigma^2_i$!
 
 . . .
 
@@ -201,7 +209,7 @@ $U_{ij}$, we might have:
 
 1.  $E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1$
 
-2.1.  $Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}$
+2.1.  $Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2$
 
 2.2.  $Corr[Y_{ij}, Y_{ik}] = \alpha$
 
@@ -220,8 +228,8 @@ $$\begin{bmatrix}
 
 If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster:
 $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
-&= \sqrt{\sigma^2_i}~ \alpha ~\sqrt{\sigma^2_i}\\
-&=\sigma^2_i\alpha\end{align*}$$
+&= \sqrt{\sigma^2}~ \alpha ~\sqrt{\sigma^2}\\
+&=\sigma^2\alpha\end{align*}$$
 
 . . .
 
@@ -230,10 +238,10 @@ $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y
 which creates us a [covariance matrix]{.alert} for cluster $i$ that looks like:
 
 $$\begin{bmatrix}
-\sigma^2_i & \sigma^2_i\alpha & \dots & \sigma^2_i\alpha \\
-\sigma^2_i\alpha & \ddots & \dots & \sigma^2_i\alpha \\
+\sigma^2 & \sigma^2\alpha & \dots & \sigma^2\alpha \\
+\sigma^2\alpha & \ddots & \dots & \sigma^2\alpha \\
 \vdots & \dots & \ddots & \vdots\\
-\sigma^2_i\alpha & \dots & \sigma^2_i\alpha & \sigma^2_i
+\sigma^2\alpha & \dots & \sigma^2\alpha & \sigma^2
 \end{bmatrix}$$
 :::
 
@@ -251,7 +259,14 @@ $$\begin{bmatrix}
 :::
 ::::
 
-. . .
+---
+
+## Marginal model components (cont.)
+
+If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster:
+$$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
+&= \sqrt{\sigma^2}~ \alpha ~\sqrt{\sigma^2}\\
+&=\sigma^2\alpha\end{align*}$$
 
 - Outcomes for individuals in **different** clusters would still have a covariance of 0 though because we're assuming that [clusters are independent of one another]{.alert}
 
@@ -261,18 +276,18 @@ $$\begin{bmatrix}
 
 If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster:
 $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
-&= \sqrt{\sigma^2_i}~ \alpha ~\sqrt{\sigma^2_i}\\
-&=\sigma^2_i\alpha\end{align*}$$
+&= \sqrt{\sigma^2}~ \alpha ~\sqrt{\sigma^2}\\
+&=\sigma^2\alpha\end{align*}$$
 
 :::: {.columns}
 ::: {.column width="50%"}
 which creates us a [covariance matrix]{.alert} for cluster $i$ that looks like:
 
 $$\begin{bmatrix}
-\sigma^2_i & \sigma^2_i\alpha & \dots & \sigma^2_i\alpha \\
-\sigma^2_i\alpha & \ddots & \dots & \sigma^2_i\alpha \\
+\sigma^2 & \sigma^2\alpha & \dots & \sigma^2\alpha \\
+\sigma^2\alpha & \ddots & \dots & \sigma^2\alpha \\
 \vdots & \dots & \ddots & \vdots\\
-\sigma^2_i\alpha & \dots & \sigma^2_i\alpha & \sigma^2_i
+\sigma^2\alpha & \dots & \sigma^2\alpha & \sigma^2
 \end{bmatrix}$$
 :::
 
@@ -315,13 +330,13 @@ $$\begin{bmatrix}
 
 ::: {.column width="50%"}
 ::: {.fragment}
-Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}$, creates a covariance matrix that looks like
+Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2$, creates a covariance matrix that looks like
 
 $$\begin{bmatrix}
-\sigma^2_i & 0 & \dots & 0 \\
+\sigma^2 & 0 & \dots & 0 \\
 0 & \ddots & \dots & 0 \\
 \vdots & \dots & \ddots & \vdots\\
-0 & \dots & 0 & \sigma^2_i
+0 & \dots & 0 & \sigma^2
 \end{bmatrix}$$
 :::
 :::
@@ -351,13 +366,13 @@ $$\begin{bmatrix}
 
 ::: {.column width="50%"}
 ::: {.fragment}
-Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}$, creates a covariance matrix that looks like
+Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2$, creates a covariance matrix that looks like
 
 $$\begin{bmatrix}
-\sigma^2_i & \sigma^2_i\alpha & \dots & \sigma^2_i\alpha \\
-\sigma^2_i\alpha & \ddots & \dots & \sigma^2_i\alpha \\
+\sigma^2 & \sigma^2\alpha & \dots & \sigma^2\alpha \\
+\sigma^2\alpha & \ddots & \dots & \sigma^2\alpha \\
 \vdots & \dots & \ddots & \vdots\\
-\sigma^2_i\alpha & \dots & \sigma^2_i\alpha & \sigma^2_i
+\sigma^2\alpha & \dots & \sigma^2\alpha & \sigma^2
 \end{bmatrix}$$
 :::
 :::
@@ -385,13 +400,13 @@ $$\begin{bmatrix}
 
 ::: {.column width="50%"}
 ::: {.fragment fragment-index=1}
-Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}$, creates a covariance matrix that looks like
+Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2$, creates a covariance matrix that looks like
 
 $$\begin{bmatrix}
-\sigma^2_i & \sigma^2_i\alpha_{12} & \dots & \sigma^2_i\alpha_{1n} \\
-\sigma^2_i\alpha_{21} & \ddots & \dots & \sigma^2_i\alpha_{2n} \\
+\sigma^2 & \sigma^2\alpha_{12} & \dots & \sigma^2\alpha_{1n} \\
+\sigma^2\alpha_{21} & \ddots & \dots & \sigma^2\alpha_{2n} \\
 \vdots & \dots & \ddots & \vdots\\
-\sigma^2_i\alpha_{n1} & \dots & \sigma^2_i\alpha_{n(n-1)} & \sigma^2_i
+\sigma^2\alpha_{n1} & \dots & \sigma^2\alpha_{n(n-1)} & \sigma^2
 \end{bmatrix}$$
 :::
 :::
@@ -408,9 +423,39 @@ $$\begin{bmatrix}
    - This can cause computational and efficiency issues
 :::
 
-::: {.fragment fragment-index=4}
-- Can get away with unstructured correlation in small data sets, but usually easier to assume a simpler structure
+------------------------------------------------------------------------
+
+## Correlation structures: unstructured
+
+Could you assume all observations are (potentially) related to each other in
+different ways?
+
+:::: {.columns}
+::: {.column width="50%"}
+- Known as an [unstructured]{.alert} correlation structure
+
+$$\begin{bmatrix}
+1 & \alpha_{12} & \dots & \alpha_{1n} \\
+\alpha_{21} & \ddots & \dots & \alpha_{2n} \\
+\vdots & \dots & \ddots & \vdots\\
+\alpha_{n1} & \dots & \alpha_{n(n-1)} & 1
+\end{bmatrix}$$
 :::
+
+::: {.column width="50%"}
+Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2$, creates a covariance matrix that looks like
+
+$$\begin{bmatrix}
+\sigma^2 & \sigma^2\alpha_{12} & \dots & \sigma^2\alpha_{1n} \\
+\sigma^2\alpha_{21} & \ddots & \dots & \sigma^2\alpha_{2n} \\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2\alpha_{n1} & \dots & \sigma^2\alpha_{n(n-1)} & \sigma^2
+\end{bmatrix}$$
+:::
+
+::::
+
+- Can get away with unstructured correlation in small data sets, but usually easier to assume a simpler structure
 
 ------------------------------------------------------------------------
 

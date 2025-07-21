@@ -363,10 +363,9 @@ September 23, 2025
 <li><p><span class="math inline">\(\vec{Z}_ib_{0i}\)</span> are the <span class="alert">random effects</span> accounting for random between-cluster variation</p></li>
 <li><p><span class="math inline">\(\vec{\epsilon}_i\)</span> is the regular between-individual variation</p></li>
 <li><p>We assume the outcome observations in cluster <em>i</em>, <span class="math inline">\(\vec{Y}_i\)</span>, follow a <span class="alert">multivariate probability distribution</span></p></li>
-</ul>
-<div class="fragment">
+</ul></section><section id="recap-linear-mixed-effect-models-1" class="slide level2"><h2>Recap: linear mixed effect models</h2>
+<p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <p>The <span class="alert">fixed effects</span> are shared across everyone in the sample, while the <span class="alert">random effects</span> are unique to a particular cluster</p>
-</div>
 <div class="fragment">
 <p>Interpretations of <span class="math inline">\(\beta_1\)</span> in an LME are <span class="alert">conditional</span> because they are comparing 2 individuals with the same cluster membership</p>
 <ul>
@@ -450,10 +449,10 @@ September 23, 2025
 <li><p>To account for confounding, we would add additional variables to the right hand side so that we <span class="alert">correctly model the mean</span></p></li>
 </ul>
 <div class="fragment">
-<p>2.1. <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}\)</span></p>
+<p>2.1. <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2\)</span></p>
 <ul>
-<li>Different variance for each cluster, which we assume is independent of <span class="math inline">\(\mu_{ij}\)</span>
-</li>
+<li><p>Clusters share a common variance, which we assume is independent of <span class="math inline">\(\mu_{ij}\)</span></p></li>
+<li><p>Could also assume difference variances for each cluster, <span class="math inline">\(\sigma^2_i\)</span>!</p></li>
 </ul>
 </div>
 <div class="fragment">
@@ -468,7 +467,7 @@ September 23, 2025
 <ol type="1">
 <li><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1\)</span></li>
 </ol>
-<p>2.1. <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}\)</span></p>
+<p>2.1. <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2\)</span></p>
 <p>2.2. <span class="math inline">\(Corr[Y_{ij}, Y_{ik}] = \alpha\)</span></p>
 <ul>
 <li>This means we can assume a <span class="alert">correlation structure</span> for one cluster that looks like:</li>
@@ -481,17 +480,17 @@ September 23, 2025
 \end{bmatrix}\]</span></p>
 </section><section id="marginal-model-components-cont.-2" class="slide level2"><h2>Marginal model components (cont.)</h2>
 <p>If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
-&amp;= \sqrt{\sigma^2_i}~ \alpha ~\sqrt{\sigma^2_i}\\
-&amp;=\sigma^2_i\alpha\end{align*}\]</span></p>
+&amp;= \sqrt{\sigma^2}~ \alpha ~\sqrt{\sigma^2}\\
+&amp;=\sigma^2\alpha\end{align*}\]</span></p>
 <div class="fragment">
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>which creates us a <span class="alert">covariance matrix</span> for cluster <span class="math inline">\(i\)</span> that looks like:</p>
 <p><span class="math display">\[\begin{bmatrix}
-\sigma^2_i &amp; \sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha \\
-\sigma^2_i\alpha &amp; \ddots &amp; \dots &amp; \sigma^2_i\alpha \\
+\sigma^2 &amp; \sigma^2\alpha &amp; \dots &amp; \sigma^2\alpha \\
+\sigma^2\alpha &amp; \ddots &amp; \dots &amp; \sigma^2\alpha \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha &amp; \sigma^2_i
+\sigma^2\alpha &amp; \dots &amp; \sigma^2\alpha &amp; \sigma^2
 \end{bmatrix}\]</span></p>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
@@ -506,24 +505,25 @@ September 23, 2025
 </div>
 </div>
 </div>
-<div class="fragment">
+</section><section id="marginal-model-components-cont.-3" class="slide level2"><h2>Marginal model components (cont.)</h2>
+<p>If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
+&amp;= \sqrt{\sigma^2}~ \alpha ~\sqrt{\sigma^2}\\
+&amp;=\sigma^2\alpha\end{align*}\]</span></p>
 <ul>
 <li>Outcomes for individuals in <strong>different</strong> clusters would still have a covariance of 0 though because we’re assuming that <span class="alert">clusters are independent of one another</span>
 </li>
-</ul>
-</div>
-</section><section id="marginal-model-components-cont.-3" class="slide level2"><h2>Marginal model components (cont.)</h2>
+</ul></section><section id="marginal-model-components-cont.-4" class="slide level2"><h2>Marginal model components (cont.)</h2>
 <p>If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
-&amp;= \sqrt{\sigma^2_i}~ \alpha ~\sqrt{\sigma^2_i}\\
-&amp;=\sigma^2_i\alpha\end{align*}\]</span></p>
+&amp;= \sqrt{\sigma^2}~ \alpha ~\sqrt{\sigma^2}\\
+&amp;=\sigma^2\alpha\end{align*}\]</span></p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>which creates us a <span class="alert">covariance matrix</span> for cluster <span class="math inline">\(i\)</span> that looks like:</p>
 <p><span class="math display">\[\begin{bmatrix}
-\sigma^2_i &amp; \sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha \\
-\sigma^2_i\alpha &amp; \ddots &amp; \dots &amp; \sigma^2_i\alpha \\
+\sigma^2 &amp; \sigma^2\alpha &amp; \dots &amp; \sigma^2\alpha \\
+\sigma^2\alpha &amp; \ddots &amp; \dots &amp; \sigma^2\alpha \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha &amp; \sigma^2_i
+\sigma^2\alpha &amp; \dots &amp; \sigma^2\alpha &amp; \sigma^2
 \end{bmatrix}\]</span></p>
 </div><div class="column" style="width:50%;">
 <p>which is different than the covariance matrix we’d get from an LME:</p>
@@ -556,12 +556,12 @@ September 23, 2025
 </div>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
-<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}\)</span>, creates a covariance matrix that looks like</p>
+<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2\)</span>, creates a covariance matrix that looks like</p>
 <p><span class="math display">\[\begin{bmatrix}
-\sigma^2_i &amp; 0 &amp; \dots &amp; 0 \\
+\sigma^2 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \ddots &amp; \dots &amp; 0 \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-0 &amp; \dots &amp; 0 &amp; \sigma^2_i
+0 &amp; \dots &amp; 0 &amp; \sigma^2
 \end{bmatrix}\]</span></p>
 </div>
 </div>
@@ -587,12 +587,12 @@ September 23, 2025
 </div>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
-<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}\)</span>, creates a covariance matrix that looks like</p>
+<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2\)</span>, creates a covariance matrix that looks like</p>
 <p><span class="math display">\[\begin{bmatrix}
-\sigma^2_i &amp; \sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha \\
-\sigma^2_i\alpha &amp; \ddots &amp; \dots &amp; \sigma^2_i\alpha \\
+\sigma^2 &amp; \sigma^2\alpha &amp; \dots &amp; \sigma^2\alpha \\
+\sigma^2\alpha &amp; \ddots &amp; \dots &amp; \sigma^2\alpha \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha &amp; \sigma^2_i
+\sigma^2\alpha &amp; \dots &amp; \sigma^2\alpha &amp; \sigma^2
 \end{bmatrix}\]</span></p>
 </div>
 </div>
@@ -612,12 +612,12 @@ September 23, 2025
 \end{bmatrix}\]</span></p>
 </div><div class="column" style="width:50%;">
 <div class="fragment" data-fragment-index="1">
-<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}\)</span>, creates a covariance matrix that looks like</p>
+<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2\)</span>, creates a covariance matrix that looks like</p>
 <p><span class="math display">\[\begin{bmatrix}
-\sigma^2_i &amp; \sigma^2_i\alpha_{12} &amp; \dots &amp; \sigma^2_i\alpha_{1n} \\
-\sigma^2_i\alpha_{21} &amp; \ddots &amp; \dots &amp; \sigma^2_i\alpha_{2n} \\
+\sigma^2 &amp; \sigma^2\alpha_{12} &amp; \dots &amp; \sigma^2\alpha_{1n} \\
+\sigma^2\alpha_{21} &amp; \ddots &amp; \dots &amp; \sigma^2\alpha_{2n} \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_i\alpha_{n1} &amp; \dots &amp; \sigma^2_i\alpha_{n(n-1)} &amp; \sigma^2_i
+\sigma^2\alpha_{n1} &amp; \dots &amp; \sigma^2\alpha_{n(n-1)} &amp; \sigma^2
 \end{bmatrix}\]</span></p>
 </div>
 </div>
@@ -637,12 +637,32 @@ September 23, 2025
 </li>
 </ul>
 </div>
-<div class="fragment" data-fragment-index="4">
+</section><section id="correlation-structures-unstructured-1" class="slide level2"><h2>Correlation structures: unstructured</h2>
+<p>Could you assume all observations are (potentially) related to each other in different ways?</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Known as an <span class="alert">unstructured</span> correlation structure</li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+1 &amp; \alpha_{12} &amp; \dots &amp; \alpha_{1n} \\
+\alpha_{21} &amp; \ddots &amp; \dots &amp; \alpha_{2n} \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\alpha_{n1} &amp; \dots &amp; \alpha_{n(n-1)} &amp; 1
+\end{bmatrix}\]</span></p>
+</div><div class="column" style="width:50%;">
+<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2\)</span>, creates a covariance matrix that looks like</p>
+<p><span class="math display">\[\begin{bmatrix}
+\sigma^2 &amp; \sigma^2\alpha_{12} &amp; \dots &amp; \sigma^2\alpha_{1n} \\
+\sigma^2\alpha_{21} &amp; \ddots &amp; \dots &amp; \sigma^2\alpha_{2n} \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\sigma^2\alpha_{n1} &amp; \dots &amp; \sigma^2\alpha_{n(n-1)} &amp; \sigma^2
+\end{bmatrix}\]</span></p>
+</div>
+</div>
 <ul>
 <li>Can get away with unstructured correlation in small data sets, but usually easier to assume a simpler structure</li>
-</ul>
-</div>
-</section><section id="marginal-model-components-1" class="slide level2"><h2>Marginal model components</h2>
+</ul></section><section id="marginal-model-components-1" class="slide level2"><h2>Marginal model components</h2>
 <p>So we have the main components of a marginal model</p>
 <ol type="1">
 <li><p>The marginal expectation of the outcome: <span class="math inline">\(g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}\)</span></p></li>

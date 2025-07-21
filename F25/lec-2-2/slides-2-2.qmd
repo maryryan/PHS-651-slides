@@ -89,11 +89,11 @@ $$Y_j \sim \text{Poisson}(\lambda T_j)$$
 
 We assume 3 things with a Poisson distribution:
 
-1. Stationarity: The expected number of events per unit time is the same throughout the entire time interval
+1. [Stationarity]{.underline}: The expected number of events per unit time is the same throughout the entire time interval
 
-2. Independence: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval
+2. [Independence]{.underline}: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval
 
-3. Rare events: For any very small time interval $h$:
+3. [Rare events]{.underline}: For any very small time interval $h$:
 
    - The probability of observing 1 event is directly proportional to the length of the time interval, e.g. $P(\text{1 event}) \approx \lambda h$
    
@@ -103,9 +103,9 @@ We assume 3 things with a Poisson distribution:
 
 ---
 
-## 552/551 review: Count data and time
+## 551/552 review: Count data and time
 
-Ideally when we collect count data, we want to collect it on the *same time scale* for everyone
+Ideally when we collect count data, we want to collect it on the [same time scale]{.alert} for everyone
 
 - Count of events within 1 day, 1 month, 1 year
 
@@ -129,7 +129,7 @@ We will also sometimes model the mean of the count data, rather than the rate:
 
 $$\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)$$
 
-- $T_j$ is known as an [offset]{.alert}
+- $T_j$ is known as an [offset]{.alert} $\rightarrow$ this allows us to account for different observation lengths or population totals that the events could occur in
 
 Both these regressions assume:
 
@@ -300,9 +300,9 @@ awards$cid <- factor(awards$cid)
 glimpse(awards)
 ```
 
-- Student-level variables: gender, socioeconomic status, test scores (math, reading, writing, science, social studies), honors course enrollment status, program enrollment type (general, academic, vocational)
+- [Student-level variables]{.underline}: gender, socioeconomic status, test scores (math, reading, writing, science, social studies), honors course enrollment status, program enrollment type (general, academic, vocational)
 
-- School-level variables: school ID, school type (public/private)
+- [School-level variables]{.underline}: school ID, school type (public/private)
 
 ---
 
@@ -324,8 +324,17 @@ First our Poisson mixed effects model:
 
 $$\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}(\text{school}_{i})$$
 
-- All data is on the per-year scale so $T_{ij}=1$, and $\log(T_{ij})=0$, so no need to add the time offset term
+- All data is measured on the same time-scale (annual) and has the same total population denominator (awards within a person)
 
+   - $T_{ij}=1$, and $\log(T_{ij})=0$, so no need to add an offset term
+   
+   - We observe different numbers of students in each `cid` in this dataset, but offset is defined by the smallest observation unit
+
+---
+
+## Example: Student awards and writing scores
+
+Running this in R we would use `glmer()`
 ```{r awards glmm quad}
 library(lme4)
 awards_quad <- glmer( awards ~ write + (1 | cid),
@@ -341,7 +350,7 @@ summary( awards_quad )$coefficients
 
 - 95% CI: exp(`r round(summary( awards_quad )$coef[2,1],4)` $\pm$ `r round(summary( awards_quad )$coef[2,2],4)` $\times Z_{1-\alpha/2})$
 
-   - We are 95% confident the true award incidence ratio for writing scores is between `r round(exp(summary( awards_quad )$coef[2,1] - summary( awards_quad )$coef[2,2]*qnorm(0.975)), 4)` and `r round(exp(summary( awards_quad )$coef[2,1] + summary( awards_quad )$coef[2,2]*qnorm(0.975)), 4)`.
+   - We are 95% confident the true award incidence ratio for writing scores is between `r round(exp(confint( awards_quad ))[3,1], 4)` and `r round(exp(confint( awards_quad ))[3,2], 4)`.
 
 ---
 
@@ -413,7 +422,7 @@ If dispersion is present this is an indicator that we likely want to fit somethi
 To see if dispersion is present, we can calculate the dispersion parameter using the squared sum of Pearson residuals:
 $$\widehat\phi = \frac{\sum[\text{Pearson Residual}_{ij}^2]}{\text{Residual degrees of freedom}}$$
 
-- Pearson residuals correct for the unequal variance in the raw residuals by dividing by the standard deviation - this includes an estimate of the dispersion paramter (which we're extracting above)
+- Pearson residuals correct for the unequal variance in the raw residuals by dividing by the standard deviation -- this includes an estimate of the dispersion parameter (which we're extracting above)
 
 - $\hat\phi$ should be 1 if there is absolutely no dispersion
 
@@ -467,4 +476,4 @@ testDispersion(awards_quad, type="PearsonChisq")
 
 - This provides a formal test for whether $\hat{\phi} \ne 0$ in addition to calculating the estimated $\phi$
 
-- I would generally [not]{.alert} pay much attention to the p-value - focus on the estimated value for $\phi$
+- I would generally [not]{.alert} pay much attention to the p-value -- focus on the estimated value for $\phi$

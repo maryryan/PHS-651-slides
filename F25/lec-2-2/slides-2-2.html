@@ -437,18 +437,18 @@ Online video: September 30, 2025
 </ul></section><section id="review-distribution-of-count-data-1" class="slide level2"><h2>551/552 review: Distribution of count data</h2>
 <p>We assume 3 things with a Poisson distribution:</p>
 <ol type="1">
-<li><p>Stationarity: The expected number of events per unit time is the same throughout the entire time interval</p></li>
-<li><p>Independence: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval</p></li>
+<li><p><u>Stationarity</u>: The expected number of events per unit time is the same throughout the entire time interval</p></li>
+<li><p><u>Independence</u>: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval</p></li>
 <li>
-<p>Rare events: For any very small time interval <span class="math inline">\(h\)</span>:</p>
+<p><u>Rare events</u>: For any very small time interval <span class="math inline">\(h\)</span>:</p>
 <ul>
 <li><p>The probability of observing 1 event is directly proportional to the length of the time interval, e.g.&nbsp;<span class="math inline">\(P(\text{1 event}) \approx \lambda h\)</span></p></li>
 <li><p>The probability of observing no events is approximately <span class="math inline">\(1-\lambda h\)</span></p></li>
 <li><p>The probability of observing 2 or more events is essentially 0</p></li>
 </ul>
 </li>
-</ol></section><section id="review-count-data-and-time" class="slide level2"><h2>552/551 review: Count data and time</h2>
-<p>Ideally when we collect count data, we want to collect it on the <em>same time scale</em> for everyone</p>
+</ol></section><section id="review-count-data-and-time" class="slide level2"><h2>551/552 review: Count data and time</h2>
+<p>Ideally when we collect count data, we want to collect it on the <span class="alert">same time scale</span> for everyone</p>
 <ul>
 <li><p>Count of events within 1 day, 1 month, 1 year</p></li>
 <li><p>This may not always be the case, especially when combining data from multiple sources</p></li>
@@ -464,8 +464,7 @@ Online video: September 30, 2025
 <p><span class="math display">\[\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)\]</span></p>
 <ul>
 <li>
-<span class="math inline">\(T_j\)</span> is known as an <span class="alert">offset</span>
-</li>
+<span class="math inline">\(T_j\)</span> is known as an <span class="alert">offset</span> <span class="math inline">\(\rightarrow\)</span> this allows us to account for different observation lengths or population totals that the events could occur in</li>
 </ul>
 <p>Both these regressions assume:</p>
 <ol type="1">
@@ -599,8 +598,8 @@ $ cid     &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2
 </div>
 </div>
 <ul>
-<li><p>Student-level variables: gender, socioeconomic status, test scores (math, reading, writing, science, social studies), honors course enrollment status, program enrollment type (general, academic, vocational)</p></li>
-<li><p>School-level variables: school ID, school type (public/private)</p></li>
+<li><p><u>Student-level variables</u>: gender, socioeconomic status, test scores (math, reading, writing, science, social studies), honors course enrollment status, program enrollment type (general, academic, vocational)</p></li>
+<li><p><u>School-level variables</u>: school ID, school type (public/private)</p></li>
 </ul></section><section id="example-student-awards-and-writing-scores-1" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>Let’s get an idea of our data…</p>
 <div class="cell">
@@ -637,8 +636,15 @@ $ cid     &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2
 <p>First our Poisson mixed effects model:</p>
 <p><span class="math display">\[\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}(\text{school}_{i})\]</span></p>
 <ul>
-<li>All data is on the per-year scale so <span class="math inline">\(T_{ij}=1\)</span>, and <span class="math inline">\(\log(T_{ij})=0\)</span>, so no need to add the time offset term</li>
+<li>
+<p>All data is measured on the same time-scale (annual) and has the same total population denominator (awards within a person)</p>
+<ul>
+<li><p><span class="math inline">\(T_{ij}=1\)</span>, and <span class="math inline">\(\log(T_{ij})=0\)</span>, so no need to add an offset term</p></li>
+<li><p>We observe different numbers of students in each <code>cid</code> in this dataset, but offset is defined by the smallest observation unit</p></li>
 </ul>
+</li>
+</ul></section><section id="example-student-awards-and-writing-scores-3" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+<p>Running this in R we would use <code>glmer()</code></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(lme4)</span>
 <span id="cb5-2"><a href="#cb5-2"></a>awards_quad <span class="ot">&lt;-</span> <span class="fu">glmer</span>( awards <span class="sc">~</span> write <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> cid),</span>
@@ -657,12 +663,12 @@ write        0.1670148 0.01099133  15.19513 3.808977e-52</code></pre>
 <li>
 <p>95% CI: exp(0.167 <span class="math inline">\(\pm\)</span> 0.011 <span class="math inline">\(\times Z_{1-\alpha/2})\)</span></p>
 <ul>
-<li>We are 95% confident the true award incidence ratio for writing scores is between 1.1566 and 1.2075.</li>
+<li>We are 95% confident the true award incidence ratio for writing scores is between 1.1573 and 1.2082.</li>
 </ul>
 </li>
 </ul>
 </div>
-</section><section id="example-student-awards-and-writing-scores-3" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+</section><section id="example-student-awards-and-writing-scores-4" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>For SAS, we would use PROC GLIMMIX</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource sas number-lines code-with-copy"><code class="sourceCode"><span id="cb7-1"><a href="#cb7-1"></a>PROC GLIMMIX method=quad data=awards;</span>
@@ -672,7 +678,7 @@ write        0.1670148 0.01099133  15.19513 3.808977e-52</code></pre>
 <span id="cb7-5"><a href="#cb7-5"></a>run;</span>
 <span id="cb7-6"><a href="#cb7-6"></a>   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="example-student-awards-and-writing-scores-4" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+</section><section id="example-student-awards-and-writing-scores-5" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>Now our NB mixed effects model:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>awards_NBquad <span class="ot">&lt;-</span> <span class="fu">glmer.nb</span>( awards <span class="sc">~</span> write <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> cid),</span>
@@ -688,7 +694,7 @@ write        0.1670175 0.01373927  12.15622 5.316210e-34</code></pre>
 <ul>
 <li><p><span class="math inline">\(\exp (\beta_1)\)</span>: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate 1.1818 times greater than the student whose writing score is 1 point lower</p></li>
 <li><p>95% CI: (1.1504, 1.214)</p></li>
-</ul></section><section id="example-student-awards-and-writing-scores-5" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+</ul></section><section id="example-student-awards-and-writing-scores-6" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>For SAS, we would just change the distribution on PROC GLIMMIX</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource sas number-lines code-with-copy"><code class="sourceCode"><span id="cb10-1"><a href="#cb10-1"></a>PROC GLIMMIX method=quad data=awards;</span>
@@ -714,7 +720,7 @@ write        0.1670175 0.01373927  12.15622 5.316210e-34</code></pre>
 </section><section id="investigating-dispersion-in-poisson-models-1" class="slide level2"><h2>Investigating dispersion in Poisson models</h2>
 <p>To see if dispersion is present, we can calculate the dispersion parameter using the squared sum of Pearson residuals: <span class="math display">\[\widehat\phi = \frac{\sum[\text{Pearson Residual}_{ij}^2]}{\text{Residual degrees of freedom}}\]</span></p>
 <ul>
-<li><p>Pearson residuals correct for the unequal variance in the raw residuals by dividing by the standard deviation - this includes an estimate of the dispersion paramter (which we’re extracting above)</p></li>
+<li><p>Pearson residuals correct for the unequal variance in the raw residuals by dividing by the standard deviation – this includes an estimate of the dispersion parameter (which we’re extracting above)</p></li>
 <li><p><span class="math inline">\(\hat\phi\)</span> should be 1 if there is absolutely no dispersion</p></li>
 <li><p>Will usually expect this not to be <em>exactly</em> 1, but major departures (rule of thumb: <span class="math inline">\(&lt;0.75\)</span> or <span class="math inline">\(&gt;1.4\)</span>) indicate a NB model is likely better</p></li>
 </ul></section><section id="investigating-dispersion-in-poisson-models-2" class="slide level2"><h2>Investigating dispersion in Poisson models</h2>
@@ -767,7 +773,7 @@ alternative hypothesis: two.sided</code></pre>
 </div>
 <ul>
 <li><p>This provides a formal test for whether <span class="math inline">\(\hat{\phi} \ne 0\)</span> in addition to calculating the estimated <span class="math inline">\(\phi\)</span></p></li>
-<li><p>I would generally <span class="alert">not</span> pay much attention to the p-value - focus on the estimated value for <span class="math inline">\(\phi\)</span></p></li>
+<li><p>I would generally <span class="alert">not</span> pay much attention to the p-value – focus on the estimated value for <span class="math inline">\(\phi\)</span></p></li>
 </ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">

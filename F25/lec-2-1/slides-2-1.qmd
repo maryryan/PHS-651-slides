@@ -380,7 +380,7 @@ summary(glmm_fit)
 
 Let's be more specific
 
-- Say we have $\vec{Y}_i$ that is distributed Bernoulli with probability of success $p_i$
+- Say we have $\vec{Y}_i$ that is distributed Bernoulli with probability of success $p_{ij}$
 
 - We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
 

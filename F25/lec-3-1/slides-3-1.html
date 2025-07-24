@@ -400,7 +400,25 @@ September 23, 2025
 </li>
 </ul>
 </div>
-</section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
+</section><section id="r-side-and-g-side-variance" class="slide level2"><h2>R-side and G-side variance</h2>
+<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{\gamma} + \vec{\epsilon}_i\]</span></p>
+<ul>
+<li>
+<p>Recall that with LMEs and GLMMs, we modeled: <span class="math display">\[\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})\]</span></p>
+<ul>
+<li><p>These random effects <span class="math inline">\(\vec{\gamma}\)</span> were difficult to marginalize out of the expectation</p></li>
+<li><p>What if instead we had <em>no</em> random effects (<span class="math inline">\(\boldsymbol{G}=0\)</span>), and modeled non-zero covariance using <span class="math inline">\(\vec{\epsilon}_i\)</span> and a <span class="math inline">\(\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}\)</span>?</p></li>
+</ul>
+</li>
+<li><p>When using random effects (like in LMEs and GLMMs), some call this modeling with <span class="alert">G-side variance</span></p></li>
+<li>
+<p>When using <span class="math inline">\(\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}\)</span>, we call this modeling with <span class="alert">R-side variance</span></p>
+<ul>
+<li>
+<span class="alert">Marginal modeling</span> approaches tend to exclusively model with R-side variance</li>
+</ul>
+</li>
+</ul></section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
 <p>There are 2 main components of a marginal model</p>
 <ol type="1">
 <li>The <span class="alert">marginal expectation</span> of the outcome <span class="math inline">\(E[Y_{ij}|\vec{X}_{ij}]=\mu_{ij}\)</span>:</li>

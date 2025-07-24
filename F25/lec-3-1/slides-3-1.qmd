@@ -108,7 +108,7 @@ they are comparing 2 individuals with the same cluster membership
 
 . . .
 
-[What if we want to look at the effect of an exposure *averaged across*
+[What if we want to look at the marginal effect of an exposure -- one that's *averaged across*
 all clusters?]{.alert}
 
 ------------------------------------------------------------------------
@@ -131,12 +131,8 @@ Rigid distributional assumptions got in the way of this in LMEs/GLMMs
 
 . . .
 
-- How can we account for correlation among outcome observations without the rigidity of distribution assumptions?
+- How can we account for correlation among outcome observations/non-0 covariance without the rigidity of distribution assumptions?
 
-   - Those assumptions focused on specifying [within-cluster and between cluster variability]{.alert}, and helped show what the covariance matrix for a cluster should look like and how we could estimate model parameters
-
-   - What if we focused more on the [within-cluster correlation]{.alert}, and use an [empirically estimated]{.alert} covariance structure?
-   
 ---
 
 ## R-side and G-side variance
@@ -146,15 +142,22 @@ $$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{\gamma} + \v
 - Recall that with LMEs and GLMMs, we modeled:
 $$\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})$$
 
+- When using random effects (like in LMEs and GLMMs), some call this modeling with [G-side variance]{.alert}
+
    - These random effects $\vec{\gamma}$ were difficult to marginalize out of the expectation
    
    - What if instead we had *no* random effects ($\boldsymbol{G}=0$), and modeled non-zero covariance using $\vec{\epsilon}_i$ and a $\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}$?
-   
-- When using random effects (like in LMEs and GLMMs), some call this modeling with [G-side variance]{.alert}
 
 - When using $\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}$, we call this modeling with [R-side variance]{.alert}
 
    - [Marginal modeling]{.alert} approaches tend to exclusively model with R-side variance
+   
+   - Downside: this means we're not modeling the outcome using a proper probability distribution (more on this soon...)
+   
+
+<!--    - Those assumptions focused on specifying [within-cluster and between cluster variability]{.alert}, and helped show what the covariance matrix for a cluster should look like and how we could estimate model parameters -->
+
+<!--    - What if we focused more on the [within-cluster correlation]{.alert}, and use an [empirically estimated]{.alert} covariance structure? -->
 
 ------------------------------------------------------------------------
 
@@ -254,9 +257,9 @@ $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y
 
 :::: {.columns}
 ::: {.column width="50%"}
-which creates us a [covariance matrix]{.alert} for cluster $i$ that looks like:
+which creates us a [covariance matrix]{.alert} for cluster $i$, $V_i$, that looks like:
 
-$$\begin{bmatrix}
+$$V_i=\begin{bmatrix}
 \sigma^2 & \sigma^2\alpha & \dots & \sigma^2\alpha \\
 \sigma^2\alpha & \ddots & \dots & \sigma^2\alpha \\
 \vdots & \dots & \ddots & \vdots\\
@@ -277,6 +280,10 @@ $$\begin{bmatrix}
 :::
 :::
 ::::
+
+. . .
+
+- We call $V_i$ the ["working" covariance]{.alert} matrix
 
 ---
 
@@ -302,7 +309,7 @@ $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y
 ::: {.column width="50%"}
 which creates us a [covariance matrix]{.alert} for cluster $i$ that looks like:
 
-$$\begin{bmatrix}
+$$V_i=\begin{bmatrix}
 \sigma^2 & \sigma^2\alpha & \dots & \sigma^2\alpha \\
 \sigma^2\alpha & \ddots & \dots & \sigma^2\alpha \\
 \vdots & \dots & \ddots & \vdots\\
@@ -351,7 +358,7 @@ $$\begin{bmatrix}
 ::: {.fragment}
 Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2$, creates a covariance matrix that looks like
 
-$$\begin{bmatrix}
+$$V_i=\begin{bmatrix}
 \sigma^2 & 0 & \dots & 0 \\
 0 & \ddots & \dots & 0 \\
 \vdots & \dots & \ddots & \vdots\\
@@ -387,7 +394,7 @@ $$\begin{bmatrix}
 ::: {.fragment}
 Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2$, creates a covariance matrix that looks like
 
-$$\begin{bmatrix}
+$$V_i=\begin{bmatrix}
 \sigma^2 & \sigma^2\alpha & \dots & \sigma^2\alpha \\
 \sigma^2\alpha & \ddots & \dots & \sigma^2\alpha \\
 \vdots & \dots & \ddots & \vdots\\
@@ -421,7 +428,7 @@ $$\begin{bmatrix}
 ::: {.fragment fragment-index=1}
 Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2$, creates a covariance matrix that looks like
 
-$$\begin{bmatrix}
+$$V_i=\begin{bmatrix}
 \sigma^2 & \sigma^2\alpha_{12} & \dots & \sigma^2\alpha_{1n} \\
 \sigma^2\alpha_{21} & \ddots & \dots & \sigma^2\alpha_{2n} \\
 \vdots & \dots & \ddots & \vdots\\
@@ -464,7 +471,7 @@ $$\begin{bmatrix}
 ::: {.column width="50%"}
 Assuming $Var[Y_{ij}|\boldsymbol{X}] = \sigma^2$, creates a covariance matrix that looks like
 
-$$\begin{bmatrix}
+$$V_i=\begin{bmatrix}
 \sigma^2 & \sigma^2\alpha_{12} & \dots & \sigma^2\alpha_{1n} \\
 \sigma^2\alpha_{21} & \ddots & \dots & \sigma^2\alpha_{2n} \\
 \vdots & \dots & \ddots & \vdots\\

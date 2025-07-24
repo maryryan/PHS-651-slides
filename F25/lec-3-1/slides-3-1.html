@@ -374,7 +374,7 @@ September 23, 2025
 </ul>
 </div>
 <div class="fragment">
-<p><span class="alert">What if we want to look at the effect of an exposure <em>averaged across</em> all clusters?</span></p>
+<p><span class="alert">What if we want to look at the marginal effect of an exposure – one that’s <em>averaged across</em> all clusters?</span></p>
 </div>
 </section><section id="marginal-models" class="slide level2"><h2>Marginal models</h2>
 <p>Basic idea: we want to account for clustering of data, but make inference about <span class="alert">population averages</span> (marginal effects)</p>
@@ -391,34 +391,29 @@ September 23, 2025
 </div>
 <div class="fragment">
 <ul>
-<li>
-<p>How can we account for correlation among outcome observations without the rigidity of distribution assumptions?</p>
-<ul>
-<li><p>Those assumptions focused on specifying <span class="alert">within-cluster and between cluster variability</span>, and helped show what the covariance matrix for a cluster should look like and how we could estimate model parameters</p></li>
-<li><p>What if we focused more on the <span class="alert">within-cluster correlation</span>, and use an <span class="alert">empirically estimated</span> covariance structure?</p></li>
-</ul>
-</li>
+<li>How can we account for correlation among outcome observations/non-0 covariance without the rigidity of distribution assumptions?</li>
 </ul>
 </div>
 </section><section id="r-side-and-g-side-variance" class="slide level2"><h2>R-side and G-side variance</h2>
 <p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{\gamma} + \vec{\epsilon}_i\]</span></p>
 <ul>
+<li><p>Recall that with LMEs and GLMMs, we modeled: <span class="math display">\[\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})\]</span></p></li>
 <li>
-<p>Recall that with LMEs and GLMMs, we modeled: <span class="math display">\[\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})\]</span></p>
+<p>When using random effects (like in LMEs and GLMMs), some call this modeling with <span class="alert">G-side variance</span></p>
 <ul>
 <li><p>These random effects <span class="math inline">\(\vec{\gamma}\)</span> were difficult to marginalize out of the expectation</p></li>
 <li><p>What if instead we had <em>no</em> random effects (<span class="math inline">\(\boldsymbol{G}=0\)</span>), and modeled non-zero covariance using <span class="math inline">\(\vec{\epsilon}_i\)</span> and a <span class="math inline">\(\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}\)</span>?</p></li>
 </ul>
 </li>
-<li><p>When using random effects (like in LMEs and GLMMs), some call this modeling with <span class="alert">G-side variance</span></p></li>
 <li>
 <p>When using <span class="math inline">\(\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}\)</span>, we call this modeling with <span class="alert">R-side variance</span></p>
 <ul>
-<li>
-<span class="alert">Marginal modeling</span> approaches tend to exclusively model with R-side variance</li>
+<li><p><span class="alert">Marginal modeling</span> approaches tend to exclusively model with R-side variance</p></li>
+<li><p>Downside: this means we’re not modeling the outcome using a proper probability distribution (more on this soon…)</p></li>
 </ul>
 </li>
-</ul></section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
+</ul>
+<!--    - Those assumptions focused on specifying [within-cluster and between cluster variability]{.alert}, and helped show what the covariance matrix for a cluster should look like and how we could estimate model parameters --><!--    - What if we focused more on the [within-cluster correlation]{.alert}, and use an [empirically estimated]{.alert} covariance structure? --></section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
 <p>There are 2 main components of a marginal model</p>
 <ol type="1">
 <li>The <span class="alert">marginal expectation</span> of the outcome <span class="math inline">\(E[Y_{ij}|\vec{X}_{ij}]=\mu_{ij}\)</span>:</li>
@@ -503,8 +498,8 @@ September 23, 2025
 <div class="fragment">
 <div class="columns">
 <div class="column" style="width:50%;">
-<p>which creates us a <span class="alert">covariance matrix</span> for cluster <span class="math inline">\(i\)</span> that looks like:</p>
-<p><span class="math display">\[\begin{bmatrix}
+<p>which creates us a <span class="alert">covariance matrix</span> for cluster <span class="math inline">\(i\)</span>, <span class="math inline">\(V_i\)</span>, that looks like:</p>
+<p><span class="math display">\[V_i=\begin{bmatrix}
 \sigma^2 &amp; \sigma^2\alpha &amp; \dots &amp; \sigma^2\alpha \\
 \sigma^2\alpha &amp; \ddots &amp; \dots &amp; \sigma^2\alpha \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
@@ -523,6 +518,11 @@ September 23, 2025
 </div>
 </div>
 </div>
+<div class="fragment">
+<ul>
+<li>We call <span class="math inline">\(V_i\)</span> the <span class="alert">“working” covariance</span> matrix</li>
+</ul>
+</div>
 </section><section id="marginal-model-components-cont.-3" class="slide level2"><h2>Marginal model components (cont.)</h2>
 <p>If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
 &amp;= \sqrt{\sigma^2}~ \alpha ~\sqrt{\sigma^2}\\
@@ -537,7 +537,7 @@ September 23, 2025
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>which creates us a <span class="alert">covariance matrix</span> for cluster <span class="math inline">\(i\)</span> that looks like:</p>
-<p><span class="math display">\[\begin{bmatrix}
+<p><span class="math display">\[V_i=\begin{bmatrix}
 \sigma^2 &amp; \sigma^2\alpha &amp; \dots &amp; \sigma^2\alpha \\
 \sigma^2\alpha &amp; \ddots &amp; \dots &amp; \sigma^2\alpha \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
@@ -575,7 +575,7 @@ September 23, 2025
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2\)</span>, creates a covariance matrix that looks like</p>
-<p><span class="math display">\[\begin{bmatrix}
+<p><span class="math display">\[V_i=\begin{bmatrix}
 \sigma^2 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \ddots &amp; \dots &amp; 0 \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
@@ -606,7 +606,7 @@ September 23, 2025
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2\)</span>, creates a covariance matrix that looks like</p>
-<p><span class="math display">\[\begin{bmatrix}
+<p><span class="math display">\[V_i=\begin{bmatrix}
 \sigma^2 &amp; \sigma^2\alpha &amp; \dots &amp; \sigma^2\alpha \\
 \sigma^2\alpha &amp; \ddots &amp; \dots &amp; \sigma^2\alpha \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
@@ -631,7 +631,7 @@ September 23, 2025
 </div><div class="column" style="width:50%;">
 <div class="fragment" data-fragment-index="1">
 <p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2\)</span>, creates a covariance matrix that looks like</p>
-<p><span class="math display">\[\begin{bmatrix}
+<p><span class="math display">\[V_i=\begin{bmatrix}
 \sigma^2 &amp; \sigma^2\alpha_{12} &amp; \dots &amp; \sigma^2\alpha_{1n} \\
 \sigma^2\alpha_{21} &amp; \ddots &amp; \dots &amp; \sigma^2\alpha_{2n} \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
@@ -670,7 +670,7 @@ September 23, 2025
 \end{bmatrix}\]</span></p>
 </div><div class="column" style="width:50%;">
 <p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2\)</span>, creates a covariance matrix that looks like</p>
-<p><span class="math display">\[\begin{bmatrix}
+<p><span class="math display">\[V_i=\begin{bmatrix}
 \sigma^2 &amp; \sigma^2\alpha_{12} &amp; \dots &amp; \sigma^2\alpha_{1n} \\
 \sigma^2\alpha_{21} &amp; \ddots &amp; \dots &amp; \sigma^2\alpha_{2n} \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\

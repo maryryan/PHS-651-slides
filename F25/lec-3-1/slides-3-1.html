@@ -380,19 +380,16 @@ September 23, 2025
 <p>Basic idea: we want to account for clustering of data, but make inference about <span class="alert">population averages</span> (marginal effects)</p>
 <ul>
 <li><p>We’re often very interested in these in public and population health!</p></li>
+<li><p>Not to be confused with the average treatment effect (ATE) – this is a different concept</p></li>
 <li><p>Mean response is conditional <em>only</em> on the adjustment covariates we add to the mean model</p></li>
 </ul>
 <div class="fragment">
-<p>Rigid distributional assumptions got in the way of this in LMEs/GLMMs</p>
+<p><br> Rigid distributional assumptions got in the way of this in LMEs/GLMMs</p>
 <ul>
 <li>So for marginal models we want to use <span class="alert">fewer distributional assumptions</span>
 </li>
 </ul>
-</div>
-<div class="fragment">
-<ul>
-<li>How can we account for correlation among outcome observations/non-0 covariance without the rigidity of distribution assumptions?</li>
-</ul>
+<!-- . . . --><!-- - How can we account for correlation among outcome observations/non-0 covariance without the rigidity of distribution assumptions? -->
 </div>
 </section><section id="r-side-and-g-side-variance" class="slide level2"><h2>R-side and G-side variance</h2>
 <p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{\gamma} + \vec{\epsilon}_i\]</span></p>
@@ -401,10 +398,13 @@ September 23, 2025
 <li>
 <p>When using random effects (like in LMEs and GLMMs), some call this modeling with <span class="alert">G-side variance</span></p>
 <ul>
-<li><p>These random effects <span class="math inline">\(\vec{\gamma}\)</span> were difficult to marginalize out of the expectation</p></li>
+<li><p>These random effects <span class="math inline">\(\vec{\gamma}\)</span> were difficult to marginalize out of the expectation when we used a non-identity link function</p></li>
 <li><p>What if instead we had <em>no</em> random effects (<span class="math inline">\(\boldsymbol{G}=0\)</span>), and modeled non-zero covariance using <span class="math inline">\(\vec{\epsilon}_i\)</span> and a <span class="math inline">\(\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}\)</span>?</p></li>
 </ul>
 </li>
+</ul>
+<div class="fragment">
+<ul>
 <li>
 <p>When using <span class="math inline">\(\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}\)</span>, we call this modeling with <span class="alert">R-side variance</span></p>
 <ul>
@@ -413,7 +413,9 @@ September 23, 2025
 </ul>
 </li>
 </ul>
-<!--    - Those assumptions focused on specifying [within-cluster and between cluster variability]{.alert}, and helped show what the covariance matrix for a cluster should look like and how we could estimate model parameters --><!--    - What if we focused more on the [within-cluster correlation]{.alert}, and use an [empirically estimated]{.alert} covariance structure? --></section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
+<!--    - Those assumptions focused on specifying [within-cluster and between cluster variability]{.alert}, and helped show what the covariance matrix for a cluster should look like and how we could estimate model parameters --><!--    - What if we focused more on the [within-cluster correlation]{.alert}, and use an [empirically estimated]{.alert} covariance structure? -->
+</div>
+</section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
 <p>There are 2 main components of a marginal model</p>
 <ol type="1">
 <li>The <span class="alert">marginal expectation</span> of the outcome <span class="math inline">\(E[Y_{ij}|\vec{X}_{ij}]=\mu_{ij}\)</span>:</li>
@@ -452,13 +454,13 @@ September 23, 2025
 <div class="fragment absolute" style="bottom: 200px; right: 200px; width: 30%; ">
 <p><span class="alert">Component 2 is kind of like systematic variation in GLMMs!</span></p>
 </div>
-</section><section id="marginal-model-components-cont." class="slide level2"><h2>Marginal model components (cont.)</h2>
-<p>In a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(U_{ij}\)</span>, we might have:</p>
+</section><section id="marginal-model-components-example-continuous-outcomes" class="slide level2"><h2>Marginal model components example: continuous outcomes</h2>
+<p>For example, in a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(U_{ij}\)</span>, we might have:</p>
 <ol type="1">
 <li><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1\)</span></li>
 </ol>
 <ul>
-<li><p>We specify this based on our domain knowledge</p></li>
+<li><p>We specify this based on our domain knowledge, hypotheses we want to test, model-building strategies, etc</p></li>
 <li><p>To account for confounding, we would add additional variables to the right hand side so that we <span class="alert">correctly model the mean</span></p></li>
 </ul>
 <div class="fragment">
@@ -475,8 +477,8 @@ September 23, 2025
 </li>
 </ul>
 </div>
-</section><section id="marginal-model-components-cont.-1" class="slide level2"><h2>Marginal model components (cont.)</h2>
-<p>In a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(U_{ij}\)</span>, we might have:</p>
+</section><section id="marginal-model-components-example-continuous-outcomes-1" class="slide level2"><h2>Marginal model components example: continuous outcomes</h2>
+<p>For example, in a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(U_{ij}\)</span>, we might have:</p>
 <ol type="1">
 <li><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1\)</span></li>
 </ol>
@@ -491,7 +493,7 @@ September 23, 2025
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
 \alpha &amp; \dots &amp; \alpha &amp; 1
 \end{bmatrix}\]</span></p>
-</section><section id="marginal-model-components-cont.-2" class="slide level2"><h2>Marginal model components (cont.)</h2>
+</section><section id="marginal-model-components-example-continuous-outcomes-2" class="slide level2"><h2>Marginal model components example: continuous outcomes</h2>
 <p>If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
 &amp;= \sqrt{\sigma^2}~ \alpha ~\sqrt{\sigma^2}\\
 &amp;=\sigma^2\alpha\end{align*}\]</span></p>
@@ -523,14 +525,14 @@ September 23, 2025
 <li>We call <span class="math inline">\(V_i\)</span> the <span class="alert">“working” covariance</span> matrix</li>
 </ul>
 </div>
-</section><section id="marginal-model-components-cont.-3" class="slide level2"><h2>Marginal model components (cont.)</h2>
+</section><section id="marginal-model-components-example-continuous-outcomes-3" class="slide level2"><h2>Marginal model components example: continuous outcomes</h2>
 <p>If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
 &amp;= \sqrt{\sigma^2}~ \alpha ~\sqrt{\sigma^2}\\
 &amp;=\sigma^2\alpha\end{align*}\]</span></p>
 <ul>
 <li>Outcomes for individuals in <strong>different</strong> clusters would still have a covariance of 0 though because we’re assuming that <span class="alert">clusters are independent of one another</span>
 </li>
-</ul></section><section id="marginal-model-components-cont.-4" class="slide level2"><h2>Marginal model components (cont.)</h2>
+</ul></section><section id="marginal-model-components-example-continuous-outcomes-4" class="slide level2"><h2>Marginal model components example: continuous outcomes</h2>
 <p>If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
 &amp;= \sqrt{\sigma^2}~ \alpha ~\sqrt{\sigma^2}\\
 &amp;=\sigma^2\alpha\end{align*}\]</span></p>
@@ -761,6 +763,57 @@ September 23, 2025
 <ul>
 <li>Also means we <span class="alert">need more data</span> to run this model 🙁</li>
 </ul>
+</div>
+</section><section id="glmms-vs-gees" class="slide level2"><h2>GLMMs vs GEEs</h2>
+<p>We noted that GEEs are <em>marginal</em> models while GLMMS are <em>conditional</em> models…</p>
+<div class="fragment">
+<p><span class="alert">What are some other differences between GEEs and GLMMs?</span></p>
+</div>
+<div class="fragment">
+<table>
+<colgroup>
+<col style="width: 20%">
+<col style="width: 40%">
+<col style="width: 40%">
+</colgroup>
+<thead><tr class="header">
+<th></th>
+<th>GEE</th>
+<th>GLMM</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Interpretation</td>
+<td>“Population”-level</td>
+<td>Cluster-level</td>
+</tr>
+<tr class="even">
+<td>Accounting for correlation</td>
+<td>Empirical estimation</td>
+<td>Specification of random effects</td>
+</tr>
+<tr class="odd">
+<td>Assumptions</td>
+<td>Weak assumptions; more robust (correlation structure, over-dispersion)</td>
+<td>Strong assumptions; less robust</td>
+</tr>
+<tr class="even">
+<td>Sample size requirements</td>
+<td>Moderately large (<span class="math inline">\(n &gt; 50\)</span>)</td>
+<td>Works with smaller sample sizes provided that the entire model is correctly specified</td>
+</tr>
+<tr class="odd">
+<td>Computational burden</td>
+<td>Light</td>
+<td>Heavy</td>
+</tr>
+<tr class="even">
+<td>Cluster-level prediction?</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
 </div>
 </section><section id="a-note-on-population-level-interpretation" class="slide level2"><h2>A note on “population”-level interpretation</h2>
 <p>GEEs are often touted as having “population”-level interpretations as opposed to GLMMs cluster-level ones</p>

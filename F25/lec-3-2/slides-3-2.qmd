@@ -66,6 +66,7 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-3-2/slides-3-2")
 :::
 
 ---
+
 ## Inference for $\widehat{\beta}$
 
 We also need to be able to get variance estimates for our model parameters in order to perform inference

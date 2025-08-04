@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<script src="slides-3-1_files/libs/clipboard/clipboard.min.js"></script>
-<script src="slides-3-1_files/libs/quarto-html/tabby.min.js"></script>
-<script src="slides-3-1_files/libs/quarto-html/popper.min.js"></script>
-<script src="slides-3-1_files/libs/quarto-html/tippy.umd.min.js"></script>
-<link href="slides-3-1_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="slides-3-1_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="slides-3-1_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
-<link href="slides-3-1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="slides-3-2_files/libs/clipboard/clipboard.min.js"></script>
+<script src="slides-3-2_files/libs/quarto-html/tabby.min.js"></script>
+<script src="slides-3-2_files/libs/quarto-html/popper.min.js"></script>
+<script src="slides-3-2_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="slides-3-2_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="slides-3-2_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="slides-3-2_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="slides-3-2_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.3.353">
-<title>slides-3-1</title>
+<title>slides-3-2</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-<link rel="stylesheet" href="slides-3-1_files/libs/revealjs/dist/reset.css">
-<link rel="stylesheet" href="slides-3-1_files/libs/revealjs/dist/reveal.css">
+<link rel="stylesheet" href="slides-3-2_files/libs/revealjs/dist/reset.css">
+<link rel="stylesheet" href="slides-3-2_files/libs/revealjs/dist/reveal.css">
 <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -94,13 +94,13 @@
     code span.vs { color: #008000; } /* VerbatimString */
     code span.wa { color: #696969; font-style: italic; } /* Warning */
   </style>
-<link rel="stylesheet" href="slides-3-1_files/libs/revealjs/dist/theme/quarto.css">
-<link href="slides-3-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-<link href="slides-3-1_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-<link href="slides-3-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-<link href="slides-3-1_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-<link href="slides-3-1_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-<link href="slides-3-1_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+<link rel="stylesheet" href="slides-3-2_files/libs/revealjs/dist/theme/quarto.css">
+<link href="slides-3-2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+<link href="slides-3-2_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+<link href="slides-3-2_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+<link href="slides-3-2_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+<link href="slides-3-2_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+<link href="slides-3-2_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
 <style type="text/css">
 
   .callout {
@@ -392,7 +392,7 @@
 
 
 <section class="slide level2"><h1>
-Lecture 3.1: Marginal models for correlated data
+Lecture 3.1: Inference for GEEs
 </h1>
 <h2>
 PHS 651: Advanced regression methods
@@ -402,7 +402,7 @@ PHS 651: Advanced regression methods
 Mary Ryan Baumann, PhD
 </h3>
 <h3>
-September 23, 2025
+September 25, 2025
 </h3>
 <p><br></p>
 <div style="font-size: 75%;">
@@ -412,383 +412,14 @@ September 23, 2025
 <p><em>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</em></p>
 </div>
 <div class="absolute" style="left: 260px; bottom: 50px; width: 1500px; ">
-<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1" class="uri">https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1</a></p>
+<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/F25/lec-3-2/slides-3-2" class="uri">https://maryryan.github.io/PHS-651-slides/F25/lec-3-2/slides-3-2</a></p>
 </div>
 <div class="absolute" style="left: 100px; bottom: 0px; width: 150px; ">
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="slides-3-1_files/figure-revealjs/qr%20code-1.png" width="192"></p>
+<p><img data-src="slides-3-2_files/figure-revealjs/qr%20code-1.png" width="192"></p>
 </div>
 </div>
-</div>
-</section><section id="recap-linear-mixed-effect-models" class="slide level2"><h2>Recap: linear mixed effect models</h2>
-<p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
-<ul>
-<li><p><span class="math inline">\(\boldsymbol{X}_i\vec{\beta}\)</span> are the <span class="alert">fixed effects</span> representing the mean response</p></li>
-<li><p><span class="math inline">\(\vec{Z}_ib_{0i}\)</span> are the <span class="alert">random effects</span> accounting for random between-cluster variation</p></li>
-<li><p><span class="math inline">\(\vec{\epsilon}_i\)</span> is the regular between-individual variation</p></li>
-<li><p>We assume the outcome observations in cluster <em>i</em>, <span class="math inline">\(\vec{Y}_i\)</span>, follow a <span class="alert">multivariate probability distribution</span></p></li>
-</ul>
-<div class="fragment">
-<p>The <span class="alert">fixed effects</span> are shared across everyone in the sample, while the <span class="alert">random effects</span> are unique to a particular cluster</p>
-</div>
-<div class="fragment">
-<p>Interpretations of <span class="math inline">\(\beta_1\)</span> in an LME are <span class="alert">conditional</span> because they are comparing 2 individuals with the same cluster membership</p>
-<ul>
-<li><p>Often referred to as having individual-specific or cluster-specific interpretation</p></li>
-<li><p>Possible to extract marginal effects from conditional models, but often complicated and prone to bias</p></li>
-</ul>
-</div>
-<div class="fragment">
-<p><span class="alert">What if we want to look at the effect of an exposure <em>averaged across</em> all clusters?</span></p>
-</div>
-</section><section id="marginal-models" class="slide level2"><h2>Marginal models</h2>
-<p>Basic idea: we want to account for clustering of data, but make inference about <span class="alert">population averages</span> (marginal effects)</p>
-<ul>
-<li><p>We’re often very interested in these in public and population health!</p></li>
-<li><p>Mean response is conditional <em>only</em> on the adjustment covariates we add to the mean model</p></li>
-</ul>
-<div class="fragment">
-<p>Rigid distributional assumptions got in the way of this in LMEs/GLMMs</p>
-<ul>
-<li>So for marginal models we want to use <span class="alert">fewer distributional assumptions</span>
-</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li>
-<p>How can we account for correlation among outcome observations without the rigidity of distribution assumptions?</p>
-<ul>
-<li><p>Those assumptions focused on specifying <span class="alert">within-cluster and between cluster variability</span>, and helped show what the covariance matrix for a cluster should look like and how we could estimate model parameters</p></li>
-<li><p>What if we focused more on the <span class="alert">within-cluster correlation</span>, and use an <span class="alert">empirically estimated</span> covariance structure?</p></li>
-</ul>
-</li>
-</ul>
-</div>
-</section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
-<p>There are 2 main components of a marginal model</p>
-<ol type="1">
-<li>The <span class="alert">marginal expectation</span> of the outcome <span class="math inline">\(E[Y_{ij}|\vec{X}_{ij}]=\mu_{ij}\)</span>:</li>
-</ol>
-<ul>
-<li>
-<span class="math inline">\(\mu_{ij}\)</span> should only depend on the covariates in the model through the link function <span class="math inline">\(g(\cdot)\)</span>: <span class="math inline">\(g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}\)</span>
-</li>
-</ul>
-<ol start="2" type="1">
-<li>The covariance of the outcome <span class="math inline">\(Cov[Y_{ij}, Y_{ik}|\boldsymbol{X}_i]\)</span>, which can be broken down into 2 more components:</li>
-</ol>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="fragment">
-<ol type="i">
-<li>The <span class="alert">marginal variance</span> of the outcome:</li>
-</ol>
-<p><span class="math display">\[Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})\]</span></p>
-<ul>
-<li>Should depend on the marginal mean through the variance function <span class="math inline">\(v(\cdot)\)</span> and a scale parameter <span class="math inline">\(\varphi\)</span>
-</li>
-</ul>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="fragment">
-<ol start="2" type="i">
-<li>The <span class="alert">within-cluster association</span> of the outcomes</li>
-</ol>
-<ul>
-<li>Should depend on the means and a correlation parameter(s)</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="fragment absolute" style="bottom: 200px; right: 200px; width: 30%; ">
-<p><span class="alert">Component 2 is kind of like systematic variation in GLMMs!</span></p>
-</div>
-</section><section id="marginal-model-components-cont." class="slide level2"><h2>Marginal model components (cont.)</h2>
-<p>In a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(U_{ij}\)</span>, we might have:</p>
-<ol type="1">
-<li><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1\)</span></li>
-</ol>
-<ul>
-<li><p>We specify this based on our domain knowledge</p></li>
-<li><p>To account for confounding, we would add additional variables to the right hand side so that we <span class="alert">correctly model the mean</span></p></li>
-</ul>
-<div class="fragment">
-<p>2.1. <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}\)</span></p>
-<ul>
-<li>Different variance for each cluster, which we assume is independent of <span class="math inline">\(\mu_{ij}\)</span>
-</li>
-</ul>
-</div>
-<div class="fragment">
-<p>2.2. <span class="math inline">\(Corr[Y_{ij}, Y_{ik}] = \alpha\)</span></p>
-<ul>
-<li>Outcomes in same cluster are all correlated by <span class="math inline">\(\alpha\)</span>
-</li>
-</ul>
-</div>
-</section><section id="marginal-model-components-cont.-1" class="slide level2"><h2>Marginal model components (cont.)</h2>
-<p>In a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(U_{ij}\)</span>, we might have:</p>
-<ol type="1">
-<li><span class="math inline">\(E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1\)</span></li>
-</ol>
-<p>2.1. <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \varphi_{i} = \sigma^2_{i}\)</span></p>
-<p>2.2. <span class="math inline">\(Corr[Y_{ij}, Y_{ik}] = \alpha\)</span></p>
-<ul>
-<li>This means we can assume a <span class="alert">correlation structure</span> for one cluster that looks like:</li>
-</ul>
-<p><span class="math display">\[\begin{bmatrix}
-1 &amp; \alpha &amp; \dots &amp; \alpha \\
-\alpha &amp; \ddots &amp; \dots &amp; \alpha \\
-\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\alpha &amp; \dots &amp; \alpha &amp; 1
-\end{bmatrix}\]</span></p>
-</section><section id="marginal-model-components-cont.-2" class="slide level2"><h2>Marginal model components (cont.)</h2>
-<p>If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
-&amp;= \sqrt{\sigma^2_i}~ \alpha ~\sqrt{\sigma^2_i}\\
-&amp;=\sigma^2_i\alpha\end{align*}\]</span></p>
-<div class="fragment">
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>which creates us a <span class="alert">covariance matrix</span> for cluster <span class="math inline">\(i\)</span> that looks like:</p>
-<p><span class="math display">\[\begin{bmatrix}
-\sigma^2_i &amp; \sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha \\
-\sigma^2_i\alpha &amp; \ddots &amp; \dots &amp; \sigma^2_i\alpha \\
-\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha &amp; \sigma^2_i
-\end{bmatrix}\]</span></p>
-</div><div class="column" style="width:50%;">
-<div class="fragment">
-<p>which is different than the covariance matrix we’d get from an LME:</p>
-<p><span class="math display">\[\begin{bmatrix}
-\sigma^2_b + \sigma^2_\epsilon &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
-\sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
-\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \sigma^2_\epsilon
-\end{bmatrix}\]</span></p>
-</div>
-</div>
-</div>
-</div>
-<div class="fragment">
-<ul>
-<li>Outcomes for individuals in <strong>different</strong> clusters would still have a covariance of 0 though because we’re assuming that <span class="alert">clusters are independent of one another</span>
-</li>
-</ul>
-</div>
-</section><section id="marginal-model-components-cont.-3" class="slide level2"><h2>Marginal model components (cont.)</h2>
-<p>If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
-&amp;= \sqrt{\sigma^2_i}~ \alpha ~\sqrt{\sigma^2_i}\\
-&amp;=\sigma^2_i\alpha\end{align*}\]</span></p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>which creates us a <span class="alert">covariance matrix</span> for cluster <span class="math inline">\(i\)</span> that looks like:</p>
-<p><span class="math display">\[\begin{bmatrix}
-\sigma^2_i &amp; \sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha \\
-\sigma^2_i\alpha &amp; \ddots &amp; \dots &amp; \sigma^2_i\alpha \\
-\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha &amp; \sigma^2_i
-\end{bmatrix}\]</span></p>
-</div><div class="column" style="width:50%;">
-<p>which is different than the covariance matrix we’d get from an LME:</p>
-<p><span class="math display">\[\begin{bmatrix}
-\sigma^2_b + \sigma^2_\epsilon &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
-\sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
-\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \sigma^2_\epsilon
-\end{bmatrix}\]</span></p>
-</div>
-</div>
-<p><span class="alert">Can we assume other types of correlation/covariance structures?</span> <span class="fragment">Yes!</span></p>
-</section><section id="correlation-structures-independence" class="slide level2"><h2>Correlation structures: independence</h2>
-<p>The most basic (and the one we have the most prior experience with) is the <span class="alert">independence</span> correlation structure</p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li>Assumes all observations in a cluster are completely uncorrelated with each other</li>
-</ul>
-<p><span class="math display">\[\begin{bmatrix}
-1 &amp; 0 &amp; \dots &amp; 0 \\
-0 &amp; \ddots &amp; \dots &amp; 0 \\
-\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-0 &amp; \dots &amp; 0 &amp; 1
-\end{bmatrix}\]</span></p>
-<div class="fragment">
-<ul>
-<li>We don’t have to estimate anything here!</li>
-</ul>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="fragment">
-<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}\)</span>, creates a covariance matrix that looks like</p>
-<p><span class="math display">\[\begin{bmatrix}
-\sigma^2_i &amp; 0 &amp; \dots &amp; 0 \\
-0 &amp; \ddots &amp; \dots &amp; 0 \\
-\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-0 &amp; \dots &amp; 0 &amp; \sigma^2_i
-\end{bmatrix}\]</span></p>
-</div>
-</div>
-</div>
-</section><section id="correlation-structures-exchangeable" class="slide level2"><h2>Correlation structures: exchangeable</h2>
-<p>Another type is the <span class="alert">exchangeable</span> correlation structure (AKA: compound symmetry)</p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li>Assumes all observations in a cluster are related to each other to the same degree</li>
-</ul>
-<p><span class="math display">\[\begin{bmatrix}
-1 &amp; \alpha &amp; \dots &amp; \alpha \\
-\alpha &amp; \ddots &amp; \dots &amp; \alpha \\
-\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\alpha &amp; \dots &amp; \alpha &amp; 1
-\end{bmatrix}\]</span></p>
-<div class="fragment">
-<ul>
-<li>Need to estimate <span class="math inline">\(\alpha\)</span>
-</li>
-</ul>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="fragment">
-<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}\)</span>, creates a covariance matrix that looks like</p>
-<p><span class="math display">\[\begin{bmatrix}
-\sigma^2_i &amp; \sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha \\
-\sigma^2_i\alpha &amp; \ddots &amp; \dots &amp; \sigma^2_i\alpha \\
-\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_i\alpha &amp; \dots &amp; \sigma^2_i\alpha &amp; \sigma^2_i
-\end{bmatrix}\]</span></p>
-</div>
-</div>
-</div>
-</section><section id="correlation-structures-unstructured" class="slide level2"><h2>Correlation structures: unstructured</h2>
-<p>Could you assume all observations are (potentially) related to each other in different ways?</p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li>Known as an <span class="alert">unstructured</span> correlation structure</li>
-</ul>
-<p><span class="math display">\[\begin{bmatrix}
-1 &amp; \alpha_{12} &amp; \dots &amp; \alpha_{1n} \\
-\alpha_{21} &amp; \ddots &amp; \dots &amp; \alpha_{2n} \\
-\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\alpha_{n1} &amp; \dots &amp; \alpha_{n(n-1)} &amp; 1
-\end{bmatrix}\]</span></p>
-</div><div class="column" style="width:50%;">
-<div class="fragment" data-fragment-index="1">
-<p>Assuming <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}] = \sigma^2_{i}\)</span>, creates a covariance matrix that looks like</p>
-<p><span class="math display">\[\begin{bmatrix}
-\sigma^2_i &amp; \sigma^2_i\alpha_{12} &amp; \dots &amp; \sigma^2_i\alpha_{1n} \\
-\sigma^2_i\alpha_{21} &amp; \ddots &amp; \dots &amp; \sigma^2_i\alpha_{2n} \\
-\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_i\alpha_{n1} &amp; \dots &amp; \sigma^2_i\alpha_{n(n-1)} &amp; \sigma^2_i
-\end{bmatrix}\]</span></p>
-</div>
-</div>
-</div>
-<div class="fragment" data-fragment-index="2">
-<ul>
-<li>Offers maximum flexibility because correlations can be the same, very similar, or completely different from each other</li>
-</ul>
-</div>
-<div class="fragment" data-fragment-index="3">
-<ul>
-<li>
-<p>But also requires you to estimate <em>every</em> correlation parameter in this matrix separately</p>
-<ul>
-<li>This can cause computational and efficiency issues</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="fragment" data-fragment-index="4">
-<ul>
-<li>Can get away with unstructured correlation in small data sets, but usually easier to assume a simpler structure</li>
-</ul>
-</div>
-</section><section id="marginal-model-components-1" class="slide level2"><h2>Marginal model components</h2>
-<p>So we have the main components of a marginal model</p>
-<ol type="1">
-<li><p>The marginal expectation of the outcome: <span class="math inline">\(g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}\)</span></p></li>
-<li>
-<p>The covariance of the outcome</p>
-<ol type="i">
-<li><p>The marginal variance of the outcome: <span class="math inline">\(Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})\)</span></p></li>
-<li><p>The within-cluster association of the outcomes (correlation structure)</p></li>
-</ol>
-</li>
-</ol>
-<p><span class="alert">But how do we use these components to estimate our regression coefficients?</span></p>
-<div class="fragment">
-<ul>
-<li>With OLS and GLMMs, we had a likelihood-based estimating equation we could use to derive estimates for <span class="math inline">\(\beta\)</span>
-</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li>What if we used something like the GLM estimating equation here?</li>
-</ul>
-</div>
-<div class="fragment">
-<p>Thus is born <span class="alert">generalized estimating equations</span></p>
-<!-- --- -->
-<!-- ## Marginal models and estimating equations -->
-<!-- We want to take the 3 components of the marginal model -->
-<!-- 1. The marginal expectation of the outcome $g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$ -->
-<!-- 2. The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$ -->
-<!-- 3. The within-cluster association of the outcomes -->
-<!-- and shove them into something that looks like the GLM estimating equation -->
-<!-- . . . -->
-<!-- Thus is born [generalized estimating equations]{.alert} -->
-</div>
-</section><section id="generalized-estimating-equations" class="slide level2"><h2>Generalized estimating equations</h2>
-<p>Generalized estimating equations (GEEs) find the <span class="math inline">\(\beta\)</span> that solves an estimating equation of the general form: <span class="math display">\[\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0\]</span></p>
-<ul>
-<li>Almost exactly the same as the one we saw for GLMs!</li>
-</ul>
-<div class="fragment">
-<ul>
-<li>
-<p>Difference here: <span class="math inline">\(V_i\)</span> is the <span class="alert">working covariance</span> for the outcome</p>
-<ul>
-<li>
-<p>Explicitly accounts for models of outcome variance <em>and</em> within-cluster association (components 2.1 and 2.2)</p>
-<p><span class="math display">\[V_i = sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\]</span></p>
-</li>
-<li><p>Called “working” to distinguish it from the <em>true</em> covariance matrix of <span class="math inline">\(\vec{Y}_i\)</span></p></li>
-</ul>
-</li>
-</ul>
-</div>
-</section><section id="generalized-estimating-equations-1" class="slide level2"><h2>Generalized estimating equations</h2>
-<p>Generalized estimating equations (GEEs) find the <span class="math inline">\(\beta\)</span> that solves an estimating equation of the general form: <span class="math display">\[\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0\]</span></p>
-<p>Since this estimating equation <span class="alert">only depends on the mean <span class="math inline">\(\mu_{ij}(\cdot)\)</span> and the working (co)variance <span class="math inline">\(V_i\)</span></span>, a GEE doesn’t have to correspond to a full likelihood/distribution like a GLMM does</p>
-<ul>
-<li><p>This means we have <span class="alert">fewer assumptions</span> about how <span class="math inline">\(Y_{ij}\)</span> behaves</p></li>
-<li><p>Also lets us “mix and match” different forms for the marginal model components into this one estimating equation</p></li>
-<li><p>e.g., we don’t need to theoretically derive the covariance - we can just approximate it using the variance and the chosen correlation structure</p></li>
-</ul></section><section id="generalized-estimating-equations-2" class="slide level2"><h2>Generalized estimating equations</h2>
-<p>Generalized estimating equations (GEEs) find the <span class="math inline">\(\beta\)</span> that solves an estimating equation of the general form: <span class="math display">\[\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0\]</span></p>
-<p>Since this estimating equation <span class="alert">only depends on the mean <span class="math inline">\(\mu_{ij}(\cdot)\)</span> and the working (co)variance <span class="math inline">\(V_i\)</span></span>, a GEE doesn’t have to correspond to a full likelihood/distribution like a GLMM does</p>
-<p><span class="alert">What’s the effect of this?</span></p>
-<div class="fragment">
-<ul>
-<li><p>Need to estimate mean model paramters <span class="math inline">\(\beta\)</span> and variance/covariance/correlation parameters <span class="math inline">\(\varphi\)</span>, <span class="math inline">\(\vec{\alpha}\)</span></p></li>
-<li><p>Estimation of model parameters no longer done by maximum likelihood, but by an iterative algorithm (like Newton-Raphson)</p></li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li>Fewer assumptions means results will be <span class="alert">more robust</span> to incorrect assumptions about the marginal model components (e.g., wrong correlation structure, wrong variance) 🎉</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
-<li>Also means we <span class="alert">need more data</span> to run this model 🙁</li>
-</ul>
-<!-- ------------------------------------------------------------------------ --><!-- ## Building the working covariance --><!-- Based on your outcome variable, you'll likely know what the variance --><!-- would be if all your outcome datapoints were *independent* --><!-- We can fill in what the covariance would be by making assumptions about --><!-- how observations within a cluster are correlated -->
 </div>
 </section><section id="inference-for-widehatbeta" class="slide level2"><h2>Inference for <span class="math inline">\(\widehat{\beta}\)</span>
 </h2>
@@ -965,7 +596,7 @@ floor       -0.6698925 0.06583761 -10.17492  0.07746389 -8.647803</code></pre>
 </div>
   </div>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="slides-3-1_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="slides-3-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="slides-3-1_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="slides-3-1_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="slides-3-1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="slides-3-1_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="slides-3-1_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="slides-3-1_files/libs/revealjs/plugin/notes/notes.js"></script><script src="slides-3-1_files/libs/revealjs/plugin/search/search.js"></script><script src="slides-3-1_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="slides-3-1_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="slides-3-2_files/libs/revealjs/dist/reveal.js"></script><!-- reveal.js plugins --><script src="slides-3-2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script><script src="slides-3-2_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script><script src="slides-3-2_files/libs/revealjs/plugin/reveal-menu/menu.js"></script><script src="slides-3-2_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script><script src="slides-3-2_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script><script src="slides-3-2_files/libs/revealjs/plugin/quarto-support/support.js"></script><script src="slides-3-2_files/libs/revealjs/plugin/notes/notes.js"></script><script src="slides-3-2_files/libs/revealjs/plugin/search/search.js"></script><script src="slides-3-2_files/libs/revealjs/plugin/zoom/zoom.js"></script><script src="slides-3-2_files/libs/revealjs/plugin/math/math.js"></script><script>window.define = window.backupDefine; window.backupDefine = undefined;</script><script>
 
       // Full list of configuration options available at:
       // https://revealjs.com/config/

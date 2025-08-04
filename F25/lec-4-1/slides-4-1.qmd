@@ -197,20 +197,13 @@ summary( cancer_gee )$coef
 
 ------------------------------------------------------------------------
 
-## GLMMs vs GEEs
+## Recall: GLMMs vs GEEs
 
-We noted that GEEs are *marginal* models while GLMMS are *conditional*
-models...
-
-. . .
-
-[What are some other differences between GEEs and GLMMs?]{.alert}
-
-. . .
+Recall that we previously noted several differences between GEEs and GLMMS
 
 |                            | GEE                                                                    | GLMM |
 |----------------------------|------------------------------------------------------------------------|----------------------------------------------|
-| Interpretation             | Population-level                                                       | Cluster-level                                |
+| Interpretation             | "Population"-level                                                       | Cluster-level                                |
 | Accounting for correlation | Empirical estimation                                                   | Specification of random effects              |
 | Assumptions                | Weak assumptions; more robust (correlation structure, over-dispersion) | Strong assumptions; less robust              |
 | Sample size requirements   | Moderately large ($n > 50$)                                            | Works with smaller sample sizes provided that the entire model is correctly specified |

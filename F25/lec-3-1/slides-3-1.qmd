@@ -120,18 +120,21 @@ inference about [population averages]{.alert} (marginal effects)
 
 -   We're often very interested in these in public and population health!
 
+- Not to be confused with the average treatment effect (ATE) -- this is a different concept
+
 -   Mean response is conditional *only* on the adjustment covariates we add
     to the mean model
 
 . . .
 
+<br>
 Rigid distributional assumptions got in the way of this in LMEs/GLMMs
 
 - So for marginal models we want to use [fewer distributional assumptions]{.alert}
 
-. . .
+<!-- . . . -->
 
-- How can we account for correlation among outcome observations/non-0 covariance without the rigidity of distribution assumptions?
+<!-- - How can we account for correlation among outcome observations/non-0 covariance without the rigidity of distribution assumptions? -->
 
 ---
 
@@ -144,9 +147,11 @@ $$\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{
 
 - When using random effects (like in LMEs and GLMMs), some call this modeling with [G-side variance]{.alert}
 
-   - These random effects $\vec{\gamma}$ were difficult to marginalize out of the expectation
+   - These random effects $\vec{\gamma}$ were difficult to marginalize out of the expectation when we used a non-identity link function
    
    - What if instead we had *no* random effects ($\boldsymbol{G}=0$), and modeled non-zero covariance using $\vec{\epsilon}_i$ and a $\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}$?
+
+. . .
 
 - When using $\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}$, we call this modeling with [R-side variance]{.alert}
 
@@ -197,14 +202,13 @@ ii. The [within-cluster association]{.alert} of the outcomes
 
 ---
 
-## Marginal model components (cont.)
+## Marginal model components example: continuous outcomes
 
-In a model with clustered continuous responses $Y_{ij}$ and only one exposure
-$U_{ij}$, we might have:
+For example, in a model with clustered continuous responses $Y_{ij}$ and only one exposure $U_{ij}$, we might have:
 
 1.  $E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1$
 
-- We specify this based on our domain knowledge
+- We specify this based on our domain knowledge, hypotheses we want to test, model-building strategies, etc
     
 - To account for confounding, we would add additional variables to the right hand side so that we [correctly model the mean]{.alert}
 
@@ -224,10 +228,9 @@ $U_{ij}$, we might have:
 
 ---
 
-## Marginal model components (cont.)
+## Marginal model components example: continuous outcomes
 
-In a model with clustered continuous responses $Y_{ij}$ and only one exposure
-$U_{ij}$, we might have:
+For example, in a model with clustered continuous responses $Y_{ij}$ and only one exposure $U_{ij}$, we might have:
 
 1.  $E[Y_{ij}|\boldsymbol{X}_i] = \mu_{ij} = \beta_0 + U_{ij}\beta_1$
 
@@ -246,7 +249,7 @@ $$\begin{bmatrix}
 
 ---
 
-## Marginal model components (cont.)
+## Marginal model components example: continuous outcomes
 
 If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster:
 $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
@@ -287,7 +290,7 @@ $$\begin{bmatrix}
 
 ---
 
-## Marginal model components (cont.)
+## Marginal model components example: continuous outcomes
 
 If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster:
 $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
@@ -298,7 +301,7 @@ $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y
 
 ---
 
-## Marginal model components (cont.)
+## Marginal model components example: continuous outcomes
 
 If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster:
 $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
@@ -597,6 +600,29 @@ $V_i$]{.alert}, a GEE doesn't have to correspond to a full likelihood/distributi
 . . .
 
 - Also means we [need more data]{.alert} to run this model 🙁
+
+---
+
+## GLMMs vs GEEs
+
+We noted that GEEs are *marginal* models while GLMMS are *conditional*
+models...
+
+. . .
+
+[What are some other differences between GEEs and GLMMs?]{.alert}
+
+. . .
+
+|                            | GEE                                                                    | GLMM |
+|----------------------------|------------------------------------------------------------------------|----------------------------------------------|
+| Interpretation             | "Population"-level                                                       | Cluster-level                                |
+| Accounting for correlation | Empirical estimation                                                   | Specification of random effects              |
+| Assumptions                | Weak assumptions; more robust (correlation structure, over-dispersion) | Strong assumptions; less robust              |
+| Sample size requirements   | Moderately large ($n > 50$)                                            | Works with smaller sample sizes provided that the entire model is correctly specified |
+| Computational burden       | Light                                                                  | Heavy                                        |
+| Cluster-level prediction?  | No                                                                     | Yes                                          |
+: {tbl-colwidths="[20,40,40]"}
 
 ---
 

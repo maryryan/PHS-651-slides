@@ -1,0 +1,539 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+      df-separate-fragments: true
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+library(corrr)
+library(lme4)
+```
+
+```{r exercise, echo=F}
+exercise <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/exercise-data.txt", sep="", na.strings=".")
+colnames(exercise) <- c("ID", "PROGRAM", "day0","day2", "day4", "day6", "day8", "day10", "day12")
+exercise_long <- exercise %>% 
+   pivot_longer(!(c("ID","PROGRAM")), names_to="time", values_to="strength") %>% 
+   mutate(time=parse_number(time))
+
+exercise_long_complete <- exercise_long %>% 
+   filter(complete.cases(.))
+```
+
+<h1>Lecture 9.1: Comparing longitudinal models & other diganostics</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>November 4, 2025</h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=50 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-9-2/slides-9-2>
+
+:::
+
+::: {.absolute bottom=0 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-9-2/slides-9-2"))
+```
+:::
+
+---
+
+## Update: Inference for a single regression parameter
+
+The fundamentals of statistical inference remain the same between non-longitudinal clustered data and longitudinal data models
+
+- Confidence intervals for a single regression coefficients are still:
+
+   - $\hat{\beta} \pm SE_\beta \times Z_{1-\alpha/2}$, if using a Z critical value 
+   
+   - $\hat{\beta} \pm SE_\beta \times t_{DoF; ~1-\alpha/2}$ if using a t critical value
+   
+
+Using a Z standard normal critical value may result in p-values being smaller or confidence intervals beeing narrower than "reality"
+
+
+But using a t critical value requires determining the degrees of freedom... which is complicated in longitudinal data settings
+
+- 2 degrees of freedom approximations are:
+
+   - Satterthwaite approximation
+   
+   - Kenward-Roger approximations
+   
+- Both are available in `PROC GLIMMIX` in SAS and via the `lmer()` function from `library(lmerTest)`
+
+::: {.absolute bottom=300 right=100 width=45%}
+[These approximations are appropriate when the number of clusters is "small" (rule of thumb: fewer than 40)]{.alert}
+:::
+
+---
+
+## Building a longitudinal model
+
+Over the last few weeks we've touched on how we might explore the data to make some initial modeling decisions
+
+. . .
+
+:::: {.columns}
+::: {.column width="50%"}
+- Should we include a time-by-exposure interaction in the mean model?
+
+<br>
+<br>
+
+- What correlation structures might be appropriate for a GEE?
+:::
+
+::: {.column width="50%"}
+- If we're running a GLMM, should we include random slopes?
+
+<br>
+<br>
+
+- If we're running a GLMM, should we include serial correlation?
+:::
+::::
+
+---
+
+## Building a longitudinal model
+
+Over the last few weeks we've touched on how we might explore the data to make some initial modeling decisions
+
+:::: {.columns}
+::: {.column width="50%"}
+- Should we include a time-by-exposure interaction in the mean model?
+
+   - First, ask if this is part of our research question
+   
+      - If yes, should include it regardless
+   
+   - Second, plot outcome over time by exposure group to look for evidence of non-parallel trends
+   
+::: {.fragment}
+- What correlation structures might be appropriate for a GEE?
+
+   - Calculate a matrix of the raw correlations between outcomes and different time points and observe behavior
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+- If we're running a GLMM, should we include random slopes?
+
+   - Calculate correlation matrix
+   
+   - Create "spaghetti plot" of a random sample of individuals and observe differences in trends
+:::
+
+::: {.fragment}
+- If we're running a GLMM, should we include serial correlation?
+
+   - Calculate correlation matrix
+   
+   - [We could also create a variogram plot]{.fragment .alert}
+:::
+:::
+::::
+
+---
+
+## Variograms
+
+:::: {.columns}
+::: {.column width="60%"}
+Recall our hybrid random effects model from last week:
+
+$$Y_{ij} = \beta_0 + \beta_1 U_{i0} + \beta_3 t_{ij} + b_{0i}Z_i + C_i(t_{ij}) + \epsilon_{ij}$$
+
+$$b_{0i} \sim N(0,\sigma^2_{0})~~~C_i(t_{ij}) \sim N(0, \sigma^2_c)~~~ \epsilon_{ij} \sim (0, \sigma^2_\epsilon)$$
+$$Corr[C_i(t_{ij}), C_i(t_{ik})] = \exp\{-|t_{ij} - t_{ik}|\}$$
+:::
+
+::: {.column width="40%"}
+::: {.fragment}
+[Sample or empirical variogram plots]{.alert} are one way to assess the presence/strength of serial correlation, and whether random intercepts are needed
+:::
+:::
+::::
+
+::: {.fragment}
+![](variogram-edit.png){.absolute bottom=-80 width=65%}
+:::
+
+---
+
+## Variograms
+
+:::: {.columns}
+::: {.column width="65%"}
+![](variogram-evidence.png){width=170%}
+:::
+
+::: {.column width="35%"}
+- The more the curve is stretched out horizontally ("wide S"), the slower it takes correlation between observations to decay
+
+- The taller the curve, the faster it takes correlation between observations to decay
+
+- These plots are more useful when each cluster has enough repeated measures
+
+   - Software often won't compute this for fewer than 4 time points
+:::
+::::
+
+
+---
+
+## Variograms
+
+![](variogram-examp.png){width=45%}
+
+::: {.absolute width=40% top=200 right=150}
+Random intercepts
+:::
+
+::: {.absolute width=40% top=500 right=150}
+Random intercepts + slopes
+:::
+
+::: {.absolute width=40% bottom=150 right=150}
+Random intercepts + serial correlation
+:::
+
+---
+
+## Example: CD4+ count
+
+As an example, we'll use a longitudinal dataset of CD4+ cell counts among children with HIV:
+
+```{r cd4, echo=F}
+set.seed(110724)
+
+cd4 <- read.csv("~/Desktop/teaching/PHS-651/data/Gelman-data/cd4/allvar.csv",header=T)
+
+cd4 <- cd4 %>% 
+   as.data.frame() %>% 
+   dplyr::filter(treatmnt==1) %>% 
+   rename(age_baseline = baseage,
+          age = visage) %>% 
+   mutate(time = age - age_baseline,
+          newpid=factor(newpid)) %>%
+   select(!(treatmnt))
+
+glimpse(cd4)
+```
+
+- We want to see how the square-root of CD4+ cell counts behaves over time for each child
+
+---
+
+## Example: CD4+ count
+
+First, a spaghetti plot of 20 random participants
+
+```{r cd4 plot, out.width="60%"}
+cd4_sample <- sample(cd4$newpid, 20)
+cd4 %>% 
+   dplyr::filter(newpid %in% cd4_sample) %>% 
+   ggplot(aes(time, sqrt(CD4CNT), group = newpid, color = newpid)) + 
+   geom_line(size=1.2)+
+   theme_bw()+
+   theme(text = element_text(size = 20)) 
+```
+
+::: {.absolute width=40% bottom=500 right=-30}
+[What's our instinct on appropriateness of random intercepts/slopes?]{.alert}
+:::
+
+---
+
+## Example: CD4+ count
+
+Unfortunately, I haven't been able to find appropriate code to plot (time) variograms in SAS
+
+In R, we can create these plots using the `variogram()` function from `library(joineR)`
+
+```{r variogram, out.width="55%"}
+library(joineR)
+vario <- variogram( indv = cd4$newpid,
+                    time = cd4$time,
+                    Y = sqrt(cd4$CD4CNT) )
+vario$svar <- vario$svar[complete.cases(vario$svar),]
+
+par(mar = c(2, 2, 0.5, 2))
+plot(vario, smooth=T, ylim=c(0,300))
+```
+
+::: {.absolute width=50% bottom=450 right=-500}
+[What can we conclude?]{.alert}
+:::
+
+---
+
+## Building longitudinal model(s?)
+
+However, even after we perform these exploratory steps, we might still be left with multiple plausible model specifications
+
+- Is there a way to compare multiple model specifications or assess the appropriateness of our modeling decisions?
+
+. . .
+
+[Yes!]{.alert}
+
+. . .
+
+There are 2 general approaches to compare GLMMs: likelihood ratios tests and AIC
+
+- We can't use these for GEEs because GEEs don't have a likelihood
+
+. . .
+
+For GEEs, we can use a modification of AIC called QIC
+
+---
+
+## Model comparison via likelihood ratio test
+
+One way to compare multiple models is via a [likelihood ratio test]{.alert} (LRT)
+
+. . .
+
+- An LRT is obtained by taking twice the difference in the respective maximized REML log-likelihoods,
+$$G^2 = 2(\hat{l}_{full} - \hat{l}_{reduced})$$
+and comparing statistic to a chi-squared distribution with degrees-of-freedom equal to difference between the number of covariance parameters in full and reduced models
+
+   - "Full" here would be the most complicated covariance structure, while "reduced" would be a simpler one
+   
+   - Sometimes it's also written as $G^2 = -2(\hat{l}_{reduced} - \hat{l}_{full})$
+
+. . .
+
+- This tests the hypothesis:
+
+$$\begin{align*}&H_0: \text{There is no difference on how the full and reduced models fit the data}\\
+&H_A: \text{There is a difference on how the full and reduced models fit the data}\end{align*}$$
+
+   - This assumes that the "full" or more complicated model is always the best-fitting
+
+---
+
+## Model comparison via likelihood ratio test
+
+One way to compare multiple models is via a [likelihood ratio test]{.alert} (LRT)
+
+- An LRT is obtained by taking twice the difference in the respective maximized REML log-likelihoods,
+$$G^2 = 2(\hat{l}_{full} - \hat{l}_{reduced})$$
+and comparing statistic to a chi-squared distribution with degrees-of-freedom equal to difference between the number of covariance parameters in full and reduced models
+
+   - "Full" here would be the most complicated covariance structure, while "reduced" would be a simpler one
+   
+   - Sometimes it's also written as $G^2 = -2(\hat{l}_{reduced} - \hat{l}_full)$
+
+For GLMMs, this means comparing models with [the same fixed effects]{.alert} but "nested" random effects
+
+- i.e., random intercepts vs random slopes + random intercepts; random slopes vs random slopes + random intercepts
+
+- NOT random intercepts vs random slopes
+
+---
+
+## Model comparison via AIC
+
+An alternative approach is the [Akaike Information Criterion (AIC)]{.alert}
+
+- According to the AIC, given a set of competing models for the covariance, one should select the model that [minimizes]{.alert}:
+
+$$AIC = -2(\text{maximized log-likelihood}) + 2(\text{number of covariance parameters})$$
+
+. . .
+
+According to AIC, we want a model that fits the data well, but not at the price of having to estimate a ton of extra covariance parameters
+
+- You can use this to compare either nested or non-nested models
+
+- SAS reports AIC automatically in `PROC GLIMMIX`
+
+. . .
+
+Let's try this with the exercise therapy trial
+
+---
+
+## Example: Exercise therapy trial
+
+We'll fit 2 models: one with random slopes + random intercepts, and one with just random intercepts
+
+- Then we'll use the `anova()` function to both perform a LRT and calculate the AICs for each
+
+. . .
+
+```{r glmm compare}
+exercise_lme_slopes <- lmer( strength ~ PROGRAM*time + (time | ID),
+                      data = exercise_long )
+
+exercise_lme_int <- lmer( strength ~ PROGRAM*time + (1 | ID),
+                      data = exercise_long )
+
+anova(exercise_lme_slopes, exercise_lme_int)
+```
+
+. . .
+
+[What can we conclude?]{.alert}
+
+---
+
+## Model comparison via QIC/CIC
+
+Neither LRTs nor AIC work for GEEs because GEEs do not have a likelihood that is needed to calculate those statistics
+
+- Instead, we can use a modified AIC called the [Quasi-likelihood Information Criterion (QIC)]{.alert}
+
+   - Its calculation is somewhat complicated, but it's interpretation is similar to the AIC: you want to minimize it
+   
+- There is also the [Correlation Information Criterion (CIC)]{.alert} that may be more robust than the QIC
+
+. . .
+
+If QIC and CIC give conflicting results, it might be best to choose the model whose model-based SEs are closest to their estimated robust SEs
+
+. . .
+
+Let's test this in the exercise trial
+
+---
+
+## Example: Exercise therapy trial
+
+In SAS, QIC is automatically reported as part of `PROC GENMOD`
+
+For R, `QIC()` is only available for models run with the `geeglm()` function from `library(geepack)`
+
+. . .
+
+```{r gee compare, output=F}
+library(geepack)
+
+# fitting an unstructured correlation structure #
+exercise_gee_un <- geeglm(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="unstructured")
+
+# fitting an autoregression, distance 1 correlation structure #
+exercise_gee_AR <- geeglm(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="ar1")
+
+# fitting an exchangeable correlation structure #
+exercise_gee_exch <- geeglm(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="exchangeable")
+
+```
+
+```{r gee compare2}
+QIC(exercise_gee_un, exercise_gee_AR, exercise_gee_exch)
+```
+
+. . .
+
+
+[What can we conclude?]{.alert}
+
+---
+
+## Example: Exercise therapy trial
+
+Let's try comparing their model-based and robust SEs. First we need to refit the models with `gee()`
+```{r gee compare3, output=F}
+library(gee)
+exercise_gee_un2 <- gee(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="unstructured")
+
+# fitting an autoregression, distance 1 correlation structure #
+exercise_gee_AR2 <- gee(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="AR-M", Mv=1)
+
+# fitting an exchangeable correlation structure #
+exercise_gee_exch2 <- gee(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="exchangeable")
+```
+
+---
+
+## Example: Exercise therapy trial
+
+Then we can compare the distance between the SEs within each model
+```{r gee compare4}
+summary(exercise_gee_un2)$coeff[,2] - summary(exercise_gee_un2)$coeff[,4]
+summary(exercise_gee_AR2)$coeff[,2] - summary(exercise_gee_AR2)$coeff[,4]
+summary(exercise_gee_exch2)$coeff[,2] - summary(exercise_gee_exch2)$coeff[,4]
+```
+
+[What can we conclude?]{.alert}
+
+---
+
+## Model justification
+
+We can use these metrics in a couple of different ways
+
+. . .
+
+We can use LRTs and AIC/QIC to help us [make a decision]{.alert} between two competing models
+
+- We've interally justified both to ourselves and just need to make a decision
+
+. . .
+
+They can also help us [justify a modeling decision]{.alert} we've already made
+
+- Want to show the model we've picked is just as good or better than another specification someone else might suggest
+
+While the mechanics of both of these are the same, the motivations are different
+
+---
+
+## Hands-on activity break! {.center}
+
+Let's try these out on the dental data

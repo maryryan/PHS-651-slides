@@ -34,7 +34,7 @@ library(qrcode)
 
 <h3> Mary Ryan Baumann, PhD </h3>
 
-<h3> September 5, 2024 </h3>
+<h3> September 4, 2024 </h3>
 
 <br>
 
@@ -152,7 +152,7 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
 
 - I don't take it
 
-- All in-person lectures will also have a synchronous Zoom-in option & will be recorded
+- All in-person lectures will also have a synchronous Zoom-in option (link on Canvas) & will be recorded
 
    - Plan A: attend in person
    
@@ -205,7 +205,7 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
    - I use a generic format for the web address:\
    [https://maryryan.github.io/PHS-651-slides/F25/lec-LectureNumber/slides-LectureNumber]{.alert}
    
-      - Fill in "LectureNumber" with the lecture/week number for the slide deck you want
+      - Fill in "LectureNumber" with the lecture/week number for the slide deck you want (e.g., today is lecture 0, next Tuesday we'll start with lecture 1.1)
 
 ---
 
@@ -331,7 +331,7 @@ violations of those assumptions, and estimate and interpret regression models to
 
 - Some familiarity with matrix notation
 
-   - Should be familiar with matrix addition/subtraction/multiplication/inversion
+   - Should be familiar with matrix addition/subtraction/multiplication/inversion (just to recognize what's happening when I show in slides)
    
    - We'll review and I'll post resources
 
@@ -367,11 +367,11 @@ violations of those assumptions, and estimate and interpret regression models to
 
 [Final data analysis project]{.alert} (45%)
 
-- Intermediate milestone assignments (10% / 45%)
+- Intermediate milestone assignments (10% of overall grade)
 
-- 8-10 minute oral presentation (10% / 45%)
+- 8-10 minute oral presentation (10%)
 
-- Final written report (25% / 45%)
+- Final written report (25%)
 
 ---
 
@@ -384,26 +384,26 @@ There's no single textbook for this course
 - Any time there's a suggested reading, I'll put a copy of the corresponding sections in the module
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column width="50%" style="font-size: 90%;"}
 I've made the following full e-books available on the Canvas site:
 
-- [Foundations of Liner and Generalized Linear Models]{.alert}. 2015. Agresti A. John Wiley & Sons: Hoboken, New Jersey. ISBN: 978-1-118-73030-0
+- [Foundations of Liner and Generalized Linear Models]{.alert}. 2015. Agresti A. John Wiley & Sons. ISBN: 978-1-118-73030-0
 
 - [Beyond Multiple Linear Regression: Applied Generalized Linear Models and Multilevel Models in R](https://bookdown.org/roback/bookdown-BeyondMLR/) (online textbook)
 
-- [Applied Longitudinal Analysis]{.alert}. 2011. Fitzmaurice GM, Laird NM, and Ware JH. John Wiley & Sons: Hoboken, New Jersey. ISBN: 9780470380277
+- [Applied Longitudinal Analysis]{.alert}. 2011. Fitzmaurice GM, Laird NM, and Ware JH. John Wiley & Sons. ISBN: 9780470380277
 
-- [Survival Analysis: A Self-Learning Text]{.alert}. 2016. Moore, DF. Springer International Publishing: Switzerland. ISBN: 9783319312439
+- [Survival Analysis: A Self-Learning Text]{.alert}. 2016. Moore, DF. Springer International Publishing. ISBN: 9783319312439
 :::
 
-::: {.column width="50%"}
+::: {.column width="50%" style="font-size: 90%;"}
 I've also scanned several chapters from books I could not find electronic copies of:
 
-- [Analysis of Longitudinal Data]{.alert}, 2nd edition. 2002. Diggle PJ, Heagerty P, Liang K, and Zeger SL. Oxford University Press: Oxford. ISBN: 9780198524847
+- [Analysis of Longitudinal Data]{.alert}, 2nd edition. 2002. Diggle PJ, Heagerty P, Liang K, and Zeger SL. Oxford University Press. ISBN: 9780198524847
 
-- [Data Analysis Using Regression and Multilevel/Hierarchical Models]{.alert}. 2007. Gelman A and Hill J. Cambridge University Press: New York. ISBN: 9780521686891
+- [Data Analysis Using Regression and Multilevel/Hierarchical Models]{.alert}. 2007. Gelman A and Hill J. Cambridge University Press. ISBN: 9780521686891
 
-- [Applied Survival Analysis Using R]{.alert}. 2012. Kleinbaum DG and Klein M. Springer Science+Business Media: New York. ISBN: 9781441966452
+- [Applied Survival Analysis Using R]{.alert}. 2012. Kleinbaum DG and Klein M. Springer Science+Business Media. ISBN: 9781441966452
 :::
 ::::
 
@@ -453,7 +453,7 @@ Official stance of this course is that I don't condone the use of AI tools for a
 
 ---
 
-## Final data analysis project
+## Final data analysis project {style="font-size: 90%;"}
 
 - Semester-long, semi-open-ended data analysis project
 
@@ -660,10 +660,19 @@ $$Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\Sigma}$$
    - The errors have a constant variance across all levels of $\boldsymbol{X}$ ([homoskedasticity]{.alert} assumption)
    
    - And that observations are completely independent (covariance of 0)
+   
+---
+
+## Quick aside
+
+![Borrowed via: <https://bsky.app/profile/cameronpat.bsky.social/post/3lwn5ireyes2w>](ols-assumptions.jpg)
 
 ---
 
 ## Review: ordinary linear regression {.smaller}
+
+:::: {.columns}
+::: {.column width="60%"} 
 
 2. the model of the [covariance]{.alert}
 $$Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\Sigma}$$
@@ -678,14 +687,17 @@ $$Cov[\vec{Y}|\boldsymbol{X}] = \boldsymbol{\Sigma}$$
    
    - And that observations are completely independent (covariance of 0)
 
+:::
 
+::: {.column width="40%"}
 So in OLS, $\boldsymbol{\Sigma}$ ends up being assumed to look like:
 
 $$\boldsymbol{\Sigma} = \begin{bmatrix}\sigma^2 & 0 & \dots & 0 \\
 0 & \ddots & \dots & 0 \\
 \vdots & \dots & \ddots & \vdots\\
 0 & \dots & 0 & \sigma^2\end{bmatrix}$$
-
+:::
+::::
    
 ---
 
@@ -833,7 +845,7 @@ $$(\hat{\beta}_1 + \hat{\beta}_2) \pm \sqrt{\left(LCov[\hat{\beta}]L^T\right)} \
 
 What happens when $Var[\vec{Y}|\boldsymbol{X}]$ is [NOT the same]{.alert} across all observations? What if it varies by $u_i$?
 
-- This is different than assuming observations are no independent
+- This is different than assuming observations are not independent
 
 . . .
 
@@ -956,97 +968,97 @@ $$(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol
 
    - We'll break that assumption in this class
 
----
+<!-- --- -->
 
-## Review: logistic regression
+<!-- ## Review: logistic regression -->
 
-Now what happens if $\vec{Y}$ is binary?
+<!-- Now what happens if $\vec{Y}$ is binary? -->
 
-. . .
+<!-- . . . -->
 
-- We could still try to model $\vec{Y}$ with
-$$E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}$$
-and use WLS to deal with non-constant variance (since $Var[\vec{Y}|\boldsymbol{X}] = E[\vec{Y}|\boldsymbol{X}]\left(1 - E[\vec{Y}|\boldsymbol{X}]\right)$)
+<!-- - We could still try to model $\vec{Y}$ with -->
+<!-- $$E[\vec{Y}|\boldsymbol{X}] = \boldsymbol{X}\vec{\beta}$$ -->
+<!-- and use WLS to deal with non-constant variance (since $Var[\vec{Y}|\boldsymbol{X}] = E[\vec{Y}|\boldsymbol{X}]\left(1 - E[\vec{Y}|\boldsymbol{X}]\right)$) -->
 
-   - What do the interpretations of $\beta_0$ and $\beta_1$ then become?
-   
-- But this gets squirrel-y as your probability of an "event" drifts toward 0 or 1
+<!--    - What do the interpretations of $\beta_0$ and $\beta_1$ then become? -->
 
----
+<!-- - But this gets squirrel-y as your probability of an "event" drifts toward 0 or 1 -->
 
-## Review: logistic regression
+<!-- --- -->
 
-Now what happens if $\vec{Y}$ is binary?
+<!-- ## Review: logistic regression -->
 
-An alternative model is [logistic regression]{.alert}
+<!-- Now what happens if $\vec{Y}$ is binary? -->
 
-$$\log\left(\frac{E[\vec{Y}|\boldsymbol{X}]}{1-E[\vec{Y}|\boldsymbol{X}]}\right) = \boldsymbol{X}\vec{\beta}$$
+<!-- An alternative model is [logistic regression]{.alert} -->
 
-- Interpretation of $e^{\beta_1}$: the relative difference in the [odds]{.alert} of 'success' comparing two populations differing by 1 unit in $\boldsymbol{X}$
-   
-   - The above regression is modeling the [odds ratio]{.alert}
+<!-- $$\log\left(\frac{E[\vec{Y}|\boldsymbol{X}]}{1-E[\vec{Y}|\boldsymbol{X}]}\right) = \boldsymbol{X}\vec{\beta}$$ -->
 
-- We call the function $\log\left(\frac{x}{1-x}\right)$ the [logit]{.alert}
+<!-- - Interpretation of $e^{\beta_1}$: the relative difference in the [odds]{.alert} of 'success' comparing two populations differing by 1 unit in $\boldsymbol{X}$ -->
 
-   - That makes this type of regression a [logistic regression]{.alert}
+<!--    - The above regression is modeling the [odds ratio]{.alert} -->
 
-   - In PHS 552, you derived why we use that transformation based on the binomial likelihood
+<!-- - We call the function $\log\left(\frac{x}{1-x}\right)$ the [logit]{.alert} -->
 
-. . .
+<!--    - That makes this type of regression a [logistic regression]{.alert} -->
 
-We'll dig into logistic regression more in a few classes
+<!--    - In PHS 552, you derived why we use that transformation based on the binomial likelihood -->
 
----
+<!-- . . . -->
 
-## Review: Poisson regression
+<!-- We'll dig into logistic regression more in a few classes -->
 
-Now what happens if $\vec{Y}$ is a count of something?
+<!-- --- -->
 
-. . .
+<!-- ## Review: Poisson regression -->
 
-We model $Y_i$ a Poisson random variable with mean $\lambda_i T_i$
+<!-- Now what happens if $\vec{Y}$ is a count of something? -->
 
-- $\lambda_i$ is the rate of events per unit of time
+<!-- . . . -->
 
-- $T_i$ is the interval of observation
+<!-- We model $Y_i$ a Poisson random variable with mean $\lambda_i T_i$ -->
 
-We don't like modeling this via OLS because count/Poisson variables break the constant variance assumption
+<!-- - $\lambda_i$ is the rate of events per unit of time -->
 
-. . .
+<!-- - $T_i$ is the interval of observation -->
+
+<!-- We don't like modeling this via OLS because count/Poisson variables break the constant variance assumption -->
+
+<!-- . . . -->
 
 
-An alternate model is the d a [log-linear regression]{.alert} model
-$$\log\left(\lambda(\vec{x}_i)\right) = \vec{X}_i\vec{\beta}$$
-where we assume that $\lambda_i$ depends on the covariate(s) through the log link function
+<!-- An alternate model is the d a [log-linear regression]{.alert} model -->
+<!-- $$\log\left(\lambda(\vec{x}_i)\right) = \vec{X}_i\vec{\beta}$$ -->
+<!-- where we assume that $\lambda_i$ depends on the covariate(s) through the log link function -->
 
-. . .
+<!-- . . . -->
 
-- In practice, the linear predictor is usually specified in terms of the mean events per observed time $\lambda(u_i) T_i$ rather than the rate $\lambda_i$
+<!-- - In practice, the linear predictor is usually specified in terms of the mean events per observed time $\lambda(u_i) T_i$ rather than the rate $\lambda_i$ -->
 
-$$\log(\mu_i)=\log\left(\lambda(u_i)\right) + \log(T_i) = \vec{X}_i\vec{\beta} + \log(T_i)$$
-   
-   - This makes $\log(T_i)$ an offset, a predictor variable (covariate) with a known coefficient ($\beta$) of 1
-   
----
+<!-- $$\log(\mu_i)=\log\left(\lambda(u_i)\right) + \log(T_i) = \vec{X}_i\vec{\beta} + \log(T_i)$$ -->
 
-## Review: Poisson vs negative binomial regression
+<!--    - This makes $\log(T_i)$ an offset, a predictor variable (covariate) with a known coefficient ($\beta$) of 1 -->
 
-An issue with Poisson regression is that it assumes $Var[Y_i|\vec{X}_i] = E[Y_i|\vec{X}_i] = \mu_i$
+<!-- --- -->
 
-- In our data, we usually end up finding $Var[Y_i|\vec{X}_i] > E[Y_i|\vec{X}_i]$
+<!-- ## Review: Poisson vs negative binomial regression -->
 
-   - This causes [overdispersion]{.alert}
+<!-- An issue with Poisson regression is that it assumes $Var[Y_i|\vec{X}_i] = E[Y_i|\vec{X}_i] = \mu_i$ -->
 
-. . .
+<!-- - In our data, we usually end up finding $Var[Y_i|\vec{X}_i] > E[Y_i|\vec{X}_i]$ -->
 
-One way to combat this is by assuming our count outcome $\vec{Y}$ actually follows a negative binomial distribution that allows $Var[Y_i|\vec{X}_i] > E[Y_i|\vec{X}_i]$
+<!--    - This causes [overdispersion]{.alert} -->
 
-- We still use a log transformation on the outcome, so the model is written the same as before -- the difference is on the variance
+<!-- . . . -->
 
-   - As the mean number of events in observed time:
+<!-- One way to combat this is by assuming our count outcome $\vec{Y}$ actually follows a negative binomial distribution that allows $Var[Y_i|\vec{X}_i] > E[Y_i|\vec{X}_i]$ -->
 
-   $$\log(\mu_i)=\log\left(\lambda(u_i)\right) + \log(T_i) = \vec{X}_i\vec{\beta} + \log(T_i)$$
+<!-- - We still use a log transformation on the outcome, so the model is written the same as before -- the difference is on the variance -->
 
-   - Or as the rate of events given a standard length of time:
+<!--    - As the mean number of events in observed time: -->
 
-   $$\log\left(\lambda(\vec{x}_i)\right) = \vec{X}_i\vec{\beta}$$
+<!--    $$\log(\mu_i)=\log\left(\lambda(u_i)\right) + \log(T_i) = \vec{X}_i\vec{\beta} + \log(T_i)$$ -->
+
+<!--    - Or as the rate of events given a standard length of time: -->
+
+<!--    $$\log\left(\lambda(\vec{x}_i)\right) = \vec{X}_i\vec{\beta}$$ -->

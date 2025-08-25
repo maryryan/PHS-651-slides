@@ -90,16 +90,20 @@ What do we mean by correlated data or data that is clustered?
 - Exposure/adjustment variables tend to have a [limited]{.alert} number of groups
 
    - e.g., diagnosis groups
+   
+   - Many groups means fewer degrees of freedom to spend on estimating coefficients
+   
+- This boundary can sometimes be fuzzy! See Clark & Linzer (2014) or McNeish & Kelley (2019) for more discussion
 
-. . .
+---
+
+## Recap: correlated/clustered data
 
 The ICC is a way to measure the "clustered-ness" of the outcome
 
 $$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} = \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}$$
 
----
-
-## Recap: correlated/clustered data
+. . .
 
 Clustering may impact analysis in several ways
 
@@ -111,12 +115,14 @@ Clustering may impact analysis in several ways
 
 - Reduces the amount of information we get from each individual data point
 
+---
+
+## Recap: correlated/clustered data
+
 :::: {.columns}
 
-::: {.column width="70%"}
-::: {.fragment}
+::: {.column width="60%"}
 [How do we account for this clustering in analysis?]{.alert}
-:::
 
 ::: {.fragment}
 - Could fit [separate regressions]{.alert} for each group... no "global" estimate of exposure effect
@@ -129,7 +135,7 @@ Clustering may impact analysis in several ways
 :::
 :::
 
-::: {.column width="30%"}
+::: {.column width="40%"}
 ::: {.fragment}
 [Some new approaches]{.alert}
 
@@ -154,8 +160,20 @@ Basic idea: some clusters will [randomly]{.alert} having higher/lower means than
 - And that each cluster $i$ will have a [cluster-specific mean]{.alert} a little bit above/below this: $\beta_0 \pm b_{0i}$
 
    - Can think of $b_{0i}$ as the cluster-specific deviation -- we'll add this to our regression model
+   
+![Figure via Lesa Hoffman's F23 PSQF 6272 lecture slides: <https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf> -- link may be broken as Lesa is updating her slides](hoffman-cluster-means.png)
 
-. . .
+---
+
+## Conditional models
+
+Basic idea: some clusters will [randomly]{.alert} having higher/lower means than other
+
+- This means we might assume to have one population-level mean $\beta_0$
+
+- And that each cluster $i$ will have a [cluster-specific mean]{.alert} a little bit above/below this: $\beta_0 \pm b_{0i}$
+
+   - Can think of $b_{0i}$ as the cluster-specific deviation -- we'll add this to our regression model
 
 Model is [conditional]{.alert} because the interpretation of $\beta_1$ assumes we're comparing individuals *in the same cluster* (conditional on group membership/that cluster-specific bump)
 
@@ -196,7 +214,7 @@ $$Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}$$
 
 - $\beta_1$ is the population-averaged (fixed) effect of exposure on the outcome
 
-- $Z_i$ is the random effects indicator for cluster $i$
+- $Z_i$ is the random effects indicator for cluster $i$ (sometimes we omit this and just have $b_{0i}$ on its own)
 
 - $b_{0i}$ is the [random intercept]{.alert} for cluster $i$
 
@@ -256,7 +274,7 @@ $$E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + b_{0i}$$
 Marginal mean:
 $$E[Y_{ij}|\boldsymbol{X}_i] = \boldsymbol{X}_i\vec{\beta}$$
 
-- Mean outcome averaged over the entire sample
+- Mean outcome averaged over the entire sample (weighted by cluster size)
 :::
 :::
 
@@ -280,7 +298,7 @@ $$\vec{Y}_i = \color{green}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{\xi
    
    $$\color{green}{\boldsymbol{X}_i\vec{\beta}}$$
    
-   - Think of this as a function of the variables we need to isolate the causal effect of our exposure of interest
+   - Think of this as a function of the variables we need to [isolate the causal effect]{.underline} of our exposure of interest
    
    - Usually variables that we care about for testing hypotheses
 :::
@@ -289,13 +307,13 @@ $$\vec{Y}_i = \color{green}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{\xi
 ::: {.column width="50%"}
 ::: {.fragment}
    2. Systematic variation (of the response/outcome)
-   $$\color{blue}{\vec{\xi}_i} = \color{red}{\vec{Z}_ib_{0i}}+\color{orchid}{\vec{\epsilon}_i}$$
+   $$\color{blue}{\vec{\xi}_i} = \color{red}{\vec{Z}_ib_{0i}}+\color{BlueViolet}{\vec{\epsilon}_i}$$
    made up of:
          i. Random effects
          
             - Random between-cluster variation: $\color{red}{\vec{Z}_i b_{0i}}$
             
-         ii. Within-cluster variation: $\color{orchid}{\vec{\epsilon}_i}$
+         ii. Within-cluster variation: $\color{BlueViolet}{\vec{\epsilon}_i}$
          
          - The systematic variation is what we're [making assumptions about]{.alert}
 :::
@@ -573,7 +591,7 @@ library(lme4)
 # run an LME with random intercepts for county #
 radon_lme <- lmer(log_radon ~ floor + (1 | county), data=radon.mn)
 radon_lme_ci <- confint(radon_lme)
-summary(radon_lme)
+summary(radon_lme)$coef
 ```
 
 - LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
@@ -593,7 +611,7 @@ Let's compare the LME results to adding county as a regression coefficient
 ```{r radon lm cty}
 radon_cty_lm <- lm(log_radon ~ floor + factor(county) - 1, data=radon.mn)
 radon_cty_lm_ci <- confint(radon_cty_lm)
-summary(radon_cty_lm)
+summary(radon_cty_lm)$coef
 ```
 
 :::: {.columns}
@@ -634,7 +652,7 @@ text(ci_lme[2,2]+0.08, 1.5, "LME CI", col="purple", cex=1.5)
 
 ::::
 
-::: {.fragment .absolute top=400 right=50 width="30%"}
+::: {.fragment .absolute top=400 right=25 width="30%"}
 [If county affects both % houses with basements and radon levels, what variables could we include to control for this confounding?]{.alert}
 :::
 

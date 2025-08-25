@@ -445,15 +445,15 @@ September 11, 2025
 <li>
 <p>Exposure/adjustment variables tend to have a <span class="alert">limited</span> number of groups</p>
 <ul>
-<li>e.g., diagnosis groups</li>
+<li><p>e.g., diagnosis groups</p></li>
+<li><p>Many groups means fewer degrees of freedom to spend on estimating coefficients</p></li>
 </ul>
 </li>
-</ul>
-<div class="fragment">
+<li><p>This boundary can sometimes be fuzzy! See Clark &amp; Linzer (2014) or McNeish &amp; Kelley (2019) for more discussion</p></li>
+</ul></section><section id="recap-correlatedclustered-data-2" class="slide level2"><h2>Recap: correlated/clustered data</h2>
 <p>The ICC is a way to measure the “clustered-ness” of the outcome</p>
 <p><span class="math display">\[\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} = \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\]</span></p>
-</div>
-</section><section id="recap-correlatedclustered-data-2" class="slide level2"><h2>Recap: correlated/clustered data</h2>
+<div class="fragment">
 <p>Clustering may impact analysis in several ways</p>
 <ul>
 <li><p>Groups/clusters may not be the same size</p></li>
@@ -461,11 +461,11 @@ September 11, 2025
 <li><p>May impact average outcome/exposure</p></li>
 <li><p>Reduces the amount of information we get from each individual data point</p></li>
 </ul>
-<div class="columns">
-<div class="column" style="width:70%;">
-<div class="fragment">
-<p><span class="alert">How do we account for this clustering in analysis?</span></p>
 </div>
+</section><section id="recap-correlatedclustered-data-3" class="slide level2"><h2>Recap: correlated/clustered data</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><span class="alert">How do we account for this clustering in analysis?</span></p>
 <div class="fragment">
 <ul>
 <li><p>Could fit <span class="alert">separate regressions</span> for each group… no “global” estimate of exposure effect</p></li>
@@ -474,7 +474,7 @@ September 11, 2025
 <li><p>… Something else?</p></li>
 </ul>
 </div>
-</div><div class="column" style="width:30%;">
+</div><div class="column" style="width:40%;">
 <div class="fragment">
 <p><span class="alert">Some new approaches</span></p>
 <p>Two main “classes”:</p>
@@ -496,13 +496,26 @@ September 11, 2025
 </ul>
 </li>
 </ul>
-<div class="fragment">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="hoffman-cluster-means.png"></p>
+<figcaption>Figure via Lesa Hoffman’s F23 PSQF 6272 lecture slides: <a href="https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf" class="uri">https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf</a> – link may be broken as Lesa is updating her slides</figcaption></figure>
+</div>
+</section><section id="conditional-models-1" class="slide level2"><h2>Conditional models</h2>
+<p>Basic idea: some clusters will <span class="alert">randomly</span> having higher/lower means than other</p>
+<ul>
+<li><p>This means we might assume to have one population-level mean <span class="math inline">\(\beta_0\)</span></p></li>
+<li>
+<p>And that each cluster <span class="math inline">\(i\)</span> will have a <span class="alert">cluster-specific mean</span> a little bit above/below this: <span class="math inline">\(\beta_0 \pm b_{0i}\)</span></p>
+<ul>
+<li>Can think of <span class="math inline">\(b_{0i}\)</span> as the cluster-specific deviation – we’ll add this to our regression model</li>
+</ul>
+</li>
+</ul>
 <p>Model is <span class="alert">conditional</span> because the interpretation of <span class="math inline">\(\beta_1\)</span> assumes we’re comparing individuals <em>in the same cluster</em> (conditional on group membership/that cluster-specific bump)</p>
 <ul>
 <li><p>Just like how interpretation of <span class="math inline">\(\beta_1\)</span> assumes we’re comparing individuals who have the same value for all other covariates</p></li>
 <li><p>We’ll dig into this more later</p></li>
 </ul>
-</div>
 <div class="fragment">
 <p>We tried this (somewhat informally) last week by adding cluster membership as a covariate</p>
 <ul>
@@ -524,7 +537,7 @@ September 11, 2025
 <li><p><span class="math inline">\(\beta_0\)</span> is the population-level (<span class="alert">fixed effect</span>) intercept</p></li>
 <li><p><span class="math inline">\(U_{ij}\)</span> is the exposure variable for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(\beta_1\)</span> is the population-averaged (fixed) effect of exposure on the outcome</p></li>
-<li><p><span class="math inline">\(Z_i\)</span> is the random effects indicator for cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(Z_i\)</span> is the random effects indicator for cluster <span class="math inline">\(i\)</span> (sometimes we omit this and just have <span class="math inline">\(b_{0i}\)</span> on its own)</p></li>
 <li><p><span class="math inline">\(b_{0i}\)</span> is the <span class="alert">random intercept</span> for cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(\epsilon_{ij}\)</span> is the random error term for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 </ul>
@@ -564,7 +577,7 @@ September 11, 2025
 <div class="fragment">
 <p>Marginal mean: <span class="math display">\[E[Y_{ij}|\boldsymbol{X}_i] = \boldsymbol{X}_i\vec{\beta}\]</span></p>
 <ul>
-<li>Mean outcome averaged over the entire sample</li>
+<li>Mean outcome averaged over the entire sample (weighted by cluster size)</li>
 </ul>
 </div>
 </div>
@@ -584,14 +597,14 @@ September 11, 2025
 </ol>
 <p><span class="math display">\[\color{green}{\boldsymbol{X}_i\vec{\beta}}\]</span></p>
 <ul>
-<li><p>Think of this as a function of the variables we need to isolate the causal effect of our exposure of interest</p></li>
+<li><p>Think of this as a function of the variables we need to <u>isolate the causal effect</u> of our exposure of interest</p></li>
 <li><p>Usually variables that we care about for testing hypotheses</p></li>
 </ul>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <ol start="2" type="1">
-<li>Systematic variation (of the response/outcome) <span class="math display">\[\color{blue}{\vec{\xi}_i} = \color{red}{\vec{Z}_ib_{0i}}+\color{orchid}{\vec{\epsilon}_i}\]</span> made up of:
+<li>Systematic variation (of the response/outcome) <span class="math display">\[\color{blue}{\vec{\xi}_i} = \color{red}{\vec{Z}_ib_{0i}}+\color{BlueViolet}{\vec{\epsilon}_i}\]</span> made up of:
 <ol type="i">
 <li>
 <p>Random effects</p>
@@ -600,7 +613,7 @@ September 11, 2025
 </li>
 </ul>
 </li>
-<li><p>Within-cluster variation: <span class="math inline">\(\color{orchid}{\vec{\epsilon}_i}\)</span></p></li>
+<li><p>Within-cluster variation: <span class="math inline">\(\color{BlueViolet}{\vec{\epsilon}_i}\)</span></p></li>
 </ol>
 <ul>
 <li>The systematic variation is what we’re <span class="alert">making assumptions about</span>
@@ -804,32 +817,11 @@ September 11, 2025
 <span id="cb1-3"><a href="#cb1-3"></a><span class="co"># run an LME with random intercepts for county #</span></span>
 <span id="cb1-4"><a href="#cb1-4"></a>radon_lme <span class="ot">&lt;-</span> <span class="fu">lmer</span>(log_radon <span class="sc">~</span> floor <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> county), <span class="at">data=</span>radon.mn)</span>
 <span id="cb1-5"><a href="#cb1-5"></a>radon_lme_ci <span class="ot">&lt;-</span> <span class="fu">confint</span>(radon_lme)</span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">summary</span>(radon_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">summary</span>(radon_lme)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Linear mixed model fit by REML ['lmerMod']
-Formula: log_radon ~ floor + (1 | county)
-   Data: radon.mn
-
-REML criterion at convergence: 2097.5
-
-Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--4.3597 -0.6253 -0.0016  0.6389  3.4965 
-
-Random effects:
- Groups   Name        Variance Std.Dev.
- county   (Intercept) 0.09948  0.3154  
- Residual             0.52676  0.7258  
-Number of obs: 919, groups:  county, 85
-
-Fixed effects:
-            Estimate Std. Error t value
-(Intercept)  1.49239    0.04955  30.117
-floor       -0.66289    0.06765  -9.798
-
-Correlation of Fixed Effects:
-      (Intr)
-floor -0.288</code></pre>
+<pre><code>              Estimate Std. Error   t value
+(Intercept)  1.4923932 0.04955304 30.117088
+floor       -0.6628887 0.06765334 -9.798315</code></pre>
 </div>
 </div>
 <ul>
@@ -848,110 +840,95 @@ floor -0.288</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>radon_cty_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_radon <span class="sc">~</span> floor <span class="sc">+</span> <span class="fu">factor</span>(county) <span class="sc">-</span> <span class="dv">1</span>, <span class="at">data=</span>radon.mn)</span>
 <span id="cb3-2"><a href="#cb3-2"></a>radon_cty_lm_ci <span class="ot">&lt;-</span> <span class="fu">confint</span>(radon_cty_lm)</span>
-<span id="cb3-3"><a href="#cb3-3"></a><span class="fu">summary</span>(radon_cty_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="fu">summary</span>(radon_cty_lm)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = log_radon ~ floor + factor(county) - 1, data = radon.mn)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--3.1794 -0.4449 -0.0065  0.4406  2.6083 
-
-Coefficients:
-                                Estimate Std. Error t value Pr(&gt;|t|)    
-floor                           -0.68923    0.07062  -9.760  &lt; 2e-16 ***
-factor(county)AITKIN             0.88724    0.36370   2.439 0.014915 *  
-factor(county)ANOKA              0.93061    0.10084   9.229  &lt; 2e-16 ***
-factor(county)BECKER             1.54949    0.42210   3.671 0.000257 ***
-factor(county)BELTRAMI           1.58715    0.27756   5.718 1.50e-08 ***
-factor(county)BENTON             1.45454    0.36370   3.999 6.92e-05 ***
-factor(county)BIG STONE          1.53679    0.41947   3.664 0.000264 ***
-factor(county)BLUE EARTH         2.02488    0.19444  10.414  &lt; 2e-16 ***
-factor(county)BROWN              1.99607    0.36498   5.469 5.99e-08 ***
-factor(county)CARLTON            1.04568    0.22986   4.549 6.19e-06 ***
-factor(county)CARVER             1.56601    0.29870   5.243 2.01e-07 ***
-factor(county)CASS               1.42809    0.32492   4.395 1.25e-05 ***
-factor(county)CHIPPEWA           1.75585    0.36327   4.833 1.60e-06 ***
-factor(county)CHISAGO            1.08472    0.29661   3.657 0.000271 ***
-factor(county)CLAY               2.00594    0.19522  10.275  &lt; 2e-16 ***
-factor(county)CLEARWATER         1.36830    0.36498   3.749 0.000190 ***
-factor(county)COOK               0.71754    0.51374   1.397 0.162876    
-factor(county)COTTONWOOD         1.26701    0.36711   3.451 0.000586 ***
-factor(county)CROW WING          1.16000    0.21048   5.511 4.75e-08 ***
-factor(county)DAKOTA             1.37202    0.09165  14.971  &lt; 2e-16 ***
-factor(county)DODGE              1.81683    0.41947   4.331 1.66e-05 ***
-factor(county)DOUGLAS            1.75056    0.24231   7.225 1.14e-12 ***
-factor(county)FARIBAULT          0.77847    0.29684   2.623 0.008888 ** 
-factor(county)FILLMORE           1.41933    0.51495   2.756 0.005975 ** 
-factor(county)FREEBORN           2.11291    0.24269   8.706  &lt; 2e-16 ***
-factor(county)GOODHUE            1.96481    0.19444  10.105  &lt; 2e-16 ***
-factor(county)HENNEPIN           1.39279    0.07129  19.538  &lt; 2e-16 ***
-factor(county)HOUSTON            1.78696    0.29754   6.006 2.84e-09 ***
-factor(county)HUBBARD            1.27592    0.32767   3.894 0.000107 ***
-factor(county)ISANTI             1.09088    0.41947   2.601 0.009470 ** 
-factor(county)ITASCA             0.96989    0.21906   4.427 1.08e-05 ***
-factor(county)JACKSON            2.03650    0.32492   6.268 5.87e-10 ***
-factor(county)KANABEC            1.26888    0.36327   3.493 0.000503 ***
-factor(county)KANDIYOHI          2.07583    0.36327   5.714 1.53e-08 ***
-factor(county)KITTSON            1.61681    0.42210   3.830 0.000138 ***
-factor(county)KOOCHICHING        0.86913    0.27756   3.131 0.001801 ** 
-factor(county)LAC QUI PARLE      2.95083    0.51495   5.730 1.40e-08 ***
-factor(county)LAKE               0.48666    0.24231   2.008 0.044918 *  
-factor(county)LAKE OF THE WOODS  1.87621    0.36498   5.141 3.42e-07 ***
-factor(county)LE SUEUR           1.76353    0.32523   5.422 7.70e-08 ***
-factor(county)LINCOLN            2.32194    0.36370   6.384 2.86e-10 ***
-factor(county)LYON               1.97906    0.25702   7.700 3.86e-14 ***
-factor(county)MAHNOMEN           1.38629    0.72654   1.908 0.056725 .  
-factor(county)MARSHALL           1.63869    0.24534   6.679 4.39e-11 ***
-factor(county)MARTIN             1.10682    0.27479   4.028 6.14e-05 ***
-factor(county)MCLEOD             1.31964    0.20267   6.511 1.29e-10 ***
-factor(county)MEEKER             1.24640    0.32492   3.836 0.000134 ***
-factor(county)MILLE LACS         0.96813    0.51495   1.880 0.060452 .  
-factor(county)MORRISON           1.18075    0.24231   4.873 1.32e-06 ***
-factor(county)MOWER              1.72680    0.20180   8.557  &lt; 2e-16 ***
-factor(county)MURRAY             2.50144    0.72654   3.443 0.000604 ***
-factor(county)NICOLLET           2.17788    0.36327   5.995 3.03e-09 ***
-factor(county)NOBLES             1.94256    0.41947   4.631 4.22e-06 ***
-factor(county)NORMAN             1.28487    0.42013   3.058 0.002297 ** 
-factor(county)OLMSTED            1.34113    0.15177   8.836  &lt; 2e-16 ***
-factor(county)OTTER TAIL         1.63955    0.25823   6.349 3.56e-10 ***
-factor(county)PENNINGTON         1.19071    0.42210   2.821 0.004903 ** 
-factor(county)PINE               0.81282    0.29684   2.738 0.006309 ** 
-factor(county)PIPESTONE          1.87784    0.36370   5.163 3.04e-07 ***
-factor(county)POLK               1.73937    0.36498   4.766 2.22e-06 ***
-factor(county)POPE               1.30687    0.51374   2.544 0.011144 *  
-factor(county)RAMSEY             1.19648    0.12861   9.303  &lt; 2e-16 ***
-factor(county)REDWOOD            1.99809    0.32523   6.144 1.25e-09 ***
-factor(county)RENVILLE           1.68698    0.42013   4.015 6.47e-05 ***
-factor(county)RICE               1.86403    0.21915   8.506  &lt; 2e-16 ***
-factor(county)ROCK               1.33535    0.51374   2.599 0.009508 ** 
-factor(county)ROSEAU             1.68230    0.19832   8.483  &lt; 2e-16 ***
-factor(county)SCOTT              1.82266    0.20267   8.993  &lt; 2e-16 ***
-factor(county)SHERBURNE          1.12508    0.25687   4.380 1.34e-05 ***
-factor(county)SIBLEY             1.27487    0.36327   3.509 0.000473 ***
-factor(county)ST LOUIS           0.92306    0.06816  13.543  &lt; 2e-16 ***
-factor(county)STEARNS            1.51813    0.14575  10.416  &lt; 2e-16 ***
-factor(county)STEELE             1.60398    0.22975   6.981 5.97e-12 ***
-factor(county)STEVENS            1.80896    0.51374   3.521 0.000453 ***
-factor(county)SWIFT              1.02673    0.36327   2.826 0.004821 ** 
-factor(county)TODD               1.73917    0.42013   4.140 3.83e-05 ***
-factor(county)TRAVERSE           2.02026    0.36370   5.555 3.74e-08 ***
-factor(county)WABASHA            1.84256    0.27479   6.705 3.71e-11 ***
-factor(county)WADENA             1.32114    0.32614   4.051 5.58e-05 ***
-factor(county)WASECA             0.70614    0.36370   1.942 0.052527 .  
-factor(county)WASHINGTON         1.36338    0.10740  12.695  &lt; 2e-16 ***
-factor(county)WATONWAN           2.70012    0.42210   6.397 2.64e-10 ***
-factor(county)WILKIN             2.24071    0.72654   3.084 0.002109 ** 
-factor(county)WINONA             1.65628    0.20216   8.193 9.58e-16 ***
-factor(county)WRIGHT             1.66647    0.20158   8.267 5.40e-16 ***
-factor(county)YELLOW MEDICINE    1.21681    0.51374   2.369 0.018087 *  
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.7265 on 833 degrees of freedom
-Multiple R-squared:  0.7892,    Adjusted R-squared:  0.7675 
-F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre><code>                                  Estimate Std. Error   t value     Pr(&gt;|t|)
+floor                           -0.6892278 0.07061897 -9.759812 2.222631e-21
+factor(county)AITKIN             0.8872421 0.36369889  2.439496 1.491544e-02
+factor(county)ANOKA              0.9306117 0.10083535  9.229023 2.203248e-19
+factor(county)BECKER             1.5494936 0.42210194  3.670899 2.570958e-04
+factor(county)BELTRAMI           1.5871474 0.27755558  5.718305 1.499191e-08
+factor(county)BENTON             1.4545448 0.36369889  3.999311 6.917153e-05
+factor(county)BIG STONE          1.5367889 0.41946822  3.663660 2.643561e-04
+factor(county)BLUE EARTH         2.0248774 0.19443795 10.414003 5.870367e-24
+factor(county)BROWN              1.9960661 0.36498212  5.468942 5.987929e-08
+factor(county)CARLTON            1.0456783 0.22986071  4.549182 6.185498e-06
+factor(county)CARVER             1.5660075 0.29870312  5.242689 2.007501e-07
+factor(county)CASS               1.4280874 0.32491868  4.395215 1.249659e-05
+factor(county)CHIPPEWA           1.7558540 0.36327013  4.833466 1.597428e-06
+factor(county)CHISAGO            1.0847226 0.29660882  3.657081 2.711205e-04
+factor(county)CLAY               2.0059394 0.19522153 10.275196 2.120006e-23
+factor(county)CLEARWATER         1.3683042 0.36498212  3.748962 1.898351e-04
+factor(county)COOK               0.7175423 0.51374155  1.396699 1.628761e-01
+factor(county)COTTONWOOD         1.2670113 0.36711088  3.451304 5.859629e-04
+factor(county)CROW WING          1.1600049 0.21047586  5.511344 4.749648e-08
+factor(county)DAKOTA             1.3720234 0.09164522 14.971031 4.734256e-45
+factor(county)DODGE              1.8168268 0.41946822  4.331262 1.663238e-05
+factor(county)DOUGLAS            1.7505574 0.24230717  7.224538 1.136034e-12
+factor(county)FARIBAULT          0.7784693 0.29684225  2.622502 8.888117e-03
+factor(county)FILLMORE           1.4193309 0.51495353  2.756231 5.974945e-03
+factor(county)FREEBORN           2.1129118 0.24268801  8.706288 1.667422e-17
+factor(county)GOODHUE            1.9648086 0.19443795 10.105067 1.004852e-22
+factor(county)HENNEPIN           1.3927949 0.07128800 19.537579 2.860795e-70
+factor(county)HOUSTON            1.7869554 0.29754144  6.005736 2.842769e-09
+factor(county)HUBBARD            1.2759202 0.32766978  3.893921 1.065318e-04
+factor(county)ISANTI             1.0908814 0.41946822  2.600629 9.470233e-03
+factor(county)ITASCA             0.9698884 0.21906013  4.427498 1.080220e-05
+factor(county)JACKSON            2.0365007 0.32491868  6.267724 5.872878e-10
+factor(county)KANABEC            1.2688809 0.36327013  3.492940 5.028983e-04
+factor(county)KANDIYOHI          2.0758292 0.36327013  5.714285 1.533684e-08
+factor(county)KITTSON            1.6168074 0.42210194  3.830372 1.375560e-04
+factor(county)KOOCHICHING        0.8691291 0.27755558  3.131370 1.800686e-03
+factor(county)LAC QUI PARLE      2.9508302 0.51495353  5.730285 1.400800e-08
+factor(county)LAKE               0.4866605 0.24230717  2.008445 4.491841e-02
+factor(county)LAKE OF THE WOODS  1.8762089 0.36498212  5.140550 3.415587e-07
+factor(county)LE SUEUR           1.7635332 0.32522551  5.422493 7.703984e-08
+factor(county)LINCOLN            2.3219365 0.36369889  6.384228 2.858738e-10
+factor(county)LYON               1.9790587 0.25702241  7.699946 3.857267e-14
+factor(county)MAHNOMEN           1.3862944 0.72654027  1.908076 5.672488e-02
+factor(county)MARSHALL           1.6386869 0.24533733  6.679321 4.385706e-11
+factor(county)MARTIN             1.1068214 0.27479166  4.027857 6.143028e-05
+factor(county)MCLEOD             1.3196430 0.20267417  6.511155 1.287875e-10
+factor(county)MEEKER             1.2464035 0.32491868  3.836047 1.344715e-04
+factor(county)MILLE LACS         0.9681301 0.51495353  1.880034 6.045223e-02
+factor(county)MORRISON           1.1807517 0.24230717  4.872954 1.316118e-06
+factor(county)MOWER              1.7267952 0.20179869  8.557019 5.525492e-17
+factor(county)MURRAY             2.5014360 0.72654027  3.442942 6.041184e-04
+factor(county)NICOLLET           2.1778805 0.36327013  5.995209 3.025038e-09
+factor(county)NOBLES             1.9425600 0.41946822  4.631006 4.220247e-06
+factor(county)NORMAN             1.2848728 0.42012820  3.058288 2.297266e-03
+factor(county)OLMSTED            1.3411333 0.15177389  8.836390 5.789065e-18
+factor(county)OTTER TAIL         1.6395504 0.25823225  6.349131 3.555422e-10
+factor(county)PENNINGTON         1.1907061 0.42210194  2.820897 4.902809e-03
+factor(county)PINE               0.8128171 0.29684225  2.738212 6.309244e-03
+factor(county)PIPESTONE          1.8778367 0.36369889  5.163163 3.038837e-07
+factor(county)POLK               1.7393671 0.36498212  4.765623 2.221064e-06
+factor(county)POPE               1.3068698 0.51374155  2.543827 1.114414e-02
+factor(county)RAMSEY             1.1964756 0.12860591  9.303426 1.170948e-19
+factor(county)REDWOOD            1.9980864 0.32522551  6.143695 1.248089e-09
+factor(county)RENVILLE           1.6869754 0.42012820  4.015383 6.470618e-05
+factor(county)RICE               1.8640322 0.21915418  8.505574 8.317691e-17
+factor(county)ROCK               1.3353472 0.51374155  2.599259 9.507820e-03
+factor(county)ROSEAU             1.6822959 0.19832489  8.482525 9.984029e-17
+factor(county)SCOTT              1.8226588 0.20267417  8.993049 1.592678e-18
+factor(county)SHERBURNE          1.1250834 0.25687077  4.379959 1.338305e-05
+factor(county)SIBLEY             1.2748666 0.36327013  3.509418 4.731732e-04
+factor(county)ST LOUIS           0.9230634 0.06815719 13.543156 6.518505e-38
+factor(county)STEARNS            1.5181320 0.14574669 10.416236 5.749724e-24
+factor(county)STEELE             1.6039799 0.22975221  6.981347 5.973271e-12
+factor(county)STEVENS            1.8089602 0.51374155  3.521148 4.530203e-04
+factor(county)SWIFT              1.0267329 0.36327013  2.826362 4.820722e-03
+factor(county)TODD               1.7391651 0.42012820  4.139606 3.833099e-05
+factor(county)TRAVERSE           2.0202557 0.36369889  5.554748 3.740823e-08
+factor(county)WABASHA            1.8425616 0.27479166  6.705304 3.705476e-11
+factor(county)WADENA             1.3211396 0.32614426  4.050783 5.581559e-05
+factor(county)WASECA             0.7061443 0.36369889  1.941563 5.252692e-02
+factor(county)WASHINGTON         1.3633839 0.10739718 12.694783 6.958128e-34
+factor(county)WATONWAN           2.7001154 0.42210194  6.396833 2.642693e-10
+factor(county)WILKIN             2.2407097 0.72654027  3.084082 2.109193e-03
+factor(county)WINONA             1.6562790 0.20216393  8.192752 9.577664e-16
+factor(county)WRIGHT             1.6664711 0.20157922  8.267078 5.395861e-16
+factor(county)YELLOW MEDICINE    1.2168067 0.51374155  2.368519 1.808678e-02</code></pre>
 </div>
 </div>
 <div class="columns">
@@ -987,7 +964,7 @@ F-statistic: 36.27 on 86 and 833 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div>
-<div class="fragment absolute" style="top: 400px; right: 50px; width: 30%; ">
+<div class="fragment absolute" style="top: 400px; right: 25px; width: 30%; ">
 <p><span class="alert">If county affects both % houses with basements and radon levels, what variables could we include to control for this confounding?</span></p>
 </div>
 </div>

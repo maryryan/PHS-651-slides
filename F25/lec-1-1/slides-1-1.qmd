@@ -207,7 +207,7 @@ dagify(
 
 ## How does clustering affect outcomes?
 
-... or potentially be a [confounding variable]{.alert} (affects both exposure and outcome distributions)
+... or potentially be a [confounding variable]{.alert} (affects both exposure and outcome distributions) -- more on this later
 
 ```{r cluster DAG3, echo=F, fig.align="center"}
 dagify(
@@ -253,6 +253,12 @@ dagify(
 <!-- Seaman S, Pavlou M, Copas A. Review of methods for handling confounding by cluster and informative cluster size in clustered data. Stat Med. 2014 Dec 30;33(30):5371-87. doi: 10.1002/sim.6277. Epub 2014 Aug 4. PMID: 25087978; PMCID: PMC4320764. -->
 
 ------------------------------------------------------------------------
+
+## An example of cluster membership impacting outcome values
+
+![Figure via Lesa Hoffman's PSQF 6272 lecture slides: <https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf>](hoffman-cluster-means.png)
+
+---
 
 ## Other issues from correlated data
 
@@ -315,6 +321,12 @@ How can we tell if data are clustered?
 -   ICC: $$\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}$$
 
 In words: $$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}}= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}$$
+
+---
+
+## Large vs small ICC
+
+![Figure via Lesa Hoffman's PSQF 6272 lecture slides: <https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf>](hoffman-cluster-var2.png)
 
 ------------------------------------------------------------------------
 

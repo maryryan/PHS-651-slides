@@ -528,7 +528,7 @@ September 9, 2025
 </div>
 </div>
 </section><section id="how-does-clustering-affect-outcomes-2" class="slide level2"><h2>How does clustering affect outcomes?</h2>
-<p>… or potentially be a <span class="alert">confounding variable</span> (affects both exposure and outcome distributions)</p>
+<p>… or potentially be a <span class="alert">confounding variable</span> (affects both exposure and outcome distributions) – more on this later</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -548,6 +548,11 @@ September 9, 2025
 </div>
 </div>
 <!-- Seaman S, Pavlou M, Copas A. Review of methods for handling confounding by cluster and informative cluster size in clustered data. Stat Med. 2014 Dec 30;33(30):5371-87. doi: 10.1002/sim.6277. Epub 2014 Aug 4. PMID: 25087978; PMCID: PMC4320764. -->
+</section><section id="an-example-of-cluster-membership-impacting-outcome-values" class="slide level2"><h2>An example of cluster membership impacting outcome values</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="hoffman-cluster-means.png"></p>
+<figcaption>Figure via Lesa Hoffman’s PSQF 6272 lecture slides: <a href="https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf" class="uri">https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf</a></figcaption></figure>
+</div>
 </section><section id="other-issues-from-correlated-data" class="slide level2"><h2>Other issues from correlated data</h2>
 <p>Even if clustering has no impact on the overall outcome or exposure averages:</p>
 <ul>
@@ -600,6 +605,11 @@ September 9, 2025
 <li><p>ICC: <span class="math display">\[\rho = \frac{\gamma^2}{\gamma^2 + \sigma^2}\]</span></p></li>
 </ul>
 <p>In words: <span class="math display">\[\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}}= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\]</span></p>
+</section><section id="large-vs-small-icc" class="slide level2"><h2>Large vs small ICC</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="hoffman-cluster-var2.png"></p>
+<figcaption>Figure via Lesa Hoffman’s PSQF 6272 lecture slides: <a href="https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf" class="uri">https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf</a></figcaption></figure>
+</div>
 </section><section id="clustering-in-data-analysis" class="slide level2"><h2>Clustering in data analysis</h2>
 <p>What are some ideas about how we could handle clustering in an analysis?</p>
 </section><section id="clustering-in-individual-level-data-analysis" class="slide level2"><h2>Clustering in individual-level data analysis</h2>

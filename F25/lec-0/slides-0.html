@@ -347,7 +347,7 @@ September 4, 2024
 <p><em>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</em></p>
 </div>
 <div class="absolute" style="left: 260px; bottom: 50px; width: 1500px; ">
-<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/PHS-651-0/slides-0" class="uri">https://maryryan.github.io/PHS-651-slides/PHS-651-0/slides-0</a></p>
+<p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0" class="uri">https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0</a></p>
 </div>
 <div class="absolute" style="left: 100px; bottom: 25px; width: 150px; ">
 <div class="cell">
@@ -384,8 +384,8 @@ September 4, 2024
 <li>
 <p>Office hours:</p>
 <ul>
-<li><p>In-person: xxx</p></li>
-<li><p>Zoom: xxx</p></li>
+<li><p>In-person: Mondays, 11 - 11:50am</p></li>
+<li><p>Zoom: Thursdays, noon - 1pm</p></li>
 </ul>
 </li>
 <li>
@@ -418,7 +418,13 @@ September 4, 2024
 <li><p>Office hours: xxx</p></li>
 </ul>
 </div>
-</section><section id="course-logistics" class="slide level2"><h2>Course logistics</h2>
+</section><section id="outline-for-today" class="slide level2"><h2>Outline for today</h2>
+<ul>
+<li><p>Course logistics/policies</p></li>
+<li><p>Overview of course topics/learning objectives</p></li>
+<li><p>Overview of major assignments</p></li>
+<li><p>Review of linear regression and notation</p></li>
+</ul></section><section id="course-logistics" class="slide level2"><h2>Course logistics</h2>
 <div class="columns">
 <div class="column" style="width:&quot;50%;">
 <p><span class="alert">Instruction times</span></p>
@@ -493,12 +499,19 @@ September 4, 2024
 <li>
 <p>I use a generic format for the web address:<br><span class="alert">https://maryryan.github.io/PHS-651-slides/F25/lec-LectureNumber/slides-LectureNumber</span></p>
 <ul>
-<li>Fill in “LectureNumber” with the lecture/week number for the slide deck you want (e.g., today is lecture 0, next Tuesday we’ll start with lecture 1.1)</li>
+<li>Fill in “LectureNumber” with the lecture/week number for the slide deck you want (e.g., today is lecture 0, next Tuesday we’ll start with lecture 1-1)</li>
 </ul>
 </li>
 </ul>
 </li>
-</ul></section><section id="phs-552-vs-651" class="slide level2"><h2>PHS 552 vs 651</h2>
+</ul></section><section id="learning-objectives" class="slide level2"><h2>Learning objectives</h2>
+<p>Upon successful completion of the course, students will be able to:</p>
+<ol type="1">
+<li><p>Understand the features of correlated data, their role in epidemiologic study, and their implications in drawing inference</p></li>
+<li><p>State the assumptions underlying linear mixed effect, generalized linear mixed effect, generalized estimating equation, and survival regression models, recognize and address violations of those assumptions, and estimate and interpret regression models to answer epidemiologic and public health research questions in correlated and longitudinal data settings</p></li>
+<li><p>Implement the inference procedures to solve real-world problems using statistical packages such as SAS and R</p></li>
+<li><p>Interpret and present the analytic results to answer substantive questions</p></li>
+</ol></section><section id="phs-552-vs-651" class="slide level2"><h2>PHS 552 vs 651</h2>
 <p>What you covered in PHS 552</p>
 <ul>
 <li><p>What is regression</p></li>
@@ -567,21 +580,31 @@ September 4, 2024
 <ul>
 <li><p>Time series modeling</p></li>
 <li><p>Spatial statistical modeling</p></li>
-</ul></section><section id="learning-objectives" class="slide level2"><h2>Learning objectives</h2>
-<p>Upon successful completion of the course, students will be able to:</p>
-<ol type="1">
-<li><p>Understand the features of correlated data, their role in epidemiologic study, and their implications in drawing inference</p></li>
-<li><p>State the assumptions underlying linear mixed effect, generalized linear mixed effect, generalized estimating equation, and survival regression models, recognize and address violations of those assumptions, and estimate and interpret regression models to answer epidemiologic and public health research questions in correlated and longitudinal data settings</p></li>
-<li><p>Implement the inference procedures to solve real-world problems using statistical packages such as SAS and R</p></li>
-<li><p>Interpret and present the analytic results to answer substantive questions</p></li>
-</ol></section><section id="course-outline" class="slide level2"><h2>Course outline</h2>
+</ul></section><section id="course-outline" class="slide level2"><h2>Course outline</h2>
 <ul>
 <li><p>Review of ordinary linear regression, logistic regression weighted least squares</p></li>
+<li>
+<p><span class="alert">Analysis of correlated data</span></p>
+<ul>
 <li><p>Cross-sectional clustered data</p></li>
 <li><p>Conditional modeling: linear mixed effect models (LMEs), generalized linear mixed models (GLMMs)</p></li>
-<li><p>Marginal modeling : generalized estimationg equations (GEEs)</p></li>
+<li><p>Marginal modeling : generalized estimating equations (GEEs)</p></li>
+</ul>
+</li>
+<li>
+<p><span class="alert">Analysis of longitudinal data</span></p>
+<ul>
 <li><p>Modeling repeated measures: longitudinal data, multi-period cross-sectional data (panel data)</p></li>
-<li><p>Time-to-event/survival analysis</p></li>
+<li><p>Applying LMEs, GLMMS, and GEE to the longitudinal data setting</p></li>
+</ul>
+</li>
+<li>
+<p><span class="alert">Time-to-event/survival analysis</span></p>
+<ul>
+<li><p>Kaplan-Meier curves</p></li>
+<li><p>Cox proportional hazards models</p></li>
+</ul>
+</li>
 </ul></section><section id="what-im-assuming-youre-coming-in-with" class="slide level2 smaller"><h2>What I’m assuming you’re coming in with</h2>
 <ul>
 <li><p>Familiarity with basic statistical inference concepts (i.e., estimation, hypothesis testing, confidence intervals)</p></li>
@@ -616,28 +639,7 @@ September 4, 2024
 </li>
 </ul>
 </div>
-</section><section id="how-youll-be-evaluated" class="slide level2"><h2>How you’ll be evaluated</h2>
-<p><span class="alert">Small assignments</span> (40%)</p>
-<ul>
-<li><p>Biweekly homeworks assigned Tuesdays at end of class, due on due-date at beginning of class</p></li>
-<li><p>Some other small assignments to be completed over several weeks</p></li>
-</ul>
-<p><span class="alert">Midterm</span> (15%)</p>
-<ul>
-<li><p>In-class exam focused on understanding of concepts</p></li>
-<li>
-<p>Scheduled for Th 10/09</p>
-<ul>
-<li>If you have scheduling issues with this date, email me ASAP</li>
-</ul>
-</li>
-</ul>
-<p><span class="alert">Final data analysis project</span> (45%)</p>
-<ul>
-<li><p>Intermediate milestone assignments (10% of overall grade)</p></li>
-<li><p>8-10 minute oral presentation (10%)</p></li>
-<li><p>Final written report (25%)</p></li>
-</ul></section><section id="textbooksreadings" class="slide level2"><h2>Textbooks/Readings</h2>
+</section><section id="textbooksreadings" class="slide level2"><h2>Textbooks/Readings</h2>
 <p>There’s no single textbook for this course</p>
 <ul>
 <li><p>I’ll be pulling from several books for different topics, as well as stand-alone journal articles</p></li>
@@ -661,36 +663,38 @@ September 4, 2024
 </ul>
 </div>
 </div>
-</section><section id="ai-policy" class="slide level2"><h2>AI policy</h2>
-<p>Official stance of this course is that I don’t condone the use of AI tools for assignments</p>
-<p><span class="alert">Why?</span></p>
+</section><section id="other-resources-for-you" class="slide level2"><h2>Other resources for you</h2>
+<p><span class="alert">Canvas Discussions</span></p>
 <ul>
-<li><p>I want to know how <em>you</em> think, not how an LLM thinks</p></li>
-<li><p>Validity of responses is not guaranteed</p></li>
-<li><p>Often gives the look of intellectualism without the substance</p></li>
-<li><p>Training data ethics are debatable</p></li>
-<li><p>Policy follows the guidelines of most academic journals</p></li>
-</ul>
-<p><span class="alert">I don’t use AI detection software</span></p>
-<ul>
-<li><p>Mostly because it’s bad</p></li>
-<li><p>Subpar answers will receive subpar grades, regardless of who/what generated it</p></li>
-</ul></section><section id="other-resources-for-you" class="slide level2"><h2>Other resources for you</h2>
-<p><span class="alert">Piazza</span></p>
-<ul>
-<li><p>This is our main forum for questions</p></li>
+<li><p>This is our main forum for questions (threads available for each week, as well as general thread)</p></li>
 <li><p>It is my expectation that most questions can (and will) be answered by your fellow students</p></li>
 </ul>
 <p><span class="alert">Peer support groups</span></p>
 <ul>
 <li><p>Randomly assigned groups of 3-4</p></li>
-<li>
-<p>Guarantees everyone with some continuing level of informal brainstorming/feedback/support through the semester</p>
+<li><p>Guarantees everyone with some continuing level of informal feedback/support/brainstorming through the semester</p></li>
+<li><p>Feel free to use as study/question groups</p></li>
+</ul></section><section id="how-youll-be-evaluated" class="slide level2"><h2>How you’ll be evaluated</h2>
+<p><span class="alert">Homework/small assignments</span> (40%)</p>
 <ul>
-<li>We’ll periodically meet in peer groups throughout the semester to work on (individual) final projects</li>
+<li><p>Biweekly homeworks assigned at end of class, due on due-date at beginning of class</p></li>
+<li><p>Some other small assignments to be completed over several weeks</p></li>
+</ul>
+<p><span class="alert">Midterm</span> (15%)</p>
+<ul>
+<li><p>In-class exam focused on understanding of concepts</p></li>
+<li>
+<p>Scheduled for Th 10/09</p>
+<ul>
+<li>If you have scheduling issues with this date, email me ASAP</li>
 </ul>
 </li>
-<li><p>Also feel free to use as study/question groups</p></li>
+</ul>
+<p><span class="alert">Final data analysis project</span> (45%)</p>
+<ul>
+<li><p>Intermediate milestone assignments (10% of overall grade)</p></li>
+<li><p>5-8 minute oral presentation (10%)</p></li>
+<li><p>Final written report (25%)</p></li>
 </ul></section><section id="final-data-analysis-project" class="slide level2" style="font-size: 90%;"><h2>Final data analysis project</h2>
 <ul>
 <li><p>Semester-long, semi-open-ended data analysis project</p></li>
@@ -718,7 +722,26 @@ September 4, 2024
 </li>
 <li><p>If you want to use this as a chance to test-drive/further your dissertation research, please do!</p></li>
 <li><p>Note that pretty much any data used for this will require some cleaning – don’t leave this to the last minute!</p></li>
-</ul></section><section><section id="lets-go" class="title-slide slide level1 center"><h1>Let’s go!</h1>
+</ul></section><section id="ai-policy" class="slide level2"><h2>AI policy</h2>
+<p>Official stance of this course is that I don’t condone the use of AI tools for assignments</p>
+<p><span class="alert">Why?</span></p>
+<ul>
+<li><p>I want to know how <em>you</em> think, not how an LLM thinks</p></li>
+<li><p>Validity of responses is not guaranteed</p></li>
+<li><p>Training data ethics are debatable</p></li>
+<li><p>This policy follows the guidelines of most academic journals</p></li>
+</ul>
+<p><span class="alert">I don’t use AI detection software</span></p>
+<ul>
+<li><p>Mostly because it’s bad</p></li>
+<li><p>Subpar answers will receive subpar grades, regardless of who/what generated it</p></li>
+</ul></section><section id="before-we-dive-in" class="slide level2"><h2>Before we dive in…</h2>
+<ol type="1">
+<li><p>Please complete the <span class="alert">pre-course survey</span> before next class! <em>This helps give me an idea of where people are coming from</em></p></li>
+<li><p><span class="alert">Homework 0</span> is due Thurs 9/11 – <em>Primarily review material</em></p></li>
+<li><p><span class="alert">Small Assignment 1</span> is due Tues 9/16 – <em>A (very short) reading and reflection on Canvas</em></p></li>
+<li><p><span class="alert">Milestone 1</span> is due Thurs 9/25 – <em>Start thinking about your final project data set!</em></p></li>
+</ol></section><section><section id="lets-go" class="title-slide slide level1 center"><h1>Let’s go!</h1>
 
 </section><section id="review-ordinary-linear-regression" class="slide level2 smaller"><h2>Review: ordinary linear regression</h2>
 <p>AKA: ordinary least squares</p>

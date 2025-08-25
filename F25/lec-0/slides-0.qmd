@@ -50,7 +50,7 @@ library(qrcode)
 
 ::: {.absolute bottom=50 left=260 width=1500}
 
-Slides found at: <https://maryryan.github.io/PHS-651-slides/PHS-651-0/slides-0>
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0>
 
 :::
 
@@ -90,9 +90,9 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
 
 - Office hours:
 
-   - In-person: xxx
+   - In-person: Mondays, 11 - 11:50am
    
-   - Zoom: xxx
+   - Zoom: Thursdays, noon - 1pm
 
 - Doodle: <https://doodle.com/bp/marybaumann/651-oh>
 
@@ -125,6 +125,18 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
 
 - Office hours: xxx
 :::
+
+---
+
+## Outline for today
+
+- Course logistics/policies
+
+- Overview of course topics/learning objectives
+
+- Overview of major assignments
+
+- Review of linear regression and notation
 
 ---
 
@@ -205,7 +217,22 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
    - I use a generic format for the web address:\
    [https://maryryan.github.io/PHS-651-slides/F25/lec-LectureNumber/slides-LectureNumber]{.alert}
    
-      - Fill in "LectureNumber" with the lecture/week number for the slide deck you want (e.g., today is lecture 0, next Tuesday we'll start with lecture 1.1)
+      - Fill in "LectureNumber" with the lecture/week number for the slide deck you want (e.g., today is lecture 0, next Tuesday we'll start with lecture 1-1)
+
+---
+
+## Learning objectives 
+
+Upon successful completion of the course, students will be able to:
+
+1. Understand the features of correlated data, their role in epidemiologic study, and their implications in drawing inference
+
+2.	State the assumptions underlying linear mixed effect, generalized linear mixed effect, generalized estimating equation, and survival regression models, recognize and address
+violations of those assumptions, and estimate and interpret regression models to answer epidemiologic and public health research questions in correlated and longitudinal data settings
+
+3.	Implement the inference procedures to solve real-world problems using statistical packages such as SAS and R
+
+4.	Interpret and present the analytic results to answer substantive questions
 
 ---
 
@@ -288,34 +315,29 @@ Non-independence we [won't]{.alert} be getting into
 
 ---
 
-## Learning objectives 
-
-Upon successful completion of the course, students will be able to:
-
-1. Understand the features of correlated data, their role in epidemiologic study, and their implications in drawing inference
-
-2.	State the assumptions underlying linear mixed effect, generalized linear mixed effect, generalized estimating equation, and survival regression models, recognize and address
-violations of those assumptions, and estimate and interpret regression models to answer epidemiologic and public health research questions in correlated and longitudinal data settings
-
-3.	Implement the inference procedures to solve real-world problems using statistical packages such as SAS and R
-
-4.	Interpret and present the analytic results to answer substantive questions
-
----
-
 ## Course outline
 
 - Review of ordinary linear regression, logistic regression weighted least squares
 
-- Cross-sectional clustered data
+- [Analysis of correlated data]{.alert}
 
-- Conditional modeling: linear mixed effect models (LMEs), generalized linear mixed models (GLMMs)
+   - Cross-sectional clustered data
 
-- Marginal modeling : generalized estimationg equations (GEEs)
+   - Conditional modeling: linear mixed effect models (LMEs), generalized linear mixed models (GLMMs)
 
-- Modeling repeated measures: longitudinal data, multi-period cross-sectional data (panel data)
+   - Marginal modeling : generalized estimating equations (GEEs)
 
-- Time-to-event/survival analysis
+- [Analysis of longitudinal data]{.alert}
+
+   - Modeling repeated measures: longitudinal data, multi-period cross-sectional data (panel data)
+   
+   - Applying LMEs, GLMMS, and GEE to the longitudinal data setting
+
+- [Time-to-event/survival analysis]{.alert}
+
+   - Kaplan-Meier curves
+   
+   - Cox proportional hazards models
 
 ---
 
@@ -346,32 +368,6 @@ violations of those assumptions, and estimate and interpret regression models to
    - You can use whatever software you want for your assignments, just know there are softwares I may be less good at providing support in
    
       - I can give you partial points if I can find where you went wrong in the code, but can't give partial points if you use software I can't read
-   
----
-
-## How you'll be evaluated
-
-[Small assignments]{.alert} (40%)
-
-- Biweekly homeworks assigned Tuesdays at end of class, due on due-date at beginning of class
-
-- Some other small assignments to be completed over several weeks
-
-[Midterm]{.alert} (15%)
-
-- In-class exam focused on understanding of concepts
-
-- Scheduled for Th 10/09
-
-   - If you have scheduling issues with this date, email me ASAP
-
-[Final data analysis project]{.alert} (45%)
-
-- Intermediate milestone assignments (10% of overall grade)
-
-- 8-10 minute oral presentation (10%)
-
-- Final written report (25%)
 
 ---
 
@@ -409,35 +405,11 @@ I've also scanned several chapters from books I could not find electronic copies
 
 ---
 
-## AI policy
-
-Official stance of this course is that I don't condone the use of AI tools for assignments
-
-[Why?]{.alert}
-
-- I want to know how *you* think, not how an LLM thinks
-
-- Validity of responses is not guaranteed
-
-- Often gives the look of intellectualism without the substance
-
-- Training data ethics are debatable
-
-- Policy follows the guidelines of most academic journals
-
-[I don't use AI detection software]{.alert}
-
-- Mostly because it's bad
-
-- Subpar answers will receive subpar grades, regardless of who/what generated it
-
----
-
 ## Other resources for you
 
-[Piazza]{.alert}
+[Canvas Discussions]{.alert}
 
-- This is our main forum for questions
+- This is our main forum for questions (threads available for each week, as well as general thread)
 
 - It is my expectation that most questions can (and will) be answered by your fellow students
 
@@ -445,11 +417,35 @@ Official stance of this course is that I don't condone the use of AI tools for a
 
 - Randomly assigned groups of 3-4
 
-- Guarantees everyone with some continuing level of informal brainstorming/feedback/support through the semester
+- Guarantees everyone with some continuing level of informal feedback/support/brainstorming through the semester
 
-   - We'll periodically meet in peer groups throughout the semester to work on (individual) final projects
+- Feel free to use as study/question groups
 
-- Also feel free to use as study/question groups
+---
+
+## How you'll be evaluated
+
+[Homework/small assignments]{.alert} (40%)
+
+- Biweekly homeworks assigned at end of class, due on due-date at beginning of class
+
+- Some other small assignments to be completed over several weeks
+
+[Midterm]{.alert} (15%)
+
+- In-class exam focused on understanding of concepts
+
+- Scheduled for Th 10/09
+
+   - If you have scheduling issues with this date, email me ASAP
+
+[Final data analysis project]{.alert} (45%)
+
+- Intermediate milestone assignments (10% of overall grade)
+
+- 5-8 minute oral presentation (10%)
+
+- Final written report (25%)
 
 ---
 
@@ -481,7 +477,43 @@ Official stance of this course is that I don't condone the use of AI tools for a
 
 - Note that pretty much any data used for this will require some cleaning -- don't leave this to the last minute!
 
+---
 
+## AI policy
+
+Official stance of this course is that I don't condone the use of AI tools for assignments
+
+[Why?]{.alert}
+
+- I want to know how *you* think, not how an LLM thinks
+
+- Validity of responses is not guaranteed
+
+- Training data ethics are debatable
+
+- This policy follows the guidelines of most academic journals
+
+[I don't use AI detection software]{.alert}
+
+- Mostly because it's bad
+
+- Subpar answers will receive subpar grades, regardless of who/what generated it
+
+---
+
+## Before we dive in...
+
+1. Please complete the [pre-course survey]{.alert} before next class!
+*This helps give me an idea of where people are coming from*
+
+
+2. [Homework 0]{.alert} is due Thurs 9/11 -- *Primarily review material*
+
+
+3. [Small Assignment 1]{.alert} is due Tues 9/16 -- *A (very short) reading and reflection on Canvas*
+
+
+4. [Milestone 1]{.alert} is due Thurs 9/25 -- *Start thinking about your final project data set!*
 
 
 # Let's go! {.center}

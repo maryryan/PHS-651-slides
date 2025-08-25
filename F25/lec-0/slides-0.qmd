@@ -361,7 +361,7 @@ Non-independence we [won't]{.alert} be getting into
 
 - Basic SAS/R coding knowledge
 
-   - I'll use both in teaching
+   - I'll give example code for both offline -- most lecure examples will have R code attached
    
    - My primary software is R
    

@@ -65,7 +65,9 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-1-1/slides-1-1")
 
 When we talk about "correlated" or "clustered" data, we're most often talking about correlated/clustered [outcomes]{.alert}
 
--   This stems from one of our regression assumptions: that the *outcome values* for 2 observations will be independent
+-   This stems from one of our OLS regression assumptions: that the *outcome values* for 2 observations will be [independent]{.underline}
+
+-   Outcomes with more than 1 dimension of sampling simultaneously
 
 . . .
 
@@ -81,7 +83,7 @@ Informal definitions
 
 When we talk about "correlated" or "clustered" data, we're most often talking about correlated/clustered [outcomes]{.alert}
 
--   This stems from one of our regression assumptions: that the *outcome values* for 2 observations will be independent
+-   This stems from one of our OLS regression assumptions: that the *outcome values* for 2 observations will be [independent]{.underline}
 
 -   Outcomes with more than 1 dimension of sampling simultaneously
 
@@ -97,15 +99,24 @@ Can outcomes have more than one "level" of clustering?
 
 Some more informal definitions/descriptions
 
--   "Clustered data arise when the data from the whole study [can be classified]{.alert} into a number of different groups, referred to as clusters. [Each cluster contains multiple observations, giving the data a "nested" or "hierarchical" structure]{.alert}, with individual observations nested within the cluster." (Galbraith et al, 2010, ["A Study of Clustered Data and Approaches to Its Analysis"](https://doi.org/10.1523/JNEUROSCI.0362-10.2010))
+-   "Clustered data arise when the data from the whole study [can be classified]{.alert} into a number of different groups, referred to as clusters. [Each cluster contains multiple observations, giving the data a 'nested' or 'hierarchical' structure]{.alert}, with individual observations nested within the cluster." (Galbraith et al, 2010, ["A Study of Clustered Data and Approaches to Its Analysis"](https://doi.org/10.1523/JNEUROSCI.0362-10.2010))
 
 -   "...we might reasonably expect that measurements on [units within a cluster are more similar]{.alert} than measurements on units in different clusters." (Applied Longitudinal Analysis pg. 4)
 
 -   AKA: nested/multilevel/hierarchical data
 
-Note that clustering is [different]{.alert} than a regular covariate
+---
 
-- There are times where this distinction gets a little fuzzy
+## What is clustered/correlated data?
+
+Note that we usually think of clustering as something [different]{.alert} than a regular covariate
+
+- More "administrative" variable, usually not an exposure of interest
+
+- Clustering variable potentially has many different levels/categories with no clear reference group
+
+
+There are times when the distinction between "cluster" and "covariate/predictor" may a little fuzzy
 
 ------------------------------------------------------------------------
 
@@ -157,7 +168,7 @@ Several potential reasons
 
         -   Exposure can be randomized or not
 
-    -   Cluster/multi-stage sampling
+    -   Cluster/multi-stage/dimensional sampling
 
         -   e.g., NHANES
 
@@ -256,7 +267,7 @@ dagify(
 
 ## An example of cluster membership impacting outcome values
 
-![Figure via Lesa Hoffman's PSQF 6272 lecture slides: <https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf>](hoffman-cluster-means.png)
+![Figure via Lesa Hoffman's F23 PSQF 6272 lecture slides: <https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf> -- link may be broken as Lesa is updating her slides](hoffman-cluster-means.png)
 
 ---
 
@@ -514,10 +525,9 @@ counties <- sample( unique(radon.mn$county), size=8 )
 radon.mn %>% 
    dplyr::filter( county %in% counties ) %>% 
     ggplot()+
-   geom_point(aes(y=log_radon,x=factor(floor)),
-              size=5)+
+   geom_point(aes(y=log_radon,x=factor(floor)), size=10)+
    facet_grid(cols=vars(county))+
-   theme(text=element_text(size=30))
+   theme(text=element_text(size=50))
 ```
 
 -   How do we think county membership might affect analysis of our question of interest?
@@ -546,13 +556,13 @@ Breaking the output down:
 
 -   Individual-level (within-cluster) variation (`varw`): `r round(ICCest(county,log_radon, data=radon.mn)$varw, 4)`
 
--   Total variation: `r round((ICCest(county,log_radon, data=radon.mn)$varw+ICCest(county,log_radon, data=radon.mn)$vara),4)`
+-   Total variation (`vara + varw`): `r round((ICCest(county,log_radon, data=radon.mn)$varw+ICCest(county,log_radon, data=radon.mn)$vara),4)`
 
 -   ICC = cluster mean variation/total variation: `r round((ICCest(county,log_radon, data=radon.mn)$vara/(ICCest(county,log_radon, data=radon.mn)$varw+ICCest(county,log_radon, data=radon.mn)$vara)),6)`
 
 -   95% confidence interval: (`r round(ICCest(county,log_radon, data=radon.mn)$LowerCI,4)`, `r round(ICCest(county,log_radon, data=radon.mn)$Upper,4)`)
 
-    -   Not trivial...
+-   Not a trivial amount of clustering...
 :::
 :::
 :::
@@ -684,7 +694,7 @@ Now we'll look at fitting with counties, but without removing the intercept
 ```{r radon cluster}
 # run OLS regression with county as covariate #
 radon_cty_int_lm <- lm(log_radon ~ floor + factor(county), data=radon.mn)
-summary(radon_cty_int_lm)
+summary(radon_cty_int_lm)$coef
 
 ```
 
@@ -703,7 +713,7 @@ Finally we'll fit with counties, and without an intercept
 ```{r radon cluster2}
 # run OLS regression with county as covariate and removing global intercept #
 radon_cty_lm <- lm(log_radon ~ floor + factor(county) - 1, data=radon.mn)
-summary(radon_cty_lm)
+summary(radon_cty_lm)$coef
 ```
 
 -   What changed from the last regression?
@@ -723,7 +733,8 @@ summary(radon_cty_lm)$coeff[c(1,17,27),]
 
 ```{r radon cook plots, fig.align='center'}
 #| output-location: column
-# create density plot of log radon for Cook and Hennepin counties by floor #
+# create density plot of log radon #
+# for Cook and Hennepin counties by floor #
 radon.mn %>% 
    dplyr::filter( county %in% c("COOK",
                                 "HENNEPIN") ) %>% 
@@ -754,7 +765,7 @@ radon.mn.ctylvl <- radon.mn %>%
 
 # run county-level OLS regression #
 radon_ctylvl_lm <- lm(log_radon_mean ~ floor_prop, data=radon.mn.ctylvl)
-summary(radon_ctylvl_lm)
+summary(radon_ctylvl_lm)$coef
 ```
 
 -   How would we interpret these results? How are they different from the results from our other strategies?

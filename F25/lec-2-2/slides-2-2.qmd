@@ -26,7 +26,7 @@ library(gridExtra)
 library(qrcode)
 ```
 
-<h1>Lecture 2.2: Correlated count data</h1>
+<h1>Week 2 Online Lecture: Correlated count data</h1>
 
 <h2>PHS 651: Advanced regression methods</h2>
 
@@ -81,19 +81,20 @@ $$Y_j \sim \text{Poisson}(\lambda T_j)$$
 
 - Parameterized by [rate parameter]{.alert} $\lambda$: number of events per unit of time
 
-- Mean: $E[Y_j] = \lambda T_j$; Variance: $Var[Y_j] = \lambda T$
+- Mean: $E[Y_j] = \lambda T_j$; Variance: $Var[Y_j] = \lambda T_j$
 
+- $\lambda T_j =$ count of number of events
 ---
 
 ## 551/552 review: Distribution of count data
 
 We assume 3 things with a Poisson distribution:
 
-1. [Stationarity]{.underline}: The expected number of events per unit time is the same throughout the entire time interval
+1. [Stationarity]{.alert}: The expected number of events per unit time is the same throughout the entire time interval
 
-2. [Independence]{.underline}: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval
+2. [Independence]{.alert}: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval
 
-3. [Rare events]{.underline}: For any very small time interval $h$:
+3. [Rare events]{.alert}: For any very small time interval $h$:
 
    - The probability of observing 1 event is directly proportional to the length of the time interval, e.g. $P(\text{1 event}) \approx \lambda h$
    
@@ -129,11 +130,11 @@ We will also sometimes model the mean of the count data, rather than the rate:
 
 $$\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)$$
 
-- $T_j$ is known as an [offset]{.alert} $\rightarrow$ this allows us to account for different observation lengths or population totals that the events could occur in
+- $T_j$ is known as an [offset]{.alert} $\rightarrow$ this allows us to account for different observation lengths or population totals that the events could occur in (more people = more opportunity for even to occur)
 
 Both these regressions assume:
 
-1. The outcome data, $Y_j$, follow a Poisson distribution with mean $\lambda(\boldsymbol{X})T_j$ and variance $\lambda(\boldsymbol{X})T_j$
+1. The outcome data, $Y_j$, follow a Poisson distribution with mean $\lambda(\boldsymbol{X})T_j$ and variance $\lambda(\boldsymbol{X})T_j$ (mean and variance equal to each other)
 
 2. We have correctly specified the linear predictors (isolating causal pathway) and the link function
 
@@ -152,7 +153,7 @@ In reality, we often have count data where $E[Y_j|\boldsymbol{X}] \ne Var[Y_j|\b
 :::: {.columns}
 ::: {.column width="50%"}
 ::: {.fragment}
-We can instead assume:
+In this case, we can instead assume:
 
 $$Y_j | \theta \sim \text{Poisson}(\lambda T_j \theta)$$
 $$\theta \sim \text{Gamma}(\alpha, \beta)$$
@@ -302,7 +303,7 @@ glimpse(awards)
 
 - [Student-level variables]{.underline}: gender, socioeconomic status, test scores (math, reading, writing, science, social studies), honors course enrollment status, program enrollment type (general, academic, vocational)
 
-- [School-level variables]{.underline}: school ID, school type (public/private)
+- [School-level variables]{.underline}: school ID (`cid`), school type (public/private)
 
 ---
 
@@ -328,7 +329,7 @@ $$\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) 
 
    - $T_{ij}=1$, and $\log(T_{ij})=0$, so no need to add an offset term
    
-   - We observe different numbers of students in each `cid` in this dataset, but offset is defined by the smallest observation unit
+   - We observe different numbers of students in each `cid` in this dataset, but offset is defined by the smallest observation unit (in this case, the student)
 
 ---
 
@@ -453,7 +454,7 @@ awards_quad <- glmer( awards ~ write + (1 | cid),
 
 # estimate dispersion parameter #
 # pearson weighted residual sum of squares divided by degrees of freedom #
-# if not dispersion, we want this to be 1 #
+# if no dispersion, we want this to be 1 #
 summary(awards_quad)$devcomp$cmp["pwrss"] / summary(awards_quad)$AICtab["df.resid"]
 # can also calculate the pearson RSS yourself #
 sum(resid(awards_quad, type="pearson")^2) / summary(awards_quad)$AICtab["df.resid"]
@@ -467,7 +468,7 @@ This dispersion parameter is very small, so the data is likely very under-disper
 
 ## Investigating dispersion in Poisson models
 
-We can also use the `testDispersion()` function
+We can also use the `testDispersion()` function from the `DHARMa` package
 ```{r testDispersion}
 # can use the testDisperson() function from DHARMa as well #
 library(DHARMa)
@@ -477,3 +478,15 @@ testDispersion(awards_quad, type="PearsonChisq")
 - This provides a formal test for whether $\hat{\phi} \ne 0$ in addition to calculating the estimated $\phi$
 
 - I would generally [not]{.alert} pay much attention to the p-value -- focus on the estimated value for $\phi$
+
+---
+
+## In conclusion
+
+Modeling count data with GLMMs requires several special considerations that we don't see with continuous Normal data or binary data
+
+- Different parametric family: Poisson or Negative Binomial
+
+- Need to account for different observation lengths or population totals in smallest unit of observation (offset term)
+
+- Whether we expect the outcome mean to be equal to the variance (dispersion)

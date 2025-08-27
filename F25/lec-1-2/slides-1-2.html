@@ -763,9 +763,24 @@ September 11, 2025
 <p>The “model-based” covariance matrix for <span class="math inline">\(\widehat{\beta}\)</span> is <span class="math display">\[Cov[\widehat{\beta}]=\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}\]</span></p>
 <div class="fragment">
 <p>The confidence intervals for <span class="math inline">\(\vec{\beta}\)</span> will take the form:</p>
-<p><span class="math display">\[\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}\]</span></p>
+<p><span class="math display">\[\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}\]</span></p>
 </div>
-</section><section id="icc-in-lmes" class="slide level2"><h2>ICC in LMEs</h2>
+</section><section id="inference-for-widehatbeta-2" class="slide level2"><h2>Inference for <span class="math inline">\(widehat{\beta}\)</span>
+</h2>
+<p><span class="math display">\[\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}\]</span></p>
+<p>Wait, I thought we usually like to use a <span class="math inline">\(t\)</span>-distribution critical value for confidence intervals?</p>
+<ul>
+<li><p>Generally, yes</p></li>
+<li><p>This gets complicated in correlated data when we try to calculate the degrees of freedom: each observation doesn’t contribute fully independent information, so what is <span class="math inline">\(n\)</span> really?</p></li>
+<li><p>Often we can just use a standard normal Z critical value</p></li>
+<li>
+<p>For small sample sizes, we can use a Satterthwaite or Kenward-Roger approximation of the degrees of freedom</p>
+<ul>
+<li><p>Available in SAS via <code>PROC GLIMMIX</code></p></li>
+<li><p>Available in R via <code>model_parameters()</code> function in the <code>parameters</code> package</p></li>
+</ul>
+</li>
+</ul></section><section id="icc-in-lmes" class="slide level2"><h2>ICC in LMEs</h2>
 <p>LMEs also make it very intuitive to calculate the ICC</p>
 <p><span class="math display">\[\vec{\xi}_i = \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <p><span class="math display">\[b_{i0} \sim N(0, \sigma^2_b)\]</span></p>
@@ -795,7 +810,7 @@ September 11, 2025
 </div>
 <div class="fragment">
 <ul>
-<li>See Clark &amp; Linzer (2014) or McNeish &amp; Kelley (2019) in the suggested readings!</li>
+<li>See Clark &amp; Linzer (2014) or McNeish (2023) in the suggested readings!</li>
 </ul>
 </div>
 </section><section id="example-radon-measurements-in-minnesota" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
@@ -828,19 +843,44 @@ floor       -0.6628887 0.06765334 -9.798315</code></pre>
 <li>
 <p>LME <span class="math inline">\(\beta_1\)</span>: -0.6629</p>
 <ul>
-<li><p>95% CI: (-0.7954, -0.5296)</p></li>
+<li><p>95% CI (standard normal Z): (-0.7954, -0.5296)</p></li>
 <li><p>How would we interpret this?</p></li>
 </ul>
 </li>
 </ul>
 </div>
 </section><section id="example-radon-measurements-in-minnesota-2" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
+<p>How would these results differ if we calculated the 95% CI using a Satterthwaite approximation?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(parameters)</span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="fu">model_parameters</span>(radon_lme, <span class="at">df_method=</span><span class="st">"satterthwaite"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Fixed Effects
+
+Parameter   | Coefficient |   SE |         95% CI | t(915) |      p
+-------------------------------------------------------------------
+(Intercept) |        1.49 | 0.05 | [ 1.40,  1.59] |  30.12 | &lt; .001
+floor       |       -0.66 | 0.07 | [-0.80, -0.53] |  -9.80 | &lt; .001
+
+# Random Effects
+
+Parameter              | Coefficient
+------------------------------------
+SD (Intercept: county) |        0.32
+SD (Residual)          |        0.73</code></pre>
+</div>
+</div>
+<ul>
+<li><p>Previous standard normal 95% CI: (-0.7954, -0.5296)</p></li>
+<li><p>Really no difference here!</p></li>
+</ul></section><section id="example-radon-measurements-in-minnesota-3" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <p>Let’s compare the LME results to adding county as a regression coefficient</p>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>radon_cty_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_radon <span class="sc">~</span> floor <span class="sc">+</span> <span class="fu">factor</span>(county) <span class="sc">-</span> <span class="dv">1</span>, <span class="at">data=</span>radon.mn)</span>
-<span id="cb3-2"><a href="#cb3-2"></a>radon_cty_lm_ci <span class="ot">&lt;-</span> <span class="fu">confint</span>(radon_cty_lm)</span>
-<span id="cb3-3"><a href="#cb3-3"></a><span class="fu">summary</span>(radon_cty_lm)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>radon_cty_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_radon <span class="sc">~</span> floor <span class="sc">+</span> <span class="fu">factor</span>(county) <span class="sc">-</span> <span class="dv">1</span>, <span class="at">data=</span>radon.mn)</span>
+<span id="cb5-2"><a href="#cb5-2"></a>radon_cty_lm_ci <span class="ot">&lt;-</span> <span class="fu">confint</span>(radon_cty_lm)</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="fu">summary</span>(radon_cty_lm)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                  Estimate Std. Error   t value     Pr(&gt;|t|)
 floor                           -0.6892278 0.07061897 -9.759812 2.222631e-21

@@ -501,8 +501,28 @@ $$Cov[\widehat{\beta}]=\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i
 ::: {.fragment}
 The confidence intervals for $\vec{\beta}$ will take the form:
 
-$$\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}$$
+$$\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}$$
 :::
+
+---
+
+## Inference for $widehat{\beta}$
+
+$$\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}$$
+
+Wait, I thought we usually like to use a $t$-distribution critical value for confidence intervals?
+
+- Generally, yes
+
+- This gets complicated in correlated data when we try to calculate the degrees of freedom: each observation doesn't contribute fully independent information, so what is $n$ really?
+
+- Often we can just use a standard normal Z critical value
+
+- For small sample sizes, we can use a Satterthwaite or Kenward-Roger approximation of the degrees of freedom
+
+   - Available in SAS via `PROC GLIMMIX`
+   
+   - Available in R via `model_parameters()` function in the `parameters` package
 
 ---
 
@@ -547,7 +567,7 @@ This means that [adding random intercepts does not account for confounding by cl
 
 . . .
 
-- See Clark & Linzer (2014) or McNeish & Kelley (2019) in the suggested readings!
+- See Clark & Linzer (2014) or McNeish (2023) in the suggested readings!
 
 ---
 
@@ -596,9 +616,24 @@ summary(radon_lme)$coef
 
 - LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
 
-   - 95% CI: (`r round(radon_lme_ci[4,1], 4)`, `r round(radon_lme_ci[4,2], 4)`)
+   - 95% CI (standard normal Z): (`r round(radon_lme_ci[4,1], 4)`, `r round(radon_lme_ci[4,2], 4)`)
 
    - How would we interpret this?
+   
+---
+
+## Example: radon measurements in Minnesota
+
+How would these results differ if we calculated the 95% CI using a Satterthwaite approximation?
+```{r radon lme satterthwaite}
+library(parameters)
+
+model_parameters(radon_lme, df_method="satterthwaite")
+```
+
+- Previous standard normal 95% CI: (`r round(radon_lme_ci[4,1], 4)`, `r round(radon_lme_ci[4,2], 4)`)
+
+- Really no difference here!
 
 ---
 

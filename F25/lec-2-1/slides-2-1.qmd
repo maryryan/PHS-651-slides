@@ -222,15 +222,15 @@ $$\text{Var}[Y_j] = \phi v(\mu_j),$$
 
 ## Exponential family and GLMs
 
-| Distribution | Var. function $v(\mu)$ | Link function                                                                     |
+| Distribution | Var. function $v(\mu)$ | Usual link function                                                                     |
 |--------------|------------------------|-----------------------------------------------------------------------------------|
 | Normal       | $v(\mu)=1$             | Identity: $g(\mu) = \mu = \boldsymbol{X}_i\vec{\beta}$                            |
-| Bernoulli    | $v(\mu)=\mu(1-\mu)$    | Logit: $g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_i\vec{\beta}$ |
+| Bernoulli/Binomial    | $v(\mu)=\mu(1-\mu)$    | Logit: $g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_i\vec{\beta}$ |
 | Poisson      | $v(\mu)=\mu$           | Log: $g(\mu) = \log(\mu)= \boldsymbol{X}_i\vec{\beta}$                            |
 
 . . .
 
-- We'll focus on binary/Bernoulli/Binomial data today and circle back to count/Poisson data later
+- We'll focus on binary/Bernoulli/Binomial data today and circle back to count/Poisson data in a recorded video
 
 ---
 
@@ -386,23 +386,31 @@ Let's be more specific
 
 [What would our model look like?]{.alert}
 
----
-
-## Logistic linear mixed models
-
-Let's be more specific
-
-- Say we have $\vec{Y}_i$ that is distributed Bernoulli with probability of success $p_{ij}$
-
-- We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
-
-[What would our model look like?]{.alert}
+. . .
 
 $$\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \epsilon_{ij}$$
 
 where $b_{0i} \sim N(0, \sigma^2_b)$ and $\epsilon_{ij} \sim \left(0, p_{ij}(1-p_{ij})\right)$
 
 - We usually estimate $Var[\epsilon_{ij}]$ as $p(1-p)$
+
+---
+
+## Logistic linear mixed models
+
+$$\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \epsilon_{ij}$$
+
+where $b_{0i} \sim N(0, \sigma^2_b)$ and $\epsilon_{ij} \sim \left(0, p_{ij}(1-p_{ij})\right)$
+
+[How do we interpret $\beta_0$ and $b_{0i}$ in this setting?]{.alert}
+
+. . .
+
+- $e^{\beta_0}$: grand odds of the event occurring
+
+- $e^{\beta_0 + b_{i0}}$: cluster $i$-specific odds of the event occurring
+
+- $e^{b_{i0}}$: odds ratio/relative change in odds of the event occurring in cluster $i$ compared to grand odds
 
 ---
 
@@ -557,7 +565,7 @@ iccbin( cid = doc_ID, y = remission, data = cancer,
 
 ## Example: cancer remission
 
-Now let's see what a non-clustered logistic regression would get us:
+Now let's see what a [non-clustered]{.alert} logistic regression would get us:
 
 ```{r cancer logistic}
 logistic_fit <- glm( remission ~ Experience + factor(CancerStage),
@@ -566,7 +574,7 @@ logistic_fit <- glm( remission ~ Experience + factor(CancerStage),
 
 logistic_fit_ci <- confint(logistic_fit)
 
-summary(logistic_fit)
+summary(logistic_fit)$coef
 ```
 
 :::: {.columns}
@@ -642,8 +650,7 @@ A brief comparison of `glmmPQL` vs `glmer` (Laplace) vs `glmer` (GQ with 10 q-po
 ```{r cancer pql}
 library(MASS)
 pql_fit <- glmmPQL( remission ~ Experience + CancerStage,
-         random = ~ 1 | doc_ID, family = binomial, data = cancer, 
-         verbose = F )
+         random = ~ 1 | doc_ID, family = binomial, data = cancer, verbose = F )
 summary( pql_fit )$tTable
 
 ```

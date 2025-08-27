@@ -561,7 +561,7 @@ September 16, 2025
 <th>Distribution</th>
 <th>Var. function <span class="math inline">\(v(\mu)\)</span>
 </th>
-<th>Link function</th>
+<th>Usual link function</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -571,7 +571,7 @@ September 16, 2025
 </td>
 </tr>
 <tr class="even">
-<td>Bernoulli</td>
+<td>Bernoulli/Binomial</td>
 <td><span class="math inline">\(v(\mu)=\mu(1-\mu)\)</span></td>
 <td>Logit: <span class="math inline">\(g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_i\vec{\beta}\)</span>
 </td>
@@ -586,7 +586,7 @@ September 16, 2025
 </table>
 <div class="fragment">
 <ul>
-<li>We’ll focus on binary/Bernoulli/Binomial data today and circle back to count/Poisson data later</li>
+<li>We’ll focus on binary/Bernoulli/Binomial data today and circle back to count/Poisson data in a recorded video</li>
 </ul>
 </div>
 </section><section id="exponential-family-and-glms-examples" class="slide level2"><h2>Exponential family and GLMs: examples</h2>
@@ -656,23 +656,30 @@ September 16, 2025
 </ul></section><section id="logistic-linear-mixed-models" class="slide level2"><h2>Logistic linear mixed models</h2>
 <p>Let’s be more specific</p>
 <ul>
-<li><p>Say we have <span class="math inline">\(\vec{Y}_i\)</span> that is distributed Bernoulli with probability of success <span class="math inline">\(p_i\)</span></p></li>
-<li><p>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(\vec{Y}_i\)</span></p></li>
-</ul>
-<p><span class="alert">What would our model look like?</span></p>
-</section><section id="logistic-linear-mixed-models-1" class="slide level2"><h2>Logistic linear mixed models</h2>
-<p>Let’s be more specific</p>
-<ul>
 <li><p>Say we have <span class="math inline">\(\vec{Y}_i\)</span> that is distributed Bernoulli with probability of success <span class="math inline">\(p_{ij}\)</span></p></li>
 <li><p>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(\vec{Y}_i\)</span></p></li>
 </ul>
 <p><span class="alert">What would our model look like?</span></p>
+<div class="fragment">
 <p><span class="math display">\[\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \epsilon_{ij}\]</span></p>
 <p>where <span class="math inline">\(b_{0i} \sim N(0, \sigma^2_b)\)</span> and <span class="math inline">\(\epsilon_{ij} \sim \left(0, p_{ij}(1-p_{ij})\right)\)</span></p>
 <ul>
 <li>We usually estimate <span class="math inline">\(Var[\epsilon_{ij}]\)</span> as <span class="math inline">\(p(1-p)\)</span>
 </li>
-</ul></section><section id="some-notes-on-estimation" class="slide level2"><h2>Some notes on estimation</h2>
+</ul>
+</div>
+</section><section id="logistic-linear-mixed-models-1" class="slide level2"><h2>Logistic linear mixed models</h2>
+<p><span class="math display">\[\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \epsilon_{ij}\]</span></p>
+<p>where <span class="math inline">\(b_{0i} \sim N(0, \sigma^2_b)\)</span> and <span class="math inline">\(\epsilon_{ij} \sim \left(0, p_{ij}(1-p_{ij})\right)\)</span></p>
+<p><span class="alert">How do we interpret <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(b_{0i}\)</span> in this setting?</span></p>
+<div class="fragment">
+<ul>
+<li><p><span class="math inline">\(e^{\beta_0}\)</span>: grand odds of the event occurring</p></li>
+<li><p><span class="math inline">\(e^{\beta_0 + b_{i0}}\)</span>: cluster <span class="math inline">\(i\)</span>-specific odds of the event occurring</p></li>
+<li><p><span class="math inline">\(e^{b_{i0}}\)</span>: odds ratio/relative change in odds of the event occurring in cluster <span class="math inline">\(i\)</span> compared to grand odds</p></li>
+</ul>
+</div>
+</section><section id="some-notes-on-estimation" class="slide level2"><h2>Some notes on estimation</h2>
 <p>In order to estimate regression coefficients/covariances from the likelihood function for a GLMM, we usually need to do some approximations</p>
 <ul>
 <li>
@@ -819,7 +826,7 @@ $ci
 </ul>
 </div>
 </section><section id="example-cancer-remission-3" class="slide level2"><h2>Example: cancer remission</h2>
-<p>Now let’s see what a non-clustered logistic regression would get us:</p>
+<p>Now let’s see what a <span class="alert">non-clustered</span> logistic regression would get us:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>logistic_fit <span class="ot">&lt;-</span> <span class="fu">glm</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> <span class="fu">factor</span>(CancerStage),</span>
 <span id="cb5-2"><a href="#cb5-2"></a>         <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>),</span>
@@ -827,30 +834,14 @@ $ci
 <span id="cb5-4"><a href="#cb5-4"></a></span>
 <span id="cb5-5"><a href="#cb5-5"></a>logistic_fit_ci <span class="ot">&lt;-</span> <span class="fu">confint</span>(logistic_fit)</span>
 <span id="cb5-6"><a href="#cb5-6"></a></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="fu">summary</span>(logistic_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="fu">summary</span>(logistic_fit)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-glm(formula = remission ~ Experience + factor(CancerStage), family = binomial(link = "logit"), 
-    data = cancer)
-
-Coefficients:
-                        Estimate Std. Error z value Pr(&gt;|z|)    
-(Intercept)            -1.974542   0.117055 -16.869  &lt; 2e-16 ***
-Experience              0.083896   0.006099  13.755  &lt; 2e-16 ***
-factor(CancerStage)II  -0.331089   0.055770  -5.937 2.91e-09 ***
-factor(CancerStage)III -0.709707   0.070848 -10.017  &lt; 2e-16 ***
-factor(CancerStage)IV  -1.724174   0.121057 -14.243  &lt; 2e-16 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-(Dispersion parameter for binomial family taken to be 1)
-
-    Null deviance: 10352.6  on 8524  degrees of freedom
-Residual deviance:  9850.3  on 8520  degrees of freedom
-AIC: 9860.3
-
-Number of Fisher Scoring iterations: 4</code></pre>
+<pre><code>                          Estimate Std. Error    z value     Pr(&gt;|z|)
+(Intercept)            -1.97454210 0.11705470 -16.868541 7.666646e-64
+Experience              0.08389574 0.00609915  13.755316 4.732102e-43
+factor(CancerStage)II  -0.33108865 0.05577013  -5.936666 2.908764e-09
+factor(CancerStage)III -0.70970702 0.07084838 -10.017265 1.279957e-23
+factor(CancerStage)IV  -1.72417405 0.12105741 -14.242614 4.982759e-46</code></pre>
 </div>
 </div>
 <div class="columns">
@@ -925,9 +916,8 @@ CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">library</span>(MASS)</span>
 <span id="cb9-2"><a href="#cb9-2"></a>pql_fit <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
-<span id="cb9-3"><a href="#cb9-3"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> doc_ID, <span class="at">family =</span> binomial, <span class="at">data =</span> cancer, </span>
-<span id="cb9-4"><a href="#cb9-4"></a>         <span class="at">verbose =</span> F )</span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="fu">summary</span>( pql_fit )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-3"><a href="#cb9-3"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> doc_ID, <span class="at">family =</span> binomial, <span class="at">data =</span> cancer, <span class="at">verbose =</span> F )</span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="fu">summary</span>( pql_fit )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                    Value  Std.Error   DF    t-value      p-value
 (Intercept)    -2.6355391 0.44747734 8115  -5.889771 4.021412e-09

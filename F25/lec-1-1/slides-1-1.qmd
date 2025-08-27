@@ -425,7 +425,7 @@ $$Y_{ij} = U_{ij} \beta_1 + C^{(i)}_{ij} \gamma_i + \epsilon_{ij}$$
 
 This is called a [fixed effects]{.alert} model
 
-- See Clark & Linzer (2014) or McNeish & Kelley (2019) in the suggested readings!
+- See Clark & Linzer (2014) or McNeish (2023) in the suggested readings!
 
 ------------------------------------------------------------------------
 

@@ -392,7 +392,7 @@
 
 
 <section class="slide level2"><h1>
-Lecture 2.2: Correlated count data
+Week 2 Online Lecture: Correlated count data
 </h1>
 <h2>
 PHS 651: Advanced regression methods
@@ -433,14 +433,15 @@ Online video: September 16-18 2025
 <p><span class="math display">\[Y_j \sim \text{Poisson}(\lambda T_j)\]</span></p>
 <ul>
 <li><p>Parameterized by <span class="alert">rate parameter</span> <span class="math inline">\(\lambda\)</span>: number of events per unit of time</p></li>
-<li><p>Mean: <span class="math inline">\(E[Y_j] = \lambda T_j\)</span>; Variance: <span class="math inline">\(Var[Y_j] = \lambda T\)</span></p></li>
+<li><p>Mean: <span class="math inline">\(E[Y_j] = \lambda T_j\)</span>; Variance: <span class="math inline">\(Var[Y_j] = \lambda T_j\)</span></p></li>
+<li><p><span class="math inline">\(\lambda T_j =\)</span> count of number of events</p></li>
 </ul></section><section id="review-distribution-of-count-data-1" class="slide level2"><h2>551/552 review: Distribution of count data</h2>
 <p>We assume 3 things with a Poisson distribution:</p>
 <ol type="1">
-<li><p><u>Stationarity</u>: The expected number of events per unit time is the same throughout the entire time interval</p></li>
-<li><p><u>Independence</u>: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval</p></li>
+<li><p><span class="alert">Stationarity</span>: The expected number of events per unit time is the same throughout the entire time interval</p></li>
+<li><p><span class="alert">Independence</span>: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval</p></li>
 <li>
-<p><u>Rare events</u>: For any very small time interval <span class="math inline">\(h\)</span>:</p>
+<p><span class="alert">Rare events</span>: For any very small time interval <span class="math inline">\(h\)</span>:</p>
 <ul>
 <li><p>The probability of observing 1 event is directly proportional to the length of the time interval, e.g.&nbsp;<span class="math inline">\(P(\text{1 event}) \approx \lambda h\)</span></p></li>
 <li><p>The probability of observing no events is approximately <span class="math inline">\(1-\lambda h\)</span></p></li>
@@ -464,11 +465,11 @@ Online video: September 16-18 2025
 <p><span class="math display">\[\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)\]</span></p>
 <ul>
 <li>
-<span class="math inline">\(T_j\)</span> is known as an <span class="alert">offset</span> <span class="math inline">\(\rightarrow\)</span> this allows us to account for different observation lengths or population totals that the events could occur in</li>
+<span class="math inline">\(T_j\)</span> is known as an <span class="alert">offset</span> <span class="math inline">\(\rightarrow\)</span> this allows us to account for different observation lengths or population totals that the events could occur in (more people = more opportunity for even to occur)</li>
 </ul>
 <p>Both these regressions assume:</p>
 <ol type="1">
-<li><p>The outcome data, <span class="math inline">\(Y_j\)</span>, follow a Poisson distribution with mean <span class="math inline">\(\lambda(\boldsymbol{X})T_j\)</span> and variance <span class="math inline">\(\lambda(\boldsymbol{X})T_j\)</span></p></li>
+<li><p>The outcome data, <span class="math inline">\(Y_j\)</span>, follow a Poisson distribution with mean <span class="math inline">\(\lambda(\boldsymbol{X})T_j\)</span> and variance <span class="math inline">\(\lambda(\boldsymbol{X})T_j\)</span> (mean and variance equal to each other)</p></li>
 <li><p>We have correctly specified the linear predictors (isolating causal pathway) and the link function</p></li>
 <li><p>Each outcome observation is independent of one another</p></li>
 </ol></section><section id="review-negative-binomial-regression" class="slide level2"><h2>552 review: Negative Binomial regression</h2>
@@ -480,7 +481,7 @@ Online video: September 16-18 2025
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="fragment">
-<p>We can instead assume:</p>
+<p>In this case, we can instead assume:</p>
 <p><span class="math display">\[Y_j | \theta \sim \text{Poisson}(\lambda T_j \theta)\]</span> <span class="math display">\[\theta \sim \text{Gamma}(\alpha, \beta)\]</span></p>
 <ul>
 <li><p>Mean: <span class="math inline">\(E[\theta] = \alpha/\beta = \mu_{\theta}\)</span></p></li>
@@ -599,7 +600,7 @@ $ cid     &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2
 </div>
 <ul>
 <li><p><u>Student-level variables</u>: gender, socioeconomic status, test scores (math, reading, writing, science, social studies), honors course enrollment status, program enrollment type (general, academic, vocational)</p></li>
-<li><p><u>School-level variables</u>: school ID, school type (public/private)</p></li>
+<li><p><u>School-level variables</u>: school ID (<code>cid</code>), school type (public/private)</p></li>
 </ul></section><section id="example-student-awards-and-writing-scores-1" class="slide level2"><h2>Example: Student awards and writing scores</h2>
 <p>Let’s get an idea of our data…</p>
 <div class="cell">
@@ -640,7 +641,7 @@ $ cid     &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2
 <p>All data is measured on the same time-scale (annual) and has the same total population denominator (awards within a person)</p>
 <ul>
 <li><p><span class="math inline">\(T_{ij}=1\)</span>, and <span class="math inline">\(\log(T_{ij})=0\)</span>, so no need to add an offset term</p></li>
-<li><p>We observe different numbers of students in each <code>cid</code> in this dataset, but offset is defined by the smallest observation unit</p></li>
+<li><p>We observe different numbers of students in each <code>cid</code> in this dataset, but offset is defined by the smallest observation unit (in this case, the student)</p></li>
 </ul>
 </li>
 </ul></section><section id="example-student-awards-and-writing-scores-3" class="slide level2"><h2>Example: Student awards and writing scores</h2>
@@ -740,7 +741,7 @@ write        0.1670175 0.01373927  12.15622 5.316210e-34</code></pre>
 <span id="cb11-5"><a href="#cb11-5"></a></span>
 <span id="cb11-6"><a href="#cb11-6"></a><span class="co"># estimate dispersion parameter #</span></span>
 <span id="cb11-7"><a href="#cb11-7"></a><span class="co"># pearson weighted residual sum of squares divided by degrees of freedom #</span></span>
-<span id="cb11-8"><a href="#cb11-8"></a><span class="co"># if not dispersion, we want this to be 1 #</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="co"># if no dispersion, we want this to be 1 #</span></span>
 <span id="cb11-9"><a href="#cb11-9"></a><span class="fu">summary</span>(awards_quad)<span class="sc">$</span>devcomp<span class="sc">$</span>cmp[<span class="st">"pwrss"</span>] <span class="sc">/</span> <span class="fu">summary</span>(awards_quad)<span class="sc">$</span>AICtab[<span class="st">"df.resid"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    pwrss 
@@ -757,7 +758,7 @@ write        0.1670175 0.01373927  12.15622 5.316210e-34</code></pre>
 <p>This dispersion parameter is very small, so the data is likely very under-dispersed</p>
 </div>
 </section><section id="investigating-dispersion-in-poisson-models-4" class="slide level2"><h2>Investigating dispersion in Poisson models</h2>
-<p>We can also use the <code>testDispersion()</code> function</p>
+<p>We can also use the <code>testDispersion()</code> function from the <code>DHARMa</code> package</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># can use the testDisperson() function from DHARMa as well #</span></span>
 <span id="cb15-2"><a href="#cb15-2"></a><span class="fu">library</span>(DHARMa)</span>
@@ -774,6 +775,12 @@ alternative hypothesis: two.sided</code></pre>
 <ul>
 <li><p>This provides a formal test for whether <span class="math inline">\(\hat{\phi} \ne 0\)</span> in addition to calculating the estimated <span class="math inline">\(\phi\)</span></p></li>
 <li><p>I would generally <span class="alert">not</span> pay much attention to the p-value – focus on the estimated value for <span class="math inline">\(\phi\)</span></p></li>
+</ul></section><section id="in-conclusion" class="slide level2"><h2>In conclusion</h2>
+<p>Modeling count data with GLMMs requires several special considerations that we don’t see with continuous Normal data or binary data</p>
+<ul>
+<li><p>Different parametric family: Poisson or Negative Binomial</p></li>
+<li><p>Need to account for different observation lengths or population totals in smallest unit of observation (offset term)</p></li>
+<li><p>Whether we expect the outcome mean to be equal to the variance (dispersion)</p></li>
 </ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">

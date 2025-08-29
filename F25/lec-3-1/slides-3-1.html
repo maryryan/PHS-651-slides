@@ -356,23 +356,31 @@ September 23, 2025
 </div>
 </div>
 </div>
-</section><section id="recap-linear-mixed-effect-models" class="slide level2"><h2>Recap: linear mixed effect models</h2>
-<p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+</section><section id="recap-generalized-linear-mixed-effect-models" class="slide level2"><h2>Recap: (generalized) linear mixed effect models</h2>
+<p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <ul>
+<li><p><span class="math inline">\(g(\cdot)\)</span> is a <span class="alert">link function</span> that transforms the outcome</p></li>
 <li><p><span class="math inline">\(\boldsymbol{X}_i\vec{\beta}\)</span> are the <span class="alert">fixed effects</span> representing the mean response</p></li>
 <li><p><span class="math inline">\(\vec{Z}_ib_{0i}\)</span> are the <span class="alert">random effects</span> accounting for random between-cluster variation</p></li>
 <li><p><span class="math inline">\(\vec{\epsilon}_i\)</span> is the regular between-individual variation</p></li>
 <li><p>We assume the outcome observations in cluster <em>i</em>, <span class="math inline">\(\vec{Y}_i\)</span>, follow a <span class="alert">multivariate probability distribution</span></p></li>
-</ul></section><section id="recap-linear-mixed-effect-models-1" class="slide level2"><h2>Recap: linear mixed effect models</h2>
-<p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
-<p>The <span class="alert">fixed effects</span> are shared across everyone in the sample, while the <span class="alert">random effects</span> are unique to a particular cluster</p>
+</ul></section><section id="recap-generalized-linear-mixed-effect-models-1" class="slide level2"><h2>Recap: (generalized) linear mixed effect models</h2>
+<p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p>The <span class="alert">fixed effects</span> are shared across everyone in the sample, while the <span class="alert">random effects</span> are unique to a particular cluster (however we define cluster)</p>
 <div class="fragment">
-<p>Interpretations of <span class="math inline">\(\beta_1\)</span> in an LME are <span class="alert">conditional</span> because they are comparing 2 individuals with the same cluster membership</p>
+<p><br> Interpretations of <span class="math inline">\(\beta_1\)</span> in an LME (identity link) are technically <span class="alert">conditional</span> because they are comparing 2 individuals with the same cluster membership (<span class="math inline">\(E[Y_{ij} | \boldsymbol{X}_i, b_{0i}]\)</span>)</p>
+<ul>
+<li>It is easy to separate out the random effects, though, and get the <span class="alert">marginal</span> interpretation</li>
+</ul>
+</div>
+</section><section id="recap-generalized-linear-mixed-effect-models-2" class="slide level2"><h2>Recap: (generalized) linear mixed effect models</h2>
+<p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p>The <span class="alert">fixed effects</span> are shared across everyone in the sample, while the <span class="alert">random effects</span> are unique to a particular cluster (however we define cluster)</p>
+<p><br> Interpretations of <span class="math inline">\(\beta_1\)</span> in a GLMM are more strictly <span class="alert">conditional</span> because they are comparing 2 individuals with the same cluster membership, or have the same random effect value (<span class="math inline">\(g\left(E[Y_{ij} | \boldsymbol{X}_i, b_{0i}]\right)\)</span>)</p>
 <ul>
 <li><p>Often referred to as having individual-specific or cluster-specific interpretation</p></li>
 <li><p>Possible to extract marginal effects from conditional models, but often complicated and prone to bias</p></li>
 </ul>
-</div>
 <div class="fragment">
 <p><span class="alert">What if we want to look at the marginal effect of an exposure – one that’s <em>averaged across</em> all clusters?</span></p>
 </div>
@@ -402,27 +410,27 @@ September 23, 2025
 <li><p>What if instead we had <em>no</em> random effects (<span class="math inline">\(\boldsymbol{G}=0\)</span>), and modeled non-zero covariance using <span class="math inline">\(\vec{\epsilon}_i\)</span> and a <span class="math inline">\(\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}\)</span>?</p></li>
 </ul>
 </li>
-</ul>
-<div class="fragment">
+</ul></section><section id="r-side-and-g-side-variance-1" class="slide level2"><h2>R-side and G-side variance</h2>
+<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{\gamma} + \vec{\epsilon}_i\]</span></p>
 <ul>
+<li><p>Recall that with LMEs and GLMMs, we modeled: <span class="math display">\[\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})\]</span></p></li>
+<li><p>When using random effects (like in LMEs and GLMMs), some call this modeling with <span class="alert">G-side variance</span></p></li>
 <li>
-<p>When using <span class="math inline">\(\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}\)</span>, we call this modeling with <span class="alert">R-side variance</span></p>
+<p>When using <span class="math inline">\(\boldsymbol{G}=0\)</span>, we call this modeling with <span class="alert">R-side variance</span></p>
 <ul>
 <li><p><span class="alert">Marginal modeling</span> approaches tend to exclusively model with R-side variance</p></li>
 <li><p>Downside: this means we’re not modeling the outcome using a proper probability distribution (more on this soon…)</p></li>
 </ul>
 </li>
 </ul>
-<!--    - Those assumptions focused on specifying [within-cluster and between cluster variability]{.alert}, and helped show what the covariance matrix for a cluster should look like and how we could estimate model parameters --><!--    - What if we focused more on the [within-cluster correlation]{.alert}, and use an [empirically estimated]{.alert} covariance structure? -->
-</div>
-</section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
+<!--    - Those assumptions focused on specifying [within-cluster and between cluster variability]{.alert}, and helped show what the covariance matrix for a cluster should look like and how we could estimate model parameters --><!--    - What if we focused more on the [within-cluster correlation]{.alert}, and use an [empirically estimated]{.alert} covariance structure? --></section><section id="marginal-model-components" class="slide level2"><h2>Marginal model components</h2>
 <p>There are 2 main components of a marginal model</p>
 <ol type="1">
 <li>The <span class="alert">marginal expectation</span> of the outcome <span class="math inline">\(E[Y_{ij}|\vec{X}_{ij}]=\mu_{ij}\)</span>:</li>
 </ol>
 <ul>
 <li>
-<span class="math inline">\(\mu_{ij}\)</span> should only depend on the covariates in the model through the link function <span class="math inline">\(g(\cdot)\)</span>: <span class="math inline">\(g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}\)</span>
+<span class="math inline">\(\mu_{ij}\)</span> should only depend on the covariates in the model through the link function <span class="math inline">\(g(\cdot)\)</span>: <span class="math inline">\(~g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}\)</span>
 </li>
 </ul>
 <ol start="2" type="1">
@@ -452,7 +460,7 @@ September 23, 2025
 </div>
 </div>
 <div class="fragment absolute" style="bottom: 200px; right: 200px; width: 30%; ">
-<p><span class="alert">Component 2 is kind of like systematic variation in GLMMs!</span></p>
+<p><span class="alert">Component 2 is kind of like the systematic variation in GLMMs we saw in lecture 2.1!</span></p>
 </div>
 </section><section id="marginal-model-components-example-continuous-outcomes" class="slide level2"><h2>Marginal model components example: continuous outcomes</h2>
 <p>For example, in a model with clustered continuous responses <span class="math inline">\(Y_{ij}\)</span> and only one exposure <span class="math inline">\(U_{ij}\)</span>, we might have:</p>
@@ -507,23 +515,20 @@ September 23, 2025
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
 \sigma^2\alpha &amp; \dots &amp; \sigma^2\alpha &amp; \sigma^2
 \end{bmatrix}\]</span></p>
+<p>We call <span class="math inline">\(V_i\)</span> the <span class="alert">“working” covariance</span> matrix</p>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
-<p>which is different than the covariance matrix we’d get from an LME:</p>
+<p>which <em>looks</em> different than the covariance matrix we’d get from an LME:</p>
 <p><span class="math display">\[\begin{bmatrix}
 \sigma^2_b + \sigma^2_\epsilon &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
 \sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
 \sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \sigma^2_\epsilon
 \end{bmatrix}\]</span></p>
+<p><span class="fragment">but these are actually the same if <span class="math inline">\(\sigma^2 = \sigma^2_b + \sigma^2_\epsilon\)</span> and <span class="math inline">\(\sigma^2\alpha = \sigma^2_b\)</span></span> <span class="fragment">🤯</span></p>
 </div>
 </div>
 </div>
-</div>
-<div class="fragment">
-<ul>
-<li>We call <span class="math inline">\(V_i\)</span> the <span class="alert">“working” covariance</span> matrix</li>
-</ul>
 </div>
 </section><section id="marginal-model-components-example-continuous-outcomes-3" class="slide level2"><h2>Marginal model components example: continuous outcomes</h2>
 <p>If we combined 2.1 and 2.2, we get the covariance between two outcomes in the same cluster: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]\\
@@ -546,7 +551,7 @@ September 23, 2025
 \sigma^2\alpha &amp; \dots &amp; \sigma^2\alpha &amp; \sigma^2
 \end{bmatrix}\]</span></p>
 </div><div class="column" style="width:50%;">
-<p>which is different than the covariance matrix we’d get from an LME:</p>
+<p>which <em>looks</em> different than the covariance matrix we’d get from an LME:</p>
 <p><span class="math display">\[\begin{bmatrix}
 \sigma^2_b + \sigma^2_\epsilon &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
 \sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
@@ -697,7 +702,7 @@ September 23, 2025
 <p><span class="alert">But how do we use these components to estimate our regression coefficients?</span></p>
 <div class="fragment">
 <ul>
-<li>With OLS and GLMMs, we had a likelihood-based estimating equation we could use to derive estimates for <span class="math inline">\(\beta\)</span>
+<li>With OLS and LMEs/GLMMs, we had a likelihood-based estimating equation we could use to derive estimates for <span class="math inline">\(\beta\)</span>
 </li>
 </ul>
 </div>
@@ -719,7 +724,7 @@ September 23, 2025
 <!-- Thus is born [generalized estimating equations]{.alert} -->
 </div>
 </section><section id="generalized-estimating-equations" class="slide level2"><h2>Generalized estimating equations</h2>
-<p>Generalized estimating equations (GEEs) find the <span class="math inline">\(\beta\)</span> that solves an estimating equation of the general form: <span class="math display">\[\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0\]</span></p>
+<p>Generalized estimating equations (<span class="alert">GEEs</span>) find the <span class="math inline">\(\beta\)</span> that solves an estimating equation of the general form: <span class="math display">\[\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0\]</span></p>
 <ul>
 <li>Almost exactly the same as the one we saw for GLMs!</li>
 </ul>
@@ -751,7 +756,7 @@ September 23, 2025
 <div class="fragment">
 <ul>
 <li><p>Need to estimate mean model parameters <span class="math inline">\(\beta\)</span> and variance/covariance/correlation parameters <span class="math inline">\(\varphi\)</span>, <span class="math inline">\(\vec{\alpha}\)</span></p></li>
-<li><p>Estimation of model parameters no longer done by maximum likelihood, but by an iterative algorithm (like Newton-Raphson)</p></li>
+<li><p>Estimation of model parameters no longer done by maximum likelihood or REML, but by an iterative algorithm (like Newton-Raphson)</p></li>
 </ul>
 </div>
 <div class="fragment">

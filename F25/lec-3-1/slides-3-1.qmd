@@ -68,11 +68,13 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1")
 
 ---
 
-## Recap: linear mixed effect models
+## Recap: (generalized) linear mixed effect models
 
-One way to account for clustering in analysis is with a [linear mixed
+One way to account for clustering in analysis is with a [(generalized) linear mixed
 effects]{.alert} model
-$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+- $g(\cdot)$ is a [link function]{.alert} that transforms the outcome
 
 -   $\boldsymbol{X}_i\vec{\beta}$ are the [fixed effects]{.alert}
     representing the mean response
@@ -86,19 +88,36 @@ $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
 ---
 
-## Recap: linear mixed effect models
+## Recap: (generalized) linear mixed effect models
 
-One way to account for clustering in analysis is with a [linear mixed
+One way to account for clustering in analysis is with a [(generalized) linear mixed
 effects]{.alert} model
-$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
 The [fixed effects]{.alert} are shared across everyone in the sample,
-while the [random effects]{.alert} are unique to a particular cluster
+while the [random effects]{.alert} are unique to a particular cluster (however we define cluster)
 
 . . .
 
-Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because
-they are comparing 2 individuals with the same cluster membership
+<br>
+Interpretations of $\beta_1$ in an LME (identity link) are technically [conditional]{.alert} because they are comparing 2 individuals with the same cluster membership ($E[Y_{ij} | \boldsymbol{X}_i, b_{0i}]$)
+
+- It is easy to separate out the random effects, though, and get the [marginal]{.alert} interpretation
+
+---
+
+## Recap: (generalized) linear mixed effect models
+
+One way to account for clustering in analysis is with a [(generalized) linear mixed
+effects]{.alert} model
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+The [fixed effects]{.alert} are shared across everyone in the sample,
+while the [random effects]{.alert} are unique to a particular cluster (however we define cluster)
+
+<br>
+Interpretations of $\beta_1$ in a GLMM are more strictly [conditional]{.alert} because
+they are comparing 2 individuals with the same cluster membership, or have the same random effect value ($g\left(E[Y_{ij} | \boldsymbol{X}_i, b_{0i}]\right)$)
 
 -   Often referred to as having individual-specific or cluster-specific
     interpretation
@@ -151,9 +170,18 @@ $$\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{
    
    - What if instead we had *no* random effects ($\boldsymbol{G}=0$), and modeled non-zero covariance using $\vec{\epsilon}_i$ and a $\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}$?
 
-. . .
+---
 
-- When using $\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}$, we call this modeling with [R-side variance]{.alert}
+## R-side and G-side variance
+
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{\gamma} + \vec{\epsilon}_i$$
+
+- Recall that with LMEs and GLMMs, we modeled:
+$$\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})$$
+
+- When using random effects (like in LMEs and GLMMs), some call this modeling with [G-side variance]{.alert}
+
+- When using $\boldsymbol{G}=0$, we call this modeling with [R-side variance]{.alert}
 
    - [Marginal modeling]{.alert} approaches tend to exclusively model with R-side variance
    
@@ -171,7 +199,7 @@ $$\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{
 There are 2 main components of a marginal model
 
 1. The [marginal expectation]{.alert} of the outcome $E[Y_{ij}|\vec{X}_{ij}]=\mu_{ij}$:
-- $\mu_{ij}$ should only depend on the covariates in the model through the link function $g(\cdot)$: $g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$
+- $\mu_{ij}$ should only depend on the covariates in the model through the link function $g(\cdot)$: $~g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$
 
 2. The covariance of the outcome $Cov[Y_{ij}, Y_{ik}|\boldsymbol{X}_i]$, which can be broken down into 2 more components:
 
@@ -196,7 +224,7 @@ ii. The [within-cluster association]{.alert} of the outcomes
 ::::
 
 ::: {.fragment .absolute bottom=200 right=200 width="30%"}
-[Component 2 is kind of like systematic variation in GLMMs!]{.alert}
+[Component 2 is kind of like the systematic variation in GLMMs we saw in lecture 2.1!]{.alert}
 :::
 
 
@@ -268,11 +296,13 @@ $$V_i=\begin{bmatrix}
 \vdots & \dots & \ddots & \vdots\\
 \sigma^2\alpha & \dots & \sigma^2\alpha & \sigma^2
 \end{bmatrix}$$
+
+We call $V_i$ the ["working" covariance]{.alert} matrix
 :::
 
 ::: {.column width="50%"}
 ::: {.fragment}
-which is different than the covariance matrix we'd get from an LME:
+which *looks* different than the covariance matrix we'd get from an LME:
 
 $$\begin{bmatrix}
 \sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
@@ -280,13 +310,13 @@ $$\begin{bmatrix}
 \vdots & \dots & \ddots & \vdots\\
 \sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
 \end{bmatrix}$$
+
+[but these are actually the same if $\sigma^2 = \sigma^2_b + \sigma^2_\epsilon$ and $\sigma^2\alpha = \sigma^2_b$]{.fragment} [🤯]{.fragment}
 :::
 :::
 ::::
 
-. . .
 
-- We call $V_i$ the ["working" covariance]{.alert} matrix
 
 ---
 
@@ -321,7 +351,7 @@ $$V_i=\begin{bmatrix}
 :::
 
 ::: {.column width="50%"}
-which is different than the covariance matrix we'd get from an LME:
+which *looks* different than the covariance matrix we'd get from an LME:
 
 $$\begin{bmatrix}
 \sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
@@ -504,7 +534,7 @@ So we have the main components of a marginal model
 
 . . .
 
-- With OLS and GLMMs, we had a likelihood-based estimating equation we could use to derive estimates for $\beta$
+- With OLS and LMEs/GLMMs, we had a likelihood-based estimating equation we could use to derive estimates for $\beta$
 
 . . .
 
@@ -536,7 +566,7 @@ Thus is born [generalized estimating equations]{.alert}
 
 ## Generalized estimating equations
 
-Generalized estimating equations (GEEs) find the $\beta$ that solves an
+Generalized estimating equations ([GEEs]{.alert}) find the $\beta$ that solves an
 estimating equation of the general form:
 $$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
 
@@ -591,7 +621,7 @@ $V_i$]{.alert}, a GEE doesn't have to correspond to a full likelihood/distributi
 
 - Need to estimate mean model parameters $\beta$ and variance/covariance/correlation parameters $\varphi$, $\vec{\alpha}$
 
-- Estimation of model parameters no longer done by maximum likelihood, but by an iterative algorithm (like Newton-Raphson)
+- Estimation of model parameters no longer done by maximum likelihood or REML, but by an iterative algorithm (like Newton-Raphson)
 
 . . .
 

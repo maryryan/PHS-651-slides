@@ -506,7 +506,7 @@ $$\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_
 
 ---
 
-## Inference for $widehat{\beta}$
+## Inference for $\widehat{\beta}$
 
 $$\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}$$
 

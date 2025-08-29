@@ -31,7 +31,7 @@ library(gridExtra)
 library(qrcode)
 ```
 
-<h1>Lecture 3.1: Inference for GEEs</h1>
+<h1>Lecture 3.2: Inference for GEEs</h1>
 
 <h2>PHS 651: Advanced regression methods</h2>
 
@@ -67,11 +67,54 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-3-2/slides-3-2")
 
 ---
 
+## Recap: marginal models
+
+Last class we introduced the idea of marginal models
+
+- Marginal models have 2 components (or 3, depending on how you count)
+
+1. The marginal expectation of the outcome: $g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$
+
+2. The covariance of the outcome
+
+   i. The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
+
+   ii. The within-cluster association of the outcomes (correlation structure)
+   
+- We use these to estimate our regression coefficients using [generalized estimating equations]{.alert}
+
+---
+
+## Recap: generalized estimating equations
+
+Generalized estimating equations (GEEs) find the $\beta$ that solves an estimating equation of the general form:
+$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
+
+$V_i = sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}]$ is the [working covariance]{.alert} for the outcome
+
+<br>
+Since this estimating equation [only depends on the mean $\mu_{ij}(\cdot)$ and the working (co)variance
+$V_i$]{.alert}, a GEE doesn't have to correspond to a full likelihood/distribution like a GLMM does
+
+- This means we have [fewer assumptions]{.alert} about how $Y_{ij}$ behaves
+
+- We don't need to theoretically derive the covariance - we can just approximate it using the variance and the chosen correlation structure
+
+---
+
+## Recap: generalized estimating equations
+
+Generalized estimating equations (GEEs) find the $\beta$ that solves an estimating equation of the general form:
+$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
+
+Okay great we can use GEEs to get population-level interpretations of regression coefficients while accounting for non-0 covariance... [but how do we perform inference?]{.alert}
+
+
+---
+
 ## Inference for $\widehat{\beta}$
 
-We also need to be able to get variance estimates for our model parameters in order to perform inference
-
-- The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
+The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
 
 $$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
 
@@ -89,9 +132,7 @@ The individual variances for each $\beta$ will be found along the diagonal of th
 
 ## Inference for $\widehat{\beta}$
 
-We also need to be able to get variance estimates for our model parameters in order to perform inference
-
-- The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
+The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
 
 $$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
 
@@ -111,16 +152,101 @@ $$\begin{align*}&\frac{\partial \mu_i}{\partial \beta} = \frac{\partial \boldsym
 
 ## Inference for $\widehat{\beta}$
 
-We also need to be able to get variance estimates for our model parameters in order to perform inference
-
-- The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
-
-$$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
-
 The confidence intervals for $\vec{\beta}$ will take the form:
 
-$$\begin{align*}&\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(\left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\right)\\
-&\rightarrow \widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(Cov[\widehat{\beta}]\right)\end{align*}$$
+$$\begin{align*}&\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\right)\\
+&\rightarrow \widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(Cov[\widehat{\beta}]\right)\end{align*}$$
+
+. . .
+
+- If we'd like to use a $t$-distribution critical value instead of a standard Normal $Z$ critical value, approximate the [degrees of freedom as $n-p$]{.alert}, or the number of clusters minus the number of parameters you're estimating (for CIs, usually $p=1$)
+
+   - We [do not]{.alert} use the Satterthwaite or Kenward-Roger degrees of freedom approximation -- these were developed for LMEs/GLMMs and do not translate over to GEEs
+
+. . .
+
+Let's see this in an example
+
+---
+
+## GEEs: radon
+
+Let's use our old Minnesota radon data we used back in lecture 1.2
+
+- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county
+
+```{r radon, echo=F}
+radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
+
+set.seed(081524)
+
+radon.mn <- radon %>% 
+   as.data.frame() %>% 
+   mutate(log_radon = log(activity +0.1),
+          county = str_trim(county)) %>% 
+   dplyr::filter(state == "MN")
+```
+
+We'd assume:
+
+- Mean model: 
+
+- Variance: 
+
+- Correlation structure: 
+
+---
+
+## GEEs: radon
+
+Let's use our old Minnesota radon data we used back in lecture 2.1
+
+- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county
+
+We'd assume:
+
+- Mean model: [$E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})$]{.alert}\
+
+- Variance: [$Var[Y_{ij}] = \sigma^2$]{.alert}
+
+- Correlation structure: [exchangeable (just one correlation parameter to estimate)]{.alert}
+
+. . .
+
+Let's run it!
+
+---
+
+## GEEs: radon
+
+Let's run it:
+```{r radon gee}
+library(gee)
+
+# run a GEE with exchangeable correlation clustered on counties #
+radon_gee <- gee( log_radon ~ floor,
+                  id=cntyfips, # cluster ID needs to be a number, not names or categories
+                  data=radon.mn, corstr="exchangeable" )
+summary( radon_gee )$coef
+```
+
+- $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
+
+. . .
+
+[What about our inference?]{.alert}
+
+::: {.fragment}
+- Model-based/"naive" 95% CI with a standard Normal $Z$ critical value: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`)
+:::
+
+::: {.fragment}
+- Model-based/"naive" 95% CI with a $t$ critical value and $df=85-1=84$: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qt(0.975,84), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qt(0.975,84), 4)`)
+:::
+
+
+
+# [But what if we're wrong about our choice of working correlation structure?]{.alert} {.center}
 
 ---
    
@@ -154,14 +280,28 @@ where
 $$\begin{align*}&B^{-1} = \left[\text{model-based covariance of }\beta\right]^{-1}= \left[\sigma^2\boldsymbol{X}^T\boldsymbol{X}\right]^{-1}\\
 &A = \left[\boldsymbol{X}^T (\vec{Y} - \hat{\vec{\mu}})(\vec{Y} - \hat{\vec{\mu}})^T \boldsymbol{X}\right]\end{align*}$$
 
-If there is no clustering in the outcomes, the covariance between observations, $A \approx B$ and:
+If there is [no clustering]{.alert} in the outcomes, the covariance between observations, $A \approx B$ and:
 $$\begin{align*}Cov^*[\widehat{\beta}] &= B^{-1} A B^{-1}\\
 &\approx B^{-1} B B^{-1}\\
 & = B^{-1} = Cov[\widehat{\beta}]\end{align*}$$
 the robust variance is the same as the model-based variance!
 
+---
+
+## Cluster-robust standard errors
+
+The sandwich variance estimator on an OLS model would look like:
+
+$$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
+
+where
+$$\begin{align*}&B^{-1} = \left[\text{model-based covariance of }\beta\right]^{-1}= \left[\sigma^2\boldsymbol{X}^T\boldsymbol{X}\right]^{-1}\\
+&A = \left[\boldsymbol{X}^T (\vec{Y} - \hat{\vec{\mu}})(\vec{Y} - \hat{\vec{\mu}})^T \boldsymbol{X}\right]\end{align*}$$
+
+If there is clustering, then the robust variance will generally be larger than the "naive" variance
+
 ::: {.fragment}
-![](clustering-SE-meme){.absolute top=75 right=-50 width="25%"}
+![](clustering-SE-meme){.absolute top=180 right=0 width="20%"}
 :::
 
 
@@ -169,7 +309,7 @@ the robust variance is the same as the model-based variance!
 
 ## Robust inference for $\widehat{\beta}$
 
-We can also use a sandwich variance estimator to perform inference on $\widehat{\beta}$ from a GEE model
+We can also use a [robust/sandwich variance]{.alert} estimator to perform inference on $\widehat{\beta}$ from a GEE model
 
 $$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
 where
@@ -184,7 +324,7 @@ This will give us (approximately) correct variance estimates for $\widehat{\beta
 
 ## Robust inference for $\widehat{\beta}$
 
-We can also use a sandwich variance estimator to perform inference on $\widehat{\beta}$ from a GEE model
+We can also use a [robust/sandwich variance]{.alert} estimator to perform inference on $\widehat{\beta}$ from a GEE model
 
 $$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
 where
@@ -199,7 +339,7 @@ the robust variance is the same as the model-based variance!
 
 ## Robust inference for $\widehat{\beta}$
 
-We can also use a sandwich variance estimator to perform inference on $\widehat{\beta}$ from a GEE model
+We can also use a [robust/sandwich variance]{.alert} estimator to perform inference on $\widehat{\beta}$ from a GEE model
 
 $$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
 where
@@ -208,112 +348,155 @@ $$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{
    
 The confidence intervals for $\vec{\beta}$ will take about the same form, just using $Cov^*[\widehat{\beta}]$ instead of $Cov[\widehat{\beta}]$:
 
-$$\widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(Cov^*[\widehat{\beta}]\right)$$
+$$\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(Cov^*[\widehat{\beta}]\right) ~~~\text{ or }~~~ \widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(Cov^*[\widehat{\beta}]\right)$$
 
 ---
 
 ## Robust inference for $\widehat{\beta}$
 
-We can also use [robust or sandwich variance]{.alert} estimators to perform inference on $\widehat{\beta}$
+We can also use a [robust/sandwich variance]{.alert} estimators to perform inference on $\widehat{\beta}$
 
 $$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
 where
 $$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
 &A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
 
-Most people will use the sandwich variance estimator over the model-based variance by default to cover their bases
+Most people will use the sandwich variance estimator over the model-based variance (in GEEs) by default to cover their bases
 
-- Should note that robustness of the sandwich variance isn't guaranteed in scenarios when # clusters is small, cluster sizes are highly variable (see *Applied Longitudinal Analysis* pg. 359-361)
+- It can be used with LMEs/GLMMs, but by convention this generally isn't common
+
+- Note that robustness of the sandwich variance isn't guaranteed in scenarios when # clusters is small, cluster sizes are highly variable (see *Applied Longitudinal Analysis* pg. 359-361)
 
 ---
 
-## GEEs: radon
+## GEE: radon
 
-Let's see how we'd fit a GEE using our Minnesota radon data
+Let's go back to our Minnesota radon example and see how using cluster-robust variance methods change the results
 
-- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county
+<br>
+First, let's try a GEE model with an independence correlation structure
 
-```{r radon, echo=F}
-radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
-
-set.seed(081524)
-
-radon.mn <- radon %>% 
-   as.data.frame() %>% 
-   mutate(log_radon = log(activity +0.1),
-          county = str_trim(county)) %>% 
-   dplyr::filter(state == "MN")
+```{r gee indep}
+# run a GEE with independence correlation clustered on counties #
+radon_gee_indep <- gee( log_radon ~ floor,
+                  id=cntyfips,
+                  data=radon.mn, corstr="independence" )
+summary( radon_gee_indep )$coef
 ```
 
-We'd assume:
+:::: {.columns}
+::: {.column width="45%"}
 
-- Mean model: 
+[Model-based CIs]{.alert}
 
-- Variance: 
+- 95% CI with a standard Normal $Z$ critical value: (`r round(summary(radon_gee_indep)$coef[2,1] - summary(radon_gee_indep)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_gee_indep)$coef[2,1] + summary(radon_gee_indep)$coef[2,2]*qnorm(0.975), 4)`)
 
-- Correlation structure: 
 
----
+- 95% CI with a $t$ critical value and $df=84$: (`r round(summary(radon_gee_indep)$coef[2,1] - summary(radon_gee_indep)$coef[2,2]*qt(0.975,84), 4)`, `r round(summary(radon_gee_indep)$coef[2,1] + summary(radon_gee_indep)$coef[2,2]*qt(0.975,84), 4)`)
+:::
 
-## GEEs: radon
+::: {.column width="5%"}
+:::
 
-Let's see how we'd fit a GEE using our Minnesota radon data
+::: {.column width="50%"}
+::: {.fragment}
+[Robust-based CIs]{.alert}
 
-- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county
+- 95% CI with a standard Normal $Z$ critical value: (`r round(summary(radon_gee_indep)$coef[2,1] - summary(radon_gee_indep)$coef[2,4]*qnorm(0.975), 4)`, `r round(summary(radon_gee_indep)$coef[2,1] + summary(radon_gee_indep)$coef[2,4]*qnorm(0.975), 4)`)
 
-We'd assume:
 
-- Mean model: $E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})$\
-
-- Variance: $Var[Y_{ij}] = \sigma^2$
-
-- Correlation structure: exchangeable (just one correlation parameter to estimate)
-
-. . .
-
-Let's run it!
+- 95% CI with a $t$ critical value with $df=84$: (`r round(summary(radon_gee_indep)$coef[2,1] - summary(radon_gee_indep)$coef[2,4]*qt(0.975,84), 4)`, `r round(summary(radon_gee_indep)$coef[2,1] + summary(radon_gee_indep)$coef[2,4]*qt(0.975,84), 4)`)
+:::
+:::
+::::
 
 ---
 
 ## GEEs: radon
 
-Let's run it:
-```{r radon gee}
-library(gee)
+Now let's try robust variance estimates with our exchangeble GEE and compare
 
-# run a GEE with exchangeable correlation clustered on counties #
-radon_gee <- gee( log_radon ~ floor,
-                  id=cntyfips, # cluster ID needs to be a number, not names or categories
-                  data=radon.mn, corstr="exchangeable" )
+- Model-based results
+```{r radon gee2}
 summary( radon_gee )$coef
 ```
 
-- $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
+:::: {.columns}
+::: {.column width="45%"}
 
-. . .
+[Model-based exchangeable CIs]{.alert}
 
-[What about our inference?]{.alert}
+- 95% CI with a standard Normal $Z$ critical value: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`)
 
-::: {.fragment}
-Two SEs: model-based/naive; robust
+
+- 95% CI with a $t$ critical value and $df=84$: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qt(0.975,84), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qt(0.975,84), 4)`)
 :::
 
-::: {.fragment}
-- Naive 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`)
+::: {.column width="45%"}
+[Robust-based exchangeable CIs]{.alert}
 
-- Robust 95% CI: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*qnorm(0.975), 4)`)
+- 95% CI with a standard Normal $Z$ critical value: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*qnorm(0.975), 4)`)
+
+
+- 95% CI with a $t$ critical value with $df=84$: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*qt(0.975,84), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*qt(0.975,84), 4)`)
 :::
+::::
 
 ---
 
-## A note on "population"-level interpretation
+## GEEs: radon
 
-GEEs are often touted as having "population"-level interpretations as opposed to GLMMs cluster-level ones
+How do these confidence intervals differ between model-based vs robust and independence vs exchangeable?
 
-- This is usually easier to think about than marginal vs conditional effects
+:::: {.columns}
+::: {.column width="45%"}
+[Exchangeable GEE ($\beta=$`r round(summary(radon_gee)$coef[2,1],4)`)]{.alert}
 
-Our estimates (and our interpretations!) are only as good as our data, though
+[Model-based exchangeable CIs]{.underline}
 
-- If the data we're using to build a GEE isn't [representative of the population]{.alert} we're interested in, it's not going to magically give us results generalizable to the population
+- 95% CI with a standard Normal $Z$ critical value: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`)
 
-- A more accurate description would be that GEEs give us sample-population-level interpretations while GLMMs give us sample-cluster-level interpretations
+
+- 95% CI with a $t$ critical value and $df=84$: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qt(0.975,84), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qt(0.975,84), 4)`)
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="50%"}
+<br>
+[Robust-based exchangeable CIs]{.underline}
+
+- 95% CI with a standard Normal $Z$ critical value: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*qnorm(0.975), 4)`)
+
+
+- 95% CI with a $t$ critical value with $df=84$: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,4]*qt(0.975,84), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,4]*qt(0.975,84), 4)`)
+:::
+::::
+
+:::: {.columns}
+::: {.column width="45%"}
+
+[Independence GEE ($\beta=$`r round(summary(radon_gee_indep)$coef[2,1],4)`)]{.alert}
+
+[Model-based independence CIs]{.underline}
+
+- 95% CI with a standard Normal $Z$ critical value: (`r round(summary(radon_gee_indep)$coef[2,1] - summary(radon_gee_indep)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_gee_indep)$coef[2,1] + summary(radon_gee_indep)$coef[2,2]*qnorm(0.975), 4)`)
+
+
+- 95% CI with a $t$ critical value and $df=84$: (`r round(summary(radon_gee_indep)$coef[2,1] - summary(radon_gee_indep)$coef[2,2]*qt(0.975,84), 4)`, `r round(summary(radon_gee_indep)$coef[2,1] + summary(radon_gee_indep)$coef[2,2]*qt(0.975,84), 4)`)
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="50%"}
+<br>
+[Robust-based independence CIs]{.underline}
+
+- 95% CI with a standard Normal $Z$ critical value: (`r round(summary(radon_gee_indep)$coef[2,1] - summary(radon_gee_indep)$coef[2,4]*qnorm(0.975), 4)`, `r round(summary(radon_gee_indep)$coef[2,1] + summary(radon_gee_indep)$coef[2,4]*qnorm(0.975), 4)`)
+
+
+- 95% CI with a $t$ critical value with $df=84$: (`r round(summary(radon_gee_indep)$coef[2,1] - summary(radon_gee_indep)$coef[2,4]*qt(0.975,84), 4)`, `r round(summary(radon_gee_indep)$coef[2,1] + summary(radon_gee_indep)$coef[2,4]*qt(0.975,84), 4)`)
+:::
+::::

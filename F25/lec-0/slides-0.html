@@ -369,14 +369,6 @@ September 4, 2024
 </ul>
 </li>
 </ul>
-</div><div class="column" style="width:30%;">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="mary-ryan-class.png" style="width:75.0%"></p>
-<figcaption><em>Me and my husband in Bruges, Belgium</em></figcaption></figure>
-</div>
-</div>
-</div>
-<div class="absolute" style="bottom: 150px; ">
 <p><span class="alert">Contact</span></p>
 <ul>
 <li><p>My office: 701 WARF</p></li>
@@ -395,28 +387,25 @@ September 4, 2024
 </ul>
 </li>
 </ul>
+</div><div class="column" style="width:30%;">
+<p><img data-src="mary-ryan-class.png" style="width:85.0%" alt="Me and my husband in Bruges, Belgium"></p>
+</div>
 </div>
 </section><section id="howdy-1" class="slide level2"><h2>Howdy! 🤠</h2>
 <div class="columns">
 <div class="column" style="width:65%;">
 <p><span class="alert">Teaching assistant</span>: Eugene Kahng</p>
 <ul>
-<li><p>3rd year Epidemiology PhD student</p></li>
-<li><p>xxx</p></li>
+<li>3rd year Epidemiology PhD student</li>
 </ul>
-</div><div class="column" style="width:30%;">
-<div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="TA.jpg" style="width:75.0%"></p>
-<figcaption><em>TA</em></figcaption></figure>
-</div>
-</div>
-</div>
-<div class="absolute" style="bottom: 350px; ">
 <p><span class="alert">Contact</span></p>
 <ul>
 <li><p>Email: <a href="mailto:ekahng2@wisc.edu">ekahng2@wisc.edu</a></p></li>
-<li><p>Office hours: xxx</p></li>
+<li><p>Office hours: TBD</p></li>
 </ul>
+</div><div class="column" style="width:30%;">
+<p><img data-src="eugene.jpg" style="width:75.0%" alt="Headshot of TA, Eugene Kahng"></p>
+</div>
 </div>
 </section><section id="outline-for-today" class="slide level2"><h2>Outline for today</h2>
 <ul>
@@ -512,6 +501,8 @@ September 4, 2024
 <li><p>Implement the inference procedures to solve real-world problems using statistical packages such as SAS and R</p></li>
 <li><p>Interpret and present the analytic results to answer substantive questions</p></li>
 </ol></section><section id="phs-552-vs-651" class="slide level2"><h2>PHS 552 vs 651</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
 <p>What you covered in PHS 552</p>
 <ul>
 <li><p>What is regression</p></li>
@@ -520,17 +511,25 @@ September 4, 2024
 <li><p>Assumed constant variance, but also looked at what happens when that assumption breaks</p></li>
 <li><p>Assumed observations are <span class="alert">always independent</span></p></li>
 </ul>
+</div><div class="column" style="width:50%;">
 <div class="fragment">
 <p>What we’ll focus on here:</p>
 <ul>
-<li>
-<p>Same foundations, different style</p>
+<li>What happens when observations <span class="alert">are not independent</span>
 <ul>
-<li>What happens when observations <span class="alert">are not independent</span> <!-- - Clustered data --> <!-- - Longitudinal/repeated measures data --> <!-- - Time-to-event/survival data -->
+<li>Clustered data</li>
+<li>Longitudinal/repeated measures data</li>
+</ul>
 </li>
+<li>How do we model a <span class="alert">trend over time</span>, or the time it takes for something to happen?
+<ul>
+<li>Longitudinal/repeated measures data</li>
+<li>Time-to-event/survival data</li>
 </ul>
 </li>
 </ul>
+</div>
+</div>
 </div>
 </section><section id="our-focus" class="slide level2 smaller"><h2>Our focus</h2>
 <p>We’ve previously assumed all observations are <span class="alert">independent</span></p>
@@ -582,7 +581,7 @@ September 4, 2024
 <li><p>Spatial statistical modeling</p></li>
 </ul></section><section id="course-outline" class="slide level2"><h2>Course outline</h2>
 <ul>
-<li><p>Review of ordinary linear regression, logistic regression weighted least squares</p></li>
+<li><p>Review of ordinary linear regression, weighted least squares</p></li>
 <li>
 <p><span class="alert">Analysis of correlated data</span></p>
 <ul>
@@ -609,7 +608,7 @@ September 4, 2024
 <ul>
 <li><p>Familiarity with basic statistical inference concepts (i.e., estimation, hypothesis testing, confidence intervals)</p></li>
 <li><p>Basic regression/ANOVA</p></li>
-<li><p>(Generally) how to build a mean model (i.e., confounding and precision variables)</p></li>
+<li><p>(Generally) how to build a mean model (i.e., confounding and precision variables) that answers your research question</p></li>
 </ul>
 <div class="fragment">
 <ul>
@@ -647,19 +646,19 @@ September 4, 2024
 </ul>
 <div class="columns">
 <div class="column" style="font-size: 90%;">
-<p>I’ve made the following full e-books available on the Canvas site:</p>
+<p>I’ve made the following <span class="alert">full e-books</span> available on the Canvas site:</p>
 <ul>
-<li><p><span class="alert">Foundations of Liner and Generalized Linear Models</span>. 2015. Agresti A. John Wiley &amp; Sons. ISBN: 978-1-118-73030-0</p></li>
+<li><p><u><em>Foundations of Liner and Generalized Linear Models</em></u>. 2015. Agresti A. John Wiley &amp; Sons. ISBN: 978-1-118-73030-0</p></li>
 <li><p><a href="https://bookdown.org/roback/bookdown-BeyondMLR/">Beyond Multiple Linear Regression: Applied Generalized Linear Models and Multilevel Models in R</a> (online textbook)</p></li>
-<li><p><span class="alert">Applied Longitudinal Analysis</span>. 2011. Fitzmaurice GM, Laird NM, and Ware JH. John Wiley &amp; Sons. ISBN: 9780470380277</p></li>
-<li><p><span class="alert">Survival Analysis: A Self-Learning Text</span>. 2016. Moore, DF. Springer International Publishing. ISBN: 9783319312439</p></li>
+<li><p><u><em>Applied Longitudinal Analysis</em></u>. 2011. Fitzmaurice GM, Laird NM, and Ware JH. John Wiley &amp; Sons. ISBN: 9780470380277</p></li>
+<li><p><u><em>Survival Analysis: A Self-Learning Text</em></u>. 2016. Moore, DF. Springer International Publishing. ISBN: 9783319312439</p></li>
 </ul>
 </div><div class="column" style="font-size: 90%;">
-<p>I’ve also scanned several chapters from books I could not find electronic copies of:</p>
+<p>I’ve also <span class="alert">scanned</span> several chapters from books I could not find electronic copies of:</p>
 <ul>
-<li><p><span class="alert">Analysis of Longitudinal Data</span>, 2nd edition. 2002. Diggle PJ, Heagerty P, Liang K, and Zeger SL. Oxford University Press. ISBN: 9780198524847</p></li>
-<li><p><span class="alert">Data Analysis Using Regression and Multilevel/Hierarchical Models</span>. 2007. Gelman A and Hill J. Cambridge University Press. ISBN: 9780521686891</p></li>
-<li><p><span class="alert">Applied Survival Analysis Using R</span>. 2012. Kleinbaum DG and Klein M. Springer Science+Business Media. ISBN: 9781441966452</p></li>
+<li><p><u><em>Analysis of Longitudinal Data</em></u>, 2nd edition. 2002. Diggle PJ, Heagerty P, Liang K, and Zeger SL. Oxford University Press. ISBN: 9780198524847</p></li>
+<li><p><u><em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em></u>. 2007. Gelman A and Hill J. Cambridge University Press. ISBN: 9780521686891</p></li>
+<li><p><u><em>Applied Survival Analysis Using R</em></u>. 2012. Kleinbaum DG and Klein M. Springer Science+Business Media. ISBN: 9781441966452</p></li>
 </ul>
 </div>
 </div>
@@ -671,13 +670,13 @@ September 4, 2024
 </ul>
 <p><span class="alert">Peer support groups</span></p>
 <ul>
-<li><p>Randomly assigned groups of 3-4</p></li>
+<li><p>Randomly assigned groups of 3-4 (available in “People” section of Canvas)</p></li>
 <li><p>Guarantees everyone with some continuing level of informal feedback/support/brainstorming through the semester</p></li>
 <li><p>Feel free to use as study/question groups</p></li>
 </ul></section><section id="how-youll-be-evaluated" class="slide level2"><h2>How you’ll be evaluated</h2>
 <p><span class="alert">Homework/small assignments</span> (40%)</p>
 <ul>
-<li><p>Biweekly homeworks assigned at end of class, due on due-date at beginning of class</p></li>
+<li><p>Bi-weekly homeworks assigned at end of class, due on due-date at beginning of class</p></li>
 <li><p>Some other small assignments to be completed over several weeks</p></li>
 </ul>
 <p><span class="alert">Midterm</span> (15%)</p>
@@ -686,7 +685,8 @@ September 4, 2024
 <li>
 <p>Scheduled for Th 10/09</p>
 <ul>
-<li>If you have scheduling issues with this date, email me ASAP</li>
+<li><p>If you have scheduling issues with this date, email me ASAP</p></li>
+<li><p><span class="alert"><em>How do we feel about moving this to Tues 10/14?</em></span></p></li>
 </ul>
 </li>
 </ul>
@@ -704,7 +704,6 @@ September 4, 2024
 <ul>
 <li><p>I’ve provided several appropriate datasets/data sources you can choose from</p></li>
 <li><p>You may also use a dataset you have found, but you must schedule a brief appointment to discuss and have it approved by me</p></li>
-<li><p>Longitudinal data may be “converted” to cross-sectional data if the appropriate research question is of interest and the analysis uses methods from this course</p></li>
 </ul>
 </li>
 <li>
@@ -716,7 +715,12 @@ September 4, 2024
 <li>Designed to keep you working on the project all semester long and provide you with preliminary feedback</li>
 </ul>
 </li>
-<li><p>Oral project presentation</p></li>
+<li>
+<p>Oral project presentation</p>
+<ul>
+<li>Designed to get you feedback on main project highlights</li>
+</ul>
+</li>
 <li><p>Final written report</p></li>
 </ul>
 </li>
@@ -727,9 +731,7 @@ September 4, 2024
 <p><span class="alert">Why?</span></p>
 <ul>
 <li><p>I want to know how <em>you</em> think, not how an LLM thinks</p></li>
-<li><p>Validity of responses is not guaranteed</p></li>
-<li><p>Training data ethics are debatable</p></li>
-<li><p>This policy follows the guidelines of most academic journals</p></li>
+<li><p>Validity of responses is not guaranteed – takes some prior knowledge to flag the nuances</p></li>
 </ul>
 <p><span class="alert">I don’t use AI detection software</span></p>
 <ul>
@@ -827,7 +829,8 @@ September 4, 2024
 (1\beta_0 + u_n\beta_1) + \epsilon_n
 \end{bmatrix}\]</span></p>
 <div class="fragment">
-<p><span class="math inline">\(\vec{Y}\)</span> and <span class="math inline">\(\boldsymbol{X}\)</span> are <span class="alert">data</span>, while <span class="math inline">\(\vec{\beta}\)</span> and <span class="math inline">\(\vec{\epsilon}\)</span> are <span class="alert">model parameters</span></p>
+<p><span class="math inline">\(\vec{Y}\)</span> and <span class="math inline">\(\boldsymbol{X}\)</span> are <span class="alert">data</span>, while <span class="math inline">\(\vec{\beta}\)</span> is a vector of <span class="alert">model parameters</span></p>
+<p><span class="math inline">\(\vec{\epsilon}\)</span> models the unexplained <span class="alert">variation</span> in the outcome</p>
 </div>
 </section><section id="review-ordinary-linear-regression-4" class="slide level2 smaller"><h2>Review: ordinary linear regression</h2>
 <p><span class="math display">\[\vec{Y} = \boldsymbol{X}\vec{\beta} + \vec{\epsilon}\]</span> We like to think of splitting our model into 2 parts:</p>
@@ -932,7 +935,7 @@ September 4, 2024
 <li>Think of it like you’re dividing <span class="math inline">\(\boldsymbol{X}^T\vec{Y}\)</span> by <span class="math inline">\((\boldsymbol{X}^T\boldsymbol{X})\)</span>: <span class="math inline">\(\frac{\boldsymbol{X}^T\vec{Y}}{(\boldsymbol{X}^T\boldsymbol{X})}\)</span>
 </li>
 </ul></section><section id="review-ols-inference" class="slide level2 smaller"><h2>Review: OLS inference</h2>
-<p>Because our data is only a <span class="alert">sample</span> from the entire <span class="alert">population of interest</span>, we always have uncertainty in that estimate… We need to incorporate varaince of our parameter to quantify that uncertainty</p>
+<p>Because our data is only a <span class="alert">sample</span> from the entire <span class="alert">population of interest</span>, we always have uncertainty in that estimate of <span class="math inline">\(\beta\)</span>… We need to incorporate variance of our parameter estimate to quantify that uncertainty</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="fragment">
@@ -951,7 +954,7 @@ September 4, 2024
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <ul>
-<li>Then we can create a <span class="math inline">\((100-\alpha/2)\)</span>% <span class="alert">confidence interval</span> for <span class="math inline">\(\widehat{\beta}\)</span>: <span class="math display">\[\widehat{\beta} \pm Z_{1-\alpha/2}\sqrt{\widehat{V}}\]</span>
+<li>Then we can create a <span class="math inline">\((100-\alpha/2)\)</span>% <span class="alert">confidence interval</span> for <span class="math inline">\(\widehat{\beta}\)</span>: <span class="math display">\[\widehat{\beta} \pm Z_{1-\alpha/2}\sqrt{\widehat{V}/N}\]</span>
 </li>
 </ul>
 </div>
@@ -1046,10 +1049,10 @@ September 4, 2024
 <li><p>Doing so <em>increases</em> the available degrees of freedom that we use <span class="math inline">\(\Rightarrow\)</span> this can be a problem when we have a finite sample size</p></li>
 </ul>
 <div class="fragment">
-<p>An alternative strategy is to use <span class="alert">weighted least squares</span> (WLS)</p>
+<p>An alternative/complementary strategy is to use <span class="alert">weighted least squares</span> (WLS)</p>
 </div>
 </section><section id="review-weighted-least-squares-1" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
-<p>An alternative strategy is to use <span class="alert">weighted least squares</span> (WLS)</p>
+<p>An alternative/complementary strategy is to use <span class="alert">weighted least squares</span> (WLS)</p>
 <p><span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}\]</span></p>
 <ul>
 <li>
@@ -1071,10 +1074,22 @@ w_1 &amp; 0 &amp; \dots &amp; 0\\
 </li>
 </ul>
 </div>
-<div class="fragment">
-<p>The variance of <span class="math inline">\(\widehat{\beta}\)</span> would then be <span class="math display">\[Var[\widehat{\beta}] = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\{Var[\vec{Y}|\boldsymbol{X}]\}\boldsymbol{W}\boldsymbol{X}^T(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
-</div>
 </section><section id="review-weighted-least-squares-2" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
+<p>An alternative/complementary strategy is to use <span class="alert">weighted least squares</span> (WLS)</p>
+<p><span class="math display">\[\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}\]</span></p>
+<ul>
+<li>
+<span class="math inline">\(\boldsymbol{W}\)</span> is a diagonal matrix of weights</li>
+</ul>
+<p><span class="math display">\[\begin{bmatrix}
+w_1 &amp; 0 &amp; \dots &amp; 0\\
+0 &amp; w_2 &amp; \dots &amp; 0\\
+\vdots&amp; &amp;\ddots &amp;\vdots\\
+0 &amp; 0 &amp; \dots &amp; w_n\\
+\end{bmatrix}\]</span></p>
+<p>The weighted estimate of our regression coefficients is now: <span class="math display">\[\widehat{\beta} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}\boldsymbol{W}\vec{Y}\]</span></p>
+<p>The variance of <span class="math inline">\(\widehat{\beta}\)</span> would then be <span class="math display">\[Var[\widehat{\beta}] = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\{Var[\vec{Y}|\boldsymbol{X}]\}\boldsymbol{W}\boldsymbol{X}^T(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\]</span></p>
+</section><section id="review-weighted-least-squares-3" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
 <p>But what do we use for <span class="math inline">\(\boldsymbol{W}\)</span>?</p>
 <ul>
 <li>If we knew <span class="math inline">\(Var[Y_i|\vec{X}_i]\)</span>, we’d use some <span class="math inline">\(w_i\)</span> such that <span class="math display">\[w_i^2 \times Var[Y_i|\vec{X}_i] = w_i^2 \sigma^2_i = w_i^2 \frac{\sigma^2}{w_i^2} = \sigma^2\]</span> The variance of <span class="math inline">\(\widehat{\beta}\)</span> would then be</li>
@@ -1082,7 +1097,7 @@ w_1 &amp; 0 &amp; \dots &amp; 0\\
 <p><span class="math display">\[\begin{align*}Var[\widehat{\beta}] &amp;= (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\{Var[\vec{Y}|\boldsymbol{X}]\}\boldsymbol{W}\boldsymbol{X}^T(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\\
 &amp;=(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\sigma^2\boldsymbol{W}^{-1}\boldsymbol{W}\boldsymbol{X}^T(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\\
 &amp;=\sigma^2(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\end{align*}\]</span></p>
-</section><section id="review-weighted-least-squares-3" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
+</section><section id="review-weighted-least-squares-4" class="slide level2 smaller"><h2>Review: weighted least squares</h2>
 <p>There are some cases where we know <span class="math inline">\(Var[Y_i|\vec{X}_i]\)</span> or know what weights <span class="math inline">\(\boldsymbol{W}\)</span> we should use</p>
 <ul>
 <li>E.g., If <span class="math inline">\(y_i\)</span> is the average of <span class="math inline">\(n_i\)</span> equally-variable observations, then <span class="math inline">\(Var[Y_i|\vec{X}_i] = \sigma^2/n_i\)</span> and <span class="math inline">\(w_i = n_i\)</span>

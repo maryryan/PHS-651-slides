@@ -74,14 +74,7 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
    - Statistician by training; biostatistician by practice
 
    - Research in correlated data & study design
-:::
-
-::: {.column width="30%"}
-![*Me and my husband in Bruges, Belgium*](mary-ryan-class.png){width="75%"}
-:::
-::::
-
-::: {.absolute bottom=150}
+   
 [Contact]{.alert}
 
 - My office: 701 WARF
@@ -99,6 +92,11 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
    - For scheduling outside meeting time
 :::
 
+::: {.column width="30%"}
+![](mary-ryan-class.png){width="85%" fig-alt="Me and my husband in Bruges, Belgium"}
+:::
+::::
+
 ---
 
 ## Howdy! 🤠
@@ -110,21 +108,17 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
 
 - 3rd year Epidemiology PhD student
 
-- xxx
-:::
-
-::: {.column width="30%"}
-![*TA*](TA.jpg){width="75%"}
-:::
-::::
-
-::: {.absolute bottom=350}
 [Contact]{.alert}
 
 - Email: [ekahng2@wisc.edu](mailto:ekahng2@wisc.edu)
 
-- Office hours: xxx
+- Office hours: TBD
 :::
+
+::: {.column width="30%"}
+![](eugene.jpg){width="75%" fig-alt="Headshot of TA, Eugene Kahng"}
+:::
+::::
 
 ---
 
@@ -238,6 +232,8 @@ violations of those assumptions, and estimate and interpret regression models to
 
 ## PHS 552 vs 651
 
+:::: {.columns}
+::: {.column width="50%"}
 What you covered in PHS 552
 
 - What is regression
@@ -249,17 +245,22 @@ What you covered in PHS 552
 - Assumed constant variance, but also looked at what happens when that assumption breaks
 
 - Assumed observations are [always independent]{.alert}
+:::
 
-. . .
-
+::: {.column width="50%"}
+::: {.fragment}
 What we'll focus on here:
 
-- Same foundations, different style
+- What happens when observations [are not independent]{.alert}
+   - Clustered data
+   - Longitudinal/repeated measures data
 
-   - What happens when observations [are not independent]{.alert}
-   <!-- - Clustered data -->
-   <!-- - Longitudinal/repeated measures data -->
-   <!-- - Time-to-event/survival data -->
+- How do we model a [trend over time]{.alert}, or the time it takes for something to happen?
+   - Longitudinal/repeated measures data
+   - Time-to-event/survival data
+:::
+:::
+::::
 
 ---
 
@@ -317,7 +318,7 @@ Non-independence we [won't]{.alert} be getting into
 
 ## Course outline
 
-- Review of ordinary linear regression, logistic regression weighted least squares
+- Review of ordinary linear regression, weighted least squares
 
 - [Analysis of correlated data]{.alert}
 
@@ -347,7 +348,7 @@ Non-independence we [won't]{.alert} be getting into
 
 - Basic regression/ANOVA
 
-- (Generally) how to build a mean model (i.e., confounding and precision variables)
+- (Generally) how to build a mean model (i.e., confounding and precision variables) that answers your research question
 
 . . .
 
@@ -381,25 +382,25 @@ There's no single textbook for this course
 
 :::: {.columns}
 ::: {.column width="50%" style="font-size: 90%;"}
-I've made the following full e-books available on the Canvas site:
+I've made the following [full e-books]{.alert} available on the Canvas site:
 
-- [Foundations of Liner and Generalized Linear Models]{.alert}. 2015. Agresti A. John Wiley & Sons. ISBN: 978-1-118-73030-0
+- [*Foundations of Liner and Generalized Linear Models*]{.underline}. 2015. Agresti A. John Wiley & Sons. ISBN: 978-1-118-73030-0
 
 - [Beyond Multiple Linear Regression: Applied Generalized Linear Models and Multilevel Models in R](https://bookdown.org/roback/bookdown-BeyondMLR/) (online textbook)
 
-- [Applied Longitudinal Analysis]{.alert}. 2011. Fitzmaurice GM, Laird NM, and Ware JH. John Wiley & Sons. ISBN: 9780470380277
+- [*Applied Longitudinal Analysis*]{.underline}. 2011. Fitzmaurice GM, Laird NM, and Ware JH. John Wiley & Sons. ISBN: 9780470380277
 
-- [Survival Analysis: A Self-Learning Text]{.alert}. 2016. Moore, DF. Springer International Publishing. ISBN: 9783319312439
+- [*Survival Analysis: A Self-Learning Text*]{.underline}. 2016. Moore, DF. Springer International Publishing. ISBN: 9783319312439
 :::
 
 ::: {.column width="50%" style="font-size: 90%;"}
-I've also scanned several chapters from books I could not find electronic copies of:
+I've also [scanned]{.alert} several chapters from books I could not find electronic copies of:
 
-- [Analysis of Longitudinal Data]{.alert}, 2nd edition. 2002. Diggle PJ, Heagerty P, Liang K, and Zeger SL. Oxford University Press. ISBN: 9780198524847
+- [*Analysis of Longitudinal Data*]{.underline}, 2nd edition. 2002. Diggle PJ, Heagerty P, Liang K, and Zeger SL. Oxford University Press. ISBN: 9780198524847
 
-- [Data Analysis Using Regression and Multilevel/Hierarchical Models]{.alert}. 2007. Gelman A and Hill J. Cambridge University Press. ISBN: 9780521686891
+- [*Data Analysis Using Regression and Multilevel/Hierarchical Models*]{.underline}. 2007. Gelman A and Hill J. Cambridge University Press. ISBN: 9780521686891
 
-- [Applied Survival Analysis Using R]{.alert}. 2012. Kleinbaum DG and Klein M. Springer Science+Business Media. ISBN: 9781441966452
+- [*Applied Survival Analysis Using R*]{.underline}. 2012. Kleinbaum DG and Klein M. Springer Science+Business Media. ISBN: 9781441966452
 :::
 ::::
 
@@ -415,7 +416,7 @@ I've also scanned several chapters from books I could not find electronic copies
 
 [Peer support groups]{.alert}
 
-- Randomly assigned groups of 3-4
+- Randomly assigned groups of 3-4 (available in "People" section of Canvas)
 
 - Guarantees everyone with some continuing level of informal feedback/support/brainstorming through the semester
 
@@ -427,7 +428,7 @@ I've also scanned several chapters from books I could not find electronic copies
 
 [Homework/small assignments]{.alert} (40%)
 
-- Biweekly homeworks assigned at end of class, due on due-date at beginning of class
+- Bi-weekly homeworks assigned at end of class, due on due-date at beginning of class
 
 - Some other small assignments to be completed over several weeks
 
@@ -438,6 +439,8 @@ I've also scanned several chapters from books I could not find electronic copies
 - Scheduled for Th 10/09
 
    - If you have scheduling issues with this date, email me ASAP
+   
+   - [*How do we feel about moving this to Tues 10/14?*]{.alert}
 
 [Final data analysis project]{.alert} (45%)
 
@@ -460,8 +463,6 @@ I've also scanned several chapters from books I could not find electronic copies
    - I've provided several appropriate datasets/data sources you can choose from
    
    - You may also use a dataset you have found, but you must schedule a brief appointment to discuss and have it approved by me
-
-   - Longitudinal data may be "converted" to cross-sectional data if the appropriate research question is of interest and the analysis uses methods from this course
    
 - [Components]{.alert}
 
@@ -470,6 +471,8 @@ I've also scanned several chapters from books I could not find electronic copies
       - Designed to keep you working on the project all semester long and provide you with preliminary feedback
    
    - Oral project presentation
+   
+      - Designed to get you feedback on main project highlights
    
    - Final written report
    
@@ -487,11 +490,7 @@ Official stance of this course is that I don't condone the use of AI tools for a
 
 - I want to know how *you* think, not how an LLM thinks
 
-- Validity of responses is not guaranteed
-
-- Training data ethics are debatable
-
-- This policy follows the guidelines of most academic journals
+- Validity of responses is not guaranteed -- takes some prior knowledge to flag the nuances
 
 [I don't use AI detection software]{.alert}
 
@@ -651,7 +650,9 @@ $$\begin{bmatrix}
 
 . . .
 
-$\vec{Y}$ and $\boldsymbol{X}$ are [data]{.alert}, while $\vec{\beta}$ and $\vec{\epsilon}$ are [model parameters]{.alert}
+$\vec{Y}$ and $\boldsymbol{X}$ are [data]{.alert}, while $\vec{\beta}$ is a vector of [model parameters]{.alert}
+
+$\vec{\epsilon}$ models the unexplained [variation]{.alert} in the outcome
 
 ---
 
@@ -793,7 +794,7 @@ $(\boldsymbol{X}^T\boldsymbol{X})^{-1}$ is an example of [matrix inversion]{.ale
 
 ## Review: OLS inference {.smaller}
 
-Because our data is only a [sample]{.alert} from the entire [population of interest]{.alert}, we always have uncertainty in that estimate... We need to incorporate varaince of our parameter to quantify that uncertainty
+Because our data is only a [sample]{.alert} from the entire [population of interest]{.alert}, we always have uncertainty in that estimate of $\beta$... We need to incorporate variance of our parameter estimate to quantify that uncertainty
 
 :::: {.columns}
 
@@ -816,7 +817,7 @@ which we estimate with
 ::: {.column width="50%"}
 ::: {.fragment}
 - Then we can create a $(100-\alpha/2)$% [confidence interval]{.alert} for $\widehat{\beta}$:
-   $$\widehat{\beta} \pm Z_{1-\alpha/2}\sqrt{\widehat{V}}$$
+   $$\widehat{\beta} \pm Z_{1-\alpha/2}\sqrt{\widehat{V}/N}$$
 :::
 
 ::: {.fragment}
@@ -930,13 +931,13 @@ The robust variance will fix the problem, but it's not statistically efficient
 
 . . .
 
-An alternative strategy is to use [weighted least squares]{.alert} (WLS)
+An alternative/complementary strategy is to use [weighted least squares]{.alert} (WLS)
 
 ---
 
 ## Review: weighted least squares {.smaller}
 
-An alternative strategy is to use [weighted least squares]{.alert} (WLS)
+An alternative/complementary strategy is to use [weighted least squares]{.alert} (WLS)
 
 $$\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}$$
 
@@ -955,7 +956,25 @@ w_1 & 0 & \dots & 0\\
 
    - This transformation changes the regression equation to one with equal variance
    
-. . .
+---
+
+## Review: weighted least squares {.smaller}
+
+An alternative/complementary strategy is to use [weighted least squares]{.alert} (WLS)
+
+$$\widehat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\vec{Y}$$
+
+- $\boldsymbol{W}$ is a diagonal matrix of weights
+
+$$\begin{bmatrix}
+w_1 & 0 & \dots & 0\\
+0 & w_2 & \dots & 0\\
+\vdots& &\ddots &\vdots\\
+0 & 0 & \dots & w_n\\
+\end{bmatrix}$$
+
+The weighted estimate of our regression coefficients is now:
+$$\widehat{\beta} = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}\boldsymbol{W}\vec{Y}$$
 
 The variance of $\widehat{\beta}$ would then be
 $$Var[\widehat{\beta}] = (\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{W}\{Var[\vec{Y}|\boldsymbol{X}]\}\boldsymbol{W}\boldsymbol{X}^T(\boldsymbol{X}^T\boldsymbol{W}\boldsymbol{X})^{-1}$$

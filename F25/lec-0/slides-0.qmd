@@ -101,9 +101,6 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
 
 ## Howdy! 🤠
 
-:::: {.columns}
-
-::: {.column width="65%"}
 [Teaching assistant]{.alert}: Eugene Kahng
 
 - 3rd year Epidemiology PhD student
@@ -112,13 +109,7 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-0/slides-0"))
 
 - Email: [ekahng2@wisc.edu](mailto:ekahng2@wisc.edu)
 
-- Office hours: TBD
-:::
-
-::: {.column width="30%"}
-![](eugene.jpg){width="75%" fig-alt="Headshot of TA, Eugene Kahng"}
-:::
-::::
+- Office hours: Tuesdays, 1 - 2pm in WARF 611
 
 ---
 
@@ -532,21 +523,17 @@ $$Y_i = \beta_0 + \beta_1 U_i + \epsilon_i$$
 - $\epsilon_i$: error term
 
 - $\beta_0$: model intercept
-   
-::: {.fragment }
+
    - [Interpretation]{.alert}:
    <br>
    <br>
-:::
    
 - $\beta_1$: model slope
 
-::: {.fragment}
    - [Interpretation]{.alert}:
    <br>
    <br>
-:::
-   
+
 ---
 
 ## Review: ordinary linear regression

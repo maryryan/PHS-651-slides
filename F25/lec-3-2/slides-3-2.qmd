@@ -9,7 +9,7 @@ format:
       code-link: true
       code-overflow: wrap
       highlight-style: a11y
-      height: 1080
+      height: 1200
       width: 1920
       chalkboard: true
       from: markdown+emoji

@@ -59,6 +59,56 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-1-1/slides-1-1")
 ```
 :::
 
+---
+
+## Welcome back!
+
+:::: {.columns}
+::: {.column width="50%"}
+[Cat tax:]{.alert}
+
+![*Tina and Penny say sorry for going too quickly last class*](tina-penny.jpeg)
+:::
+
+::: {.column width="5%"}
+
+:::
+
+::: {.column width="45%"}
+[Common concerns I saw on the survey:]{.alert}
+
+- Matrix algebra/course pacing anxiety
+
+- Final project time management anxiety
+
+- R anxiety
+:::
+::::
+
+---
+
+## For the content-anxious
+
+I'm usually not done finalizing my slides for class until about 30 minutes before lecture starts[, but...]{.fragment}
+
+. . .
+
+<br>
+For those anxious about upcoming material/class pacing, you can view [last year's]{.alert} slides at the generic link: [https://maryryan.github.io/PHS-651-slides/F24/PHS-651-[LectureNumber]/slides-[LectureNumber]]{.alert}
+
+- Replace [LectureNumber] with a number 1 to 11 (generally)
+
+   - A full list of the lecture numbers can be found at: <https://github.com/maryryan/PHS-651-slides/tree/main/F24>
+   
+   - For example, last year's version of *this* lecture is at: <https://maryryan.github.io/PHS-651-slides/F24/PHS-651-1/slides-1>
+   
+- I've changed up how I'm presenting some of the material and when I introduce things! But the content will be *roughly* the same
+
+. . .
+
+<br>
+[Now let's dive in to today's topic: clustered data]{.alert}
+
 ------------------------------------------------------------------------
 
 ## What is clustered/correlated data?

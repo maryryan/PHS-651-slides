@@ -156,10 +156,13 @@ Can outcomes have more than one "level" of clustering?
 
 Some more informal definitions/descriptions
 
+<br>
 -   "Clustered data arise when the data from the whole study [can be classified]{.alert} into a number of different groups, referred to as clusters. [Each cluster contains multiple observations, giving the data a 'nested' or 'hierarchical' structure]{.alert}, with individual observations nested within the cluster." (Galbraith et al, 2010, ["A Study of Clustered Data and Approaches to Its Analysis"](https://doi.org/10.1523/JNEUROSCI.0362-10.2010))
 
+<br>
 -   "...we might reasonably expect that measurements on [units within a cluster are more similar]{.alert} than measurements on units in different clusters." (Applied Longitudinal Analysis pg. 4)
 
+<br>
 -   AKA: nested/multilevel/hierarchical data
 
 ---

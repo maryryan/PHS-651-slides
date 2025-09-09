@@ -49,12 +49,12 @@ library(qrcode)
 *The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
 :::
 
-::: {.absolute bottom="50" left="260" width="1500"}
+::: {.absolute bottom=280 left=300 width=1500}
 Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-1-1/slides-1-1>
 :::
 
-::: {.absolute bottom="0" left="100" width="150"}
-```{r qr code, echo=F, fig.height=2, fig.width=2}
+::: {.absolute bottom=175 left=50 width=250}
+```{r qr code, echo=F, fig.height=4, fig.width=4}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-1-1/slides-1-1"))
 ```
 :::
@@ -67,7 +67,7 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-1-1/slides-1-1")
 ::: {.column width="50%"}
 [Cat tax:]{.alert}
 
-![*Tina and Penny say sorry for going too quickly last class*](tina-penny.jpeg)
+![*Tina and Penny say sorry for going too quickly last class, but thank you for filling out the survey!*](tina-penny.jpeg)
 :::
 
 ::: {.column width="5%"}
@@ -77,17 +77,17 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/PHS-651-1-1/slides-1-1")
 ::: {.column width="45%"}
 [Common concerns I saw on the survey:]{.alert}
 
-- Matrix algebra/course pacing anxiety
+- R anxiety
 
 - Final project time management anxiety
 
-- R anxiety
+- Course pacing anxiety
 :::
 ::::
 
 ---
 
-## For the content-anxious
+## For the content/pacing-anxious
 
 I'm usually not done finalizing my slides for class until about 30 minutes before lecture starts[, but...]{.fragment}
 
@@ -107,17 +107,24 @@ For those anxious about upcoming material/class pacing, you can view [last year'
 . . .
 
 <br>
+I've also found the online textbook [Beyond Multiple Linear Regression](https://bookdown.org/roback/bookdown-BeyondMLR/) to be really helpful for reviewing OLS material (with R code!)
+
+. . .
+
+<br>
 [Now let's dive in to today's topic: clustered data]{.alert}
 
 ------------------------------------------------------------------------
 
 ## What is clustered/correlated data?
 
+. . .
+
 When we talk about "correlated" or "clustered" data, we're most often talking about correlated/clustered [outcomes]{.alert}
 
--   This stems from one of our OLS regression assumptions: that the *outcome values* for 2 observations will be [independent]{.underline}
+-   This stems from one of our OLS regression assumptions: that the *outcome values* for 2 observations will be [independent]{.underline} (given the other model covariates)
 
--   Outcomes with more than 1 dimension of sampling simultaneously
+-   Outcomes with more than 1 dimension of sampling
 
 . . .
 
@@ -133,9 +140,9 @@ Informal definitions
 
 When we talk about "correlated" or "clustered" data, we're most often talking about correlated/clustered [outcomes]{.alert}
 
--   This stems from one of our OLS regression assumptions: that the *outcome values* for 2 observations will be [independent]{.underline}
+-   This stems from one of our OLS regression assumptions: that the *outcome values* for 2 observations will be [independent]{.underline} (given the other model covariates)
 
--   Outcomes with more than 1 dimension of sampling simultaneously
+-   Outcomes with more than 1 dimension of sampling
 
 Can outcomes have more than one "level" of clustering?
 
@@ -159,14 +166,32 @@ Some more informal definitions/descriptions
 
 ## What is clustered/correlated data?
 
-Note that we usually think of clustering as something [different]{.alert} than a regular covariate
+Note that we usually think of clustering as something slightly [different]{.alert} than a regular covariate
 
 - More "administrative" variable, usually not an exposure of interest
 
 - Clustering variable potentially has many different levels/categories with no clear reference group
 
 
-There are times when the distinction between "cluster" and "covariate/predictor" may a little fuzzy
+There are times when the distinction between "cluster" and "covariate/predictor" may be a little fuzzy
+
+---
+
+## What is covariance?
+
+In previous courses we've talked a lot about the variation or [variance]{.alert} of a variable:
+$$\begin{align*}Var[Y] &= E[Y^2] - (E[Y])^2\\
+&= E[Y^2] - \mu_y^2,\end{align*}$$
+which measures the spread of a variable
+
+<br>
+The [covariance]{.alert}:
+$$Cov[Y,X] = E[(Y - \mu_y)\times (X-\mu_x)],$$
+provides a measure of shared information between two variables $Y$ and $X$
+
+- When $Cov[Y,X]=0$, this means that $Y$ and $X$ are [independent]{.underline}
+
+- It's the numerator in the formula for correlation: $Correlation[Y,X] = Cov[Y,X]/\sqrt{Var[Y]\times Var[X]}$
 
 ------------------------------------------------------------------------
 
@@ -174,25 +199,42 @@ There are times when the distinction between "cluster" and "covariate/predictor"
 
 Remember in OLS where we assumed that observations were independent?
 
--   This meant that we assumed $Cov[Y_i, Y_j|\boldsymbol{X}]=0$ and:
+-   This meant that we assumed $Cov[Y_i, Y_j|\boldsymbol{X}]=0$ (*the covariance between the outcome for person i and the outcome for person j, given the predictors is equal to $0$*) and the covariance matrix for our outcomes looks like:
 
+:::: {.columns}
+::: {.column width="50%"}
 $$Cov[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{I} =  \begin{bmatrix}\sigma^2 & 0 & \dots & 0 \\
 0 & \ddots & \dots & 0 \\
 \vdots & \dots & \ddots & \vdots\\
-0 & \dots & 0 & \sigma^2\end{bmatrix} \text{ or   } Cov[\vec{Y}|\boldsymbol{X}] = \sigma_i^2\boldsymbol{I} =  \begin{bmatrix}\sigma_1^2 & 0 & \dots & 0 \\
+0 & \dots & 0 & \sigma^2\end{bmatrix}$$ 
+if we assume constant variance $Cov[Y_i, Y_i|\boldsymbol{X}] = Var[Y_i|\boldsymbol{X}]=\sigma^2$
+:::
+
+::: {.column width="50%"}
+$$\text{or  }Cov[\vec{Y}|\boldsymbol{X}] = \sigma_i^2\boldsymbol{I} =  \begin{bmatrix}\sigma_1^2 & 0 & \dots & 0 \\
 0 & \ddots & \dots & 0 \\
 \vdots & \dots & \ddots & \vdots\\
 0 & \dots & 0 & \sigma_n^2\end{bmatrix}$$
+if we assume non-constant variance $Var[Y_i|\boldsymbol{X}]=\sigma_i^2$
+:::
+::::
 
-. . .
+------------------------------------------------------------------------
 
-When data are [clustered]{.alert}, at least some $Cov[Y_i, Y_j|\boldsymbol{X}]\ne0$
+## What is clustered/correlated data?
+
+Remember in OLS where we assumed that observations were independent?
+
+-   This meant that we assumed $Cov[Y_i, Y_j|\boldsymbol{X}]=0$ (*the covariance between the outcome for person i and the outcome for person j, given the predictors is equal to $0$*)
+
+<br>
+When data are [clustered]{.alert}, at least some people will have non-0 covariance between their outcomes, $Cov[Y_i, Y_j|\boldsymbol{X}]\ne0$
 
 -   All the off-diagonals might be non-0, or maybe only some
 
--   This is like saying that some observations have [shared information]{.alert}
+-   This is like saying that some observations have [shared information]{.alert} -- each observation isn't contributing entirely unique information to our analysis
 
--   This impacts our variance estimates for $\widehat{\beta}$ and our inference
+-   This impacts our variance estimates for our regression coefficients ($\widehat{\beta}$) and our inference of them
 
 ------------------------------------------------------------------------
 
@@ -204,7 +246,7 @@ Several potential reasons
 
     -   Physical/structural grouping
 
-    -   e.g., Household members, classroom students, eyes in a person's head
+        -   e.g., Household members, classroom students, eyes in a person's head
 
     -   Things may be "done similarly" within each natural group
 
@@ -226,13 +268,13 @@ Several potential reasons
 
 ## How does clustering affect outcomes?
 
-"Clustered data" usually has cluster membership that could impact just the distribution of outcome, ...
+"Clustered data" usually has cluster membership (*C*) that could impact just the distribution of outcome (*Y*), ...
 
 ```{r cluster DAG1.5, echo=F, fig.align='center'}
 dagify(
-  O ~ U,
-  O ~ C,
-  coords = list(x = c(U = 1, O = 2, C=2.5), y = c(U = 1, O = 1, C=0.5))
+  Y ~ U,
+  Y ~ C,
+  coords = list(x = c(U = 1, Y = 2, C=2.5), y = c(U = 1, Y = 1, C=0.5))
 ) %>%
   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_dag_point(size=20) +
@@ -246,13 +288,13 @@ dagify(
 
 ## How does clustering affect outcomes?
 
-... wholly dictate who receives exposure, ...
+... wholly dictate who receives exposure (*U*), ...
 
 ```{r cluster DAG2, echo=F, fig.align="center"}
 dagify(
   U ~ C,
-  O ~ U,
-  coords = list(x = c(C = 1, U = 2, O = 3), y = c(C = 1, U = 1, O = 1))
+  Y ~ U,
+  coords = list(x = c(C = 1, U = 2, Y = 3), y = c(C = 1, U = 1, Y = 1))
 ) %>%
   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_dag_point(size=20) +
@@ -272,17 +314,17 @@ dagify(
 
 ```{r cluster DAG3, echo=F, fig.align="center"}
 dagify(
-  O ~ C,
+  Y ~ C,
   U ~ C,
-  O ~ U,
-  coords = list(x = c(C = 1, U = 2, O = 3), y = c(C = 1, U = 1, O = 1))
+  Y ~ U,
+  coords = list(x = c(C = 1, U = 2, Y = 3), y = c(C = 1, U = 1, Y = 1))
 ) %>%
   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_dag_point(size=20) +
   geom_dag_text(size=10) +
   theme_dag() +
   ylim(0, 2) +
-  geom_dag_edges_arc(curvature = c(0.5,0, 0))
+  geom_dag_edges_arc(curvature = c(0,0.5, 0))
 
 
 #grid.arrange(straight, med, ncol=2)
@@ -317,7 +359,7 @@ dagify(
 
 ## An example of cluster membership impacting outcome values
 
-![Figure via Lesa Hoffman's F23 PSQF 6272 lecture slides: <https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf> -- link may be broken as Lesa is updating her slides](hoffman-cluster-means.png)
+![Figure via Lesa Hoffman's F23 PSQF 6272 lecture slides: <https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf>](hoffman-cluster-means.png)
 
 ---
 
@@ -339,7 +381,7 @@ Even if clustering has no impact on the overall outcome or exposure averages:
 
 Clustering also reduces the amount of [information]{.alert} we get from each individual data point
 
--   Means that we will need more data to draw conclusion with same level of precision
+-   Means that we will need [more data]{.underline} to draw conclusion with same level of precision
 
 ------------------------------------------------------------------------
 
@@ -409,9 +451,13 @@ $$Y_{j} = \beta_0 + U_{j} \beta_1 + \epsilon_{j}$$
 
 -   $U_{j}$ is exposure for individual $j$
 
-. . .
+- $\epsilon_j$ is the un-specified variance/error for individual $j$
 
-Do we see any issues with this approach?
+- $\beta_0$ is... [the overall average outcome when $U_j=0$]{.fragment fragment-index=1}
+
+- $\beta_1$ is... [the overall average change in outcome when increasing $U_j$ by $1$]{.fragment fragment-index=1}
+
+[What are the pros/cons of this approach?]{.alert}
 
 ------------------------------------------------------------------------
 
@@ -427,9 +473,13 @@ $$Y_{ij} = \beta_{0i} + U_{ij} \beta_{1i} + \epsilon_{ij}$$
 
 -   $U_{ij}$ is exposure for individual $j$ in cluster $i$
 
-. . .
+- $\epsilon_{ij}$ is the un-specified variance/error for individual $j$ in cluster $i$
 
-Do we see any issues with this approach?
+- $\beta_{0i}$ is... [the average outcome for cluster $i$ when $U_{ij}=0$]{.fragment fragment-index=1}
+
+- $\beta_{1i}$ is... [the average change in outcome for cluster $i$ when increasing $U_{ij}$ by $1$]{.fragment fragment-index=1}
+
+[What are the pros/cons of this approach?]{.alert}
 
 ------------------------------------------------------------------------
 
@@ -445,13 +495,17 @@ $$Y_{ij} = \beta_0 + U_{ij} \beta_1 + C^{(i)}_{ij} \gamma_i + \epsilon_{ij}$$
 
 -   $U_{ij}$ is exposure for individual $j$ in cluster $i$
 
+- $\epsilon_{ij}$ is the un-specified variance/error for individual $j$ in cluster $i$
+
 -   $C^{(i)}_{ij}$ is whether individual $j$ in cluster $i$ is a member of cluster $i$
 
--   $\gamma_i$ is the effect of being in cluster $i$ on the outcome [compared to the reference group]{.alert}, for two individuals with the same level of exposure
+-   $\gamma_i$ is... [the effect of being in cluster $i$ on the outcome [compared to the reference cluster]{.alert}, for two individuals with the same level of exposure $U_{ij}$]{.fragment fragment-index=1}
 
-. . .
+- $\beta_0$ is... [the overall average outcome for the reference cluster when $U_{ij}=0$]{.fragment fragment-index=2}
 
-Do we see any issues with this approach?
+- $\beta_1$ is... [the average change outcome when increasing $U_{ij}$ by $1$, comparing two individuals in the same cluster]{.fragment fragment-index=2}
+
+[What are the pros/cons of this approach?]{.alert}
 
 ------------------------------------------------------------------------
 
@@ -467,9 +521,13 @@ $$Y_{ij} = U_{ij} \beta_1 + C^{(i)}_{ij} \gamma_i + \epsilon_{ij}$$
 
 -   $U_{ij}$ is exposure for individual $j$ in cluster $i$
 
+- $\epsilon_{ij}$ is the un-specified variance/error for individual $j$ in cluster $i$
+
 -   $C^{(i)}_{ij}$ is whether individual $j$ in cluster $i$ is a member of cluster $i$
 
--   $\gamma_i$ is the mean outcome of cluster $i$ for those with exposure $=0$
+-   $\gamma_i$ is the mean outcome of cluster $i$ for those with exposure $U_{ij}=0$
+
+- $\beta_1$ is... [hard to interpret, because it will always be paired with a $\gamma_i$]{.fragment}
 
 . . .
 
@@ -485,15 +543,13 @@ Another approach is to conduct the data analysis at the cluster level
 
 -   Instead of individual-level outcomes/predictors, roll these up to [cluster-level averages]{.alert}
 
-$$\bar{Y}_{i} = \bar{U}_{i} \beta_1 + \epsilon_{i}$$
+$$\bar{Y}_{i} = \beta_0 + \bar{U}_{i} \beta_1 + \epsilon_{i}$$
 
 -   $\bar{Y}_{i}$ is the mean outcome in cluster $i$
 
 -   $\bar{U}_{i}$ is mean exposure in cluster $i$
 
-. . .
-
-Do we see any issues with this approach?
+[What are the pros/cons of this approach?]{.alert}
 
 . . .
 
@@ -536,6 +592,8 @@ Say we're taking radon measurements in Minnesota houses and want to estimate whe
 -   Basement measurements coded as `floor=0`; 1st floor measurements coded as `floor=1`
 
 -   Individual houses can be grouped in a number of ways, including [by county]{.alert}
+
+    - In fact, in our dataset, researchers made sure that each of the 85 MN counties were represented
 
 . . .
 
@@ -623,7 +681,7 @@ Breaking the output down:
 
 ::: columns
 ::: {.column width="60%"}
-We'll first fit without accounting for counties
+We'll first fit a regression without accounting for counties
 
 -   AKA: "complete pooling" of data
 
@@ -633,7 +691,7 @@ We'll first fit without accounting for counties
 radon_lm <- lm(log_radon ~ floor, data=radon.mn)
 
 #get regression summary #
-summary(radon_lm)
+summary(radon_lm)$coef
 ```
 :::
 :::
@@ -735,7 +793,7 @@ radon_seg_data %>%
 
 ## Example: radon measurements in Minnesota
 
-Now we'll look at fitting with counties, but without removing the intercept
+Now we'll look at fitting a regression with counties, but without removing the intercept
 
 -   AKA: "no pooling" of data
 
@@ -754,7 +812,7 @@ summary(radon_cty_int_lm)$coef
 
 ## Example: radon measurements in Minnesota
 
-Finally we'll fit with counties, and without an intercept
+Finally we'll fit a regression with counties, without an intercept
 
 -   Another example of a "no pooling" analysis
 

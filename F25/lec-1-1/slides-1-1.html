@@ -411,13 +411,13 @@ September 9, 2025
 <p><em>If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.</em></p>
 <p><em>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</em></p>
 </div>
-<div class="absolute" style="left: 260px; bottom: 50px; width: 1500px; ">
+<div class="absolute" style="left: 300px; bottom: 280px; width: 1500px; ">
 <p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/F25/lec-1-1/slides-1-1" class="uri">https://maryryan.github.io/PHS-651-slides/F25/lec-1-1/slides-1-1</a></p>
 </div>
-<div class="absolute" style="left: 100px; bottom: 0px; width: 150px; ">
+<div class="absolute" style="left: 50px; bottom: 175px; width: 250px; ">
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="slides-1-1_files/figure-revealjs/qr%20code-1.png" width="192"></p>
+<p><img data-src="slides-1-1_files/figure-revealjs/qr%20code-1.png" width="384"></p>
 </div>
 </div>
 </div>
@@ -427,20 +427,20 @@ September 9, 2025
 <p><span class="alert">Cat tax:</span></p>
 <div class="quarto-figure quarto-figure-center">
 <figure><p><img data-src="tina-penny.jpeg"></p>
-<figcaption><em>Tina and Penny say sorry for going too quickly last class</em></figcaption></figure>
+<figcaption><em>Tina and Penny say sorry for going too quickly last class, but thank you for filling out the survey!</em></figcaption></figure>
 </div>
 </div><div class="column" style="width:5%;">
 
 </div><div class="column" style="width:45%;">
 <p><span class="alert">Common concerns I saw on the survey:</span></p>
 <ul>
-<li><p>Matrix algebra/course pacing anxiety</p></li>
-<li><p>Final project time management anxiety</p></li>
 <li><p>R anxiety</p></li>
+<li><p>Final project time management anxiety</p></li>
+<li><p>Course pacing anxiety</p></li>
 </ul>
 </div>
 </div>
-</section><section id="for-the-content-anxious" class="slide level2"><h2>For the content-anxious</h2>
+</section><section id="for-the-contentpacing-anxious" class="slide level2"><h2>For the content/pacing-anxious</h2>
 <p>I’m usually not done finalizing my slides for class until about 30 minutes before lecture starts<span class="fragment">, but…</span></p>
 <div class="fragment">
 <p><br> For those anxious about upcoming material/class pacing, you can view <span class="alert">last year’s</span> slides at the generic link: <span class="alert">https://maryryan.github.io/PHS-651-slides/F24/PHS-651-[LectureNumber]/slides-[LectureNumber]</span></p>
@@ -456,14 +456,19 @@ September 9, 2025
 </ul>
 </div>
 <div class="fragment">
+<p><br> I’ve also found the online textbook <a href="https://bookdown.org/roback/bookdown-BeyondMLR/">Beyond Multiple Linear Regression</a> to be really helpful for reviewing OLS material (with R code!)</p>
+</div>
+<div class="fragment">
 <p><br><span class="alert">Now let’s dive in to today’s topic: clustered data</span></p>
 </div>
 </section><section id="what-is-clusteredcorrelated-data" class="slide level2"><h2>What is clustered/correlated data?</h2>
+<div class="fragment">
 <p>When we talk about “correlated” or “clustered” data, we’re most often talking about correlated/clustered <span class="alert">outcomes</span></p>
 <ul>
-<li><p>This stems from one of our OLS regression assumptions: that the <em>outcome values</em> for 2 observations will be <u>independent</u></p></li>
-<li><p>Outcomes with more than 1 dimension of sampling simultaneously</p></li>
+<li><p>This stems from one of our OLS regression assumptions: that the <em>outcome values</em> for 2 observations will be <u>independent</u> (given the other model covariates)</p></li>
+<li><p>Outcomes with more than 1 dimension of sampling</p></li>
 </ul>
+</div>
 <div class="fragment">
 <p>Informal definitions</p>
 <ul>
@@ -474,8 +479,8 @@ September 9, 2025
 </section><section id="what-is-clusteredcorrelated-data-1" class="slide level2"><h2>What is clustered/correlated data?</h2>
 <p>When we talk about “correlated” or “clustered” data, we’re most often talking about correlated/clustered <span class="alert">outcomes</span></p>
 <ul>
-<li><p>This stems from one of our OLS regression assumptions: that the <em>outcome values</em> for 2 observations will be <u>independent</u></p></li>
-<li><p>Outcomes with more than 1 dimension of sampling simultaneously</p></li>
+<li><p>This stems from one of our OLS regression assumptions: that the <em>outcome values</em> for 2 observations will be <u>independent</u> (given the other model covariates)</p></li>
+<li><p>Outcomes with more than 1 dimension of sampling</p></li>
 </ul>
 <p>Can outcomes have more than one “level” of clustering?</p>
 <ul>
@@ -488,40 +493,59 @@ September 9, 2025
 <li><p>“…we might reasonably expect that measurements on <span class="alert">units within a cluster are more similar</span> than measurements on units in different clusters.” (Applied Longitudinal Analysis pg. 4)</p></li>
 <li><p>AKA: nested/multilevel/hierarchical data</p></li>
 </ul></section><section id="what-is-clusteredcorrelated-data-3" class="slide level2"><h2>What is clustered/correlated data?</h2>
-<p>Note that we usually think of clustering as something <span class="alert">different</span> than a regular covariate</p>
+<p>Note that we usually think of clustering as something slightly <span class="alert">different</span> than a regular covariate</p>
 <ul>
 <li><p>More “administrative” variable, usually not an exposure of interest</p></li>
 <li><p>Clustering variable potentially has many different levels/categories with no clear reference group</p></li>
 </ul>
-<p>There are times when the distinction between “cluster” and “covariate/predictor” may a little fuzzy</p>
-</section><section id="what-is-clusteredcorrelated-data-4" class="slide level2"><h2>What is clustered/correlated data?</h2>
+<p>There are times when the distinction between “cluster” and “covariate/predictor” may be a little fuzzy</p>
+</section><section id="what-is-covariance" class="slide level2"><h2>What is covariance?</h2>
+<p>In previous courses we’ve talked a lot about the variation or <span class="alert">variance</span> of a variable: <span class="math display">\[\begin{align*}Var[Y] &amp;= E[Y^2] - (E[Y])^2\\
+&amp;= E[Y^2] - \mu_y^2,\end{align*}\]</span> which measures the spread of a variable</p>
+<p><br> The <span class="alert">covariance</span>: <span class="math display">\[Cov[Y,X] = E[(Y - \mu_y)\times (X-\mu_x)],\]</span> provides a measure of shared information between two variables <span class="math inline">\(Y\)</span> and <span class="math inline">\(X\)</span></p>
+<ul>
+<li><p>When <span class="math inline">\(Cov[Y,X]=0\)</span>, this means that <span class="math inline">\(Y\)</span> and <span class="math inline">\(X\)</span> are <u>independent</u></p></li>
+<li><p>It’s the numerator in the formula for correlation: <span class="math inline">\(Correlation[Y,X] = Cov[Y,X]/\sqrt{Var[Y]\times Var[X]}\)</span></p></li>
+</ul></section><section id="what-is-clusteredcorrelated-data-4" class="slide level2"><h2>What is clustered/correlated data?</h2>
 <p>Remember in OLS where we assumed that observations were independent?</p>
 <ul>
-<li>This meant that we assumed <span class="math inline">\(Cov[Y_i, Y_j|\boldsymbol{X}]=0\)</span> and:</li>
+<li>This meant that we assumed <span class="math inline">\(Cov[Y_i, Y_j|\boldsymbol{X}]=0\)</span> (<em>the covariance between the outcome for person i and the outcome for person j, given the predictors is equal to <span class="math inline">\(0\)</span></em>) and the covariance matrix for our outcomes looks like:</li>
 </ul>
+<div class="columns">
+<div class="column" style="width:50%;">
 <p><span class="math display">\[Cov[\vec{Y}|\boldsymbol{X}] = \sigma^2\boldsymbol{I} =  \begin{bmatrix}\sigma^2 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \ddots &amp; \dots &amp; 0 \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-0 &amp; \dots &amp; 0 &amp; \sigma^2\end{bmatrix} \text{ or   } Cov[\vec{Y}|\boldsymbol{X}] = \sigma_i^2\boldsymbol{I} =  \begin{bmatrix}\sigma_1^2 &amp; 0 &amp; \dots &amp; 0 \\
+0 &amp; \dots &amp; 0 &amp; \sigma^2\end{bmatrix}\]</span> if we assume constant variance <span class="math inline">\(Cov[Y_i, Y_i|\boldsymbol{X}] = Var[Y_i|\boldsymbol{X}]=\sigma^2\)</span></p>
+</div><div class="column" style="width:50%;">
+<p><span class="math display">\[\text{or  }Cov[\vec{Y}|\boldsymbol{X}] = \sigma_i^2\boldsymbol{I} =  \begin{bmatrix}\sigma_1^2 &amp; 0 &amp; \dots &amp; 0 \\
 0 &amp; \ddots &amp; \dots &amp; 0 \\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-0 &amp; \dots &amp; 0 &amp; \sigma_n^2\end{bmatrix}\]</span></p>
-<div class="fragment">
-<p>When data are <span class="alert">clustered</span>, at least some <span class="math inline">\(Cov[Y_i, Y_j|\boldsymbol{X}]\ne0\)</span></p>
+0 &amp; \dots &amp; 0 &amp; \sigma_n^2\end{bmatrix}\]</span> if we assume non-constant variance <span class="math inline">\(Var[Y_i|\boldsymbol{X}]=\sigma_i^2\)</span></p>
+</div>
+</div>
+</section><section id="what-is-clusteredcorrelated-data-5" class="slide level2"><h2>What is clustered/correlated data?</h2>
+<p>Remember in OLS where we assumed that observations were independent?</p>
+<ul>
+<li>This meant that we assumed <span class="math inline">\(Cov[Y_i, Y_j|\boldsymbol{X}]=0\)</span> (<em>the covariance between the outcome for person i and the outcome for person j, given the predictors is equal to <span class="math inline">\(0\)</span></em>)</li>
+</ul>
+<p><br> When data are <span class="alert">clustered</span>, at least some people will have non-0 covariance between their outcomes, <span class="math inline">\(Cov[Y_i, Y_j|\boldsymbol{X}]\ne0\)</span></p>
 <ul>
 <li><p>All the off-diagonals might be non-0, or maybe only some</p></li>
-<li><p>This is like saying that some observations have <span class="alert">shared information</span></p></li>
-<li><p>This impacts our variance estimates for <span class="math inline">\(\widehat{\beta}\)</span> and our inference</p></li>
-</ul>
-</div>
-</section><section id="why-is-data-clusteredcorrelated" class="slide level2"><h2>Why is data clustered/correlated?</h2>
+<li><p>This is like saying that some observations have <span class="alert">shared information</span> – each observation isn’t contributing entirely unique information to our analysis</p></li>
+<li><p>This impacts our variance estimates for our regression coefficients (<span class="math inline">\(\widehat{\beta}\)</span>) and our inference of them</p></li>
+</ul></section><section id="why-is-data-clusteredcorrelated" class="slide level2"><h2>Why is data clustered/correlated?</h2>
 <p>Several potential reasons</p>
 <ul>
 <li>
 <p>Natural group membership</p>
 <ul>
-<li><p>Physical/structural grouping</p></li>
-<li><p>e.g., Household members, classroom students, eyes in a person’s head</p></li>
+<li>
+<p>Physical/structural grouping</p>
+<ul>
+<li>e.g., Household members, classroom students, eyes in a person’s head</li>
+</ul>
+</li>
 <li><p>Things may be “done similarly” within each natural group</p></li>
 </ul>
 </li>
@@ -549,7 +573,7 @@ September 9, 2025
 </ul>
 </div>
 </section><section id="how-does-clustering-affect-outcomes" class="slide level2"><h2>How does clustering affect outcomes?</h2>
-<p>“Clustered data” usually has cluster membership that could impact just the distribution of outcome, …</p>
+<p>“Clustered data” usually has cluster membership (<em>C</em>) that could impact just the distribution of outcome (<em>Y</em>), …</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -559,7 +583,7 @@ September 9, 2025
 </div>
 </div>
 </section><section id="how-does-clustering-affect-outcomes-1" class="slide level2"><h2>How does clustering affect outcomes?</h2>
-<p>… wholly dictate who receives exposure, …</p>
+<p>… wholly dictate who receives exposure (<em>U</em>), …</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -592,7 +616,7 @@ September 9, 2025
 </section><section id="an-example-of-cluster-membership-impacting-outcome-values" class="slide level2"><h2>An example of cluster membership impacting outcome values</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure><p><img data-src="hoffman-cluster-means.png"></p>
-<figcaption>Figure via Lesa Hoffman’s F23 PSQF 6272 lecture slides: <a href="https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf" class="uri">https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf</a> – link may be broken as Lesa is updating her slides</figcaption></figure>
+<figcaption>Figure via Lesa Hoffman’s F23 PSQF 6272 lecture slides: <a href="https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf" class="uri">https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf</a></figcaption></figure>
 </div>
 </section><section id="other-issues-from-correlated-data" class="slide level2"><h2>Other issues from correlated data</h2>
 <p>Even if clustering has no impact on the overall outcome or exposure averages:</p>
@@ -614,7 +638,7 @@ September 9, 2025
 </ul>
 <p>Clustering also reduces the amount of <span class="alert">information</span> we get from each individual data point</p>
 <ul>
-<li>Means that we will need more data to draw conclusion with same level of precision</li>
+<li>Means that we will need <u>more data</u> to draw conclusion with same level of precision</li>
 </ul></section><section id="measuring-clustered-ness" class="slide level2"><h2>Measuring “clustered-ness”</h2>
 <p>How can we tell if data are clustered?</p>
 <div class="fragment">
@@ -660,10 +684,11 @@ September 9, 2025
 <ul>
 <li><p><span class="math inline">\(Y_{j}\)</span> is outcome for individual <span class="math inline">\(j\)</span></p></li>
 <li><p><span class="math inline">\(U_{j}\)</span> is exposure for individual <span class="math inline">\(j\)</span></p></li>
+<li><p><span class="math inline">\(\epsilon_j\)</span> is the un-specified variance/error for individual <span class="math inline">\(j\)</span></p></li>
+<li><p><span class="math inline">\(\beta_0\)</span> is… <span class="fragment" data-fragment-index="1">the overall average outcome when <span class="math inline">\(U_j=0\)</span></span></p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> is… <span class="fragment" data-fragment-index="1">the overall average change in outcome when increasing <span class="math inline">\(U_j\)</span> by <span class="math inline">\(1\)</span></span></p></li>
 </ul>
-<div class="fragment">
-<p>Do we see any issues with this approach?</p>
-</div>
+<p><span class="alert">What are the pros/cons of this approach?</span></p>
 </section><section id="clustering-in-individual-level-data-analysis-1" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
 <p>What is a way to handle clustering in an (individual-level) analysis?</p>
 <p><span class="alert">Could perform separate regressions/t-tests for each cluster</span></p>
@@ -671,10 +696,11 @@ September 9, 2025
 <ul>
 <li><p><span class="math inline">\(Y_{ij}\)</span> is outcome for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(U_{ij}\)</span> is exposure for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(\epsilon_{ij}\)</span> is the un-specified variance/error for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(\beta_{0i}\)</span> is… <span class="fragment" data-fragment-index="1">the average outcome for cluster <span class="math inline">\(i\)</span> when <span class="math inline">\(U_{ij}=0\)</span></span></p></li>
+<li><p><span class="math inline">\(\beta_{1i}\)</span> is… <span class="fragment" data-fragment-index="1">the average change in outcome for cluster <span class="math inline">\(i\)</span> when increasing <span class="math inline">\(U_{ij}\)</span> by <span class="math inline">\(1\)</span></span></p></li>
 </ul>
-<div class="fragment">
-<p>Do we see any issues with this approach?</p>
-</div>
+<p><span class="alert">What are the pros/cons of this approach?</span></p>
 </section><section id="clustering-in-individual-level-data-analysis-2" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
 <p>What is a way to handle clustering in an (individual-level) regression?</p>
 <p><span class="alert">Could add cluster membership as model covariate</span></p>
@@ -682,12 +708,13 @@ September 9, 2025
 <ul>
 <li><p><span class="math inline">\(Y_{ij}\)</span> is outcome for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(U_{ij}\)</span> is exposure for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(\epsilon_{ij}\)</span> is the un-specified variance/error for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(C^{(i)}_{ij}\)</span> is whether individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span> is a member of cluster <span class="math inline">\(i\)</span></p></li>
-<li><p><span class="math inline">\(\gamma_i\)</span> is the effect of being in cluster <span class="math inline">\(i\)</span> on the outcome <span class="alert">compared to the reference group</span>, for two individuals with the same level of exposure</p></li>
+<li><p><span class="math inline">\(\gamma_i\)</span> is… <span class="fragment" data-fragment-index="1">the effect of being in cluster <span class="math inline">\(i\)</span> on the outcome <span class="alert">compared to the reference cluster</span>, for two individuals with the same level of exposure <span class="math inline">\(U_{ij}\)</span></span></p></li>
+<li><p><span class="math inline">\(\beta_0\)</span> is… <span class="fragment" data-fragment-index="2">the overall average outcome for the reference cluster when <span class="math inline">\(U_{ij}=0\)</span></span></p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> is… <span class="fragment" data-fragment-index="2">the average change outcome when increasing <span class="math inline">\(U_{ij}\)</span> by <span class="math inline">\(1\)</span>, comparing two individuals in the same cluster</span></p></li>
 </ul>
-<div class="fragment">
-<p>Do we see any issues with this approach?</p>
-</div>
+<p><span class="alert">What are the pros/cons of this approach?</span></p>
 </section><section id="clustering-in-individual-level-data-analysis-3" class="slide level2"><h2>Clustering in individual-level data analysis</h2>
 <p>What is a way to handle clustering in an (individual-level) regression?</p>
 <p><span class="alert">Could add cluster membership as model covariate (modified)</span></p>
@@ -695,8 +722,10 @@ September 9, 2025
 <ul>
 <li><p><span class="math inline">\(Y_{ij}\)</span> is outcome for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(U_{ij}\)</span> is exposure for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(\epsilon_{ij}\)</span> is the un-specified variance/error for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(C^{(i)}_{ij}\)</span> is whether individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span> is a member of cluster <span class="math inline">\(i\)</span></p></li>
-<li><p><span class="math inline">\(\gamma_i\)</span> is the mean outcome of cluster <span class="math inline">\(i\)</span> for those with exposure <span class="math inline">\(=0\)</span></p></li>
+<li><p><span class="math inline">\(\gamma_i\)</span> is the mean outcome of cluster <span class="math inline">\(i\)</span> for those with exposure <span class="math inline">\(U_{ij}=0\)</span></p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> is… <span class="fragment">hard to interpret, because it will always be paired with a <span class="math inline">\(\gamma_i\)</span></span></p></li>
 </ul>
 <div class="fragment">
 <p>This is called a <span class="alert">fixed effects</span> model</p>
@@ -710,14 +739,12 @@ September 9, 2025
 <li>Instead of individual-level outcomes/predictors, roll these up to <span class="alert">cluster-level averages</span>
 </li>
 </ul>
-<p><span class="math display">\[\bar{Y}_{i} = \bar{U}_{i} \beta_1 + \epsilon_{i}\]</span></p>
+<p><span class="math display">\[\bar{Y}_{i} = \beta_0 + \bar{U}_{i} \beta_1 + \epsilon_{i}\]</span></p>
 <ul>
 <li><p><span class="math inline">\(\bar{Y}_{i}\)</span> is the mean outcome in cluster <span class="math inline">\(i\)</span></p></li>
 <li><p><span class="math inline">\(\bar{U}_{i}\)</span> is mean exposure in cluster <span class="math inline">\(i\)</span></p></li>
 </ul>
-<div class="fragment">
-<p>Do we see any issues with this approach?</p>
-</div>
+<p><span class="alert">What are the pros/cons of this approach?</span></p>
 <div class="fragment">
 <ul>
 <li>Downside: removes ability of individual covariates to predict individual outcomes</li>
@@ -748,7 +775,12 @@ September 9, 2025
 <p>Say we’re taking radon measurements in Minnesota houses and want to estimate whether the lowest floor we can measure on affects our readings</p>
 <ul>
 <li><p>Basement measurements coded as <code>floor=0</code>; 1st floor measurements coded as <code>floor=1</code></p></li>
-<li><p>Individual houses can be grouped in a number of ways, including <span class="alert">by county</span></p></li>
+<li>
+<p>Individual houses can be grouped in a number of ways, including <span class="alert">by county</span></p>
+<ul>
+<li>In fact, in our dataset, researchers made sure that each of the 85 MN counties were represented</li>
+</ul>
+</li>
 </ul>
 <div class="fragment">
 <div class="cell">
@@ -922,7 +954,7 @@ $vara
 </section><section id="example-radon-measurements-in-minnesota-4" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
 <div class="columns">
 <div class="column" style="width:60%;">
-<p>We’ll first fit without accounting for counties</p>
+<p>We’ll first fit a regression without accounting for counties</p>
 <ul>
 <li>AKA: “complete pooling” of data</li>
 </ul>
@@ -932,26 +964,11 @@ $vara
 <span id="cb6-2"><a href="#cb6-2"></a>radon_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_radon <span class="sc">~</span> floor, <span class="at">data=</span>radon.mn)</span>
 <span id="cb6-3"><a href="#cb6-3"></a></span>
 <span id="cb6-4"><a href="#cb6-4"></a><span class="co">#get regression summary #</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="fu">summary</span>(radon_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="fu">summary</span>(radon_lm)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = log_radon ~ floor, data = radon.mn)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--3.07857 -0.52950  0.02388  0.53970  2.51502 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  1.36241    0.02855  47.725   &lt;2e-16 ***
-floor       -0.58642    0.06996  -8.382   &lt;2e-16 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 0.7901 on 917 degrees of freedom
-Multiple R-squared:  0.07116,   Adjusted R-squared:  0.07015 
-F-statistic: 70.25 on 1 and 917 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre><code>              Estimate Std. Error   t value      Pr(&gt;|t|)
+(Intercept)  1.3624099 0.02854728 47.724680 9.172492e-251
+floor       -0.5864218 0.06996435 -8.381723  1.947093e-16</code></pre>
 </div>
 </div>
 </div>
@@ -1405,7 +1422,7 @@ $`YELLOW MEDICINE`
 </div>
 </div>
 </section><section id="example-radon-measurements-in-minnesota-7" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
-<p>Now we’ll look at fitting with counties, but without removing the intercept</p>
+<p>Now we’ll look at fitting a regression with counties, but without removing the intercept</p>
 <ul>
 <li>AKA: “no pooling” of data</li>
 </ul>
@@ -1509,7 +1526,7 @@ factor(county)YELLOW MEDICINE    0.32956454 0.62944996  0.52357543 6.007131e-01<
 </ul>
 </div>
 </section><section id="example-radon-measurements-in-minnesota-8" class="slide level2"><h2>Example: radon measurements in Minnesota</h2>
-<p>Finally we’ll fit with counties, and without an intercept</p>
+<p>Finally we’ll fit a regression with counties, without an intercept</p>
 <ul>
 <li>Another example of a “no pooling” analysis</li>
 </ul>

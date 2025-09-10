@@ -48,13 +48,13 @@ library(qrcode)
 *The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
 :::
 
-::: {.absolute bottom=50 left=260 width=1500}
+::: {.absolute bottom=280 left=300 width=1500}
 
 Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-1-2/slides-1-2>
 
 :::
 
-::: {.absolute bottom=0 left=100 width=150}
+::: {.absolute bottom=175 left=50 width=250}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-1-2/slides-1-2"))
 ```
@@ -66,9 +66,9 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-1-2/slides-1-2")
 
 What do we mean by correlated data or data that is clustered?
 
-- [Independent data]{.underline}: data where each observation of a variable are not meaningfully correlated with other observations of the same variable
+- [Independent data]{.underline}: data where each observation of a variable are not meaningfully correlated with other observations of the same variable (given other covariates $\boldsymbol{X}$)
 
-- [Clustered/Correlated data]{.underline}: data where each observation of a variable has some kind of relationship to another set of observations of that variable
+- [Clustered/Correlated data]{.underline}: data where each observation of a variable has some kind of relationship to another set of observations of that variable (given other covariates $\boldsymbol{X}$)
 
    - AKA: nested/multilevel/hierarchical data
    
@@ -87,23 +87,71 @@ What do we mean by correlated data or data that is clustered?
 
    - Often many, many clusters in population (though we may not have data on all of them)
 
+<br>
 - Exposure/adjustment variables tend to have a [limited]{.alert} number of groups
 
    - e.g., diagnosis groups
    
    - Many groups means fewer degrees of freedom to spend on estimating coefficients
    
-- This boundary can sometimes be fuzzy! See Clark & Linzer (2014) or McNeish & Kelley (2019) for more discussion
+<br>
+- This boundary can sometimes be fuzzy! See Clark & Linzer (2014) or McNeish (2023) for more discussion
 
 ---
 
 ## Recap: correlated/clustered data
 
-The ICC is a way to measure the "clustered-ness" of the outcome
+The ICC is a way to measure the "clustered-ness" of the outcome: a measure of within- vs. between-cluster variation
 
-$$\text{ICC} = \frac{\text{variation in cluster means}}{\text{total variation}} = \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}$$
+-   Cluster-specific mean: $\bar{y}_i = \frac{1}{n_i} \sum_{j=1}^{n_i} y_{ij}$
 
-. . .
+-   Variation in cluster means: $\gamma^2 = \text{var}(\bar{y}_i)$
+
+-   Average within-cluster individual-level variation: $\sigma^2 = \frac{1}{m}\sum_{i=1}^m\text{var}_i(y_{ij})$
+
+$$\begin{align*}\text{ICC} =  \frac{\gamma^2}{\gamma^2 + \sigma^2} &= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\\
+&\\
+&= \frac{\text{variation in cluster means}}{\text{total variation}}\end{align*}$$
+
+---
+
+## Caveat: Is `Var(Y)` = Total Variation?
+
+```{css, echo=FALSE}
+.reveal code {
+  max-height: 100% !important;
+}
+```
+
+```{r simulation}
+library(ICC)
+set.seed(091025)
+var_y <- icc_y <- rep(NA,1000)
+
+for( i in seq(1000)){
+   
+   y <- epsilon <- gamma <- data_example <- NULL
+   
+   epsilon <- rnorm(100, mean=0, sd=1) # within-cluster individual error 
+   gamma <- rep(rnorm(10, mean=0, sd=2), each=10) # cluster-level error
+   
+   y <- gamma + epsilon # create our variable y
+   var_y[i] <- var(y)
+   
+   data_example <- as.data.frame(cbind(y, rep(seq(10),each=10)))
+   
+   icc_y[i] <- ICCest(V2, y, data=data_example)$ICC
+}
+
+# true var_y = 2^2 + 1^2 = 5
+mean(var_y)
+# true icc_y = 2^2/5 = 0.8
+mean(icc_y)
+```
+
+---
+
+## Recap: correlated/clustered data
 
 Clustering may impact analysis in several ways
 
@@ -161,7 +209,7 @@ Basic idea: some clusters will [randomly]{.alert} having higher/lower means than
 
    - Can think of $b_{0i}$ as the cluster-specific deviation -- we'll add this to our regression model
    
-![Figure via Lesa Hoffman's F23 PSQF 6272 lecture slides: <https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf> -- link may be broken as Lesa is updating her slides](hoffman-cluster-means.png)
+![Figure via Lesa Hoffman's F23 PSQF 6272 lecture slides: <https://www.lesahoffman.com/PSQF6272/PSQF6272_Lecture2_Empty_Level2Pred.pdf>](hoffman-cluster-means.png)
 
 ---
 
@@ -435,13 +483,13 @@ $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= Cov[\boldsymbol{X}_i\vec{\beta} + \vec{Z}
 &= \sigma^2_b + 0 + 0 + 0\\
 &= \sigma^2_b\end{align*}$$
 
-::: {.alert .fragment .absolute bottom=75 left=650}
+::: {.alert .fragment .absolute bottom=125 left=650}
 In 552, we were used to seeing $Cov[Y_{ij}, Y_{ik}]=0$!
 :::
 
 ---
 
-## What does this covariance matrix look like?
+## What does this covariance matrix look like (for observations in cluster *i*)? {.smaller}
 
 $$\begin{align*}Cov[\vec{Y}_i] &= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \sigma^2_\epsilon \boldsymbol{I}\\
 &= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
@@ -465,9 +513,19 @@ $$\begin{align*}Cov[\vec{Y}_i] &= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T +
 
 - Known as a [block exchangeable]{.alert} matrix or [compound symmetry]{.alert}
 
+   - Assumes everyone in the same cluster is similarly *exchangeable*, but assumes people from different clusters are *independent*
+
 ::: {.absolute bottom=100 right=100 width=500}
 ![](panda_combo.png)
 :::
+
+---
+
+## What does this covariance matrix look like (for all observations)?
+
+If you look at the *full* covariance matrix for all observations, it looks like a diagonal of these [block matrices]{.alert} with a bunch of 0's on the off diagonals
+
+![From the SAS blog: <https://blogs.sas.com/content/iml/2012/11/07/constructing-block-matrices.html>](blockmatrix.png){width="40%"}
 
 ---
 
@@ -591,8 +649,6 @@ $$Y_{ij} = \beta_0 + \beta_1 (\text{floor}_{ij}) + b_{0i} + \epsilon_{ij}$$
 
 What would the output/estimates of this model look like?
 
-. . .
-
 ```{r radon cleaning, echo=F}
 radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
 
@@ -614,9 +670,9 @@ radon_lme_ci <- confint(radon_lme)
 summary(radon_lme)$coef
 ```
 
-- LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
+- LME $\widehat\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
 
-   - 95% CI (standard normal Z): (`r round(radon_lme_ci[4,1], 4)`, `r round(radon_lme_ci[4,2], 4)`)
+   - 95% CI (standard normal Z):  $(\widehat\beta_1 - Z_{0.975}SE_\beta, \widehat\beta_1 + Z_{0.975}SE_\beta)=$ (`r round(radon_lme_ci[4,1], 4)`, `r round(radon_lme_ci[4,2], 4)`)
 
    - How would we interpret this?
    
@@ -641,12 +697,10 @@ model_parameters(radon_lme, df_method="satterthwaite")
 
 Let's compare the LME results to adding county as a regression coefficient
 
-. . .
-
 ```{r radon lm cty}
 radon_cty_lm <- lm(log_radon ~ floor + factor(county) - 1, data=radon.mn)
 radon_cty_lm_ci <- confint(radon_cty_lm)
-summary(radon_cty_lm)$coef
+summary(radon_cty_lm)$coef[1:10,]
 ```
 
 :::: {.columns}

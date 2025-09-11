@@ -72,7 +72,7 @@ What do we mean by correlated data or data that is clustered?
 
    - AKA: nested/multilevel/hierarchical data
    
-   - Might expect measurements on [units within a cluster are more similar]{.alert} than measurements on units in different clusters
+   - Might expect measurements on [units within a cluster to be more similar]{.alert} than measurements on units in different clusters
 
 ---
 
@@ -82,19 +82,17 @@ What do we mean by correlated data or data that is clustered?
 [Is it a clustering variable or is it an exposure/adjustment variable?]{.alert}
 
 - Clusters tend to be physical/structural (geography, time, a body/being, etc) or hierarchical (social/family hierarchy, institutional hierarchy, etc)
-
    - Often no obvious reference group for cluster
-
    - Often many, many clusters in population (though we may not have data on all of them)
 
-<br>
-- Exposure/adjustment variables tend to have a [limited]{.alert} number of groups
+<br> 
 
+- Exposure/adjustment variables tend to have a [limited]{.alert} number of groups
    - e.g., diagnosis groups
-   
    - Many groups means fewer degrees of freedom to spend on estimating coefficients
    
-<br>
+<br> 
+
 - This boundary can sometimes be fuzzy! See Clark & Linzer (2014) or McNeish (2023) for more discussion
 
 ---
@@ -107,7 +105,7 @@ The ICC is a way to measure the "clustered-ness" of the outcome: a measure of wi
 
 -   Variation in cluster means: $\gamma^2 = \text{var}(\bar{y}_i)$
 
--   Average within-cluster individual-level variation: $\sigma^2 = \frac{1}{m}\sum_{i=1}^m\text{var}_i(y_{ij})$
+-   Average [within-cluster]{.underline} individual-level variation: $\sigma^2 = \frac{1}{m}\sum_{i=1}^m\text{var}_i(y_{ij})$
 
 $$\begin{align*}\text{ICC} =  \frac{\gamma^2}{\gamma^2 + \sigma^2} &= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\\
 &\\
@@ -175,7 +173,7 @@ Clustering may impact analysis in several ways
 ::: {.fragment}
 - Could fit [separate regressions]{.alert} for each group... no "global" estimate of exposure effect
 
-- Could [add group as covariate]{.alert} in model... violates parameters vs data size assumptions
+- Could [add group as covariate]{.alert} in model... fixes the issue (and takes care of confounding) but violates parameters vs data size assumptions
 
 - Could do [cluster-level model]{.alert}... we lose a lot of individual-level information
 
@@ -362,8 +360,6 @@ $$\vec{Y}_i = \color{green}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{\xi
             - Random between-cluster variation: $\color{red}{\vec{Z}_i b_{0i}}$
             
          ii. Within-cluster variation: $\color{BlueViolet}{\vec{\epsilon}_i}$
-         
-         - The systematic variation is what we're [making assumptions about]{.alert}
 :::
 :::
 
@@ -428,6 +424,8 @@ How is this different from adding groups as covariates?
 
 - By estimating a global $\sigma^2_b$, this allows clusters with fewer observations to be more influenced by the rest of the data ("borrow" information), and clusters with more observations to be less influenced
 
+   - Clusters with few observations have their intercepts pulled toward the global intercept $\beta_0$!
+
 . . .
 
 - "... we can learn about one cluster's coefficients by understanding the variability in coefficients across the population. [When there is little variability, we should rely on the population average coefficients to estimate those for a cluster. When there's substantial variation, we must rely more heavily on the data from each cluster in estimating its own coefficients]{.alert}." (Analysis of Longitudinal Data [Diggle et al] pg. 173)
@@ -446,7 +444,7 @@ $$b_{0i} \sim N(0, \sigma^2_b)$$
 
 - Assumes that [clusters]{.alert} are *randomly* varying around the population mean response: $E[b_{0i}]=0$
 
-   - If you added groups as covariates instead, those would assume nothing about this
+   - If you added cluster IDs as covariates instead, those cluster-level slopes wouldn't assume anything about randomness
 
 - The typical cluster-to-cluster deviation in the overall level of the response is $\sqrt{\sigma^2_b}$
 
@@ -537,11 +535,14 @@ $$\widehat{\beta} = \left(\sum_{i=1}^n \boldsymbol{X}^T \left\{Cov[\vec{Y}_i]\ri
 
 ::: {.fragment}
 - In OLS and WLS, we used [maximum likelihood]{.alert} to estimate $\beta$'s and variance components 
-   
-- In LMEs, we use [restricted maximum likelihood (REML)]{.alert} estimation because MLE gives us biased estimates of the covariance components in small samples
 
-- This means that we [cannot]{.alert} perform likelihood ratio test-based inference for $\vec{\beta}$ when using REML!
+<br>
 
+- In LMEs, we generally use [restricted maximum likelihood (REML)]{.alert} estimation because MLE gives us biased estimates of the covariance components in small samples
+
+<br>
+
+- This means that we [cannot]{.alert} perform [likelihood ratio test]{.underline}-based inference for $\vec{\beta}$ when using REML!
    - Wald-based inference (z/t-tests and confidence intervals) are still fine, though
 :::
 
@@ -559,27 +560,31 @@ $$Cov[\widehat{\beta}]=\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i
 ::: {.fragment}
 The confidence intervals for $\vec{\beta}$ will take the form:
 
-$$\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}$$
+$$\widehat{\beta} \pm Z_{1-\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}$$
 :::
 
 ---
 
 ## Inference for $\widehat{\beta}$
 
-$$\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}$$
+$$\widehat{\beta} \pm Z_{1-\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}$$
 
 Wait, I thought we usually like to use a $t$-distribution critical value for confidence intervals?
 
 - Generally, yes
 
+<br>
+
 - This gets complicated in correlated data when we try to calculate the degrees of freedom: each observation doesn't contribute fully independent information, so what is $n$ really?
+
+<br>
 
 - Often we can just use a standard normal Z critical value
 
-- For small sample sizes, we can use a Satterthwaite or Kenward-Roger approximation of the degrees of freedom
+<br>
 
+- For small sample sizes, we can use a Satterthwaite or Kenward-Roger approximation of the degrees of freedom
    - Available in SAS via `PROC GLIMMIX`
-   
    - Available in R via `model_parameters()` function in the `parameters` package
 
 ---
@@ -593,6 +598,7 @@ $$\vec{\xi}_i = \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 $$b_{i0} \sim N(0, \sigma^2_b)$$
 
 $$\epsilon_{ij} \sim N(0, \sigma^2_\epsilon)$$
+<br>
 
 $$\begin{align*}\text{ICC} &= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\\
 &= \frac{\sigma^2_b}{\sigma^2_b + \sigma^2_{\epsilon}}\end{align*}$$
@@ -609,7 +615,7 @@ $$\begin{align*}\text{ICC} &= \frac{\text{variation in cluster means}}{\text{var
 
 The chief purpose of LMEs is to account for correlations between observations
 
-- They assume cluster membership adds an additional level of variation to the outcome that isn't accounted for by OLS modeling strategies
+- They assume cluster membership adds an [additional level of variation]{.alert} to the outcome that isn't accounted for by OLS modeling strategies
 
 . . .
 
@@ -707,11 +713,9 @@ summary(radon_cty_lm)$coef[1:10,]
 
 ::: {.column width="60%"}
 
-::: {.fragment}
 - OLS $\beta_1$: `r round(summary(radon_cty_lm)$coef[1,1],4)`
 
    - 95% CI: (`r round(radon_cty_lm_ci[1,1], 4)`, `r round(radon_cty_lm_ci[1,2], 4)`)
-:::
 
 ::: {.fragment}
 What differences can you see compared to the previous LME?

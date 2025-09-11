@@ -429,32 +429,37 @@ September 11, 2025
 <p><u>Clustered/Correlated data</u>: data where each observation of a variable has some kind of relationship to another set of observations of that variable (given other covariates <span class="math inline">\(\boldsymbol{X}\)</span>)</p>
 <ul>
 <li><p>AKA: nested/multilevel/hierarchical data</p></li>
-<li><p>Might expect measurements on <span class="alert">units within a cluster are more similar</span> than measurements on units in different clusters</p></li>
+<li><p>Might expect measurements on <span class="alert">units within a cluster to be more similar</span> than measurements on units in different clusters</p></li>
 </ul>
 </li>
 </ul></section><section id="recap-correlatedclustered-data-1" class="slide level2"><h2>Recap: correlated/clustered data</h2>
 <p><span class="alert">Is it a clustering variable or is it an exposure/adjustment variable?</span></p>
 <ul>
-<li>
-<p>Clusters tend to be physical/structural (geography, time, a body/being, etc) or hierarchical (social/family hierarchy, institutional hierarchy, etc)</p>
+<li>Clusters tend to be physical/structural (geography, time, a body/being, etc) or hierarchical (social/family hierarchy, institutional hierarchy, etc)
 <ul>
-<li><p>Often no obvious reference group for cluster</p></li>
-<li><p>Often many, many clusters in population (though we may not have data on all of them)</p></li>
+<li>Often no obvious reference group for cluster</li>
+<li>Often many, many clusters in population (though we may not have data on all of them)</li>
 </ul>
 </li>
 </ul>
-<p><br> - Exposure/adjustment variables tend to have a <span class="alert">limited</span> number of groups</p>
+<p><br></p>
 <ul>
-<li><p>e.g., diagnosis groups</p></li>
-<li><p>Many groups means fewer degrees of freedom to spend on estimating coefficients</p></li>
+<li>Exposure/adjustment variables tend to have a <span class="alert">limited</span> number of groups
+<ul>
+<li>e.g., diagnosis groups</li>
+<li>Many groups means fewer degrees of freedom to spend on estimating coefficients</li>
 </ul>
-<p><br> - This boundary can sometimes be fuzzy! See Clark &amp; Linzer (2014) or McNeish (2023) for more discussion</p>
-</section><section id="recap-correlatedclustered-data-2" class="slide level2"><h2>Recap: correlated/clustered data</h2>
+</li>
+</ul>
+<p><br></p>
+<ul>
+<li>This boundary can sometimes be fuzzy! See Clark &amp; Linzer (2014) or McNeish (2023) for more discussion</li>
+</ul></section><section id="recap-correlatedclustered-data-2" class="slide level2"><h2>Recap: correlated/clustered data</h2>
 <p>The ICC is a way to measure the “clustered-ness” of the outcome: a measure of within- vs.&nbsp;between-cluster variation</p>
 <ul>
 <li><p>Cluster-specific mean: <span class="math inline">\(\bar{y}_i = \frac{1}{n_i} \sum_{j=1}^{n_i} y_{ij}\)</span></p></li>
 <li><p>Variation in cluster means: <span class="math inline">\(\gamma^2 = \text{var}(\bar{y}_i)\)</span></p></li>
-<li><p>Average within-cluster individual-level variation: <span class="math inline">\(\sigma^2 = \frac{1}{m}\sum_{i=1}^m\text{var}_i(y_{ij})\)</span></p></li>
+<li><p>Average <u>within-cluster</u> individual-level variation: <span class="math inline">\(\sigma^2 = \frac{1}{m}\sum_{i=1}^m\text{var}_i(y_{ij})\)</span></p></li>
 </ul>
 <p><span class="math display">\[\begin{align*}\text{ICC} =  \frac{\gamma^2}{\gamma^2 + \sigma^2} &amp;= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\\
 &amp;\\
@@ -512,7 +517,7 @@ September 11, 2025
 <div class="fragment">
 <ul>
 <li><p>Could fit <span class="alert">separate regressions</span> for each group… no “global” estimate of exposure effect</p></li>
-<li><p>Could <span class="alert">add group as covariate</span> in model… violates parameters vs data size assumptions</p></li>
+<li><p>Could <span class="alert">add group as covariate</span> in model… fixes the issue (and takes care of confounding) but violates parameters vs data size assumptions</p></li>
 <li><p>Could do <span class="alert">cluster-level model</span>… we lose a lot of individual-level information</p></li>
 <li><p>… Something else?</p></li>
 </ul>
@@ -658,10 +663,6 @@ September 11, 2025
 </li>
 <li><p>Within-cluster variation: <span class="math inline">\(\color{BlueViolet}{\vec{\epsilon}_i}\)</span></p></li>
 </ol>
-<ul>
-<li>The systematic variation is what we’re <span class="alert">making assumptions about</span>
-</li>
-</ul>
 </li>
 </ol>
 </div>
@@ -711,7 +712,12 @@ September 11, 2025
 <div class="fragment">
 <p>How is this different from adding groups as covariates?</p>
 <ul>
-<li>By estimating a global <span class="math inline">\(\sigma^2_b\)</span>, this allows clusters with fewer observations to be more influenced by the rest of the data (“borrow” information), and clusters with more observations to be less influenced</li>
+<li>
+<p>By estimating a global <span class="math inline">\(\sigma^2_b\)</span>, this allows clusters with fewer observations to be more influenced by the rest of the data (“borrow” information), and clusters with more observations to be less influenced</p>
+<ul>
+<li>Clusters with few observations have their intercepts pulled toward the global intercept <span class="math inline">\(\beta_0\)</span>!</li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="fragment">
@@ -726,7 +732,7 @@ September 11, 2025
 <li>
 <p>Assumes that <span class="alert">clusters</span> are <em>randomly</em> varying around the population mean response: <span class="math inline">\(E[b_{0i}]=0\)</span></p>
 <ul>
-<li>If you added groups as covariates instead, those would assume nothing about this</li>
+<li>If you added cluster IDs as covariates instead, those cluster-level slopes wouldn’t assume anything about randomness</li>
 </ul>
 </li>
 <li><p>The typical cluster-to-cluster deviation in the overall level of the response is <span class="math inline">\(\sqrt{\sigma^2_b}\)</span></p></li>
@@ -800,10 +806,15 @@ September 11, 2025
 <p><span class="math display">\[\widehat{\beta} = \left(\sum_{i=1}^n \boldsymbol{X}^T \left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i\right)^{-1}\sum_{i=1}^n \boldsymbol{X}^T \left\{Cov[\vec{Y}_i]\right\}^{-1}\vec{Y}_i\]</span></p>
 <div class="fragment">
 <ul>
-<li><p>In OLS and WLS, we used <span class="alert">maximum likelihood</span> to estimate <span class="math inline">\(\beta\)</span>’s and variance components</p></li>
-<li><p>In LMEs, we use <span class="alert">restricted maximum likelihood (REML)</span> estimation because MLE gives us biased estimates of the covariance components in small samples</p></li>
-<li>
-<p>This means that we <span class="alert">cannot</span> perform likelihood ratio test-based inference for <span class="math inline">\(\vec{\beta}\)</span> when using REML!</p>
+<li>In OLS and WLS, we used <span class="alert">maximum likelihood</span> to estimate <span class="math inline">\(\beta\)</span>’s and variance components</li>
+</ul>
+<p><br></p>
+<ul>
+<li>In LMEs, we generally use <span class="alert">restricted maximum likelihood (REML)</span> estimation because MLE gives us biased estimates of the covariance components in small samples</li>
+</ul>
+<p><br></p>
+<ul>
+<li>This means that we <span class="alert">cannot</span> perform <u>likelihood ratio test</u>-based inference for <span class="math inline">\(\vec{\beta}\)</span> when using REML!
 <ul>
 <li>Wald-based inference (z/t-tests and confidence intervals) are still fine, though</li>
 </ul>
@@ -817,28 +828,37 @@ September 11, 2025
 <p>The “model-based” covariance matrix for <span class="math inline">\(\widehat{\beta}\)</span> is <span class="math display">\[Cov[\widehat{\beta}]=\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}\]</span></p>
 <div class="fragment">
 <p>The confidence intervals for <span class="math inline">\(\vec{\beta}\)</span> will take the form:</p>
-<p><span class="math display">\[\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}\]</span></p>
+<p><span class="math display">\[\widehat{\beta} \pm Z_{1-\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}\]</span></p>
 </div>
 </section><section id="inference-for-widehatbeta-2" class="slide level2"><h2>Inference for <span class="math inline">\(\widehat{\beta}\)</span>
 </h2>
-<p><span class="math display">\[\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}\]</span></p>
+<p><span class="math display">\[\widehat{\beta} \pm Z_{1-\alpha/2} \text{diag}\left(\sum_{i=1}^n \boldsymbol{X}_i^T\left\{Cov[\vec{Y}_i]\right\}^{-1}\boldsymbol{X}_i^T\right)^{-1}\]</span></p>
 <p>Wait, I thought we usually like to use a <span class="math inline">\(t\)</span>-distribution critical value for confidence intervals?</p>
 <ul>
-<li><p>Generally, yes</p></li>
-<li><p>This gets complicated in correlated data when we try to calculate the degrees of freedom: each observation doesn’t contribute fully independent information, so what is <span class="math inline">\(n\)</span> really?</p></li>
-<li><p>Often we can just use a standard normal Z critical value</p></li>
-<li>
-<p>For small sample sizes, we can use a Satterthwaite or Kenward-Roger approximation of the degrees of freedom</p>
+<li>Generally, yes</li>
+</ul>
+<p><br></p>
 <ul>
-<li><p>Available in SAS via <code>PROC GLIMMIX</code></p></li>
-<li><p>Available in R via <code>model_parameters()</code> function in the <code>parameters</code> package</p></li>
+<li>This gets complicated in correlated data when we try to calculate the degrees of freedom: each observation doesn’t contribute fully independent information, so what is <span class="math inline">\(n\)</span> really?</li>
+</ul>
+<p><br></p>
+<ul>
+<li>Often we can just use a standard normal Z critical value</li>
+</ul>
+<p><br></p>
+<ul>
+<li>For small sample sizes, we can use a Satterthwaite or Kenward-Roger approximation of the degrees of freedom
+<ul>
+<li>Available in SAS via <code>PROC GLIMMIX</code>
+</li>
+<li>Available in R via <code>model_parameters()</code> function in the <code>parameters</code> package</li>
 </ul>
 </li>
 </ul></section><section id="icc-in-lmes" class="slide level2"><h2>ICC in LMEs</h2>
 <p>LMEs also make it very intuitive to calculate the ICC</p>
 <p><span class="math display">\[\vec{\xi}_i = \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <p><span class="math display">\[b_{i0} \sim N(0, \sigma^2_b)\]</span></p>
-<p><span class="math display">\[\epsilon_{ij} \sim N(0, \sigma^2_\epsilon)\]</span></p>
+<p><span class="math display">\[\epsilon_{ij} \sim N(0, \sigma^2_\epsilon)\]</span> <br></p>
 <p><span class="math display">\[\begin{align*}\text{ICC} &amp;= \frac{\text{variation in cluster means}}{\text{variation in cluster means } + \text{individual-level variation}}\\
 &amp;= \frac{\sigma^2_b}{\sigma^2_b + \sigma^2_{\epsilon}}\end{align*}\]</span></p>
 <!-- --- -->
@@ -847,7 +867,7 @@ September 11, 2025
 </section><section id="confounding-by-cluster-membership-in-lmes" class="slide level2"><h2>Confounding by cluster membership in LMEs</h2>
 <p>The chief purpose of LMEs is to account for correlations between observations</p>
 <ul>
-<li>They assume cluster membership adds an additional level of variation to the outcome that isn’t accounted for by OLS modeling strategies</li>
+<li>They assume cluster membership adds an <span class="alert">additional level of variation</span> to the outcome that isn’t accounted for by OLS modeling strategies</li>
 </ul>
 <div class="fragment">
 <p>Also assumes the random effects are independent of the fixed effect variables</p>
@@ -947,7 +967,6 @@ factor(county)CARLTON     1.0456783 0.22986071  4.549182 6.185498e-06</code></pr
 </div>
 <div class="columns">
 <div class="column" style="width:60%;">
-<div class="fragment">
 <ul>
 <li>
 <p>OLS <span class="math inline">\(\beta_1\)</span>: -0.6892</p>
@@ -956,7 +975,6 @@ factor(county)CARLTON     1.0456783 0.22986071  4.549182 6.185498e-06</code></pr
 </ul>
 </li>
 </ul>
-</div>
 <div class="fragment">
 <p>What differences can you see compared to the previous LME?</p>
 <ul>

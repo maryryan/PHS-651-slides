@@ -411,10 +411,10 @@ September 16, 2025
 <p><em>If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.</em></p>
 <p><em>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</em></p>
 </div>
-<div class="absolute" style="left: 260px; bottom: 50px; width: 1500px; ">
+<div class="absolute" style="left: 300px; bottom: 280px; width: 1500px; ">
 <p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/F25/lec-2-1/slides-2-1" class="uri">https://maryryan.github.io/PHS-651-slides/F25/lec-2-1/slides-2-1</a></p>
 </div>
-<div class="absolute" style="left: 100px; bottom: 0px; width: 150px; ">
+<div class="absolute" style="left: 50px; bottom: 175px; width: 250px; ">
 <div class="cell">
 <div class="cell-output-display">
 <p><img data-src="slides-2-1_files/figure-revealjs/qr%20code-1.png" width="192"></p>
@@ -422,27 +422,93 @@ September 16, 2025
 </div>
 </div>
 </section><section id="recap-linear-mixed-effect-models" class="slide level2"><h2>Recap: linear mixed effect models</h2>
-<p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[Y_{ij} = \beta_0 + u_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}\]</span> or in the more general matrix notation form: <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
 <ul>
-<li><p><span class="math inline">\(\boldsymbol{X}_i\vec{\beta}\)</span> are the <span class="alert">fixed effects</span> representing the mean responses for cluster <span class="math inline">\(i\)</span></p></li>
-<li><p><span class="math inline">\(\vec{Z}_ib_{0i}\)</span> are the <span class="alert">random effects</span> accounting for random between-cluster variation</p></li>
-<li><p><span class="math inline">\(\vec{\epsilon}_i\)</span> is the regular between-individual variation</p></li>
+<li><p><span class="math inline">\(\beta_0 + u_{ij}\beta_1\)</span> (or <span class="math inline">\(\boldsymbol{X}_i\vec{\beta}\)</span>) are the <span class="alert">fixed effects</span> representing the mean responses for cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(Z_i b_{0i}\)</span> (<span class="math inline">\(\vec{Z}_ib_{0i}\)</span>) are the <span class="alert">random effects</span> accounting for random between-cluster variation</p></li>
+<li>
+<p><span class="math inline">\(\epsilon_{ij}\)</span> (<span class="math inline">\(\vec{\epsilon}_i\)</span>) is the regular between-individual variation</p>
+<ul>
+<li>or an individual’s variation from the predicted outcome <span class="math inline">\(\widehat{Y}_{ij} = E[Y_{ij}|\boldsymbol{X},b_{0i}]=\beta_0 + U_{ij}\beta_1\)</span>
+</li>
+<li><span class="math inline">\(\epsilon_{ij} = (Y_{ij} - \widehat{Y}_{ij})^2\)</span></li>
 </ul>
+</li>
+</ul></section><section id="variancecovariance-of-the-outcome" class="slide level2"><h2>Variance/covariance of the outcome</h2>
+<p><span class="math display">\[Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}\]</span> <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p>Then the variance of a single outcome measure is: <span class="math display">\[\begin{align*}Var[Y_{ij}|\boldsymbol{X}_i] &amp;= Var[(\beta_0 + U_{ij}\beta_1) + Z_ib_{0i}+\epsilon_{ij}|\boldsymbol{X}_i]\\
+&amp;= Var[Z_ib_{0i}+\epsilon_{ij}]\\
+&amp;= \sigma^2_b + \sigma^2_{\epsilon}\end{align*}\]</span></p>
+<div class="alert absolute" style="top: 450px; right: 450px; ">
+<p>(total variation!)</p>
+</div>
 <div class="fragment">
+<p>And the covariance between 2 outcome measures in the same cluster is: <span class="math display">\[\begin{align*}Cov[\color{red}{Y_{ij}}, \color{blue}{Y_{ik}}|\boldsymbol{X}_i] &amp;= Cov[\color{red}{(\beta_0 + U_{ij}\beta_1) + Z_ib_{0i}+\epsilon_{ij}}, \color{blue}{(\beta_0 + U_{ik}\beta_1) + Z_ib_{0i}+\epsilon_{ik}}|\boldsymbol{X}_i]\\
+&amp;= Cov[\color{red}{Z_i b_{0i}+\epsilon_{ij}}, \color{blue}{Z_ib_{0i}+\epsilon_{ik}}]\\
+&amp;= Cov[\color{red}{Z_ib_{0i}}, \color{blue}{Z_ib_{0i}}] + Cov[\color{red}{\epsilon_{ij}}, \color{blue}{Z_ib_{0i}}] + Cov[\color{red}{Z_ib_{0i}}, \color{blue}{\epsilon_{ik}}] + Cov[\color{red}{\epsilon_{ij}}, \color{blue}{\epsilon_{ik}}]\\
+&amp;= \sigma^2_b + 0 + 0 + 0 \text{(since we assume random effects } b_{i0} \text{ are independent of individual error } \epsilon_{ij}\text{)}\\
+&amp;= \sigma^2_b\end{align*}\]</span></p>
+<div class="alert.absolute" data-bottom="125" data-left="650">
+<p>In 552, we were used to seeing <span class="math inline">\(Cov[Y_{ij}, Y_{ik}]=0\)</span>!</p>
+</div>
+</div>
+</section><section id="what-does-this-covariance-matrix-look-like-for-observations-in-cluster-i" class="slide level2 smaller"><h2>What does this covariance matrix look like (for observations in cluster <em>i</em>)?</h2>
+<p><span class="math display">\[\begin{align*}Cov[\vec{Y}_i|\boldsymbol{X}_i] &amp;= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \sigma^2_\epsilon \boldsymbol{I}\\
+&amp;= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
+&amp;=\begin{bmatrix}
+\sigma^2_b &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b
+\end{bmatrix} + \begin{bmatrix}
+\sigma^2_\epsilon &amp; 0 &amp; \dots &amp; 0\\
+0 &amp; \ddots &amp; \dots &amp; 0\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+0&amp; \dots &amp; 0 &amp; \sigma^2_\epsilon
+\end{bmatrix}\\
+&amp;=\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}\end{align*}\]</span></p>
+<ul>
+<li>
+<p>Known as a <span class="alert">block exchangeable</span> matrix or <span class="alert">compound symmetry</span></p>
+<ul>
+<li>Assumes everyone in the same cluster is similarly <em>exchangeable</em>, but assumes people from different clusters are <em>independent</em>
+</li>
+</ul>
+</li>
+</ul></section><section id="what-does-this-covariance-matrix-look-like-for-all-observations" class="slide level2"><h2>What does this covariance matrix look like (for all observations)?</h2>
+<p>If you look at the <em>full</em> covariance matrix for all observations, it looks like a diagonal of these <span class="alert">block matrices</span> with a bunch of 0’s on the off diagonals</p>
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="blockmatrix.png" style="width:40.0%"></p>
+<figcaption>From the SAS blog: <a href="https://blogs.sas.com/content/iml/2012/11/07/constructing-block-matrices.html" class="uri">https://blogs.sas.com/content/iml/2012/11/07/constructing-block-matrices.html</a></figcaption></figure>
+</div>
+</section><section id="recap-linear-mixed-effect-models-1" class="slide level2"><h2>Recap: linear mixed effect models</h2>
+<p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[Y_{ij} = \beta_0 + u_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}\]</span> or in the more general matrix notation form: <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\beta_0 + u_{ij}\beta_1\)</span> (or <span class="math inline">\(\boldsymbol{X}_i\vec{\beta}\)</span>) are the <span class="alert">fixed effects</span> representing the mean responses for cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(Z_i b_{0i}\)</span> (<span class="math inline">\(\vec{Z}_ib_{0i}\)</span>) are the <span class="alert">random effects</span> accounting for random between-cluster variation</p></li>
+</ul>
 <p>The <span class="alert">fixed effects</span> are shared across everyone in the sample, while the <span class="alert">random effects</span> are unique to a particular cluster</p>
+<ul>
+<li>
 <p>Interpretations of <span class="math inline">\(\beta_1\)</span> in an LME are <span class="alert">conditional</span> because they are comparing 2 individuals with the same cluster membership</p>
 <ul>
 <li>Often referred to as having individual-specific or cluster-specific interpretation</li>
 </ul>
-</div>
+</li>
+</ul>
 <div class="fragment">
 <p><span class="alert">We can also extend this model to non-continuous/non-Normal outcome data</span></p>
 </div>
 </section><section id="review-logistic-regression" class="slide level2"><h2>552 review: logistic regression</h2>
-<p>If our outcome for an individual <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_{j}\)</span>, is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} = \beta_0 + U_j\beta_1 + \epsilon_j\]</span></p>
+<p>If our outcome for an individual <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_{j}\)</span>, is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} + \epsilon_j = \beta_0 + U_j\beta_1 + \epsilon_j\]</span></p>
 <ul>
 <li>
-<p>We assume <span class="math inline">\(Y_j \sim \text{Binomial}(p_j)\)</span></p>
+<p>We assume <span class="math inline">\(Y_j\)</span> follows a binomial distrigution <span class="math inline">\(\text{Binomial}(p_j)\)</span> with event probability <span class="math inline">\(p_j\)</span></p>
 <ul>
 <li><span class="math inline">\(E[Y_j] = p_j\)</span></li>
 </ul>
@@ -456,7 +522,7 @@ September 16, 2025
 </ul>
 </li>
 </ul></section><section id="review-logistic-regression-1" class="slide level2"><h2>522 review: logistic regression</h2>
-<p>If our outcome for an individual <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_{j}\)</span>, is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} = \beta_0 + U_j\beta_1 + \epsilon_j\]</span></p>
+<p>If our outcome for an individual <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_{j}\)</span>, is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} +\epsilon_j = \beta_0 + U_j\beta_1 + \epsilon_j\]</span></p>
 <ul>
 <li>
 <span class="math inline">\(\beta_1\)</span> tells us about the <span class="alert">log odds</span>:</li>
@@ -487,7 +553,9 @@ September 16, 2025
 </div>
 </section><section id="generalized-linear-models" class="slide level2"><h2>Generalized linear models</h2>
 <p>In the independent observation setting, many types of data are modeled using a common <span class="alert">generalized linear model</span> (GLM) structure</p>
-<p><span class="math display">\[g(Y_j) = \boldsymbol{X}_j\vec{\beta} + \epsilon_j\]</span></p>
+<p>Say we want to look at the effect of an exposure variable <span class="math inline">\(U\)</span> on an outcome variable <span class="math inline">\(Y\)</span>:</p>
+<p><span class="math display">\[\begin{align*}g(Y_j) &amp;= \boldsymbol{X}_j\vec{\beta} + \epsilon_j\\
+&amp;= \beta_0 + U_j\beta_1 + \epsilon_j\end{align*}\]</span></p>
 <ul>
 <li><p><span class="math inline">\(g(\cdot)\)</span> is known as the <span class="alert">link function</span> because it <em>links</em> a linear model on the righthand side to the outcome on the lefthand side</p></li>
 <li><p><span class="math inline">\(\epsilon_j\)</span> will still be Normally distributed, but its variance <span class="math inline">\(\sigma^2_{\epsilon}\)</span> will match the distribution of <span class="math inline">\(Y_j\)</span></p></li>
@@ -495,15 +563,10 @@ September 16, 2025
 <p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0\]</span></p>
 <p>where</p>
 <ul>
-<li><p>The mean of the outcome <span class="math inline">\(E[Y_j]=\mu_j(\vec{\beta})\)</span> is a function of <span class="math inline">\(\vec{\beta}\)</span></p></li>
+<li><p>The mean of the outcome <span class="math inline">\(E[Y_j]=\mu_j(\vec{\beta})\)</span> is a function of our model parameters <span class="math inline">\(\vec{\beta}\)</span></p></li>
 <li><p>The variance of the outcome <span class="math inline">\(Var[Y_j] = v_j\)</span> is some function <span class="math inline">\(v_j\)</span></p></li>
-</ul>
-<div class="fragment">
-<ul>
-<li>The estimating equation is actually just the derivative of the likelihood with respect to regression parameters <span class="math inline">\(\beta\)</span> (<span class="math inline">\(\partial f(y_j)/\partial \beta\)</span>)</li>
-</ul>
-</div>
-</section><section id="generalized-linear-models-2" class="slide level2"><h2>Generalized linear models</h2>
+<li><p><u>Bonus fact</u>: The estimating equation is actually just the derivative of the likelihood with respect to regression parameters <span class="math inline">\(\beta\)</span> (<span class="math inline">\(\partial f(y_j)/\partial \beta\)</span>)</p></li>
+</ul></section><section id="generalized-linear-models-2" class="slide level2"><h2>Generalized linear models</h2>
 <p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0\]</span></p>
 <p>Look similar?</p>
 <p><span class="math display">\[\sum_{j=1}^n\boldsymbol{X}^T\frac{1}{\sigma^2}[Y_j - \boldsymbol{X}\vec{\beta}]=0 \]</span></p>
@@ -511,7 +574,7 @@ September 16, 2025
 <p>OLS is a type of GLM!</p>
 <ul>
 <li>
-<p><span class="math inline">\(E[Y_j] = \mu_j(\beta) = \boldsymbol{X}\vec{\beta}\)</span></p>
+<p><span class="math inline">\(E[Y_j] = \mu_j(\beta) = \boldsymbol{X}\vec{\beta} = \beta_0 + U_j\beta_1\)</span></p>
 <ul>
 <li><span class="math inline">\(\left(\frac{\partial \mu_j}{\partial \beta}\right) = \boldsymbol{X}\)</span></li>
 </ul>
@@ -567,19 +630,19 @@ September 16, 2025
 <tr class="odd">
 <td>Normal</td>
 <td><span class="math inline">\(v(\mu)=1\)</span></td>
-<td>Identity: <span class="math inline">\(g(\mu) = \mu = \boldsymbol{X}_i\vec{\beta}\)</span>
+<td>Identity: <span class="math inline">\(g(\mu) = \mu = \boldsymbol{X}_j\vec{\beta}\)</span>
 </td>
 </tr>
 <tr class="even">
 <td>Bernoulli/Binomial</td>
 <td><span class="math inline">\(v(\mu)=\mu(1-\mu)\)</span></td>
-<td>Logit: <span class="math inline">\(g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_i\vec{\beta}\)</span>
+<td>Logit: <span class="math inline">\(g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_j\vec{\beta}\)</span>
 </td>
 </tr>
 <tr class="odd">
 <td>Poisson</td>
 <td><span class="math inline">\(v(\mu)=\mu\)</span></td>
-<td>Log: <span class="math inline">\(g(\mu) = \log(\mu)= \boldsymbol{X}_i\vec{\beta}\)</span>
+<td>Log: <span class="math inline">\(g(\mu) = \log(\mu)= \boldsymbol{X}_j\vec{\beta}\)</span>
 </td>
 </tr>
 </tbody>
@@ -595,14 +658,14 @@ September 16, 2025
 <li><p>Assume that <span class="math inline">\(g(\cdot)\)</span> is the identity function <span class="math inline">\(g(\mu) = \mu\)</span></p></li>
 <li><p>Model is then</p></li>
 </ul>
-<p><span class="math display">\[g(E[Y_i]) = \mu_i = \boldsymbol{X}_i\vec{\beta}\]</span></p>
+<p><span class="math display">\[g(E[Y_j]) = \mu_j = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_j\beta_1\]</span></p>
 <p>a standard linear regression model</p>
 <ul>
 <li>
-<p>Variance is <span class="math inline">\(\text{Var}[Y_i] = \phi = \sigma^2\)</span></p>
+<p>Variance is <span class="math inline">\(\text{Var}[Y_j] = \phi = \sigma^2\)</span></p>
 <ul>
 <li>
-<span class="math inline">\(v(\mu_i) = 1\)</span> (independent of mean)</li>
+<span class="math inline">\(v(\mu_j) = 1\)</span> (independent of mean)</li>
 </ul>
 </li>
 </ul></section><section id="exponential-family-and-glms-examples-1" class="slide level2"><h2>Exponential family and GLMs: examples</h2>
@@ -611,11 +674,11 @@ September 16, 2025
 <li><p>Assume that <span class="math inline">\(g(\cdot)\)</span> is the logit function <span class="math inline">\(g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)\)</span></p></li>
 <li><p>Model is then</p></li>
 </ul>
-<p><span class="math display">\[g(E[Y_i]) = \log\left(\frac{\mu_i}{1-\mu_i}\right) = \boldsymbol{X}_i\vec{\beta}\]</span></p>
+<p><span class="math display">\[g(E[Y_j]) = \log\left(\frac{\mu_j}{1-\mu_j}\right) = \boldsymbol{X}_j\vec{\beta}\]</span></p>
 <p>a logistic regression model</p>
 <ul>
 <li>
-<p>Variance is <span class="math inline">\(\text{Var}[Y_i] = v(\mu_i) = \mu_i(1-\mu_i)\)</span> (<em>dependent</em> on mean)</p>
+<p>Variance is <span class="math inline">\(\text{Var}[Y_j] = v(\mu_j) = \mu_j(1-\mu_j)\)</span> (<em>dependent</em> on mean)</p>
 <ul>
 <li>
 <span class="math inline">\(\phi = 1\)</span> <!-- ## Exponential family -->
@@ -629,9 +692,9 @@ September 16, 2025
 <li>We call this hybrid a <span class="alert">generalized linear mixed model</span> (GLMMs)</li>
 </ul>
 <div class="fragment">
-<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span> <span class="math display">\[g(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}\]</span></p>
 <ul>
-<li><p>Assumes <span class="math inline">\([\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\)</span> is distributed as a member of the exponential family</p></li>
+<li><p>Assumes our outcome <span class="math inline">\([\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\)</span> is distributed as a member of the exponential family</p></li>
 <li><p>We’ll use a distribution assumption to assume link function <span class="math inline">\(g(\cdot)\)</span> and the form of within-cluster variance <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}_i,b_{0i}]\)</span></p></li>
 </ul>
 </div>
@@ -640,7 +703,7 @@ September 16, 2025
 <ul>
 <li>We call this hybrid a <span class="alert">generalized linear mixed model</span> (GLMMs)</li>
 </ul>
-<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span> <span class="math display">\[g(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}\]</span></p>
 <ul>
 <li>Just as with Normally-distributed outcomes, the random intercepts will still give us an exchangeable covariance structure</li>
 </ul>
@@ -656,8 +719,8 @@ September 16, 2025
 </ul></section><section id="logistic-linear-mixed-models" class="slide level2"><h2>Logistic linear mixed models</h2>
 <p>Let’s be more specific</p>
 <ul>
-<li><p>Say we have <span class="math inline">\(\vec{Y}_i\)</span> that is distributed Bernoulli with probability of success <span class="math inline">\(p_{ij}\)</span></p></li>
-<li><p>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(\vec{Y}_i\)</span></p></li>
+<li><p>Say we have an outcome <span class="math inline">\(Y_{ij}\)</span> that is distributed Bernoulli with probability of success <span class="math inline">\(p_{ij}\)</span></p></li>
+<li><p>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(Y_{ij}\)</span></p></li>
 </ul>
 <p><span class="alert">What would our model look like?</span></p>
 <div class="fragment">
@@ -674,95 +737,10 @@ September 16, 2025
 <p><span class="alert">How do we interpret <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(b_{0i}\)</span> in this setting?</span></p>
 <div class="fragment">
 <ul>
-<li><p><span class="math inline">\(e^{\beta_0}\)</span>: grand odds of the event occurring</p></li>
-<li><p><span class="math inline">\(e^{\beta_0 + b_{i0}}\)</span>: cluster <span class="math inline">\(i\)</span>-specific odds of the event occurring</p></li>
-<li><p><span class="math inline">\(e^{b_{i0}}\)</span>: odds ratio/relative change in odds of the event occurring in cluster <span class="math inline">\(i\)</span> compared to grand odds</p></li>
+<li><p><span class="math inline">\(\exp{(\beta_0)}\)</span>: grand odds of the event occurring (in the reference group <span class="math inline">\(u_{ij}=0\)</span>)</p></li>
+<li><p><span class="math inline">\(\exp{(\beta_0 + b_{i0})}\)</span>: cluster <span class="math inline">\(i\)</span>-specific odds of the event occurring</p></li>
+<li><p><span class="math inline">\(\exp{(b_{i0})}\)</span>: odds ratio/relative change in odds of the event occurring in cluster <span class="math inline">\(i\)</span> compared to grand odds</p></li>
 </ul>
-</div>
-</section><section id="some-notes-on-estimation" class="slide level2"><h2>Some notes on estimation</h2>
-<p>In order to estimate regression coefficients/covariances from the likelihood function for a GLMM, we usually need to do some approximations</p>
-<ul>
-<li>
-<p>There are 2 ways to do this:</p>
-<ol type="1">
-<li><p>Approximate maximum likelihood (penalized quasi-likelihood)</p></li>
-<li><p>Approximate the integral (Gaussian quadrature or Laplace approximation)</p></li>
-</ol>
-</li>
-</ul>
-<div class="fragment">
-<ul>
-<li>
-<p>In the last 10-15 years, <span class="alert">Gaussian quadrature</span>/Laplace approximation has become the preferred method (if you don’t want to go Bayesian)</p>
-<ul>
-<li><p>However, GQ can get computationally expensive/intensive if you have lots of random effects</p></li>
-<li><p>Laplace approximation is like GQ with only one quadrature point (less precise, but uses fewer computational resources)</p></li>
-</ul>
-</li>
-</ul>
-</div>
-</section><section id="software-using-gassuain-quadraturelaplace-approximation" class="slide level2"><h2>Software using Gassuain quadrature/Laplace approximation</h2>
-<p>There are several types of functions/procedures out there that use Gaussian quadrature/Laplace approximation, but I’m recommending</p>
-<ul>
-<li>
-<p>In R: <code>glmer()</code></p>
-<ul>
-<li>Other functions (like <code>glmmML()</code> and <code>glmm()</code> ) have trouble extending to longitudinal models</li>
-</ul>
-</li>
-</ul>
-<p><br></p>
-<ul>
-<li>
-<p>In SAS</p>
-<ul>
-<li>
-<p><code>PROC GLIMMIX METHOD=QUAD</code> and <code>PROC NLMIXED METHOD=GAUSS</code> use Gaussian quadrature</p>
-<ul>
-<li>By default, they find the optimal number of quadrature points (adaptive Gaussian quadrature)</li>
-</ul>
-</li>
-<li>
-<p><code>PROC GLIMMIX METHOD=LAPLACE</code> uses Laplace approximation</p>
-<ul>
-<li>Not quite as “accurate” as GQ, but may converge in instances when GQ won’t</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul></section><section id="troubleshooting-convergence-issues" class="slide level2"><h2>Troubleshooting convergence issues</h2>
-<p>Because we need to use approximation to estimate regression coefficients/covariances, sometimes the algorithm won’t converge. There are several possible ways to troubleshoot this.</p>
-<ol type="1">
-<li>
-<p>If using GQ, try changing the number of quadrature points</p>
-<ul>
-<li><p>In SAS, you can specify a specific number of points with the <code>(QPOINTS= )</code> argument</p></li>
-<li><p>In R, you can specify a specific number of points with the <code>nAGQ=</code> argument (default is 1, resulting in Laplace approximation; can also specify 0 if even Laplace won’t converge)</p></li>
-<li><p>Fewer quadrature points will be less precise, but will use fewer computational resources (more likely to converge)</p></li>
-</ul>
-</li>
-</ol></section><section id="troubleshooting-convergence-issues-1" class="slide level2"><h2>Troubleshooting convergence issues</h2>
-<p>Because we need to use approximation to estimate regression coefficients/covariances, sometimes the algorithm won’t converge. There are several possible ways to troubleshoot this.</p>
-<ol start="2" type="1">
-<li>
-<p>Change the optimizer and increase the number of max iterations</p>
-<ul>
-<li>
-<p>In R, you can add the argument <code>control=glmerControl( optimizer="bobyqa", optCtrl=list(maxfun=200000) )</code> to change the optimizer to <code>bobyqa</code> and change the maximum bumber of iterations to 200,000</p>
-<ul>
-<li>More iterations = more computation time, so don’t go ham (but should use at least 100,000 here)</li>
-</ul>
-</li>
-<li><p>In SAS, you can add the argument <code>NLOPTIONS maxiter=1000;</code> to change the maximum number of iterations to 1,000 (no recommended min number here)</p></li>
-</ul>
-</li>
-</ol></section><section id="comparing-results-between-sas-and-r" class="slide level2"><h2>Comparing results between SAS and R</h2>
-<p>Fair warning: because we’re using approximation algorithms to estimate our regression coefficients, SAS and R <span class="alert">may give you different results</span>, even if both are using the same type of algorithm</p>
-<ul>
-<li>Ideally these differences aren’t large, but depends on how much and what type of data you have</li>
-</ul>
-<div class="fragment">
-<p>… But now let’s see these methods in action!</p>
 </div>
 </section><section id="example-cancer-remission" class="slide level2"><h2>Example: cancer remission</h2>
 <!-- https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/ -->
@@ -911,54 +889,13 @@ CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
 </ul>
 </div>
 </div>
-</section><section id="example-cancer-remission-5" class="slide level2"><h2>Example: cancer remission</h2>
-<p>A brief comparison of <code>glmmPQL</code> vs <code>glmer</code> (Laplace) vs <code>glmer</code> (GQ with 10 q-points):</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb9-2"><a href="#cb9-2"></a>pql_fit <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
-<span id="cb9-3"><a href="#cb9-3"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> doc_ID, <span class="at">family =</span> binomial, <span class="at">data =</span> cancer, <span class="at">verbose =</span> F )</span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="fu">summary</span>( pql_fit )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                    Value  Std.Error   DF    t-value      p-value
-(Intercept)    -2.6355391 0.44747734 8115  -5.889771 4.021412e-09
-Experience      0.1074656 0.02450726  405   4.385051 1.480059e-05
-CancerStageII  -0.4681372 0.06208941 8115  -7.539727 5.218208e-14
-CancerStageIII -1.0892780 0.07847836 8115 -13.879980 2.612280e-43
-CancerStageIV  -2.4132991 0.12745333 8115 -18.934767 2.823650e-78</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">summary</span>(glmm_fit)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                 Estimate Std. Error    z value     Pr(&gt;|z|)
-(Intercept)    -2.9477893 0.48456845  -6.083329 1.177125e-09
-Experience      0.1187726 0.02649019   4.483643 7.337924e-06
-CancerStageII  -0.4856890 0.07099432  -6.841238 7.851168e-12
-CancerStageIII -1.1208592 0.09006870 -12.444492 1.498347e-35
-CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>glmm_fit_agq <span class="ot">&lt;-</span> <span class="fu">glmer</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> doc_ID),<span class="at">family =</span> binomial, <span class="at">data =</span> cancer,</span>
-<span id="cb13-2"><a href="#cb13-2"></a>                       <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>), <span class="at">nAGQ=</span><span class="dv">10</span> )</span>
-<span id="cb13-3"><a href="#cb13-3"></a></span>
-<span id="cb13-4"><a href="#cb13-4"></a><span class="fu">summary</span>(glmm_fit_agq)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                 Estimate Std. Error    z value     Pr(&gt;|z|)
-(Intercept)    -2.9529558 0.50079175  -5.896574 3.711257e-09
-Experience      0.1189719 0.02730504   4.357139 1.317733e-05
-CancerStageII  -0.4867531 0.07279083  -6.687011 2.277741e-11
-CancerStageIII -1.1241823 0.09217574 -12.196076 3.261673e-34
-CancerStageIV  -2.4922475 0.15023385 -16.589121 8.353380e-62</code></pre>
-</div>
-</div>
 </section><section id="alternate-link-functions-for-binary-data" class="slide level2"><h2>Alternate link functions for binary data</h2>
 <p>Binary outcomes are special in that there are several alternative link functions you can use</p>
 <ul>
 <li>
 <p>The <span class="alert">logit</span> link is very common</p>
 <ul>
-<li>Gives us odds ratios and log-odds ratios for <span class="math inline">\(\beta_1\)</span>
+<li>Gives us <u>odds ratios</u> and <u>log-odds</u> ratios for <span class="math inline">\(\beta_1\)</span>
 </li>
 </ul>
 </li>
@@ -972,7 +909,7 @@ CancerStageIV  -2.4922475 0.15023385 -16.589121 8.353380e-62</code></pre>
 <li>
 <p>The <span class="alert">log</span> link and <span class="alert">identity</span> links also get used</p>
 <ul>
-<li>The former gives us risk ratios for <span class="math inline">\(\beta_1\)</span>, while the latter gives us risk differences for <span class="math inline">\(\beta_1\)</span>
+<li>The former gives us <u>risk ratios</u> for <span class="math inline">\(\beta_1\)</span>, while the latter gives us <u>risk differences</u> for <span class="math inline">\(\beta_1\)</span>
 </li>
 </ul>
 </li>
@@ -995,18 +932,26 @@ CancerStageIV  -2.4922475 0.15023385 -16.589121 8.353380e-62</code></pre>
 <li>This is not the case for all GLMMs</li>
 </ul>
 <p>Take a logistic mixed effects model:</p>
-<p><span class="math display">\[\text{logit}(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
+<p><span class="math display">\[\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}\]</span> <span class="math display">\[\text{logit}(\vec{Y}_{i}) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_{i}\]</span></p>
 <div class="fragment">
 <ul>
-<li>The conditional mean of our outcome is then: <span class="math display">\[\text{logit}(\mu_i)=\text{logit}(E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}\]</span>
+<li>The conditional mean of our outcome is then: <span class="math display">\[\text{logit}(\mu_{ij})=\text{logit}(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]) = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}\]</span>
 </li>
 </ul>
 </div>
 </section><section id="marginal-effects-in-glmms-1" class="slide level2"><h2>Marginal effects in GLMMs</h2>
-<p>In order to get the marginal effects, we would need to inverse-transform the outcome (undo the logit function): <span class="math display">\[E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\]</span></p>
+<p>In order to get the marginal effects, we would need to inverse-transform the outcome (undo the logit function): <span class="math display">\[E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}~~~~~~~ E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}{1+\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}\]</span></p>
 <div class="fragment">
-<p>and then take the marginal expectation of that: <span class="math display">\[\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &amp;= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
+<p>and then take the marginal expectation of that:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="math display">\[\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &amp;= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
 &amp;=E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right]\end{align*}\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><span class="math display">\[\begin{align*}E[Y_{ij}|\boldsymbol{X}_i] &amp;= E\left\{E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&amp;=E\left[\frac{\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}{1+\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}\right]\end{align*}\]</span></p>
+</div>
+</div>
 </div>
 <div class="fragment">
 <ul>
@@ -1019,7 +964,7 @@ CancerStageIV  -2.4922475 0.15023385 -16.589121 8.353380e-62</code></pre>
 </div>
 </section><section id="marginal-effects-in-identity-link-glmms" class="slide level2"><h2>Marginal effects in (identity link) GLMMs</h2>
 <p>But what if had a GLMM with a binary outcome and an identity link?</p>
-<p><span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
+<p><span class="math display">\[Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}\]</span> <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
 <div class="fragment">
 <ul>
 <li>The conditional mean of our outcome is then: <span class="math display">\[E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}\]</span>
@@ -1060,10 +1005,132 @@ CancerStageIV  -2.4922475 0.15023385 -16.589121 8.353380e-62</code></pre>
 </div>
 <div class="fragment">
 <p>Maybe what we need are specific <span class="alert">marginal models</span> that incorporate clustering… (stay tuned for next week)</p>
+</div>
+</section><section id="caveat-some-notes-on-estimation" class="slide level2"><h2>Caveat: Some notes on estimation</h2>
+<p>In order to estimate regression coefficients/covariances from the likelihood function for a GLMM, we usually need to do some approximations</p>
+<ul>
+<li>
+<p>There are 2 ways to do this:</p>
+<ol type="1">
+<li><p>Approximate maximum likelihood (penalized quasi-likelihood)</p></li>
+<li><p>Approximate the integral (Gaussian quadrature or Laplace approximation)</p></li>
+</ol>
+</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>
+<p>In the last 10-15 years, <span class="alert">Gaussian quadrature</span>/Laplace approximation has become the preferred method (if you don’t want to go Bayesian)</p>
+<ul>
+<li><p>However, GQ can get computationally expensive/intensive if you have lots of random effects</p></li>
+<li><p>Laplace approximation is like GQ with only one quadrature point (less precise, but uses fewer computational resources)</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</section><section id="caveat-software-using-gassuain-quadraturelaplace-approximation" class="slide level2"><h2>Caveat: Software using Gassuain quadrature/Laplace approximation</h2>
+<p>There are several types of functions/procedures out there that use Gaussian quadrature/Laplace approximation, but I’m recommending</p>
+<ul>
+<li>
+<p>In R: <code>glmer()</code></p>
+<ul>
+<li>Other functions (like <code>glmmML()</code> and <code>glmm()</code> ) have trouble extending to longitudinal models</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
+<ul>
+<li>
+<p>In SAS</p>
+<ul>
+<li>
+<p><code>PROC GLIMMIX METHOD=QUAD</code> and <code>PROC NLMIXED METHOD=GAUSS</code> use Gaussian quadrature</p>
+<ul>
+<li>By default, they find the optimal number of quadrature points (adaptive Gaussian quadrature)</li>
+</ul>
+</li>
+<li>
+<p><code>PROC GLIMMIX METHOD=LAPLACE</code> uses Laplace approximation</p>
+<ul>
+<li>Not quite as “accurate” as GQ, but may converge in instances when GQ won’t</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul></section><section id="caveat-troubleshooting-convergence-issues" class="slide level2"><h2>Caveat: Troubleshooting convergence issues</h2>
+<p>Because we need to use approximation to estimate regression coefficients/covariances, sometimes the algorithm won’t converge. There are several possible ways to troubleshoot this.</p>
+<ol type="1">
+<li>
+<p>If using GQ, try changing the number of quadrature points</p>
+<ul>
+<li><p>In SAS, you can specify a specific number of points with the <code>(QPOINTS= )</code> argument</p></li>
+<li><p>In R, you can specify a specific number of points with the <code>nAGQ=</code> argument (default is 1, resulting in Laplace approximation; can also specify 0 if even Laplace won’t converge)</p></li>
+<li><p>Fewer quadrature points will be less precise, but will use fewer computational resources (more likely to converge)</p></li>
+</ul>
+</li>
+</ol></section><section id="caveat-troubleshooting-convergence-issues-1" class="slide level2"><h2>Caveat: Troubleshooting convergence issues</h2>
+<p>Because we need to use approximation to estimate regression coefficients/covariances, sometimes the algorithm won’t converge. There are several possible ways to troubleshoot this.</p>
+<ol start="2" type="1">
+<li>
+<p>Change the optimizer and increase the number of max iterations</p>
+<ul>
+<li>
+<p>In R, you can add the argument <code>control=glmerControl( optimizer="bobyqa", optCtrl=list(maxfun=200000) )</code> to change the optimizer to <code>bobyqa</code> and change the maximum bumber of iterations to 200,000</p>
+<ul>
+<li>More iterations = more computation time, so don’t go ham (but should use at least 100,000 here)</li>
+</ul>
+</li>
+<li><p>In SAS, you can add the argument <code>NLOPTIONS maxiter=1000;</code> to change the maximum number of iterations to 1,000 (no recommended min number here)</p></li>
+</ul>
+</li>
+</ol></section><section id="caveat-comparing-results-between-sas-and-r" class="slide level2"><h2>Caveat: Comparing results between SAS and R</h2>
+<p>Fair warning: because we’re using approximation algorithms to estimate our regression coefficients, SAS and R <span class="alert">may give you different results</span>, even if both are using the same type of algorithm</p>
+<ul>
+<li>Ideally these differences aren’t large, but depends on how much and what type of data you have</li>
+</ul></section><section id="example-cancer-remission-5" class="slide level2"><h2>Example: cancer remission</h2>
+<p>A brief comparison of <code>glmmPQL</code> vs <code>glmer</code> (Laplace) vs <code>glmer</code> (GQ with 10 q-points):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>pql_fit <span class="ot">&lt;-</span> <span class="fu">glmmPQL</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage,</span>
+<span id="cb9-3"><a href="#cb9-3"></a>         <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> doc_ID, <span class="at">family =</span> binomial, <span class="at">data =</span> cancer, <span class="at">verbose =</span> F )</span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="fu">summary</span>( pql_fit )<span class="sc">$</span>tTable</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    Value  Std.Error   DF    t-value      p-value
+(Intercept)    -2.6355391 0.44747734 8115  -5.889771 4.021412e-09
+Experience      0.1074656 0.02450726  405   4.385051 1.480059e-05
+CancerStageII  -0.4681372 0.06208941 8115  -7.539727 5.218208e-14
+CancerStageIII -1.0892780 0.07847836 8115 -13.879980 2.612280e-43
+CancerStageIV  -2.4132991 0.12745333 8115 -18.934767 2.823650e-78</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">summary</span>(glmm_fit)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 Estimate Std. Error    z value     Pr(&gt;|z|)
+(Intercept)    -2.9477893 0.48456845  -6.083329 1.177125e-09
+Experience      0.1187726 0.02649019   4.483643 7.337924e-06
+CancerStageII  -0.4856890 0.07099432  -6.841238 7.851168e-12
+CancerStageIII -1.1208592 0.09006870 -12.444492 1.498347e-35
+CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>glmm_fit_agq <span class="ot">&lt;-</span> <span class="fu">glmer</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> CancerStage <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> doc_ID),<span class="at">family =</span> binomial, <span class="at">data =</span> cancer,</span>
+<span id="cb13-2"><a href="#cb13-2"></a>                       <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>), <span class="at">nAGQ=</span><span class="dv">10</span> )</span>
+<span id="cb13-3"><a href="#cb13-3"></a></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="fu">summary</span>(glmm_fit_agq)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 Estimate Std. Error    z value     Pr(&gt;|z|)
+(Intercept)    -2.9529558 0.50079175  -5.896574 3.711257e-09
+Experience      0.1189719 0.02730504   4.357139 1.317733e-05
+CancerStageII  -0.4867531 0.07279083  -6.687011 2.277741e-11
+CancerStageIII -1.1241823 0.09217574 -12.196076 3.261673e-34
+CancerStageIV  -2.4922475 0.15023385 -16.589121 8.353380e-62</code></pre>
+</div>
+</div>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
-</div>
 </div>
 </section>
 </div>
@@ -1230,7 +1297,7 @@ CancerStageIV  -2.4922475 0.15023385 -16.589121 8.353380e-62</code></pre>
         // specified using percentage units.
         width: 1920,
 
-        height: 1080,
+        height: 1200,
 
         // Factor of the display size that should remain empty around the content
         margin: 0.1,

@@ -48,13 +48,13 @@ library(qrcode)
 *The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
 :::
 
-::: {.absolute bottom=50 left=260 width=1500}
+::: {.absolute bottom=280 left=300 width=1500}
 
 Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-2-1/slides-2-1>
 
 :::
 
-::: {.absolute bottom=0 left=100 width=150}
+::: {.absolute bottom=175 left=50 width=250}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-2-1/slides-2-1"))
 ```
@@ -65,21 +65,102 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-2-1/slides-2-1")
 ## Recap: linear mixed effect models
 
 One way to account for clustering in analysis is with a [linear mixed effects]{.alert} model
+$$Y_{ij} = \beta_0 + u_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}$$
+or in the more general matrix notation form: 
 $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
-- $\boldsymbol{X}_i\vec{\beta}$ are the [fixed effects]{.alert} representing the mean responses for cluster $i$
+- $\beta_0 + u_{ij}\beta_1$ (or $\boldsymbol{X}_i\vec{\beta}$) are the [fixed effects]{.alert} representing the mean responses for cluster $i$
 
-- $\vec{Z}_ib_{0i}$ are the [random effects]{.alert} accounting for random between-cluster variation
+- $Z_i b_{0i}$ ($\vec{Z}_ib_{0i}$) are the [random effects]{.alert} accounting for random between-cluster variation
 
-- $\vec{\epsilon}_i$ is the regular between-individual variation
+- $\epsilon_{ij}$ ($\vec{\epsilon}_i$) is the regular between-individual variation
+   - or an individual's variation from the predicted outcome $\widehat{Y}_{ij} = E[Y_{ij}|\boldsymbol{X},b_{0i}]=\beta_0 + U_{ij}\beta_1$
+   - $\epsilon_{ij} = (Y_{ij} - \widehat{Y}_{ij})^2$
+
+---
+
+## Variance/covariance of the outcome
+
+$$Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}$$
+$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+Then the variance of a single outcome measure is:
+$$\begin{align*}Var[Y_{ij}|\boldsymbol{X}_i] &= Var[(\beta_0 + U_{ij}\beta_1) + Z_ib_{0i}+\epsilon_{ij}|\boldsymbol{X}_i]\\
+&= Var[Z_ib_{0i}+\epsilon_{ij}]\\
+&= \sigma^2_b + \sigma^2_{\epsilon}\end{align*}$$ 
+
+::: {.alert .absolute top=450 right=450}
+(total variation!)
+:::
 
 . . .
 
+And the covariance between 2 outcome measures in the same cluster is:
+$$\begin{align*}Cov[\color{red}{Y_{ij}}, \color{blue}{Y_{ik}}|\boldsymbol{X}_i] &= Cov[\color{red}{(\beta_0 + U_{ij}\beta_1) + Z_ib_{0i}+\epsilon_{ij}}, \color{blue}{(\beta_0 + U_{ik}\beta_1) + Z_ib_{0i}+\epsilon_{ik}}|\boldsymbol{X}_i]\\
+&= Cov[\color{red}{Z_i b_{0i}+\epsilon_{ij}}, \color{blue}{Z_ib_{0i}+\epsilon_{ik}}]\\
+&= Cov[\color{red}{Z_ib_{0i}}, \color{blue}{Z_ib_{0i}}] + Cov[\color{red}{\epsilon_{ij}}, \color{blue}{Z_ib_{0i}}] + Cov[\color{red}{Z_ib_{0i}}, \color{blue}{\epsilon_{ik}}] + Cov[\color{red}{\epsilon_{ij}}, \color{blue}{\epsilon_{ik}}]\\
+&= \sigma^2_b + 0 + 0 + 0 \text{(since we assume random effects } b_{i0} \text{ are independent of individual error } \epsilon_{ij}\text{)}\\
+&= \sigma^2_b\end{align*}$$
+
+::: {.alert.absolute bottom=125 left=650}
+In 552, we were used to seeing $Cov[Y_{ij}, Y_{ik}]=0$!
+:::
+
+---
+
+## What does this covariance matrix look like (for observations in cluster *i*)? {.smaller}
+
+$$\begin{align*}Cov[\vec{Y}_i|\boldsymbol{X}_i] &= \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \sigma^2_\epsilon \boldsymbol{I}\\
+&= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
+&=\begin{bmatrix}
+\sigma^2_b & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b
+\end{bmatrix} + \begin{bmatrix}
+\sigma^2_\epsilon & 0 & \dots & 0\\
+0 & \ddots & \dots & 0\\
+\vdots & \dots & \ddots & \vdots\\
+0& \dots & 0 & \sigma^2_\epsilon
+\end{bmatrix}\\
+&=\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}\end{align*}$$
+
+- Known as a [block exchangeable]{.alert} matrix or [compound symmetry]{.alert}
+
+   - Assumes everyone in the same cluster is similarly *exchangeable*, but assumes people from different clusters are *independent*
+
+---
+
+## What does this covariance matrix look like (for all observations)?
+
+If you look at the *full* covariance matrix for all observations, it looks like a diagonal of these [block matrices]{.alert} with a bunch of 0's on the off diagonals
+
+![From the SAS blog: <https://blogs.sas.com/content/iml/2012/11/07/constructing-block-matrices.html>](blockmatrix.png){width="40%"}
+
+
+---
+
+## Recap: linear mixed effect models
+
+One way to account for clustering in analysis is with a [linear mixed effects]{.alert} model
+$$Y_{ij} = \beta_0 + u_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}$$
+or in the more general matrix notation form: 
+$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+
+- $\beta_0 + u_{ij}\beta_1$ (or $\boldsymbol{X}_i\vec{\beta}$) are the [fixed effects]{.alert} representing the mean responses for cluster $i$
+
+- $Z_i b_{0i}$ ($\vec{Z}_ib_{0i}$) are the [random effects]{.alert} accounting for random between-cluster variation
+
 The [fixed effects]{.alert} are shared across everyone in the sample, while the [random effects]{.alert} are unique to a particular cluster
 
-Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they are comparing 2 individuals with the same cluster membership
+- Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they are comparing 2 individuals with the same cluster membership
 
-- Often referred to as having individual-specific or cluster-specific interpretation
+   - Often referred to as having individual-specific or cluster-specific interpretation
 
 . . .
 
@@ -90,9 +171,9 @@ Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they ar
 ## 552 review: logistic regression
 
 If our outcome for an individual $j$, $Y_{j}$, is [binary]{.alert}, we can model it using a logistic regression:
-$$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} = \beta_0 + U_j\beta_1 + \epsilon_j$$
+$$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} + \epsilon_j = \beta_0 + U_j\beta_1 + \epsilon_j$$
 
-- We assume $Y_j \sim \text{Binomial}(p_j)$
+- We assume $Y_j$ follows a binomial distrigution $\text{Binomial}(p_j)$ with event probability $p_j$
 
    - $E[Y_j] = p_j$
    
@@ -105,7 +186,7 @@ $$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} = \beta_0 + U
 ## 522 review: logistic regression
 
 If our outcome for an individual $j$, $Y_{j}$, is [binary]{.alert}, we can model it using a logistic regression:
-$$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} = \beta_0 + U_j\beta_1 + \epsilon_j$$
+$$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} +\epsilon_j = \beta_0 + U_j\beta_1 + \epsilon_j$$
 
 - $\beta_1$ tells us about the [log odds]{.alert}:
 
@@ -140,7 +221,10 @@ These are common problems when analyzing many types of non-Normal data that OLS 
 
 In the independent observation setting, many types of data are modeled using a common [generalized linear model]{.alert} (GLM) structure
 
-$$g(Y_j) = \boldsymbol{X}_j\vec{\beta} + \epsilon_j$$
+Say we want to look at the effect of an exposure variable $U$ on an outcome variable $Y$:
+
+$$\begin{align*}g(Y_j) &= \boldsymbol{X}_j\vec{\beta} + \epsilon_j\\
+&= \beta_0 + U_j\beta_1 + \epsilon_j\end{align*}$$
 
 - $g(\cdot)$ is known as the [link function]{.alert} because it *links* a linear model on the righthand side to the outcome on the lefthand side
 
@@ -156,13 +240,11 @@ $$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-
 
 where
 
-- The mean of the outcome $E[Y_j]=\mu_j(\vec{\beta})$ is a function of $\vec{\beta}$
+- The mean of the outcome $E[Y_j]=\mu_j(\vec{\beta})$ is a function of our model parameters $\vec{\beta}$
 
 - The variance of the outcome $Var[Y_j] = v_j$ is some function $v_j$
 
-. . .
-
-- The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ ($\partial f(y_j)/\partial \beta$)
+- [Bonus fact]{.underline}: The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ ($\partial f(y_j)/\partial \beta$)
 
 ---
 
@@ -179,7 +261,7 @@ $$\sum_{j=1}^n\boldsymbol{X}^T\frac{1}{\sigma^2}[Y_j - \boldsymbol{X}\vec{\beta}
 
 OLS is a type of GLM!
 
-- $E[Y_j] = \mu_j(\beta) = \boldsymbol{X}\vec{\beta}$
+- $E[Y_j] = \mu_j(\beta) = \boldsymbol{X}\vec{\beta} = \beta_0 + U_j\beta_1$
 
    - $\left(\frac{\partial \mu_j}{\partial \beta}\right) = \boldsymbol{X}$
 
@@ -224,9 +306,9 @@ $$\text{Var}[Y_j] = \phi v(\mu_j),$$
 
 | Distribution | Var. function $v(\mu)$ | Usual link function                                                                     |
 |--------------|------------------------|-----------------------------------------------------------------------------------|
-| Normal       | $v(\mu)=1$             | Identity: $g(\mu) = \mu = \boldsymbol{X}_i\vec{\beta}$                            |
-| Bernoulli/Binomial    | $v(\mu)=\mu(1-\mu)$    | Logit: $g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_i\vec{\beta}$ |
-| Poisson      | $v(\mu)=\mu$           | Log: $g(\mu) = \log(\mu)= \boldsymbol{X}_i\vec{\beta}$                            |
+| Normal       | $v(\mu)=1$             | Identity: $g(\mu) = \mu = \boldsymbol{X}_j\vec{\beta}$                            |
+| Bernoulli/Binomial    | $v(\mu)=\mu(1-\mu)$    | Logit: $g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_j\vec{\beta}$ |
+| Poisson      | $v(\mu)=\mu$           | Log: $g(\mu) = \log(\mu)= \boldsymbol{X}_j\vec{\beta}$                            |
 
 . . .
 
@@ -242,13 +324,13 @@ Normal distribution
 
 - Model is then
 
-$$g(E[Y_i]) = \mu_i = \boldsymbol{X}_i\vec{\beta}$$
+$$g(E[Y_j]) = \mu_j = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_j\beta_1$$
 
 a standard linear regression model
 
-- Variance is $\text{Var}[Y_i] = \phi = \sigma^2$ 
+- Variance is $\text{Var}[Y_j] = \phi = \sigma^2$ 
 
-   - $v(\mu_i) = 1$ (independent of mean)
+   - $v(\mu_j) = 1$ (independent of mean)
 
 ---
 
@@ -260,11 +342,11 @@ Bernoulli distribution
 
 - Model is then
 
-$$g(E[Y_i]) = \log\left(\frac{\mu_i}{1-\mu_i}\right) = \boldsymbol{X}_i\vec{\beta}$$
+$$g(E[Y_j]) = \log\left(\frac{\mu_j}{1-\mu_j}\right) = \boldsymbol{X}_j\vec{\beta}$$
 
 a logistic regression model
 
-- Variance is $\text{Var}[Y_i] = v(\mu_i) = \mu_i(1-\mu_i)$ (*dependent* on mean)
+- Variance is $\text{Var}[Y_j] = v(\mu_j) = \mu_j(1-\mu_j)$ (*dependent* on mean)
 
    - $\phi = 1$
 <!-- ## Exponential family -->
@@ -335,8 +417,9 @@ We can also use the idea of GLMs in LMEs to model data that is both *clustered* 
 . . .
 
 $$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+$$g(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}$$
 
-- Assumes $[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]$ is distributed as a member of the exponential family
+- Assumes our outcome $[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]$ is distributed as a member of the exponential family
    
 - We'll use a distribution assumption to assume link function $g(\cdot)$ and the form of within-cluster variance $Var[Y_{ij}|\boldsymbol{X}_i,b_{0i}]$
 
@@ -349,6 +432,7 @@ We can also use the idea of GLMs in LMEs to model data that is both *clustered* 
 - We call this hybrid a [generalized linear mixed model]{.alert} (GLMMs)
 
 $$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+$$g(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}$$
 
 - Just as with Normally-distributed outcomes, the random intercepts will still give us an exchangeable covariance structure
 
@@ -380,9 +464,9 @@ summary(glmm_fit)
 
 Let's be more specific
 
-- Say we have $\vec{Y}_i$ that is distributed Bernoulli with probability of success $p_{ij}$
+- Say we have an outcome $Y_{ij}$ that is distributed Bernoulli with probability of success $p_{ij}$
 
-- We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
+- We want to know what effect exposure $U_{ij}$ has on $Y_{ij}$
 
 [What would our model look like?]{.alert}
 
@@ -406,93 +490,11 @@ where $b_{0i} \sim N(0, \sigma^2_b)$ and $\epsilon_{ij} \sim \left(0, p_{ij}(1-p
 
 . . .
 
-- $e^{\beta_0}$: grand odds of the event occurring
+- $\exp{(\beta_0)}$: grand odds of the event occurring (in the reference group $u_{ij}=0$)
 
-- $e^{\beta_0 + b_{i0}}$: cluster $i$-specific odds of the event occurring
+- $\exp{(\beta_0 + b_{i0})}$: cluster $i$-specific odds of the event occurring
 
-- $e^{b_{i0}}$: odds ratio/relative change in odds of the event occurring in cluster $i$ compared to grand odds
-
----
-
-## Some notes on estimation
-
-In order to estimate regression coefficients/covariances from the likelihood function for a GLMM, we usually need to do some approximations
-
-- There are 2 ways to do this:
-
-   1. Approximate maximum likelihood (penalized quasi-likelihood)
-
-   2. Approximate the integral (Gaussian quadrature or Laplace approximation)
-
-. . .
-
-- In the last 10-15 years, [Gaussian quadrature]{.alert}/Laplace approximation has become the preferred method (if you don't want to go Bayesian)
-
-   - However, GQ can get computationally expensive/intensive if you have lots of random effects
-   
-   - Laplace approximation is like GQ with only one quadrature point (less precise, but uses fewer computational resources)
-
----
-
-## Software using Gassuain quadrature/Laplace approximation
-
-There are several types of functions/procedures out there that use Gaussian quadrature/Laplace approximation, but I'm recommending
-
-- In R: `glmer()`
-   
-   - Other functions (like `glmmML()` and `glmm()` ) have trouble extending to longitudinal models
-
-<br>
-
-- In SAS
-   
-   - `PROC GLIMMIX METHOD=QUAD` and `PROC NLMIXED METHOD=GAUSS` use Gaussian quadrature
-   
-      - By default, they find the optimal number of quadrature points (adaptive Gaussian quadrature)
-   
-   - `PROC GLIMMIX METHOD=LAPLACE` uses Laplace approximation
-      
-      - Not quite as "accurate" as GQ, but may converge in instances when GQ won't
-
----
-
-## Troubleshooting convergence issues
-
-Because we need to use approximation to estimate regression coefficients/covariances, sometimes the algorithm won't converge. There are several possible ways to troubleshoot this.
-
-1. If using GQ, try changing the number of quadrature points
-
-   - In SAS, you can specify a specific number of points with the `(QPOINTS= )` argument
-
-   - In R, you can specify a specific number of points with the `nAGQ= ` argument (default is 1, resulting in Laplace approximation; can also specify 0 if even Laplace won't converge)
-
-   - Fewer quadrature points will be less precise, but will use fewer computational resources (more likely to converge)
-
----
-
-## Troubleshooting convergence issues
-
-Because we need to use approximation to estimate regression coefficients/covariances, sometimes the algorithm won't converge. There are several possible ways to troubleshoot this.
-
-2. Change the optimizer and increase the number of max iterations
-
-   - In R, you can add the argument `control=glmerControl( optimizer="bobyqa", optCtrl=list(maxfun=200000) )` to change the optimizer to `bobyqa` and change the maximum bumber of iterations to 200,000
-
-      - More iterations = more computation time, so don't go ham (but should use at least 100,000 here)
-      
-   - In SAS, you can add the argument `NLOPTIONS maxiter=1000;` to change the maximum number of iterations to 1,000 (no recommended min number here)
-
----
-
-## Comparing results between SAS and R
-
-Fair warning: because we're using approximation algorithms to estimate our regression coefficients, SAS and R [may give you different results]{.alert}, even if both are using the same type of algorithm
-
-- Ideally these differences aren't large, but depends on how much and what type of data you have
-
-. . .
-
-... But now let's see these methods in action!
+- $\exp{(b_{i0})}$: odds ratio/relative change in odds of the event occurring in cluster $i$ compared to grand odds
 
 ---
 
@@ -643,38 +645,13 @@ Compare to what we had with the unclustered logistic model:
 
 ---
 
-## Example: cancer remission
-
-A brief comparison of `glmmPQL` vs `glmer` (Laplace) vs `glmer` (GQ with 10 q-points):
-
-```{r cancer pql}
-library(MASS)
-pql_fit <- glmmPQL( remission ~ Experience + CancerStage,
-         random = ~ 1 | doc_ID, family = binomial, data = cancer, verbose = F )
-summary( pql_fit )$tTable
-
-```
-
-```{r cancer glmer2}
-summary(glmm_fit)$coefficients
-```
-
-```{r cancer glmer agq}
-glmm_fit_agq <- glmer( remission ~ Experience + CancerStage + (1 | doc_ID),family = binomial, data = cancer,
-                       control=glmerControl(optimizer="bobyqa"), nAGQ=10 )
-
-summary(glmm_fit_agq)$coefficients
-```
-
----
-
 ## Alternate link functions for binary data
 
 Binary outcomes are special in that there are several alternative link functions you can use
 
 - The [logit]{.alert} link is very common
    
-   - Gives us odds ratios and log-odds ratios for $\beta_1$
+   - Gives us [odds ratios]{.underline} and [log-odds]{.underline} ratios for $\beta_1$
 
 - The [probit]{.alert} link is sometimes used in certain fields for prediction
    
@@ -684,7 +661,7 @@ Binary outcomes are special in that there are several alternative link functions
 
 - The [log]{.alert} link and [identity]{.alert} links also get used
 
-   - The former gives us risk ratios for $\beta_1$, while the latter gives us risk differences for $\beta_1$
+   - The former gives us [risk ratios]{.underline} for $\beta_1$, while the latter gives us [risk differences]{.underline} for $\beta_1$
 
 . . .
 
@@ -706,25 +683,36 @@ Last week we noted that marginal and conditional effects are *identical* in LMEs
 
 Take a logistic mixed effects model:
 
-$$\text{logit}(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i$$
+$$\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}$$
+$$\text{logit}(\vec{Y}_{i}) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_{i}$$
 
 . . .
 
 - The conditional mean of our outcome is then:
-$$\text{logit}(\mu_i)=\text{logit}(E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}$$
+$$\text{logit}(\mu_{ij})=\text{logit}(E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]) = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}$$
 
 ---
 
 ## Marginal effects in GLMMs
 
 In order to get the marginal effects, we would need to inverse-transform the outcome (undo the logit function):
-$$E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}$$
+$$E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}~~~~~~~ E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}{1+\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}$$
 
 . . .
 
 and then take the marginal expectation of that:
+
+:::: {.columns}
+::: {.column width="50%"}
 $$\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
 &=E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right]\end{align*}$$
+:::
+
+::: {.column width="50%"}
+$$\begin{align*}E[Y_{ij}|\boldsymbol{X}_i] &= E\left\{E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&=E\left[\frac{\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}{1+\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}\right]\end{align*}$$
+:::
+::::
 
 . . .
 
@@ -740,6 +728,8 @@ This phenomenon is known as [non-collapsibility]{.alert}
 
 But what if had a GLMM with a binary outcome and an identity link?
 
+
+$$Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}$$
 $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i$$
 
 . . .
@@ -784,3 +774,106 @@ but this is very sensitive to any model misspecification and can be biased
 . . .
 
 Maybe what we need are specific [marginal models]{.alert} that incorporate clustering... (stay tuned for next week)
+
+---
+
+## Caveat: Some notes on estimation
+
+In order to estimate regression coefficients/covariances from the likelihood function for a GLMM, we usually need to do some approximations
+
+- There are 2 ways to do this:
+
+   1. Approximate maximum likelihood (penalized quasi-likelihood)
+
+   2. Approximate the integral (Gaussian quadrature or Laplace approximation)
+
+. . .
+
+- In the last 10-15 years, [Gaussian quadrature]{.alert}/Laplace approximation has become the preferred method (if you don't want to go Bayesian)
+
+   - However, GQ can get computationally expensive/intensive if you have lots of random effects
+   
+   - Laplace approximation is like GQ with only one quadrature point (less precise, but uses fewer computational resources)
+
+---
+
+## Caveat: Software using Gassuain quadrature/Laplace approximation
+
+There are several types of functions/procedures out there that use Gaussian quadrature/Laplace approximation, but I'm recommending
+
+- In R: `glmer()`
+   
+   - Other functions (like `glmmML()` and `glmm()` ) have trouble extending to longitudinal models
+
+<br>
+
+- In SAS
+   
+   - `PROC GLIMMIX METHOD=QUAD` and `PROC NLMIXED METHOD=GAUSS` use Gaussian quadrature
+   
+      - By default, they find the optimal number of quadrature points (adaptive Gaussian quadrature)
+   
+   - `PROC GLIMMIX METHOD=LAPLACE` uses Laplace approximation
+      
+      - Not quite as "accurate" as GQ, but may converge in instances when GQ won't
+
+---
+
+## Caveat: Troubleshooting convergence issues
+
+Because we need to use approximation to estimate regression coefficients/covariances, sometimes the algorithm won't converge. There are several possible ways to troubleshoot this.
+
+1. If using GQ, try changing the number of quadrature points
+
+   - In SAS, you can specify a specific number of points with the `(QPOINTS= )` argument
+
+   - In R, you can specify a specific number of points with the `nAGQ= ` argument (default is 1, resulting in Laplace approximation; can also specify 0 if even Laplace won't converge)
+
+   - Fewer quadrature points will be less precise, but will use fewer computational resources (more likely to converge)
+
+---
+
+## Caveat: Troubleshooting convergence issues
+
+Because we need to use approximation to estimate regression coefficients/covariances, sometimes the algorithm won't converge. There are several possible ways to troubleshoot this.
+
+2. Change the optimizer and increase the number of max iterations
+
+   - In R, you can add the argument `control=glmerControl( optimizer="bobyqa", optCtrl=list(maxfun=200000) )` to change the optimizer to `bobyqa` and change the maximum bumber of iterations to 200,000
+
+      - More iterations = more computation time, so don't go ham (but should use at least 100,000 here)
+      
+   - In SAS, you can add the argument `NLOPTIONS maxiter=1000;` to change the maximum number of iterations to 1,000 (no recommended min number here)
+
+---
+
+## Caveat: Comparing results between SAS and R
+
+Fair warning: because we're using approximation algorithms to estimate our regression coefficients, SAS and R [may give you different results]{.alert}, even if both are using the same type of algorithm
+
+- Ideally these differences aren't large, but depends on how much and what type of data you have
+
+---
+
+## Example: cancer remission
+
+A brief comparison of `glmmPQL` vs `glmer` (Laplace) vs `glmer` (GQ with 10 q-points):
+
+```{r cancer pql}
+library(MASS)
+pql_fit <- glmmPQL( remission ~ Experience + CancerStage,
+         random = ~ 1 | doc_ID, family = binomial, data = cancer, verbose = F )
+summary( pql_fit )$tTable
+
+```
+
+```{r cancer glmer2}
+summary(glmm_fit)$coefficients
+```
+
+```{r cancer glmer agq}
+glmm_fit_agq <- glmer( remission ~ Experience + CancerStage + (1 | doc_ID),family = binomial, data = cancer,
+                       control=glmerControl(optimizer="bobyqa"), nAGQ=10 )
+
+summary(glmm_fit_agq)$coefficients
+```

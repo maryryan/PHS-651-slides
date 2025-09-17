@@ -402,13 +402,13 @@ PHS 651: Advanced regression methods
 Mary Ryan Baumann, PhD
 </h3>
 <h3>
-Online video: September 16-18 2025
+Online video: Week of September 15, 2025
 </h3>
 <p><br></p>
-<div class="absolute" style="left: 260px; bottom: 50px; width: 1500px; ">
+<div class="absolute" style="left: 300px; bottom: 280px; width: 1500px; ">
 <p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/F25/lec-2-2/slides-2-2" class="uri">https://maryryan.github.io/PHS-651-slides/F25/lec-2-2/slides-2-2</a></p>
 </div>
-<div class="absolute" style="left: 100px; bottom: 0px; width: 150px; ">
+<div class="absolute" style="left: 50px; bottom: 175px; width: 250px; ">
 <div class="cell">
 <div class="cell-output-display">
 <p><img data-src="slides-2-2_files/figure-revealjs/qr%20code-1.png" width="192"></p>
@@ -421,7 +421,7 @@ Online video: September 16-18 2025
 <li><p>Continuous</p></li>
 <li><p>Binary</p></li>
 </ul>
-<p>There are many other types of outcome data we might be interested, including <span class="alert">count</span> data</p>
+<p><br> There are many other types of outcome data we might be interested, including <span class="alert">count</span> data</p>
 <ul>
 <li><p>How many seizure events does a participant experience in a week?</p></li>
 <li><p>How many serious falls does a resident of an assisted living facility experience in a month?</p></li>
@@ -429,16 +429,16 @@ Online video: September 16-18 2025
 </ul>
 <p>There are several properties of count data that make it inappropriate for our previous modeling strategies</p>
 </section><section id="review-distribution-of-count-data" class="slide level2"><h2>551/552 review: Distribution of count data</h2>
-<p>In general, we think of count data for individual <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_j\)</span>, collected during time <span class="math inline">\(T_j\)</span> as following a <span class="alert">Poisson distribution</span></p>
+<p>In general, we think of a count outcome for individual <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_j\)</span>, collected during time <span class="math inline">\(T_j\)</span> as following a <span class="alert">Poisson distribution</span></p>
 <p><span class="math display">\[Y_j \sim \text{Poisson}(\lambda T_j)\]</span></p>
 <ul>
-<li><p>Parameterized by <span class="alert">rate parameter</span> <span class="math inline">\(\lambda\)</span>: number of events per unit of time</p></li>
+<li><p>This distribution is parameterized by <span class="alert">rate parameter</span> <span class="math inline">\(\lambda\)</span>: number of events per unit of time</p></li>
 <li><p>Mean: <span class="math inline">\(E[Y_j] = \lambda T_j\)</span>; Variance: <span class="math inline">\(Var[Y_j] = \lambda T_j\)</span></p></li>
 <li><p><span class="math inline">\(\lambda T_j =\)</span> count of number of events</p></li>
 </ul></section><section id="review-distribution-of-count-data-1" class="slide level2"><h2>551/552 review: Distribution of count data</h2>
-<p>We assume 3 things with a Poisson distribution:</p>
+<p>We assume 3 things about a variable that follows a Poisson distribution:</p>
 <ol type="1">
-<li><p><span class="alert">Stationarity</span>: The expected number of events per unit time is the same throughout the entire time interval</p></li>
+<li><p><span class="alert">Stationarity</span>: The expected number of events per unit time is <u>the same</u> throughout the entire time interval</p></li>
 <li><p><span class="alert">Independence</span>: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval</p></li>
 <li>
 <p><span class="alert">Rare events</span>: For any very small time interval <span class="math inline">\(h\)</span>:</p>
@@ -454,15 +454,18 @@ Online video: September 16-18 2025
 <li><p>Count of events within 1 day, 1 month, 1 year</p></li>
 <li><p>This may not always be the case, especially when combining data from multiple sources</p></li>
 </ul>
-<p>If we collect count data on different time scales, we can use the stationarity assumption to “standardize” the data to a common scale</p>
+<p>If we collect count data on different time scales, we can use the stationarity assumption to “standardize” the data to a common scale and make it a <span class="alert">rate</span> (like the <span class="math inline">\(\lambda\)</span> in the Poisson distribution)</p>
 <ul>
 <li><p>e.g., “12 events in 1 year” translates to “1 event per month”, or “2 events per day” translates to “14 events per week”</p></li>
 <li><p>Note: this may not always match reality</p></li>
 </ul></section><section id="review-poisson-regression" class="slide level2"><h2>552 review: Poisson regression</h2>
-<p>One way to model count data is by using a Poisson regression:</p>
-<p><span class="math display">\[\log[\lambda(\boldsymbol{X})] = \boldsymbol{X}\vec{\beta}= \beta_0 + U_j\beta_1\]</span></p>
-<p>We will also sometimes model the mean of the count data, rather than the rate:</p>
-<p><span class="math display">\[\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)\]</span></p>
+<p>One way to model count data is by using a Poisson regression. Say we want to investigate the impact of a binary exposure <span class="math inline">\(U_j\)</span> on participant <em>j</em>’s outcome <span class="math inline">\(Y_j\)</span> – we could do this by creating a model with the rate as the outcome:</p>
+<p><span class="math display">\[\begin{align*}\log[\lambda(\boldsymbol{X})] &amp;= \boldsymbol{X}\vec{\beta}\\
+&amp;= \beta_0 + U_j\beta_1\end{align*}\]</span></p>
+<div class="fragment">
+<p>We can also model the mean of the count data, rather than the rate:</p>
+<p><span class="math display">\[\begin{align*}\log(E[Y_j]) &amp;= \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j]\\
+&amp;= \beta_0 + U_j\beta_1 + \log(T_j)\end{align*}\]</span></p>
 <ul>
 <li>
 <span class="math inline">\(T_j\)</span> is known as an <span class="alert">offset</span> <span class="math inline">\(\rightarrow\)</span> this allows us to account for different observation lengths or population totals that the events could occur in (more people = more opportunity for even to occur)</li>
@@ -472,36 +475,51 @@ Online video: September 16-18 2025
 <li><p>The outcome data, <span class="math inline">\(Y_j\)</span>, follow a Poisson distribution with mean <span class="math inline">\(\lambda(\boldsymbol{X})T_j\)</span> and variance <span class="math inline">\(\lambda(\boldsymbol{X})T_j\)</span> (mean and variance equal to each other)</p></li>
 <li><p>We have correctly specified the linear predictors (isolating causal pathway) and the link function</p></li>
 <li><p>Each outcome observation is independent of one another</p></li>
-</ol></section><section id="review-negative-binomial-regression" class="slide level2"><h2>552 review: Negative Binomial regression</h2>
+</ol>
+</div>
+</section><section id="review-negative-binomial-regression" class="slide level2"><h2>552 review: Negative Binomial regression</h2>
 <p>In reality, we often have count data where <span class="math inline">\(E[Y_j|\boldsymbol{X}] \ne Var[Y_j|\boldsymbol{X}]\)</span></p>
 <ul>
-<li><p>If <span class="math inline">\(Var[Y_j | \boldsymbol{X}] &gt; \lambda(\boldsymbol{X})T_j\)</span> this is called <span class="alert">overdispersion</span></p></li>
-<li><p>If <span class="math inline">\(Var[Y_j | \boldsymbol{X}] &lt; \lambda(\boldsymbol{X})T_j\)</span> this is called <span class="alert">underdispersion</span></p></li>
+<li>If the variance is larger than the mean (<span class="math inline">\(Var[Y_j | \boldsymbol{X}] &gt; E[Y_j|\boldsymbol{X}]\)</span>) this is called <span class="alert">overdispersion</span>
+<ul>
+<li>more variation than expected</li>
 </ul>
+</li>
+<li>If the variance is smaller than the mean (<span class="math inline">\(Var[Y_j | \boldsymbol{X}] &lt; E[Y_j|\boldsymbol{X}]\)</span>) this is called <span class="alert">underdispersion</span>
+<ul>
+<li>less variation than expected</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div class="fragment">
 <p>In this case, we can instead assume:</p>
 <p><span class="math display">\[Y_j | \theta \sim \text{Poisson}(\lambda T_j \theta)\]</span> <span class="math display">\[\theta \sim \text{Gamma}(\alpha, \beta)\]</span></p>
 <ul>
 <li><p>Mean: <span class="math inline">\(E[\theta] = \alpha/\beta = \mu_{\theta}\)</span></p></li>
 <li><p>Variance: <span class="math inline">\(Var[\theta] = \alpha/\beta^2 = \sigma^2_{\theta}\)</span></p></li>
 </ul>
-</div>
 </div><div class="column" style="width:50%;">
 <div class="fragment">
-<p>We combine these to create:</p>
+<p>We combine those two distributions to create a <span class="alert">Negative Binomial</span> distribution:</p>
 <p><span class="math display">\[Y_j \sim \text{Negative Binomial}(\lambda T_j, \theta)\]</span></p>
 <ul>
 <li><p>Mean: <span class="math inline">\(E[Y_j] = \lambda T_j \mu_{\theta}\)</span></p></li>
-<li><p>Variance: <span class="math inline">\(Var[Y_j] = \lambda T_j (\mu_{\theta} + \lambda T_j \sigma^2_{\theta})\)</span></p></li>
+<li>
+<p>Variance: <span class="math inline">\(Var[Y_j] = \lambda T_j (\mu_{\theta} + \lambda T_j \sigma^2_{\theta})\)</span></p>
+<ul>
+<li>Variance is no longer equal to the mean!</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 </div>
 </section><section id="review-negative-binomial-regression-1" class="slide level2"><h2>552 review: Negative Binomial regression</h2>
 <p>We can use this distribution to create a negative binomial regression:</p>
-<p><span class="math display">\[\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)\]</span></p>
+<p><span class="math display">\[\begin{align*}\log(E[Y_j]) &amp;= \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j]\\
+&amp;= \beta_0 + U_j\beta_1 + \log(T_j)\end{align*}\]</span></p>
 <p>This assumes:</p>
 <ol type="1">
 <li>
@@ -516,16 +534,16 @@ Online video: September 16-18 2025
 </ol>
 <p>Poisson regression is a special case of negative binomial regression, where we assume <span class="math inline">\(\mu_{\theta}=1\)</span> and <span class="math inline">\(\sigma^2_{\theta}=0\)</span></p>
 </section><section id="clustered-count-outcomes" class="slide level2"><h2>Clustered count outcomes</h2>
-<p>A common assumption across both of these regression methods is that all outcome observations are independent of one another</p>
-<p>Can we think of some examples where count outcomes might be clustered?</p>
-</section><section id="clustered-count-outcomes-1" class="slide level2"><h2>Clustered count outcomes</h2>
-<p>A common assumption across both of these regression methods is that all outcome observations are independent of one another</p>
-<p>Can we think of some examples where count outcomes might be clustered?</p>
+<p>A common assumption across both of these regression methods is that all outcome observations are <u>independent</u> of one another</p>
+<p><br></p>
+<p>What are some examples where count outcomes might be clustered?</p>
+<div class="fragment">
 <ul>
-<li><p>Residents’ number of serious falls in one month may be clustered by living facility</p></li>
-<li><p>Cancer incidence in a county for one year may be clustered by state</p></li>
-<li><p>Number of disciplinary incidents per student in a school year may be clustered by school</p></li>
+<li><p>Residents’ number of serious falls in one month may be clustered by living facility (shared living environment)</p></li>
+<li><p>Cancer incidence in a county for one year may be clustered by state (shared state health policies/environmental exposures)</p></li>
+<li><p>Number of disciplinary incidents per student in a school year may be clustered by school (share disciplinary policies)</p></li>
 </ul>
+</div>
 <div class="fragment">
 <p>This means that the Poisson and NB regression we’ve discussed won’t give us correct inference for these data</p>
 <ul>
@@ -533,53 +551,60 @@ Online video: September 16-18 2025
 </ul>
 </div>
 </section><section id="count-outcomes-and-poisson-glmms" class="slide level2"><h2>Count outcomes and Poisson GLMMs</h2>
-<p>Say we have count outcome data for multiple individuals in a cluster <span class="math inline">\(i\)</span>, <span class="math inline">\(\vec{Y}_i\)</span>, that is distributed Poisson with event rate <span class="math inline">\(\lambda_{ij}\)</span></p>
+<p>Say we have count outcome data for multiple individuals in a cluster <span class="math inline">\(i\)</span>, <span class="math inline">\(\vec{Y}_i\)</span>, that we assume is distributed <span class="alert">Poisson</span> with event rate <span class="math inline">\(\lambda_{ij}\)</span></p>
 <ul>
 <li>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(\vec{Y}_i\)</span>
 </li>
 </ul>
-<div class="columns">
-<div class="column" style="width:50%;">
 <p><span class="alert">A GLMM representation for this would look like:</span></p>
-<p><span class="math display">\[\text{log}(\lambda_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})\]</span></p>
-<p>where <span class="math inline">\(b_{0i} \sim N(0, \sigma^2_b)\)</span></p>
+<p><span class="math display">\[\text{log}(\lambda_{ij}T_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})\]</span></p>
+<p>where the cluster-level random intercepts are distributed normally: <span class="math inline">\(b_{0i} \sim N(0, \sigma^2_b)\)</span></p>
 <ul>
-<li><p>Also assumes individual-level variation: <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}, b_{i0}] = \lambda(\boldsymbol{X})T_j\)</span></p></li>
+<li><p>Also assumes individual-level variation: <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}, b_{i0}] = \sigma^2_\epsilon = \lambda_{ij}T_{ij}\)</span></p></li>
 <li><p>Cluster-specific non-exposure group rate: <span class="math inline">\(E[Y_{ij}|u_{ij}=0,b_{i0}] = \beta_0 + b_{i0} + \log(T_{ij})\)</span></p></li>
 <li><p>Global/population-averaged non-exposure group rate: <span class="math inline">\(\beta_0\)</span></p></li>
+</ul></section><section id="count-outcomes-and-poisson-glmms-1" class="slide level2"><h2>Count outcomes and Poisson GLMMs</h2>
+<p>Say we have count outcome data for multiple individuals in a cluster <span class="math inline">\(i\)</span>, <span class="math inline">\(\vec{Y}_i\)</span>, that we assume is distributed <span class="alert">Poisson</span> with event rate <span class="math inline">\(\lambda_{ij}\)</span></p>
+<ul>
+<li>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(\vec{Y}_i\)</span>
+</li>
 </ul>
-</div><div class="column" style="width:50%;">
-<p>Our covariance structure then looks like</p>
+<p><span class="alert">A GLMM representation for this would look like:</span></p>
+<p><span class="math display">\[\text{log}(\lambda_{ij}T_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})\]</span></p>
+<p>The covariance structure coming from this model would then look like</p>
 <p><span class="math display">\[\begin{bmatrix}
-\sigma^2_b + \lambda(\boldsymbol{X})T_{ij} &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b + \lambda_{ij}T_{ij} &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
 \sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \lambda(\boldsymbol{X})T_{ij}
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \lambda_{ij}T_{ij}
 \end{bmatrix}\]</span></p>
-</div>
-</div>
 </section><section id="count-outcomes-and-nb-glmms" class="slide level2"><h2>Count outcomes and NB GLMMs</h2>
-<p>When count data are over-dispersed, we can use a <span class="alert">negative-binomial</span> regression model</p>
-<p><span class="math display">\[\text{log}(\lambda_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})\]</span></p>
+<p>When count data are over- or under-dispersed, we can use a <span class="alert">negative-binomial</span> regression model</p>
+<p><span class="math display">\[\text{log}(\lambda_{ij}T_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})\]</span></p>
 <p>where <span class="math inline">\(b_{0i}\sim N(0,\sigma^2_b)\)</span></p>
 <ul>
-<li><p>Also assumes individual-level variation: <span class="math inline">\(Var[Y_{ij}|\theta, \boldsymbol{X}, b_{i0}] = \lambda T_j (\mu_\theta + \lambda T_j \sigma^2_{\theta})\)</span></p></li>
+<li><p>Also assumes individual-level variation: <span class="math inline">\(Var[Y_{ij}|\theta, \boldsymbol{X}, b_{i0}] = \sigma^2_\epsilon = \lambda_{ij} T_{ij} (\mu_\theta + \lambda_{ij} T_j \sigma^2_{\theta})\)</span></p></li>
 <li><p>Our covariance structure then looks like</p></li>
 </ul>
 <p><span class="math display">\[\begin{bmatrix}
-\sigma^2_b + \lambda T_{ij} (\mu_\theta + \lambda T_{ij} \sigma^2_{\theta}) &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b + \lambda_{ij} T_{ij} (\mu_\theta + \lambda_{ij} T_{ij} \sigma^2_{\theta}) &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
 \sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
-\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \lambda T_{ij} (\mu_\theta + \lambda T_{ij} \sigma^2_{\theta})
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \lambda_{ij} T_{ij} (\mu_\theta + \lambda_{ij} T_{ij} \sigma^2_{\theta})
 \end{bmatrix}\]</span></p>
+<ul>
+<li>The main difference between the Poisson and the NB GLMMs is what the total variation (the diagonal of the covariance matrix) looks like</li>
+</ul>
+<div class="fragment">
+<p><span class="alert">But now let’s see these models in action</span></p>
+</div>
 </section><section id="example-student-awards-and-writing-scores" class="slide level2"><h2>Example: Student awards and writing scores</h2>
-<p>We have a simulated dataset documenting the number of awards earned by individual students at 20 high schools. Let’s say we want to say whether the number of awards a student receives is impacted by their score on a standardized writing test</p>
+<p>We have a simulated dataset documenting the <u>number of awards</u> earned by individual students at 20 high schools. Let’s say we want to ask whether the number of awards a student receives is impacted by their <u>score on a standardized writing test</u></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(foreign)</span>
-<span id="cb1-2"><a href="#cb1-2"></a>awards <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"~/Desktop/teaching/PHS-651/F25/assignments-F25/assignment-data/awards.csv"</span>, <span class="at">header=</span>T)</span>
-<span id="cb1-3"><a href="#cb1-3"></a>awards<span class="sc">$</span>cid <span class="ot">&lt;-</span> <span class="fu">factor</span>(awards<span class="sc">$</span>cid)</span>
-<span id="cb1-4"><a href="#cb1-4"></a></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">glimpse</span>(awards)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>awards <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"~/Desktop/teaching/PHS-651/F25/assignments-F25/assignment-data/awards.csv"</span>, <span class="at">header=</span>T)</span>
+<span id="cb1-2"><a href="#cb1-2"></a>awards<span class="sc">$</span>cid <span class="ot">&lt;-</span> <span class="fu">factor</span>(awards<span class="sc">$</span>cid)</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">glimpse</span>(awards)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 200
 Columns: 13
@@ -606,35 +631,38 @@ $ cid     &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>awards <span class="sc">%&gt;%</span> </span>
 <span id="cb3-2"><a href="#cb3-2"></a>   <span class="fu">group_by</span>(cid) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-3"><a href="#cb3-3"></a>   <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">mean_math=</span><span class="fu">mean</span>(write, <span class="at">na.rm=</span>T), <span class="at">mean_awards =</span> <span class="fu">mean</span>(awards), <span class="at">var_awards=</span><span class="fu">var</span>(awards))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a href="#cb3-3"></a>   <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">mean_write=</span><span class="fu">mean</span>(write, <span class="at">na.rm=</span>T), <span class="at">mean_awards =</span> <span class="fu">mean</span>(awards), <span class="at">var_awards=</span><span class="fu">var</span>(awards))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 20 × 5
-   cid       n mean_math mean_awards var_awards
-   &lt;fct&gt; &lt;int&gt;     &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
- 1 1        11      36.4       0          0    
- 2 2        10      41.3       0          0    
- 3 3         9      43.8       0.111      0.111
- 4 4        11      41.8       0.182      0.364
- 5 5        11      46.2       0.364      0.455
- 6 6         9      49.9       1          1.25 
- 7 7         9      50.6       0.778      0.694
- 8 8        11      50.7       0.818      0.564
- 9 9         9      49.1       0.556      0.528
-10 10       10      51.2       1          0.889
-11 11       12      53.8       1.33       0.788
-12 12       10      57.7       1.9        0.544
-13 13        9      60.3       2.78       1.69 
-14 14       10      54.4       1.4        1.82 
-15 15       10      59.6       2.6        0.933
-16 16       11      62.5       3.73       2.62 
-17 17        7      61.3       3          2    
-18 18       10      63.5       4.4        3.38 
-19 19       11      61.4       3.73       5.82 
-20 20       10      63.1       4          2.44 </code></pre>
+   cid       n mean_write mean_awards var_awards
+   &lt;fct&gt; &lt;int&gt;      &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+ 1 1        11       36.4       0          0    
+ 2 2        10       41.3       0          0    
+ 3 3         9       43.8       0.111      0.111
+ 4 4        11       41.8       0.182      0.364
+ 5 5        11       46.2       0.364      0.455
+ 6 6         9       49.9       1          1.25 
+ 7 7         9       50.6       0.778      0.694
+ 8 8        11       50.7       0.818      0.564
+ 9 9         9       49.1       0.556      0.528
+10 10       10       51.2       1          0.889
+11 11       12       53.8       1.33       0.788
+12 12       10       57.7       1.9        0.544
+13 13        9       60.3       2.78       1.69 
+14 14       10       54.4       1.4        1.82 
+15 15       10       59.6       2.6        0.933
+16 16       11       62.5       3.73       2.62 
+17 17        7       61.3       3          2    
+18 18       10       63.5       4.4        3.38 
+19 19       11       61.4       3.73       5.82 
+20 20       10       63.1       4          2.44 </code></pre>
 </div>
 </div>
-</section><section id="example-student-awards-and-writing-scores-2" class="slide level2"><h2>Example: Student awards and writing scores</h2>
-<p>First our Poisson mixed effects model:</p>
+<ul>
+<li>Each school has a different number of students we observe, with different average writing schools, and different average numbers of awards-per-student</li>
+</ul></section><section id="example-student-awards-and-writing-scores-2" class="slide level2"><h2>Example: Student awards and writing scores</h2>
+<p>Let’s model with a Poisson mixed model first.</p>
+<p>In a Poisson GLMM, we’re modeling the number of awards earned by student <em>j</em> in school <em>i</em> as a function of that student’s writing score, and adding a random school-level intercept:</p>
 <p><span class="math display">\[\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}(\text{school}_{i})\]</span></p>
 <ul>
 <li>
@@ -662,7 +690,7 @@ write        0.1670148 0.01099133  15.19513 3.808977e-52</code></pre>
 <ul>
 <li><p><span class="math inline">\(\exp (\beta_1)\)</span>: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate 1.1818 times greater than the student whose writing score is 1 point lower</p></li>
 <li>
-<p>95% CI: exp(0.167 <span class="math inline">\(\pm\)</span> 0.011 <span class="math inline">\(\times Z_{1-\alpha/2})\)</span></p>
+<p>95% CI: exp(0.167 <span class="math inline">\(\pm\)</span> 0.011 <span class="math inline">\(\times Z_{1-\alpha/2})=\)</span> (1.1573, 1.2082)</p>
 <ul>
 <li>We are 95% confident the true award incidence ratio for writing scores is between 1.1573 and 1.2082.</li>
 </ul>
@@ -715,17 +743,17 @@ write        0.1670175 0.01373927  12.15622 5.316210e-34</code></pre>
 <div class="fragment">
 <p>If dispersion is present this is an indicator that we likely want to fit something like a Negative Binomial GLMM that allows variance <span class="math inline">\(\ne\)</span> mean</p>
 <ul>
-<li>If that does not fix the issue, it may be that the dispersion is caused by “excess” zeros - in this case, something like a zero-inflated Poisson or NB model might work better</li>
+<li>If that does not fix the issue, it may be that the dispersion is caused by “excess” zeros - in this case, something like a zero-inflated Poisson/NB model might work better</li>
 </ul>
 </div>
 </section><section id="investigating-dispersion-in-poisson-models-1" class="slide level2"><h2>Investigating dispersion in Poisson models</h2>
 <p>To see if dispersion is present, we can calculate the dispersion parameter using the squared sum of Pearson residuals: <span class="math display">\[\widehat\phi = \frac{\sum[\text{Pearson Residual}_{ij}^2]}{\text{Residual degrees of freedom}}\]</span></p>
 <ul>
 <li><p>Pearson residuals correct for the unequal variance in the raw residuals by dividing by the standard deviation – this includes an estimate of the dispersion parameter (which we’re extracting above)</p></li>
-<li><p><span class="math inline">\(\hat\phi\)</span> should be 1 if there is absolutely no dispersion</p></li>
-<li><p>Will usually expect this not to be <em>exactly</em> 1, but major departures (rule of thumb: <span class="math inline">\(&lt;0.75\)</span> or <span class="math inline">\(&gt;1.4\)</span>) indicate a NB model is likely better</p></li>
+<li><p><span class="math inline">\(\widehat\phi\)</span> should be 1 if there is absolutely no dispersion</p></li>
+<li><p>We usually don’t expect this to be <em>exactly</em> 1, but major departures (rule of thumb: <span class="math inline">\(&lt;0.75\)</span> or <span class="math inline">\(&gt;1.4\)</span>) indicate a NB model is likely better</p></li>
 </ul></section><section id="investigating-dispersion-in-poisson-models-2" class="slide level2"><h2>Investigating dispersion in Poisson models</h2>
-<p>SAS calculates and displays <span class="math inline">\(\hat\phi\)</span> in its default result output</p>
+<p>SAS calculates and displays <span class="math inline">\(\widehat\phi\)</span> in its default result output</p>
 <ul>
 <li>For <code>PROC GLIMMIX method=QUAD</code>, the dispersion parameter is listed under “Pearson Chi-Square / DF” in the “fit statistics for conditional distribution” table</li>
 </ul>
@@ -773,7 +801,7 @@ alternative hypothesis: two.sided</code></pre>
 </div>
 </div>
 <ul>
-<li><p>This provides a formal test for whether <span class="math inline">\(\hat{\phi} \ne 0\)</span> in addition to calculating the estimated <span class="math inline">\(\phi\)</span></p></li>
+<li><p>This provides a formal test for whether <span class="math inline">\(\widehat{\phi} \ne 0\)</span> in addition to calculating the estimated <span class="math inline">\(\phi\)</span></p></li>
 <li><p>I would generally <span class="alert">not</span> pay much attention to the p-value – focus on the estimated value for <span class="math inline">\(\phi\)</span></p></li>
 </ul></section><section id="in-conclusion" class="slide level2"><h2>In conclusion</h2>
 <p>Modeling count data with GLMMs requires several special considerations that we don’t see with continuous Normal data or binary data</p>
@@ -951,7 +979,7 @@ alternative hypothesis: two.sided</code></pre>
         // specified using percentage units.
         width: 1920,
 
-        height: 1080,
+        height: 1200,
 
         // Factor of the display size that should remain empty around the content
         margin: 0.1,

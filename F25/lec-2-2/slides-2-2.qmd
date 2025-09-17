@@ -34,18 +34,18 @@ library(qrcode)
 
 <h3>Mary Ryan Baumann, PhD</h3>
 
-<h3>Online video: September 16-18 2025</h3>
+<h3>Online video: Week of September 15, 2025</h3>
 
 <br>
 
 
-::: {.absolute bottom=50 left=260 width=1500}
+::: {.absolute bottom=280 left=300 width=1500}
 
 Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-2-2/slides-2-2>
 
 :::
 
-::: {.absolute bottom=0 left=100 width=150}
+::: {.absolute bottom=175 left=50 width=250}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-2-2/slides-2-2"))
 ```
@@ -61,6 +61,7 @@ Up to this point we've focused on 2 types of outcome data:
 
 - Binary
 
+<br>
 There are many other types of outcome data we might be interested, including [count]{.alert} data
 
 - How many seizure events does a participant experience in a week?
@@ -75,11 +76,11 @@ There are several properties of count data that make it inappropriate for our pr
 
 ## 551/552 review: Distribution of count data
 
-In general, we think of count data for individual $j$, $Y_j$, collected during time $T_j$ as following a [Poisson distribution]{.alert}
+In general, we think of a count outcome for individual $j$, $Y_j$, collected during time $T_j$ as following a [Poisson distribution]{.alert}
 
 $$Y_j \sim \text{Poisson}(\lambda T_j)$$
 
-- Parameterized by [rate parameter]{.alert} $\lambda$: number of events per unit of time
+- This distribution is parameterized by [rate parameter]{.alert} $\lambda$: number of events per unit of time
 
 - Mean: $E[Y_j] = \lambda T_j$; Variance: $Var[Y_j] = \lambda T_j$
 
@@ -88,9 +89,9 @@ $$Y_j \sim \text{Poisson}(\lambda T_j)$$
 
 ## 551/552 review: Distribution of count data
 
-We assume 3 things with a Poisson distribution:
+We assume 3 things about a variable that follows a Poisson distribution:
 
-1. [Stationarity]{.alert}: The expected number of events per unit time is the same throughout the entire time interval
+1. [Stationarity]{.alert}: The expected number of events per unit time is [the same]{.underline} throughout the entire time interval
 
 2. [Independence]{.alert}: If an event occurs (or does not occur) in one time subinterval, it has no bearing on the probability of an event in the next time subinterval
 
@@ -112,7 +113,7 @@ Ideally when we collect count data, we want to collect it on the [same time scal
 
 - This may not always be the case, especially when combining data from multiple sources
 
-If we collect count data on different time scales, we can use the stationarity assumption to "standardize" the data to a common scale
+If we collect count data on different time scales, we can use the stationarity assumption to "standardize" the data to a common scale and make it a [rate]{.alert} (like the $\lambda$ in the Poisson distribution)
 
 - e.g., "12 events in 1 year" translates to "1 event per month", or "2 events per day" translates to "14 events per week"
 
@@ -122,13 +123,17 @@ If we collect count data on different time scales, we can use the stationarity a
 
 ## 552 review: Poisson regression
 
-One way to model count data is by using a Poisson regression:
+One way to model count data is by using a Poisson regression. Say we want to investigate the impact of a binary exposure $U_j$ on participant *j*'s outcome $Y_j$ -- we could do this by creating a model with the rate as the outcome:
 
-$$\log[\lambda(\boldsymbol{X})] = \boldsymbol{X}\vec{\beta}= \beta_0 + U_j\beta_1$$
+$$\begin{align*}\log[\lambda(\boldsymbol{X})] &= \boldsymbol{X}\vec{\beta}\\
+&= \beta_0 + U_j\beta_1\end{align*}$$
 
-We will also sometimes model the mean of the count data, rather than the rate:
+. . .
 
-$$\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)$$
+We can also model the mean of the count data, rather than the rate:
+
+$$\begin{align*}\log(E[Y_j]) &= \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j]\\
+&= \beta_0 + U_j\beta_1 + \log(T_j)\end{align*}$$
 
 - $T_j$ is known as an [offset]{.alert} $\rightarrow$ this allows us to account for different observation lengths or population totals that the events could occur in (more people = more opportunity for even to occur)
 
@@ -146,13 +151,17 @@ Both these regressions assume:
 
 In reality, we often have count data where $E[Y_j|\boldsymbol{X}] \ne Var[Y_j|\boldsymbol{X}]$
 
-- If $Var[Y_j | \boldsymbol{X}] > \lambda(\boldsymbol{X})T_j$ this is called [overdispersion]{.alert}
+- If the variance is larger than the mean ($Var[Y_j | \boldsymbol{X}] > E[Y_j|\boldsymbol{X}]$) this is called [overdispersion]{.alert}
+   - more variation than expected
 
-- If $Var[Y_j | \boldsymbol{X}] < \lambda(\boldsymbol{X})T_j$ this is called [underdispersion]{.alert}
+- If the variance is smaller than the mean ($Var[Y_j | \boldsymbol{X}] < E[Y_j|\boldsymbol{X}]$) this is called [underdispersion]{.alert}
+   - less variation than expected
+
+<br>
 
 :::: {.columns}
 ::: {.column width="50%"}
-::: {.fragment}
+
 In this case, we can instead assume:
 
 $$Y_j | \theta \sim \text{Poisson}(\lambda T_j \theta)$$
@@ -161,18 +170,21 @@ $$\theta \sim \text{Gamma}(\alpha, \beta)$$
 - Mean: $E[\theta] = \alpha/\beta = \mu_{\theta}$
 
 - Variance: $Var[\theta] = \alpha/\beta^2 = \sigma^2_{\theta}$
-:::
+
 :::
 
 ::: {.column width="50%"}
 ::: {.fragment}
-We combine these to create:
+
+We combine those two distributions to create a [Negative Binomial]{.alert} distribution:
 
 $$Y_j \sim \text{Negative Binomial}(\lambda T_j, \theta)$$
 
 - Mean: $E[Y_j] = \lambda T_j \mu_{\theta}$
 
 - Variance: $Var[Y_j] = \lambda T_j (\mu_{\theta} + \lambda T_j \sigma^2_{\theta})$
+   - Variance is no longer equal to the mean!
+
 :::
 :::
 ::::
@@ -183,7 +195,8 @@ $$Y_j \sim \text{Negative Binomial}(\lambda T_j, \theta)$$
 
 We can use this distribution to create a negative binomial regression:
 
-$$\log(E[Y_j]) = \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j] = \beta_0 + U_j\beta_1 + \log(T_j)$$
+$$\begin{align*}\log(E[Y_j]) &= \log[\lambda(\boldsymbol{X})T_j] = \log[\lambda(\boldsymbol{X})] + \log[T_j]\\
+&= \beta_0 + U_j\beta_1 + \log(T_j)\end{align*}$$
 
 This assumes:
 
@@ -201,23 +214,19 @@ Poisson regression is a special case of negative binomial regression, where we a
 
 ## Clustered count outcomes
 
-A common assumption across both of these regression methods is that all outcome observations are independent of one another
+A common assumption across both of these regression methods is that all outcome observations are [independent]{.underline} of one another
 
-Can we think of some examples where count outcomes might be clustered?
+<br>
 
----
+What are some examples where count outcomes might be clustered?
 
-## Clustered count outcomes
+. . .
 
-A common assumption across both of these regression methods is that all outcome observations are independent of one another
+- Residents' number of serious falls in one month may be clustered by living facility (shared living environment)
 
-Can we think of some examples where count outcomes might be clustered?
+- Cancer incidence in a county for one year may be clustered by state (shared state health policies/environmental exposures)
 
-- Residents' number of serious falls in one month may be clustered by living facility
-
-- Cancer incidence in a county for one year may be clustered by state
-
-- Number of disciplinary incidents per student in a school year may be clustered by school
+- Number of disciplinary incidents per student in a school year may be clustered by school (share disciplinary policies)
 
 . . .
 
@@ -229,72 +238,79 @@ This means that the Poisson and NB regression we've discussed won't give us corr
 
 ## Count outcomes and Poisson GLMMs
 
-Say we have count outcome data for multiple individuals in a cluster $i$, $\vec{Y}_i$, that is distributed Poisson with event rate $\lambda_{ij}$
+Say we have count outcome data for multiple individuals in a cluster $i$, $\vec{Y}_i$, that we assume is distributed [Poisson]{.alert} with event rate $\lambda_{ij}$
 
 - We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
 
-
-:::: {.columns}
-::: {.column width="50%"}
-
 [A GLMM representation for this would look like:]{.alert}
 
-$$\text{log}(\lambda_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})$$
+$$\text{log}(\lambda_{ij}T_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})$$
 
-where $b_{0i} \sim N(0, \sigma^2_b)$
+where the cluster-level random intercepts are distributed normally: $b_{0i} \sim N(0, \sigma^2_b)$
 
-- Also assumes individual-level variation: $Var[Y_{ij}|\boldsymbol{X}, b_{i0}] = \lambda(\boldsymbol{X})T_j$
+- Also assumes individual-level variation: $Var[Y_{ij}|\boldsymbol{X}, b_{i0}] = \sigma^2_\epsilon = \lambda_{ij}T_{ij}$
 
 - Cluster-specific non-exposure group rate: $E[Y_{ij}|u_{ij}=0,b_{i0}] = \beta_0 + b_{i0} + \log(T_{ij})$
 
 - Global/population-averaged non-exposure group rate: $\beta_0$
 
-:::
+---
 
-::: {.column width="50%"}
+## Count outcomes and Poisson GLMMs
 
-Our covariance structure then looks like
+Say we have count outcome data for multiple individuals in a cluster $i$, $\vec{Y}_i$, that we assume is distributed [Poisson]{.alert} with event rate $\lambda_{ij}$
+
+- We want to know what effect exposure $U_{ij}$ has on $\vec{Y}_i$
+
+[A GLMM representation for this would look like:]{.alert}
+
+$$\text{log}(\lambda_{ij}T_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})$$
+
+The covariance structure coming from this model would then look like
 
 $$\begin{bmatrix}
-\sigma^2_b + \lambda(\boldsymbol{X})T_{ij} & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b + \lambda_{ij}T_{ij} & \sigma^2_b & \dots & \sigma^2_b\\
 \sigma^2_b & \ddots & \dots & \sigma^2_b\\
 \vdots & \dots & \ddots & \vdots\\
-\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \lambda(\boldsymbol{X})T_{ij}
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \lambda_{ij}T_{ij}
 \end{bmatrix}$$
 
-:::
-::::
+
 
 ------------------------------------------------------------------------
 
 ## Count outcomes and NB GLMMs
 
-When count data are over-dispersed, we can use a [negative-binomial]{.alert} regression model
+When count data are over- or under-dispersed, we can use a [negative-binomial]{.alert} regression model
 
-$$\text{log}(\lambda_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})$$
+$$\text{log}(\lambda_{ij}T_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \log(T_{ij})$$
 
 where $b_{0i}\sim N(0,\sigma^2_b)$
 
-- Also assumes individual-level variation: $Var[Y_{ij}|\theta, \boldsymbol{X}, b_{i0}] = \lambda T_j (\mu_\theta + \lambda T_j \sigma^2_{\theta})$
+- Also assumes individual-level variation: $Var[Y_{ij}|\theta, \boldsymbol{X}, b_{i0}] = \sigma^2_\epsilon = \lambda_{ij} T_{ij} (\mu_\theta + \lambda_{ij} T_j \sigma^2_{\theta})$
 
 - Our covariance structure then looks like
 
 $$\begin{bmatrix}
-\sigma^2_b + \lambda T_{ij} (\mu_\theta + \lambda T_{ij} \sigma^2_{\theta}) & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b + \lambda_{ij} T_{ij} (\mu_\theta + \lambda_{ij} T_{ij} \sigma^2_{\theta}) & \sigma^2_b & \dots & \sigma^2_b\\
 \sigma^2_b & \ddots & \dots & \sigma^2_b\\
 \vdots & \dots & \ddots & \vdots\\
-\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \lambda T_{ij} (\mu_\theta + \lambda T_{ij} \sigma^2_{\theta})
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \lambda_{ij} T_{ij} (\mu_\theta + \lambda_{ij} T_{ij} \sigma^2_{\theta})
 \end{bmatrix}$$
 
+- The main difference between the Poisson and the NB GLMMs is what the total variation (the diagonal of the covariance matrix) looks like
+
+. . .
+
+[But now let's see these models in action]{.alert}
 
 ---
 
 ## Example: Student awards and writing scores
 
-We have a simulated dataset documenting the number of awards earned by individual students at 20 high schools. Let's say we want to say whether the number of awards a student receives is impacted by their score on a standardized writing test
+We have a simulated dataset documenting the [number of awards]{.underline} earned by individual students at 20 high schools. Let's say we want to ask whether the number of awards a student receives is impacted by their [score on a standardized writing test]{.underline}
 
 ```{r awards}
-library(foreign)
 awards <- read.csv("~/Desktop/teaching/PHS-651/F25/assignments-F25/assignment-data/awards.csv", header=T)
 awards$cid <- factor(awards$cid)
 
@@ -314,14 +330,18 @@ Let's get an idea of our data...
 ```{r awards table 1}
 awards %>% 
    group_by(cid) %>% 
-   summarize(n=n(), mean_math=mean(write, na.rm=T), mean_awards = mean(awards), var_awards=var(awards))
+   summarize(n=n(), mean_write=mean(write, na.rm=T), mean_awards = mean(awards), var_awards=var(awards))
 ```
+
+- Each school has a different number of students we observe, with different average writing schools, and different average numbers of awards-per-student
 
 ---
 
 ## Example: Student awards and writing scores
 
-First our Poisson mixed effects model:
+Let's model with a Poisson mixed model first.
+
+In a Poisson GLMM, we're modeling the number of awards earned by student *j* in school *i* as a function of that student's writing score, and adding a random school-level intercept:
 
 $$\text{log}(\text{awards}_{ij}) = \beta_0 + \beta_1(\text{writing score}_{ij}) + b_{0i}(\text{school}_{i})$$
 
@@ -349,7 +369,7 @@ summary( awards_quad )$coefficients
 
 - $\exp (\beta_1)$: Comparing 2 students in the same high school, the student whose writing score is 1 point higher would be expected to have an award rate `r round(exp(summary( awards_quad )$coef[2,1]),4)` times greater than the student whose writing score is 1 point lower
 
-- 95% CI: exp(`r round(summary( awards_quad )$coef[2,1],4)` $\pm$ `r round(summary( awards_quad )$coef[2,2],4)` $\times Z_{1-\alpha/2})$
+- 95% CI: exp(`r round(summary( awards_quad )$coef[2,1],4)` $\pm$ `r round(summary( awards_quad )$coef[2,2],4)` $\times Z_{1-\alpha/2})=$ `r paste0("(",round(exp(confint( awards_quad ))[3,1], 4), ", " , round(exp(confint( awards_quad ))[3,2], 4),")")`
 
    - We are 95% confident the true award incidence ratio for writing scores is between `r round(exp(confint( awards_quad ))[3,1], 4)` and `r round(exp(confint( awards_quad ))[3,2], 4)`.
 
@@ -414,7 +434,7 @@ Recall that Poisson GLMMs assume that the mean and variance of the data are the 
 
 If dispersion is present this is an indicator that we likely want to fit something like a Negative Binomial GLMM that allows variance $\ne$ mean
 
-- If that does not fix the issue, it may be that the dispersion is caused by "excess" zeros - in this case, something like a zero-inflated Poisson or NB model might work better
+- If that does not fix the issue, it may be that the dispersion is caused by "excess" zeros - in this case, something like a zero-inflated Poisson/NB model might work better
 
 ---
 
@@ -425,15 +445,15 @@ $$\widehat\phi = \frac{\sum[\text{Pearson Residual}_{ij}^2]}{\text{Residual degr
 
 - Pearson residuals correct for the unequal variance in the raw residuals by dividing by the standard deviation -- this includes an estimate of the dispersion parameter (which we're extracting above)
 
-- $\hat\phi$ should be 1 if there is absolutely no dispersion
+- $\widehat\phi$ should be 1 if there is absolutely no dispersion
 
-- Will usually expect this not to be *exactly* 1, but major departures (rule of thumb: $<0.75$ or $>1.4$) indicate a NB model is likely better
+- We usually don't expect this to be *exactly* 1, but major departures (rule of thumb: $<0.75$ or $>1.4$) indicate a NB model is likely better
 
 ---
 
 ## Investigating dispersion in Poisson models
 
-SAS calculates and displays $\hat\phi$ in its default result output
+SAS calculates and displays $\widehat\phi$ in its default result output
 
 - For `PROC GLIMMIX method=QUAD`, the dispersion parameter is listed under "Pearson Chi-Square / DF" in the "fit statistics for conditional distribution" table
 
@@ -475,7 +495,7 @@ library(DHARMa)
 testDispersion(awards_quad, type="PearsonChisq")
 ```
 
-- This provides a formal test for whether $\hat{\phi} \ne 0$ in addition to calculating the estimated $\phi$
+- This provides a formal test for whether $\widehat{\phi} \ne 0$ in addition to calculating the estimated $\phi$
 
 - I would generally [not]{.alert} pay much attention to the p-value -- focus on the estimated value for $\phi$
 

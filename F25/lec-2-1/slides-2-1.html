@@ -422,21 +422,16 @@ September 16, 2025
 </div>
 </div>
 </section><section id="recap-linear-mixed-effect-models" class="slide level2"><h2>Recap: linear mixed effect models</h2>
-<p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[Y_{ij} = \beta_0 + u_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}\]</span> or in the more general matrix notation form: <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[Y_{ij} = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+\epsilon_{ij}\]</span> or in the more general matrix notation form: <span class="math display">\[\vec{Y}_i = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i\]</span></p>
 <ul>
-<li><p><span class="math inline">\(\beta_0 + u_{ij}\beta_1\)</span> (or <span class="math inline">\(\boldsymbol{X}_i\vec{\beta}\)</span>) are the <span class="alert">fixed effects</span> representing the mean responses for cluster <span class="math inline">\(i\)</span></p></li>
-<li><p><span class="math inline">\(Z_i b_{0i}\)</span> (<span class="math inline">\(\vec{Z}_ib_{0i}\)</span>) are the <span class="alert">random effects</span> accounting for random between-cluster variation</p></li>
-<li>
-<p><span class="math inline">\(\epsilon_{ij}\)</span> (<span class="math inline">\(\vec{\epsilon}_i\)</span>) is the regular between-individual variation</p>
-<ul>
-<li>or an individual’s variation from the predicted outcome <span class="math inline">\(\widehat{Y}_{ij} = E[Y_{ij}|\boldsymbol{X},b_{0i}]=\beta_0 + U_{ij}\beta_1\)</span>
-</li>
-<li><span class="math inline">\(\epsilon_{ij} = (Y_{ij} - \widehat{Y}_{ij})^2\)</span></li>
-</ul>
-</li>
+<li><p><span class="math inline">\(Y_{ij}\)</span> is the outcome for individual <em>j</em> in cluster <em>i</em></p></li>
+<li><p><span class="math inline">\(U_{ij}\)</span> is the exposure status for individual <em>j</em> in cluster <em>i</em></p></li>
+<li><p><span class="math inline">\(\color{red}{\beta_0 + u_{ij}\beta_1}\)</span> (or <span class="math inline">\(\color{red}{\boldsymbol{X}_i\vec{\beta}}\)</span>) are the <u>fixed effects</u> representing the mean responses for cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(\color{blue}{Z_i b_{0i}}\)</span> (<span class="math inline">\(\color{blue}{\vec{Z}_ib_{0i}}\)</span>) are the <u>random effects</u> accounting for random between-cluster variation</p></li>
+<li><p><span class="math inline">\(\epsilon_{ij}\)</span> (<span class="math inline">\(\vec{\epsilon}_i\)</span>) is the regular between-individual variation</p></li>
 </ul></section><section id="variancecovariance-of-the-outcome" class="slide level2"><h2>Variance/covariance of the outcome</h2>
 <p><span class="math display">\[Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}\]</span> <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
-<p>Then the variance of a single outcome measure is: <span class="math display">\[\begin{align*}Var[Y_{ij}|\boldsymbol{X}_i] &amp;= Var[(\beta_0 + U_{ij}\beta_1) + Z_ib_{0i}+\epsilon_{ij}|\boldsymbol{X}_i]\\
+<p>Under a mixed model, the variance of a single outcome measure is: <span class="math display">\[\begin{align*}Var[Y_{ij}|\boldsymbol{X}_i] &amp;= Var[(\beta_0 + U_{ij}\beta_1) + Z_ib_{0i}+\epsilon_{ij}|\boldsymbol{X}_i]\\
 &amp;= Var[Z_ib_{0i}+\epsilon_{ij}]\\
 &amp;= \sigma^2_b + \sigma^2_{\epsilon}\end{align*}\]</span></p>
 <div class="alert absolute" style="top: 450px; right: 450px; ">
@@ -449,7 +444,7 @@ September 16, 2025
 &amp;= \sigma^2_b + 0 + 0 + 0 \text{(since we assume random effects } b_{i0} \text{ are independent of individual error } \epsilon_{ij}\text{)}\\
 &amp;= \sigma^2_b\end{align*}\]</span></p>
 <div class="alert.absolute" data-bottom="125" data-left="650">
-<p>In 552, we were used to seeing <span class="math inline">\(Cov[Y_{ij}, Y_{ik}]=0\)</span>!</p>
+<p>In 552, we were used to assuming <span class="math inline">\(Cov[Y_{ij}, Y_{ik}]=0\)</span>!</p>
 </div>
 </div>
 </section><section id="what-does-this-covariance-matrix-look-like-for-observations-in-cluster-i" class="slide level2 smaller"><h2>What does this covariance matrix look like (for observations in cluster <em>i</em>)?</h2>
@@ -487,12 +482,12 @@ September 16, 2025
 <figcaption>From the SAS blog: <a href="https://blogs.sas.com/content/iml/2012/11/07/constructing-block-matrices.html" class="uri">https://blogs.sas.com/content/iml/2012/11/07/constructing-block-matrices.html</a></figcaption></figure>
 </div>
 </section><section id="recap-linear-mixed-effect-models-1" class="slide level2"><h2>Recap: linear mixed effect models</h2>
-<p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[Y_{ij} = \beta_0 + u_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}\]</span> or in the more general matrix notation form: <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p>One way to account for clustering in analysis is with a <span class="alert">linear mixed effects</span> model <span class="math display">\[Y_{ij} = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+\epsilon_{ij}\]</span> or in the more general matrix notation form: <span class="math display">\[\vec{Y}_i = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i\]</span></p>
 <ul>
-<li><p><span class="math inline">\(\beta_0 + u_{ij}\beta_1\)</span> (or <span class="math inline">\(\boldsymbol{X}_i\vec{\beta}\)</span>) are the <span class="alert">fixed effects</span> representing the mean responses for cluster <span class="math inline">\(i\)</span></p></li>
-<li><p><span class="math inline">\(Z_i b_{0i}\)</span> (<span class="math inline">\(\vec{Z}_ib_{0i}\)</span>) are the <span class="alert">random effects</span> accounting for random between-cluster variation</p></li>
+<li><p><span class="math inline">\(\color{red}{\beta_0 + u_{ij}\beta_1}\)</span> (or <span class="math inline">\(\color{red}{\boldsymbol{X}_i\vec{\beta}}\)</span>) are the <u>fixed effects</u> representing the mean responses for cluster <span class="math inline">\(i\)</span></p></li>
+<li><p><span class="math inline">\(\color{blue}{Z_i b_{0i}}\)</span> (<span class="math inline">\(\color{blue}{\vec{Z}_ib_{0i}}\)</span>) are the <u>random effects</u> accounting for random between-cluster variation</p></li>
 </ul>
-<p>The <span class="alert">fixed effects</span> are shared across everyone in the sample, while the <span class="alert">random effects</span> are unique to a particular cluster</p>
+<p>The <span style="color:red;">fixed effects</span> are shared across everyone in the sample, while the <span style="color:blue;">random effects</span> are unique to a particular cluster</p>
 <ul>
 <li>
 <p>Interpretations of <span class="math inline">\(\beta_1\)</span> in an LME are <span class="alert">conditional</span> because they are comparing 2 individuals with the same cluster membership</p>
@@ -504,8 +499,8 @@ September 16, 2025
 <div class="fragment">
 <p><span class="alert">We can also extend this model to non-continuous/non-Normal outcome data</span></p>
 </div>
-</section><section id="review-logistic-regression" class="slide level2"><h2>552 review: logistic regression</h2>
-<p>If our outcome for an individual <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_{j}\)</span>, is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} + \epsilon_j = \beta_0 + U_j\beta_1 + \epsilon_j\]</span></p>
+</section><section id="review-logistic-regression-independent-observations" class="slide level2"><h2>552 review: logistic regression, independent observations</h2>
+<p>If our outcome for an individual <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_{j}\)</span>, is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_j}{1-p_j}\right) = \beta_0 + U_j\beta_1 + \epsilon_j\]</span></p>
 <ul>
 <li>
 <p>We assume <span class="math inline">\(Y_j\)</span> follows a binomial distrigution <span class="math inline">\(\text{Binomial}(p_j)\)</span> with event probability <span class="math inline">\(p_j\)</span></p>
@@ -521,8 +516,8 @@ September 16, 2025
 </li>
 </ul>
 </li>
-</ul></section><section id="review-logistic-regression-1" class="slide level2"><h2>522 review: logistic regression</h2>
-<p>If our outcome for an individual <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_{j}\)</span>, is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} +\epsilon_j = \beta_0 + U_j\beta_1 + \epsilon_j\]</span></p>
+</ul></section><section id="review-logistic-regression-independent-observations-1" class="slide level2"><h2>522 review: logistic regression, independent observations</h2>
+<p>If our outcome for an individual <span class="math inline">\(j\)</span>, <span class="math inline">\(Y_{j}\)</span>, is <span class="alert">binary</span>, we can model it using a logistic regression: <span class="math display">\[\log\left(\frac{p_j}{1-p_j}\right) = \beta_0 + U_j\beta_1 + \epsilon_j\]</span></p>
 <ul>
 <li>
 <span class="math inline">\(\beta_1\)</span> tells us about the <span class="alert">log odds</span>:</li>
@@ -533,11 +528,11 @@ September 16, 2025
 <span class="math inline">\(e^{\beta_1}\)</span> tells us about the <span class="alert">odds ratio</span>:</li>
 </ul>
 <p><span class="math display">\[e^{\beta_1} = \frac{\text{odds}(u=1)}{\text{odds}(u=0)}=\frac{\left(\frac{p(u=1)}{1-p(u=1)}\right)}{\left(\frac{p(u=0)}{1-p(u=0)}\right)}\]</span></p>
-</section><section id="review-logistic-regression-2" class="slide level2"><h2>522 review: logistic regression</h2>
+</section><section id="review-logistic-regression-independent-observations-2" class="slide level2"><h2>522 review: logistic regression, independent observations</h2>
 <p>Logistic regression is solving 2 problems for us:</p>
 <ol type="1">
 <li>
-<p>Using our Binomial distribution assumptions to handle non-constant variance in binary data</p>
+<p>Using our Binomial distribution assumptions to handle <u>non-constant variance</u> in binary data</p>
 <ul>
 <li>Remember, variance of binary data is a function of its mean!</li>
 </ul>
@@ -554,22 +549,22 @@ September 16, 2025
 </section><section id="generalized-linear-models" class="slide level2"><h2>Generalized linear models</h2>
 <p>In the independent observation setting, many types of data are modeled using a common <span class="alert">generalized linear model</span> (GLM) structure</p>
 <p>Say we want to look at the effect of an exposure variable <span class="math inline">\(U\)</span> on an outcome variable <span class="math inline">\(Y\)</span>:</p>
-<p><span class="math display">\[\begin{align*}g(Y_j) &amp;= \boldsymbol{X}_j\vec{\beta} + \epsilon_j\\
-&amp;= \beta_0 + U_j\beta_1 + \epsilon_j\end{align*}\]</span></p>
+<p><span class="math display">\[\begin{align*}g(Y_j) &amp;= \beta_0 + U_j\beta_1 + \epsilon_j\\
+&amp;=\boldsymbol{X}_j\vec{\beta} + \epsilon_j\end{align*}\]</span></p>
 <ul>
 <li><p><span class="math inline">\(g(\cdot)\)</span> is known as the <span class="alert">link function</span> because it <em>links</em> a linear model on the righthand side to the outcome on the lefthand side</p></li>
 <li><p><span class="math inline">\(\epsilon_j\)</span> will still be Normally distributed, but its variance <span class="math inline">\(\sigma^2_{\epsilon}\)</span> will match the distribution of <span class="math inline">\(Y_j\)</span></p></li>
 </ul></section><section id="generalized-linear-models-1" class="slide level2"><h2>Generalized linear models</h2>
-<p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0\]</span></p>
+<p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j(\mu_j)^{-1}[Y_j - \mu_j(\vec{\beta})] = 0\]</span></p>
 <p>where</p>
 <ul>
-<li><p>The mean of the outcome <span class="math inline">\(E[Y_j]=\mu_j(\vec{\beta})\)</span> is a function of our model parameters <span class="math inline">\(\vec{\beta}\)</span></p></li>
-<li><p>The variance of the outcome <span class="math inline">\(Var[Y_j] = v_j\)</span> is some function <span class="math inline">\(v_j\)</span></p></li>
+<li><p><span class="math inline">\(\mu_j(\vec{\beta}) = E[Y_j]\)</span> is the <u>mean of the outcome</u> and is a function of our regression coefficients <span class="math inline">\(\vec{\beta}\)</span></p></li>
+<li><p><span class="math inline">\(v_j(\mu_j)\)</span> is the part of the outcome variance <span class="math inline">\(Var[Y_j]\)</span> that depends on the mean – this is determined by the distribution of our outcome <span class="math inline">\(Y_j\)</span></p></li>
 <li><p><u>Bonus fact</u>: The estimating equation is actually just the derivative of the likelihood with respect to regression parameters <span class="math inline">\(\beta\)</span> (<span class="math inline">\(\partial f(y_j)/\partial \beta\)</span>)</p></li>
 </ul></section><section id="generalized-linear-models-2" class="slide level2"><h2>Generalized linear models</h2>
-<p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0\]</span></p>
+<p>In GLMs, we estimate the regression coefficients <span class="math inline">\(\vec{\beta}\)</span> as the solution to the <span class="alert">estimating equation</span>: <span class="math display">\[\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j(\mu_j)^{-1}[Y_j - \mu_j(\vec{\beta})] = 0\]</span></p>
 <p>Look similar?</p>
-<p><span class="math display">\[\sum_{j=1}^n\boldsymbol{X}^T\frac{1}{\sigma^2}[Y_j - \boldsymbol{X}\vec{\beta}]=0 \]</span></p>
+<p><span class="math display">\[\sum_{j=1}^n\boldsymbol{X}^T[Y_j - \boldsymbol{X}\vec{\beta}]=0 \]</span></p>
 <div class="fragment">
 <p>OLS is a type of GLM!</p>
 <ul>
@@ -579,7 +574,7 @@ September 16, 2025
 <li><span class="math inline">\(\left(\frac{\partial \mu_j}{\partial \beta}\right) = \boldsymbol{X}\)</span></li>
 </ul>
 </li>
-<li><p><span class="math inline">\(Var[Y_j] = v_j = \sigma^2\)</span></p></li>
+<li><p><span class="math inline">\(v_j(\mu_j) = 1\)</span> (the variance of <span class="math inline">\(Y_j\)</span> doesn’t depend on the mean)</p></li>
 </ul>
 </div>
 </section><section id="generalized-linear-models-3" class="slide level2"><h2>Generalized linear models</h2>
@@ -622,40 +617,38 @@ September 16, 2025
 </colgroup>
 <thead><tr class="header">
 <th>Distribution</th>
-<th>Var. function <span class="math inline">\(v(\mu)\)</span>
+<th>Var. function <span class="math inline">\(v(\mu_j)\)</span>
 </th>
 <th>Usual link function</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td>Normal</td>
-<td><span class="math inline">\(v(\mu)=1\)</span></td>
-<td>Identity: <span class="math inline">\(g(\mu) = \mu = \boldsymbol{X}_j\vec{\beta}\)</span>
+<td><span class="math inline">\(v(\mu_j)=1\)</span></td>
+<td>Identity: <span class="math inline">\(g(\mu_j) = \mu_j = \boldsymbol{X}_j\vec{\beta}\)</span>
 </td>
 </tr>
 <tr class="even">
 <td>Bernoulli/Binomial</td>
-<td><span class="math inline">\(v(\mu)=\mu(1-\mu)\)</span></td>
-<td>Logit: <span class="math inline">\(g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_j\vec{\beta}\)</span>
+<td><span class="math inline">\(v(\mu_j)=\mu_j(1-\mu_j)\)</span></td>
+<td>Logit: <span class="math inline">\(g(\mu_j) = \log\left(\frac{\mu_j}{1-\mu_j}\right)= \boldsymbol{X}_j\vec{\beta}\)</span>
 </td>
 </tr>
 <tr class="odd">
 <td>Poisson</td>
-<td><span class="math inline">\(v(\mu)=\mu\)</span></td>
-<td>Log: <span class="math inline">\(g(\mu) = \log(\mu)= \boldsymbol{X}_j\vec{\beta}\)</span>
+<td><span class="math inline">\(v(\mu_j)=\mu_j\)</span></td>
+<td>Log: <span class="math inline">\(g(\mu_j) = \log(\mu_j)= \boldsymbol{X}_j\vec{\beta}\)</span>
 </td>
 </tr>
 </tbody>
 </table>
-<div class="fragment">
+<p><br></p>
 <ul>
 <li>We’ll focus on binary/Bernoulli/Binomial data today and circle back to count/Poisson data in a recorded video</li>
-</ul>
-</div>
-</section><section id="exponential-family-and-glms-examples" class="slide level2"><h2>Exponential family and GLMs: examples</h2>
+</ul></section><section id="exponential-family-and-glms-examples" class="slide level2"><h2>Exponential family and GLMs: examples</h2>
 <p>Normal distribution</p>
 <ul>
-<li><p>Assume that <span class="math inline">\(g(\cdot)\)</span> is the identity function <span class="math inline">\(g(\mu) = \mu\)</span></p></li>
+<li><p>Assume that <span class="math inline">\(g(\cdot)\)</span> is the identity function <span class="math inline">\(g(\mu_j) = \mu_j = E[Y_j]\)</span></p></li>
 <li><p>Model is then</p></li>
 </ul>
 <p><span class="math display">\[g(E[Y_j]) = \mu_j = \boldsymbol{X}_i\vec{\beta} = \beta_0 + U_j\beta_1\]</span></p>
@@ -671,7 +664,7 @@ September 16, 2025
 </ul></section><section id="exponential-family-and-glms-examples-1" class="slide level2"><h2>Exponential family and GLMs: examples</h2>
 <p>Bernoulli distribution</p>
 <ul>
-<li><p>Assume that <span class="math inline">\(g(\cdot)\)</span> is the logit function <span class="math inline">\(g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)\)</span></p></li>
+<li><p>Assume that <span class="math inline">\(g(\cdot)\)</span> is the logit function <span class="math inline">\(g(\mu_j) = \log\left(\frac{\mu_j}{1-\mu_j}\right)\)</span></p></li>
 <li><p>Model is then</p></li>
 </ul>
 <p><span class="math display">\[g(E[Y_j]) = \log\left(\frac{\mu_j}{1-\mu_j}\right) = \boldsymbol{X}_j\vec{\beta}\]</span></p>
@@ -719,15 +712,15 @@ September 16, 2025
 </ul></section><section id="logistic-linear-mixed-models" class="slide level2"><h2>Logistic linear mixed models</h2>
 <p>Let’s be more specific</p>
 <ul>
-<li><p>Say we have an outcome <span class="math inline">\(Y_{ij}\)</span> that is distributed Bernoulli with probability of success <span class="math inline">\(p_{ij}\)</span></p></li>
-<li><p>We want to know what effect exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(Y_{ij}\)</span></p></li>
+<li><p>Say we have an outcome <span class="math inline">\(Y_{ij}\)</span> for individual <em>j</em> in cluster <em>i</em> that is distributed Bernoulli with probability of success <span class="math inline">\(p_{ij}\)</span></p></li>
+<li><p>We want to know what effect binary exposure <span class="math inline">\(U_{ij}\)</span> has on <span class="math inline">\(Y_{ij}\)</span></p></li>
 </ul>
 <p><span class="alert">What would our model look like?</span></p>
 <div class="fragment">
 <p><span class="math display">\[\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \epsilon_{ij}\]</span></p>
 <p>where <span class="math inline">\(b_{0i} \sim N(0, \sigma^2_b)\)</span> and <span class="math inline">\(\epsilon_{ij} \sim \left(0, p_{ij}(1-p_{ij})\right)\)</span></p>
 <ul>
-<li>We usually estimate <span class="math inline">\(Var[\epsilon_{ij}]\)</span> as <span class="math inline">\(p(1-p)\)</span>
+<li>We usually estimate the individual variation <span class="math inline">\(Var[Y_{ij}|\boldsymbol{X}_i,b_{0i}]=Var[\epsilon_{ij}]\)</span> as <span class="math inline">\(p(1-p)\)</span>
 </li>
 </ul>
 </div>
@@ -744,9 +737,10 @@ September 16, 2025
 </div>
 </section><section id="example-cancer-remission" class="slide level2"><h2>Example: cancer remission</h2>
 <!-- https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/ -->
-<p>Say we want to see whether <span class="alert">years of physician experience</span> impacts whether a patient’s lung cancer goes into <span class="alert">remission</span> after treatment</p>
+<p>Say we want to see whether <span class="alert">years of physician experience</span> impacts whether a patient’s lung cancer goes into <span class="alert">remission</span> (<span class="math inline">\(Y_{ij}\)</span>)after treatment</p>
 <ul>
-<li><p>simulated dummy data from <a href="https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/">UCLA</a></p></li>
+<li><p>simulated fake data from <a href="https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/">UCLA</a></p></li>
+<li><p>physician treats multiple patients</p></li>
 <li><p>patients clustered by physician</p></li>
 <li><p>adjust for cancer stage as confounding factor (more experienced physicians may get patients with more advanced cancer)</p></li>
 </ul>
@@ -780,6 +774,13 @@ September 16, 2025
 # ℹ 1 more variable: prop_stageIV &lt;dbl&gt;</code></pre>
 </div>
 </div>
+<div class="fragment">
+<ul>
+<li><p>Each physician has different numbers of patients, with different total years of experience</p></li>
+<li><p>Pretty wide variation in the proportion of patients in remission for each physician</p></li>
+<li><p>Each physician treating patients in different cancer stages in different proportions</p></li>
+</ul>
+</div>
 </section><section id="example-cancer-remission-2" class="slide level2"><h2>Example: cancer remission</h2>
 <p>Now we should see if there’s any evidence of clustering</p>
 <div class="cell" data-hash="slides-2-1_cache/revealjs/cancer icc_84e21f509a08c75b62a0c6d1050e585c">
@@ -798,12 +799,9 @@ $ci
 1 Resampling Based Confidence Interval 0.3357405 0.4079287</code></pre>
 </div>
 </div>
-<div class="fragment">
 <ul>
-<li>Decent amount of clustering!</li>
-</ul>
-</div>
-</section><section id="example-cancer-remission-3" class="slide level2"><h2>Example: cancer remission</h2>
+<li>Seeing a decent amount of remission clustering by physician!</li>
+</ul></section><section id="example-cancer-remission-3" class="slide level2"><h2>Example: cancer remission</h2>
 <p>Now let’s see what a <span class="alert">non-clustered</span> logistic regression would get us:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>logistic_fit <span class="ot">&lt;-</span> <span class="fu">glm</span>( remission <span class="sc">~</span> Experience <span class="sc">+</span> <span class="fu">factor</span>(CancerStage),</span>
@@ -826,9 +824,9 @@ factor(CancerStage)IV  -1.72417405 0.12105741 -14.242614 4.982759e-46</code></pr
 <div class="column" style="width:70%;">
 <ul>
 <li>
-<p><span class="math inline">\(e^{\beta_1}\)</span>: 1.0875</p>
+<p><span class="math inline">\(e^{\widehat\beta_1}\)</span>: 1.0875</p>
 <ul>
-<li><p>95% CI: (1.0746, 1.1006)</p></li>
+<li><p>95% CI: <span class="math inline">\(\exp{(\widehat\beta_1 \pm Z_{0.975}\times SE_{\beta_1})}=\)</span>(1.0746, 1.1006)</p></li>
 <li><p><span class="alert">Interpretation</span>: <span class="fragment">Cancer patients have an estimated 8.75% increased odds of going into remission if they have a physician with 1 year of experience compared to 0 years, cancer stage held constant. We are 95% confident the true odds is between 7.46 and 7.46%.</span></p></li>
 </ul>
 </li>
@@ -872,8 +870,8 @@ CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
 <li>
 <p><span class="math inline">\(e^{\beta_1}\)</span>: 1.1261</p>
 <ul>
-<li><p>95% CI: (1.0691, 1.1861)</p></li>
-<li><p><span class="alert">Interpretation</span>: <span class="fragment">Cancer patients have an estimated 11.35% increased odds of going into remission if they have a physician with 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between 6.91 and 18.61%.</span></p></li>
+<li><p>95% CI: <span class="math inline">\(\exp{(\widehat\beta_1 \pm Z_{0.975}\times SE_{\beta_1})}=\)</span>(1.0691, 1.1861)</p></li>
+<li><p><span class="alert">Interpretation</span>: <span class="fragment">Comparing 2 cancer patients being treated by the same physician, patients have an estimated 11.35% increased odds of going into remission if their physician has 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between 6.91 and 18.61%.</span></p></li>
 </ul>
 </li>
 </ul>
@@ -903,7 +901,7 @@ CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
 <p>The <span class="alert">probit</span> link is sometimes used in certain fields for prediction</p>
 <ul>
 <li><p>Function is the inverse Normal CDF</p></li>
-<li><p>Coefficients are very difficult to interpret</p></li>
+<li><p>Coefficients are usually pretty difficult to interpret</p></li>
 </ul>
 </li>
 <li>
@@ -917,7 +915,7 @@ CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
 <div class="fragment">
 <p>In this case, we choose our link function based on 2 criteria:</p>
 <ol type="1">
-<li><p>What quantity are we actually wanting to estimate?</p></li>
+<li><p>What <u>quantity</u> are we actually wanting to estimate?</p></li>
 <li>
 <p>Do we have many observations with outcome probabilities very near 0 or 1?</p>
 <ul>
@@ -963,25 +961,30 @@ CancerStageIV  -2.4858983 0.14796101 -16.801036 2.398188e-63</code></pre>
 <p>This phenomenon is known as <span class="alert">non-collapsibility</span></p>
 </div>
 </section><section id="marginal-effects-in-identity-link-glmms" class="slide level2"><h2>Marginal effects in (identity link) GLMMs</h2>
-<p>But what if had a GLMM with a binary outcome and an identity link?</p>
-<p><span class="math display">\[Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}\]</span> <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
+<p>But what if had a GLMM with a binary outcome and an identity link? <span class="math display">\[Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}\]</span> <span class="math display">\[\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
 <div class="fragment">
 <ul>
-<li>The conditional mean of our outcome is then: <span class="math display">\[E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}\]</span>
-</li>
+<li>The conditional mean of our outcome is then:</li>
 </ul>
+<p><span class="math display">\[E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} ~~~~~~ E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}\]</span></p>
 </div>
 <div class="fragment">
 <ul>
 <li><p>Since <span class="math inline">\(g(\vec{Y}_i) = \vec{Y}_i\)</span>, there’s no function to “undo” to isolate <span class="math inline">\(E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\)</span></p></li>
 <li><p>So,</p></li>
 </ul>
+<div class="columns">
+<div class="column" style="width:50%;">
 <p><span class="math display">\[\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &amp;= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
 &amp;=E\left[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}\right]\\
 &amp;=\boldsymbol{X}_i\vec{\beta}\end{align*}\]</span></p>
-<ul>
-<li>The conditional and marginal effects are identical again!</li>
-</ul>
+</div><div class="column" style="width:50%;">
+<p><span class="math display">\[\begin{align*}E[Y_{ij}|\boldsymbol{X}_i] &amp;= E\left\{E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&amp;=E\left[\beta_0 + U_{ij}\beta_1 + Z_ib_{0i}\right]\\
+&amp;=\beta_0 + U_{ij}\beta_1\end{align*}\]</span></p>
+</div>
+</div>
+<p>The conditional and marginal effects are identical again!</p>
 </div>
 </section><section id="marginal-effects-in-glmms-2" class="slide level2"><h2>Marginal effects in GLMMs</h2>
 <p>So what happens when we have transformed outcomes and want marginal effects?</p>
@@ -1128,6 +1131,22 @@ CancerStageIII -1.1241823 0.09217574 -12.196076 3.261673e-34
 CancerStageIV  -2.4922475 0.15023385 -16.589121 8.353380e-62</code></pre>
 </div>
 </div>
+</section><section id="before-we-go" class="slide level2"><h2>Before we go…</h2>
+<ul>
+<li>
+<p>Next class (Thurs 9/18) will be a hands-on activity day – be sure to bring your laptop!</p>
+<ul>
+<li>Can also participate on Zoom</li>
+</ul>
+</li>
+<li><p>Small Assignment 1 (reading + discussion post) is due tonight at 11:59p</p></li>
+<li>
+<p>I’ll post the correlated count data video Wednesday night – it’ll extend what we’ve done today to count outcomes</p>
+<ul>
+<li>You’ll be able to do the in-class activity without watching this video</li>
+</ul>
+</li>
+</ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 

@@ -65,17 +65,19 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-2-1/slides-2-1")
 ## Recap: linear mixed effect models
 
 One way to account for clustering in analysis is with a [linear mixed effects]{.alert} model
-$$Y_{ij} = \beta_0 + u_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}$$
+$$Y_{ij} = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+\epsilon_{ij}$$
 or in the more general matrix notation form: 
-$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+$$\vec{Y}_i = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i$$
 
-- $\beta_0 + u_{ij}\beta_1$ (or $\boldsymbol{X}_i\vec{\beta}$) are the [fixed effects]{.alert} representing the mean responses for cluster $i$
+- $Y_{ij}$ is the outcome for individual *j* in cluster *i*
 
-- $Z_i b_{0i}$ ($\vec{Z}_ib_{0i}$) are the [random effects]{.alert} accounting for random between-cluster variation
+- $U_{ij}$ is the exposure status for individual *j* in cluster *i*
+
+- $\color{red}{\beta_0 + u_{ij}\beta_1}$ (or $\color{red}{\boldsymbol{X}_i\vec{\beta}}$) are the [fixed effects]{.underline} representing the mean responses for cluster $i$
+
+- $\color{blue}{Z_i b_{0i}}$ ($\color{blue}{\vec{Z}_ib_{0i}}$) are the [random effects]{.underline} accounting for random between-cluster variation
 
 - $\epsilon_{ij}$ ($\vec{\epsilon}_i$) is the regular between-individual variation
-   - or an individual's variation from the predicted outcome $\widehat{Y}_{ij} = E[Y_{ij}|\boldsymbol{X},b_{0i}]=\beta_0 + U_{ij}\beta_1$
-   - $\epsilon_{ij} = (Y_{ij} - \widehat{Y}_{ij})^2$
 
 ---
 
@@ -84,7 +86,7 @@ $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 $$Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}$$
 $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
 
-Then the variance of a single outcome measure is:
+Under a mixed model, the variance of a single outcome measure is:
 $$\begin{align*}Var[Y_{ij}|\boldsymbol{X}_i] &= Var[(\beta_0 + U_{ij}\beta_1) + Z_ib_{0i}+\epsilon_{ij}|\boldsymbol{X}_i]\\
 &= Var[Z_ib_{0i}+\epsilon_{ij}]\\
 &= \sigma^2_b + \sigma^2_{\epsilon}\end{align*}$$ 
@@ -103,7 +105,7 @@ $$\begin{align*}Cov[\color{red}{Y_{ij}}, \color{blue}{Y_{ik}}|\boldsymbol{X}_i] 
 &= \sigma^2_b\end{align*}$$
 
 ::: {.alert.absolute bottom=125 left=650}
-In 552, we were used to seeing $Cov[Y_{ij}, Y_{ik}]=0$!
+In 552, we were used to assuming $Cov[Y_{ij}, Y_{ik}]=0$!
 :::
 
 ---
@@ -148,15 +150,15 @@ If you look at the *full* covariance matrix for all observations, it looks like 
 ## Recap: linear mixed effect models
 
 One way to account for clustering in analysis is with a [linear mixed effects]{.alert} model
-$$Y_{ij} = \beta_0 + u_{ij}\beta_1 + Z_ib_{0i}+\epsilon_{ij}$$
+$$Y_{ij} = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+\epsilon_{ij}$$
 or in the more general matrix notation form: 
-$$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+$$\vec{Y}_i = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i$$
 
-- $\beta_0 + u_{ij}\beta_1$ (or $\boldsymbol{X}_i\vec{\beta}$) are the [fixed effects]{.alert} representing the mean responses for cluster $i$
+- $\color{red}{\beta_0 + u_{ij}\beta_1}$ (or $\color{red}{\boldsymbol{X}_i\vec{\beta}}$) are the [fixed effects]{.underline} representing the mean responses for cluster $i$
 
-- $Z_i b_{0i}$ ($\vec{Z}_ib_{0i}$) are the [random effects]{.alert} accounting for random between-cluster variation
+- $\color{blue}{Z_i b_{0i}}$ ($\color{blue}{\vec{Z}_ib_{0i}}$) are the [random effects]{.underline} accounting for random between-cluster variation
 
-The [fixed effects]{.alert} are shared across everyone in the sample, while the [random effects]{.alert} are unique to a particular cluster
+The [fixed effects]{style="color:red;"} are shared across everyone in the sample, while the [random effects]{style="color:blue;"} are unique to a particular cluster
 
 - Interpretations of $\beta_1$ in an LME are [conditional]{.alert} because they are comparing 2 individuals with the same cluster membership
 
@@ -168,10 +170,10 @@ The [fixed effects]{.alert} are shared across everyone in the sample, while the 
 
 ---
 
-## 552 review: logistic regression
+## 552 review: logistic regression, independent observations
 
 If our outcome for an individual $j$, $Y_{j}$, is [binary]{.alert}, we can model it using a logistic regression:
-$$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} + \epsilon_j = \beta_0 + U_j\beta_1 + \epsilon_j$$
+$$\log\left(\frac{p_j}{1-p_j}\right) = \beta_0 + U_j\beta_1 + \epsilon_j$$
 
 - We assume $Y_j$ follows a binomial distrigution $\text{Binomial}(p_j)$ with event probability $p_j$
 
@@ -183,10 +185,10 @@ $$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} + \epsilon_j 
 
 ---
 
-## 522 review: logistic regression
+## 522 review: logistic regression, independent observations
 
 If our outcome for an individual $j$, $Y_{j}$, is [binary]{.alert}, we can model it using a logistic regression:
-$$\log\left(\frac{p_j}{1-p_j}\right) = \boldsymbol{X}_j\vec{\beta} +\epsilon_j = \beta_0 + U_j\beta_1 + \epsilon_j$$
+$$\log\left(\frac{p_j}{1-p_j}\right) = \beta_0 + U_j\beta_1 + \epsilon_j$$
 
 - $\beta_1$ tells us about the [log odds]{.alert}:
 
@@ -198,11 +200,11 @@ $$e^{\beta_1} = \frac{\text{odds}(u=1)}{\text{odds}(u=0)}=\frac{\left(\frac{p(u=
 
 ---
 
-## 522 review: logistic regression
+## 522 review: logistic regression, independent observations
 
 Logistic regression is solving 2 problems for us:
 
-1. Using our Binomial distribution assumptions to handle non-constant variance in binary data
+1. Using our Binomial distribution assumptions to handle [non-constant variance]{.underline} in binary data
 
    - Remember, variance of binary data is a function of its mean!
 
@@ -223,8 +225,8 @@ In the independent observation setting, many types of data are modeled using a c
 
 Say we want to look at the effect of an exposure variable $U$ on an outcome variable $Y$:
 
-$$\begin{align*}g(Y_j) &= \boldsymbol{X}_j\vec{\beta} + \epsilon_j\\
-&= \beta_0 + U_j\beta_1 + \epsilon_j\end{align*}$$
+$$\begin{align*}g(Y_j) &= \beta_0 + U_j\beta_1 + \epsilon_j\\
+&=\boldsymbol{X}_j\vec{\beta} + \epsilon_j\end{align*}$$
 
 - $g(\cdot)$ is known as the [link function]{.alert} because it *links* a linear model on the righthand side to the outcome on the lefthand side
 
@@ -235,14 +237,14 @@ $$\begin{align*}g(Y_j) &= \boldsymbol{X}_j\vec{\beta} + \epsilon_j\\
 ## Generalized linear models
 
 In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
-$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0$$
+$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j(\mu_j)^{-1}[Y_j - \mu_j(\vec{\beta})] = 0$$
 
 
 where
 
-- The mean of the outcome $E[Y_j]=\mu_j(\vec{\beta})$ is a function of our model parameters $\vec{\beta}$
+- $\mu_j(\vec{\beta}) = E[Y_j]$ is the [mean of the outcome]{.underline} and is a function of our regression coefficients $\vec{\beta}$
 
-- The variance of the outcome $Var[Y_j] = v_j$ is some function $v_j$
+- $v_j(\mu_j)$ is the part of the outcome variance $Var[Y_j]$ that depends on the mean -- this is determined by the distribution of our outcome $Y_j$
 
 - [Bonus fact]{.underline}: The estimating equation is actually just the derivative of the likelihood with respect to regression parameters $\beta$ ($\partial f(y_j)/\partial \beta$)
 
@@ -251,11 +253,11 @@ where
 ## Generalized linear models
 
 In GLMs, we estimate the regression coefficients $\vec{\beta}$ as the solution to the [estimating equation]{.alert}:
-$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j^{-1}[Y_j - \mu_j(\vec{\beta})] = 0$$
+$$\sum_{j=1}^n \left(\frac{\partial \mu_j}{\partial \vec{\beta}}\right)^T v_j(\mu_j)^{-1}[Y_j - \mu_j(\vec{\beta})] = 0$$
 
 Look similar?
 
-$$\sum_{j=1}^n\boldsymbol{X}^T\frac{1}{\sigma^2}[Y_j - \boldsymbol{X}\vec{\beta}]=0 $$
+$$\sum_{j=1}^n\boldsymbol{X}^T[Y_j - \boldsymbol{X}\vec{\beta}]=0 $$
 
 . . .
 
@@ -265,7 +267,7 @@ OLS is a type of GLM!
 
    - $\left(\frac{\partial \mu_j}{\partial \beta}\right) = \boldsymbol{X}$
 
-- $Var[Y_j] = v_j = \sigma^2$
+- $v_j(\mu_j) = 1$ (the variance of $Y_j$ doesn't depend on the mean)
 
 ---
 
@@ -304,13 +306,14 @@ $$\text{Var}[Y_j] = \phi v(\mu_j),$$
 
 ## Exponential family and GLMs
 
-| Distribution | Var. function $v(\mu)$ | Usual link function                                                                     |
+| Distribution | Var. function $v(\mu_j)$ | Usual link function                                                                     |
 |--------------|------------------------|-----------------------------------------------------------------------------------|
-| Normal       | $v(\mu)=1$             | Identity: $g(\mu) = \mu = \boldsymbol{X}_j\vec{\beta}$                            |
-| Bernoulli/Binomial    | $v(\mu)=\mu(1-\mu)$    | Logit: $g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)= \boldsymbol{X}_j\vec{\beta}$ |
-| Poisson      | $v(\mu)=\mu$           | Log: $g(\mu) = \log(\mu)= \boldsymbol{X}_j\vec{\beta}$                            |
+| Normal       | $v(\mu_j)=1$             | Identity: $g(\mu_j) = \mu_j = \boldsymbol{X}_j\vec{\beta}$                            |
+| Bernoulli/Binomial    | $v(\mu_j)=\mu_j(1-\mu_j)$    | Logit: $g(\mu_j) = \log\left(\frac{\mu_j}{1-\mu_j}\right)= \boldsymbol{X}_j\vec{\beta}$ |
+| Poisson      | $v(\mu_j)=\mu_j$           | Log: $g(\mu_j) = \log(\mu_j)= \boldsymbol{X}_j\vec{\beta}$                            |
 
-. . .
+
+<br>
 
 - We'll focus on binary/Bernoulli/Binomial data today and circle back to count/Poisson data in a recorded video
 
@@ -320,7 +323,7 @@ $$\text{Var}[Y_j] = \phi v(\mu_j),$$
 
 Normal distribution
 
-- Assume that $g(\cdot)$ is the identity function $g(\mu) = \mu$
+- Assume that $g(\cdot)$ is the identity function $g(\mu_j) = \mu_j = E[Y_j]$
 
 - Model is then
 
@@ -338,7 +341,7 @@ a standard linear regression model
 
 Bernoulli distribution
 
-- Assume that $g(\cdot)$ is the logit function $g(\mu) = \log\left(\frac{\mu}{1-\mu}\right)$
+- Assume that $g(\cdot)$ is the logit function $g(\mu_j) = \log\left(\frac{\mu_j}{1-\mu_j}\right)$
 
 - Model is then
 
@@ -464,9 +467,9 @@ summary(glmm_fit)
 
 Let's be more specific
 
-- Say we have an outcome $Y_{ij}$ that is distributed Bernoulli with probability of success $p_{ij}$
+- Say we have an outcome $Y_{ij}$ for individual *j* in cluster *i* that is distributed Bernoulli with probability of success $p_{ij}$
 
-- We want to know what effect exposure $U_{ij}$ has on $Y_{ij}$
+- We want to know what effect binary exposure $U_{ij}$ has on $Y_{ij}$
 
 [What would our model look like?]{.alert}
 
@@ -476,7 +479,7 @@ $$\text{logit}(Y_{ij}) = \beta_0 + U_{ij}\beta_1 + Z_i b_{0i} + \epsilon_{ij}$$
 
 where $b_{0i} \sim N(0, \sigma^2_b)$ and $\epsilon_{ij} \sim \left(0, p_{ij}(1-p_{ij})\right)$
 
-- We usually estimate $Var[\epsilon_{ij}]$ as $p(1-p)$
+- We usually estimate the individual variation $Var[Y_{ij}|\boldsymbol{X}_i,b_{0i}]=Var[\epsilon_{ij}]$ as $p(1-p)$
 
 ---
 
@@ -502,9 +505,11 @@ where $b_{0i} \sim N(0, \sigma^2_b)$ and $\epsilon_{ij} \sim \left(0, p_{ij}(1-p
 
 <!-- https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/ -->
 
-Say we want to see whether [years of physician experience]{.alert} impacts whether a patient’s lung cancer goes into [remission]{.alert} after treatment
+Say we want to see whether [years of physician experience]{.alert} impacts whether a patient’s lung cancer goes into [remission]{.alert} ($Y_{ij}$)after treatment
 
-- simulated dummy data from [UCLA](https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/)
+- simulated fake data from [UCLA](https://stats.oarc.ucla.edu/r/dae/mixed-effects-logistic-regression/)
+
+- physician treats multiple patients
 
 - patients clustered by physician
 
@@ -545,6 +550,14 @@ cancer %>%
              prop_stageIII = mean(CancerStage=="III", na.rm=T), prop_stageIV = mean(CancerStage=="IV", na.rm=T))
 ```
 
+. . .
+
+- Each physician has different numbers of patients, with different total years of experience
+
+- Pretty wide variation in the proportion of patients in remission for each physician
+
+- Each physician treating patients in different cancer stages in different proportions
+
 ---
 
 ## Example: cancer remission
@@ -559,9 +572,7 @@ iccbin( cid = doc_ID, y = remission, data = cancer,
         method = "rm", ci.type = "rm" )
 ```
 
-. . .
-
-- Decent amount of clustering!
+- Seeing a decent amount of remission clustering by physician!
 
 ---
 
@@ -582,9 +593,9 @@ summary(logistic_fit)$coef
 :::: {.columns}
 
 ::: {.column width="70%"}
-- $e^{\beta_1}$: `r round(exp(summary(logistic_fit)$coefficients[2,1]), 4)`
+- $e^{\widehat\beta_1}$: `r round(exp(summary(logistic_fit)$coefficients[2,1]), 4)`
 
-   - 95% CI: (`r round(exp(logistic_fit_ci[2,1]), 4)`, `r round(exp(logistic_fit_ci[2,2]), 4)`)
+   - 95% CI: $\exp{(\widehat\beta_1 \pm Z_{0.975}\times SE_{\beta_1})}=$(`r round(exp(logistic_fit_ci[2,1]), 4)`, `r round(exp(logistic_fit_ci[2,2]), 4)`)
    
    - [Interpretation]{.alert}: [Cancer patients have an estimated 8.75% increased odds of going into remission if they have a physician with 1 year of experience compared to 0 years, cancer stage held constant. We are 95% confident the true odds is between `r (round(exp(logistic_fit_ci[2,1]), 4)-1)*100` and `r (round(exp(logistic_fit_ci[2,1]), 4)-1)*100`%.]{.fragment}
 :::
@@ -627,9 +638,9 @@ Logistic GLMM results:
 
 - $e^{\beta_1}$: `r round(exp(summary(glmm_fit)$coefficients[2,1]), 4)`
 
-   - 95% CI: (`r round(glmm_fit_ci_l, 4)`, `r round(glmm_fit_ci_u, 4)`)
+   - 95% CI: $\exp{(\widehat\beta_1 \pm Z_{0.975}\times SE_{\beta_1})}=$(`r round(glmm_fit_ci_l, 4)`, `r round(glmm_fit_ci_u, 4)`)
    
-   - [Interpretation]{.alert}: [Cancer patients have an estimated 11.35% increased odds of going into remission if they have a physician with 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between `r (round(glmm_fit_ci_l, 4)-1)*100` and `r (round(glmm_fit_ci_u, 4)-1)*100`%.]{.fragment}
+   - [Interpretation]{.alert}: [Comparing 2 cancer patients being treated by the same physician, patients have an estimated 11.35% increased odds of going into remission if their physician has 1 year of experience compared to the same physician with 0 years experience, cancer stage held constant. We are 95% confident the true odds is between `r (round(glmm_fit_ci_l, 4)-1)*100` and `r (round(glmm_fit_ci_u, 4)-1)*100`%.]{.fragment}
 
 :::
 
@@ -657,7 +668,7 @@ Binary outcomes are special in that there are several alternative link functions
    
    - Function is the inverse Normal CDF
    
-   - Coefficients are very difficult to interpret
+   - Coefficients are usually pretty difficult to interpret
 
 - The [log]{.alert} link and [identity]{.alert} links also get used
 
@@ -667,7 +678,7 @@ Binary outcomes are special in that there are several alternative link functions
 
 In this case, we choose our link function based on 2 criteria:
 
-1. What quantity are we actually wanting to estimate?
+1. What [quantity]{.underline} are we actually wanting to estimate?
 
 2. Do we have many observations with outcome probabilities very near 0 or 1?
 
@@ -727,15 +738,16 @@ This phenomenon is known as [non-collapsibility]{.alert}
 ## Marginal effects in (identity link) GLMMs
 
 But what if had a GLMM with a binary outcome and an identity link?
-
-
 $$Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}$$
 $$\vec{Y}_i = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} + \vec{\epsilon}_i$$
 
 . . .
 
 - The conditional mean of our outcome is then:
-$$E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}$$
+
+$$E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i} ~~~~~~ E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i}$$
+
+
 
 . . .
 
@@ -743,11 +755,23 @@ $$E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}] = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_
 
 - So,
 
+:::: {.columns}
+::: {.column width="50%"}
+
 $$\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
 &=E\left[\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}\right]\\
 &=\boldsymbol{X}_i\vec{\beta}\end{align*}$$
 
-   - The conditional and marginal effects are identical again!
+:::
+
+::: {.column width="50%"}
+$$\begin{align*}E[Y_{ij}|\boldsymbol{X}_i] &= E\left\{E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&=E\left[\beta_0 + U_{ij}\beta_1 + Z_ib_{0i}\right]\\
+&=\beta_0 + U_{ij}\beta_1\end{align*}$$
+:::
+::::
+
+The conditional and marginal effects are identical again!
 
 ---
 
@@ -877,3 +901,17 @@ glmm_fit_agq <- glmer( remission ~ Experience + CancerStage + (1 | doc_ID),famil
 
 summary(glmm_fit_agq)$coefficients
 ```
+
+---
+
+## Before we go...
+
+- Next class (Thurs 9/18) will be a hands-on activity day -- be sure to bring your laptop!
+
+   - Can also participate on Zoom
+
+- Small Assignment 1 (reading + discussion post) is due tonight at 11:59p
+
+- I'll post the correlated count data video Wednesday night -- it'll extend what we've done today to count outcomes
+
+   - You'll be able to do the in-class activity without watching this video

@@ -248,10 +248,10 @@ $$\vec{b}_0 \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0},
 ::: {.column width="50%"}
 The $\boldsymbol{G}$ matrix with random intercepts looked like:
 $$\begin{bmatrix}
-\sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \sigma^2_b & \dots & \sigma^2_b\\
 \sigma^2_b & \ddots & \dots & \sigma^2_b\\
 \vdots & \dots & \ddots & \vdots\\
-\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b
 \end{bmatrix}$$
 :::
 

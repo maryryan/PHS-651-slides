@@ -54,13 +54,13 @@ library(qrcode)
 *The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
 :::
 
-::: {.absolute bottom=50 left=260 width=1500}
+::: {.absolute bottom=280 left=300 width=1500}
 
 Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1>
 
 :::
 
-::: {.absolute bottom=0 left=100 width=150}
+::: {.absolute bottom=175 left=50 width=250}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1"))
 ```
@@ -72,17 +72,18 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1")
 
 One way to account for clustering in analysis is with a [(generalized) linear mixed
 effects]{.alert} model
-$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+$$g(Y_{ij}) = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+ \epsilon_{ij}$$
+$$g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i$$
+(*Transformed outcome for individual j in cluster i, modeled as a function of the exposure status for individual j in cluster i, with cluster-level random effects*)
 
 - $g(\cdot)$ is a [link function]{.alert} that transforms the outcome
 
--   $\boldsymbol{X}_i\vec{\beta}$ are the [fixed effects]{.alert}
-    representing the mean response
+-   $\color{red}{\beta_0 + u_{ij}\beta_1}$ (or $\color{red}{\boldsymbol{X}_i\vec{\beta}}$) are the [fixed effects]{.alert} modeling the mean outcome response as a function of variables
 
--   $\vec{Z}_ib_{0i}$ are the [random effects]{.alert} accounting for
+-   $\color{blue}{Z_i b_{0i}}$ ($\color{blue}{\vec{Z}_ib_{0i}}$) are the [random effects]{.alert} accounting for
     random between-cluster variation
 
--   $\vec{\epsilon}_i$ is the regular between-individual variation
+-   $\epsilon_{ij}$ ($\vec{\epsilon}_i$) is the regular between-individual variation
 
 - We assume the outcome observations in cluster *i*, $\vec{Y}_i$, follow a [multivariate probability distribution]{.alert}
 
@@ -92,7 +93,31 @@ $$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$
 
 One way to account for clustering in analysis is with a [(generalized) linear mixed
 effects]{.alert} model
-$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+$$g(Y_{ij}) = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+ \epsilon_{ij}$$
+$$g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i$$
+
+::: {.columns}
+
+::: {.column width="50%"}
+![*Figure modified from Harrison et al. (2018). "A brief introduction to mixed effects modelling and multi-model inference in ecology." Ecology.*](random-intercept.png){width="120%"}
+:::
+
+::: {.column width="50%"}
+$$\mu_{\text{group}} = \beta_0$$
+$$\alpha_1 = \beta_0 + b_{0i}$$
+:::
+
+::::
+
+
+---
+
+## Recap: (generalized) linear mixed effect models
+
+One way to account for clustering in analysis is with a [(generalized) linear mixed
+effects]{.alert} model
+$$g(Y_{ij}) = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+ \epsilon_{ij}$$
+$$g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i$$
 
 The [fixed effects]{.alert} are shared across everyone in the sample,
 while the [random effects]{.alert} are unique to a particular cluster (however we define cluster)
@@ -110,13 +135,14 @@ Interpretations of $\beta_1$ in an LME (identity link) are technically [conditio
 
 One way to account for clustering in analysis is with a [(generalized) linear mixed
 effects]{.alert} model
-$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i$$
+$$g(Y_{ij}) = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+ \epsilon_{ij}$$
+$$g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i$$
 
 The [fixed effects]{.alert} are shared across everyone in the sample,
 while the [random effects]{.alert} are unique to a particular cluster (however we define cluster)
 
 <br>
-Interpretations of $\beta_1$ in a GLMM are more strictly [conditional]{.alert} because
+Interpretations of $\beta_1$ in a GLMM are [strictly conditional]{.alert} because
 they are comparing 2 individuals with the same cluster membership, or have the same random effect value ($g\left(E[Y_{ij} | \boldsymbol{X}_i, b_{0i}]\right)$)
 
 -   Often referred to as having individual-specific or cluster-specific
@@ -124,8 +150,55 @@ they are comparing 2 individuals with the same cluster membership, or have the s
 
 -   Possible to extract marginal effects from conditional models, but
     often complicated and prone to bias
+    
 
-. . .
+---
+
+## Recap: Marginal effects in GLMMs
+
+In order to get the marginal effects, we would need to inverse-transform the outcome (undo the logit function):
+$$E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}~~~~~~~ E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}{1+\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}$$
+
+and then take the marginal expectation of that:
+
+:::: {.columns}
+::: {.column width="50%"}
+$$\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&=E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right]\end{align*}$$
+:::
+
+::: {.column width="50%"}
+$$\begin{align*}E[Y_{ij}|\boldsymbol{X}_i] &= E\left\{E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&=E\left[\frac{\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}{1+\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}\right]\end{align*}$$
+:::
+::::
+
+
+- Clearly, $E[\vec{Y}_i|\boldsymbol{X}_i]$ [is not the same as]{.alert} $g(E[\vec{Y}_i|\boldsymbol{X}_i])=\frac{\exp(\boldsymbol{X}_i\vec{\beta})}{1+\exp(\boldsymbol{X}_i\vec{\beta})}$
+
+This phenomenon is known as [non-collapsibility]{.alert}
+
+---
+
+## Recap: (generalized) linear mixed effect models
+
+One way to account for clustering in analysis is with a [(generalized) linear mixed
+effects]{.alert} model
+$$g(Y_{ij}) = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+ \epsilon_{ij}$$
+$$g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i$$
+
+The [fixed effects]{.alert} are shared across everyone in the sample,
+while the [random effects]{.alert} are unique to a particular cluster (however we define cluster)
+
+<br>
+Interpretations of $\beta_1$ in a GLMM are [strictly conditional]{.alert} because
+they are comparing 2 individuals with the same cluster membership, or have the same random effect value ($g\left(E[Y_{ij} | \boldsymbol{X}_i, b_{0i}]\right)$)
+
+-   Often referred to as having individual-specific or cluster-specific
+    interpretation
+
+-   Possible to extract marginal effects from conditional models, but
+    often complicated and prone to bias
 
 [What if we want to look at the marginal effect of an exposure -- one that's *averaged across*
 all clusters?]{.alert}
@@ -149,6 +222,10 @@ inference about [population averages]{.alert} (marginal effects)
 <br>
 Rigid distributional assumptions got in the way of this in LMEs/GLMMs
 
+- Adding random effects were how we were able to have non-0 covariance ($Cov[Y_{ij},Y_{ik}]\ne 0$) while still allowing for our outcome to follow a proper probability distribution
+
+- This allowed us to assume some things about our data and not have to estimate them
+
 - So for marginal models we want to use [fewer distributional assumptions]{.alert}
 
 <!-- . . . -->
@@ -159,12 +236,36 @@ Rigid distributional assumptions got in the way of this in LMEs/GLMMs
 
 ## R-side and G-side variance
 
-$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{\gamma} + \vec{\epsilon}_i$$
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_ib_{0i} + \vec{\epsilon}_i$$
 
-- Recall that with LMEs and GLMMs, we modeled:
-$$\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})$$
+- Recall that with LMEs and GLMMs, we modeled our [systematic variation]{.underline} (random effects and within-cluster individual variation) as:
+$$\vec{b}_0 \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})$$
 
 - When using random effects (like in LMEs and GLMMs), some call this modeling with [G-side variance]{.alert}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+The $\boldsymbol{G}$ matrix with random intercepts looked like:
+$$\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon & \sigma^2_b & \dots & \sigma^2_b\\
+\sigma^2_b & \ddots & \dots & \sigma^2_b\\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}$$
+:::
+
+::: {.column width="50%"}
+The $\boldsymbol{R}_i = \sigma^2_{\epsilon}\boldsymbol{I}$ matrix for within-cluster individual variation looked like:
+$$\begin{bmatrix}
+\sigma^2 & 0 & \dots & 0 \\
+0 & \ddots & \dots & 0 \\
+\vdots & \dots & \ddots & \vdots\\
+0 & \dots & 0 & \sigma^2
+\end{bmatrix}$$
+:::
+
+::::
 
    - These random effects $\vec{\gamma}$ were difficult to marginalize out of the expectation when we used a non-identity link function
    
@@ -174,16 +275,16 @@ $$\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{
 
 ## R-side and G-side variance
 
-$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{\gamma} + \vec{\epsilon}_i$$
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_ib_{0i} + \vec{\epsilon}_i$$
 
-- Recall that with LMEs and GLMMs, we modeled:
-$$\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})$$
+- Recall that with LMEs and GLMMs, we modeled our [systematic variation]{.underline} (random effects and within-cluster variation) as:
+$$\vec{b}_0 \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})$$
 
-- When using random effects (like in LMEs and GLMMs), some call this modeling with [G-side variance]{.alert}
+- When using random effects (like in LMEs and GLMMs), some call this modeling with G-side variance
 
-- When using $\boldsymbol{G}=0$, we call this modeling with [R-side variance]{.alert}
+- When using $\boldsymbol{G}=0$ (no random intercepts), we call this modeling with [R-side variance]{.alert}
 
-   - [Marginal modeling]{.alert} approaches tend to exclusively model with R-side variance
+   - [Marginal modeling]{.alert} approaches tend to exclusively model with [R-side variance]{.underline}
    
    - Downside: this means we're not modeling the outcome using a proper probability distribution (more on this soon...)
    
@@ -216,7 +317,7 @@ $$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
 
 ::: {.column width="50%"}
 ::: {.fragment}
-ii. The [within-cluster association]{.alert} of the outcomes
+ii. The [within-cluster association]{.alert} of the outcomes ($Corr[Y_{ij},Y_{ik}]$)
 
    - Should depend on the means and a correlation parameter(s)
 :::
@@ -534,7 +635,7 @@ So we have the main components of a marginal model
 
 . . .
 
-- With OLS and LMEs/GLMMs, we had a likelihood-based estimating equation we could use to derive estimates for $\beta$
+- With OLS and LMEs/GLMMs, we had a likelihood-based estimating equation we could use to derive estimates for $\beta$ (see lecture 2.1)
 
 . . .
 
@@ -619,9 +720,11 @@ $V_i$]{.alert}, a GEE doesn't have to correspond to a full likelihood/distributi
 
 . . .
 
-- Need to estimate mean model parameters $\beta$ and variance/covariance/correlation parameters $\varphi$, $\vec{\alpha}$
-
 - Estimation of model parameters no longer done by maximum likelihood or REML, but by an iterative algorithm (like Newton-Raphson)
+
+. . .
+
+- We can't answer questions about cluster-specific trajectories like we can with GLMMs
 
 . . .
 
@@ -629,7 +732,7 @@ $V_i$]{.alert}, a GEE doesn't have to correspond to a full likelihood/distributi
 
 . . .
 
-- Also means we [need more data]{.alert} to run this model 🙁
+- Also means we [need more data]{.alert} (specifically, more clusters) to run this model 🙁
 
 ---
 
@@ -637,8 +740,6 @@ $V_i$]{.alert}, a GEE doesn't have to correspond to a full likelihood/distributi
 
 We noted that GEEs are *marginal* models while GLMMS are *conditional*
 models...
-
-. . .
 
 [What are some other differences between GEEs and GLMMs?]{.alert}
 
@@ -649,10 +750,12 @@ models...
 | Interpretation             | "Population"-level                                                       | Cluster-level                                |
 | Accounting for correlation | Empirical estimation                                                   | Specification of random effects              |
 | Assumptions                | Weak assumptions; more robust (correlation structure, over-dispersion) | Strong assumptions; less robust              |
-| Sample size requirements   | Moderately large ($n > 50$)                                            | Works with smaller sample sizes provided that the entire model is correctly specified |
+| Sample size requirements   | Moderately large ($n > 50$)                                            | Works with smaller numbers of clusters provided that the entire model is correctly specified |
 | Computational burden       | Light                                                                  | Heavy                                        |
 | Cluster-level prediction?  | No                                                                     | Yes                                          |
 : {tbl-colwidths="[20,40,40]"}
+
+[Big take away:]{.alert} GLMMs and GEEs aren't so much different models, as different ways of estimating models
 
 ---
 
@@ -667,3 +770,106 @@ Our estimates (and our interpretations!) are only as good as our data, though
 - If the data we're using to build a GEE isn't [representative of the population]{.alert} we're interested in, it's not going to magically give us results generalizable to the population
 
 - A more accurate description would be that GEEs give us sample-population-level interpretations while GLMMs give us sample-cluster-level interpretations
+
+---
+
+## GEEs: radon
+
+Let's use our old Minnesota radon data we used back in lecture 1.2
+
+- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county
+
+```{r radon, echo=F}
+radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
+
+set.seed(081524)
+
+radon.mn <- radon %>% 
+   as.data.frame() %>% 
+   mutate(log_radon = log(activity +0.1),
+          county = str_trim(county)) %>% 
+   dplyr::filter(state == "MN")
+```
+
+We'd assume:
+
+- Mean model: 
+
+- Variance: 
+
+- Correlation structure: 
+
+---
+
+## GEEs: radon
+
+Let's use our old Minnesota radon data we used back in lecture 2.1
+
+- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county
+
+We'd assume:
+
+- Mean model: [$E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})$]{.alert}\
+
+- Variance: [$Var[Y_{ij}] = \sigma^2$]{.alert}
+
+- Correlation structure: [exchangeable (just one correlation parameter to estimate)]{.alert}
+
+---
+
+## GEEs: radon
+
+Let's run it:
+```{r radon gee}
+library(gee)
+
+# run a GEE with exchangeable correlation clustered on counties #
+radon_gee <- gee( log_radon ~ floor,
+                  id=cntyfips, # cluster ID needs to be a number, not names or categories
+                  data=radon.mn, corstr="exchangeable" )
+summary( radon_gee )$coef
+```
+
+- $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
+
+- Ignore the "naive" and "robust" SEs for now -- we'll talk about that more on Thursday
+
+---
+
+## GEEs: radon
+
+Let's compare our GEE result with what we would get from an LME:
+```{r radon lme}
+library(lme4)
+
+# run a LME with random county intercepts #
+radon_lme <- lmer( log_radon ~ floor + (1|county),
+                  data=radon.mn )
+summary( radon_lme )$coef
+```
+
+- Exchangeable GEE $\beta_1$: `r round(summary(radon_gee)$coef[2,1],4)`
+
+- LME $\beta_1$: `r round(summary(radon_lme)$coef[2,1],4)`
+
+   - Not that different on point estimates!
+   
+   - Where we'll likely see the biggest differences is in the inference/95% CIs/standard errors... more on than Thursday
+
+---
+
+## Take home messages
+
+- We add random effects to GLMMs to help [model non-0 covariance]{.alert} (correlation between observations)
+
+<br>
+
+- Because GLMMs are derived from the assumption that the outcome follows a specific probability distribution, it's hard to get marginal interpretations of results because it's [difficult separate out the random effects]{.alert} when we have a [non-identity link function]{.underline}
+
+<br>
+
+- GEEs allow us to model the mean and covariance of a regression [separately]{.alert} and in a way that doesn't have distributional assumptions, so we can easily get the [population-averaged interpretation]{.alert}
+
+<br>
+
+- GEEs tend to be more robust to breaking assumptions, but we [need more clusters]{.alert} to pay for that flexibility

@@ -28,6 +28,71 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #767676;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #767676;  padding-left: 4px; }
+    div.sourceCode
+      { color: #545454; background-color: #fefefe; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #545454; } /* Normal */
+    code span.al { color: #7928a1; } /* Alert */
+    code span.an { color: #696969; } /* Annotation */
+    code span.at { color: #a55a00; } /* Attribute */
+    code span.bn { color: #7928a1; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #d91e18; } /* ControlFlow */
+    code span.ch { color: #008000; } /* Char */
+    code span.cn { color: #d91e18; } /* Constant */
+    code span.co { color: #696969; } /* Comment */
+    code span.cv { color: #696969; font-style: italic; } /* CommentVar */
+    code span.do { color: #696969; font-style: italic; } /* Documentation */
+    code span.dt { color: #7928a1; } /* DataType */
+    code span.dv { color: #7928a1; } /* DecVal */
+    code span.er { color: #7928a1; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #a55a00; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #696969; } /* Information */
+    code span.kw { color: #d91e18; } /* Keyword */
+    code span.op { color: #00769e; } /* Operator */
+    code span.ot { color: #d91e18; } /* Other */
+    code span.pp { color: #7928a1; } /* Preprocessor */
+    code span.sc { color: #00769e; } /* SpecialChar */
+    code span.ss { color: #008000; } /* SpecialString */
+    code span.st { color: #008000; } /* String */
+    code span.va { color: #a55a00; } /* Variable */
+    code span.vs { color: #008000; } /* VerbatimString */
+    code span.wa { color: #696969; font-style: italic; } /* Warning */
   </style>
 <link rel="stylesheet" href="slides-3-1_files/libs/revealjs/dist/theme/quarto.css">
 <link href="slides-3-1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -346,10 +411,10 @@ September 23, 2025
 <p><em>If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.</em></p>
 <p><em>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</em></p>
 </div>
-<div class="absolute" style="left: 260px; bottom: 50px; width: 1500px; ">
+<div class="absolute" style="left: 300px; bottom: 280px; width: 1500px; ">
 <p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1" class="uri">https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1</a></p>
 </div>
-<div class="absolute" style="left: 100px; bottom: 0px; width: 150px; ">
+<div class="absolute" style="left: 50px; bottom: 175px; width: 250px; ">
 <div class="cell">
 <div class="cell-output-display">
 <p><img data-src="slides-3-1_files/figure-revealjs/qr%20code-1.png" width="192"></p>
@@ -357,15 +422,27 @@ September 23, 2025
 </div>
 </div>
 </section><section id="recap-generalized-linear-mixed-effect-models" class="slide level2"><h2>Recap: (generalized) linear mixed effect models</h2>
-<p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(Y_{ij}) = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+ \epsilon_{ij}\]</span> <span class="math display">\[g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i\]</span> (<em>Transformed outcome for individual j in cluster i, modeled as a function of the exposure status for individual j in cluster i, with cluster-level random effects</em>)</p>
 <ul>
 <li><p><span class="math inline">\(g(\cdot)\)</span> is a <span class="alert">link function</span> that transforms the outcome</p></li>
-<li><p><span class="math inline">\(\boldsymbol{X}_i\vec{\beta}\)</span> are the <span class="alert">fixed effects</span> representing the mean response</p></li>
-<li><p><span class="math inline">\(\vec{Z}_ib_{0i}\)</span> are the <span class="alert">random effects</span> accounting for random between-cluster variation</p></li>
-<li><p><span class="math inline">\(\vec{\epsilon}_i\)</span> is the regular between-individual variation</p></li>
+<li><p><span class="math inline">\(\color{red}{\beta_0 + u_{ij}\beta_1}\)</span> (or <span class="math inline">\(\color{red}{\boldsymbol{X}_i\vec{\beta}}\)</span>) are the <span class="alert">fixed effects</span> modeling the mean outcome response as a function of variables</p></li>
+<li><p><span class="math inline">\(\color{blue}{Z_i b_{0i}}\)</span> (<span class="math inline">\(\color{blue}{\vec{Z}_ib_{0i}}\)</span>) are the <span class="alert">random effects</span> accounting for random between-cluster variation</p></li>
+<li><p><span class="math inline">\(\epsilon_{ij}\)</span> (<span class="math inline">\(\vec{\epsilon}_i\)</span>) is the regular between-individual variation</p></li>
 <li><p>We assume the outcome observations in cluster <em>i</em>, <span class="math inline">\(\vec{Y}_i\)</span>, follow a <span class="alert">multivariate probability distribution</span></p></li>
 </ul></section><section id="recap-generalized-linear-mixed-effect-models-1" class="slide level2"><h2>Recap: (generalized) linear mixed effect models</h2>
-<p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+<p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(Y_{ij}) = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+ \epsilon_{ij}\]</span> <span class="math display">\[g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i\]</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="random-intercept.png" style="width:120.0%"></p>
+<figcaption><em>Figure modified from Harrison et al.&nbsp;(2018). “A brief introduction to mixed effects modelling and multi-model inference in ecology.” Ecology.</em></figcaption></figure>
+</div>
+</div><div class="column" style="width:50%;">
+<p><span class="math display">\[\mu_{\text{group}} = \beta_0\]</span> <span class="math display">\[\alpha_1 = \beta_0 + b_{0i}\]</span></p>
+</div>
+</div>
+</section><section id="recap-generalized-linear-mixed-effect-models-2" class="slide level2"><h2>Recap: (generalized) linear mixed effect models</h2>
+<p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(Y_{ij}) = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+ \epsilon_{ij}\]</span> <span class="math display">\[g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i\]</span></p>
 <p>The <span class="alert">fixed effects</span> are shared across everyone in the sample, while the <span class="alert">random effects</span> are unique to a particular cluster (however we define cluster)</p>
 <div class="fragment">
 <p><br> Interpretations of <span class="math inline">\(\beta_1\)</span> in an LME (identity link) are technically <span class="alert">conditional</span> because they are comparing 2 individuals with the same cluster membership (<span class="math inline">\(E[Y_{ij} | \boldsymbol{X}_i, b_{0i}]\)</span>)</p>
@@ -373,17 +450,39 @@ September 23, 2025
 <li>It is easy to separate out the random effects, though, and get the <span class="alert">marginal</span> interpretation</li>
 </ul>
 </div>
-</section><section id="recap-generalized-linear-mixed-effect-models-2" class="slide level2"><h2>Recap: (generalized) linear mixed effect models</h2>
-<p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i}+\vec{\epsilon}_i\]</span></p>
+</section><section id="recap-generalized-linear-mixed-effect-models-3" class="slide level2"><h2>Recap: (generalized) linear mixed effect models</h2>
+<p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(Y_{ij}) = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+ \epsilon_{ij}\]</span> <span class="math display">\[g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i\]</span></p>
 <p>The <span class="alert">fixed effects</span> are shared across everyone in the sample, while the <span class="alert">random effects</span> are unique to a particular cluster (however we define cluster)</p>
-<p><br> Interpretations of <span class="math inline">\(\beta_1\)</span> in a GLMM are more strictly <span class="alert">conditional</span> because they are comparing 2 individuals with the same cluster membership, or have the same random effect value (<span class="math inline">\(g\left(E[Y_{ij} | \boldsymbol{X}_i, b_{0i}]\right)\)</span>)</p>
+<p><br> Interpretations of <span class="math inline">\(\beta_1\)</span> in a GLMM are <span class="alert">strictly conditional</span> because they are comparing 2 individuals with the same cluster membership, or have the same random effect value (<span class="math inline">\(g\left(E[Y_{ij} | \boldsymbol{X}_i, b_{0i}]\right)\)</span>)</p>
+<ul>
+<li><p>Often referred to as having individual-specific or cluster-specific interpretation</p></li>
+<li><p>Possible to extract marginal effects from conditional models, but often complicated and prone to bias</p></li>
+</ul></section><section id="recap-marginal-effects-in-glmms" class="slide level2"><h2>Recap: Marginal effects in GLMMs</h2>
+<p>In order to get the marginal effects, we would need to inverse-transform the outcome (undo the logit function): <span class="math display">\[E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}~~~~~~~ E[Y_{ij}|\boldsymbol{X}_i, b_{0i}] = \frac{\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}{1+\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}\]</span></p>
+<p>and then take the marginal expectation of that:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="math display">\[\begin{align*}E[\vec{Y}_i|\boldsymbol{X}_i] &amp;= E\left\{E[\vec{Y}_i|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&amp;=E\left[\frac{\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}{1+\exp(\boldsymbol{X}_i\vec{\beta} + \vec{Z}_ib_{0i})}\right]\end{align*}\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><span class="math display">\[\begin{align*}E[Y_{ij}|\boldsymbol{X}_i] &amp;= E\left\{E[Y_{ij}|\boldsymbol{X}_i, b_{0i}]\right\}\\
+&amp;=E\left[\frac{\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}{1+\exp(\beta_0 + U_{ij}\beta_1 + Z_ib_{0i})}\right]\end{align*}\]</span></p>
+</div>
+</div>
+<ul>
+<li>Clearly, <span class="math inline">\(E[\vec{Y}_i|\boldsymbol{X}_i]\)</span> <span class="alert">is not the same as</span> <span class="math inline">\(g(E[\vec{Y}_i|\boldsymbol{X}_i])=\frac{\exp(\boldsymbol{X}_i\vec{\beta})}{1+\exp(\boldsymbol{X}_i\vec{\beta})}\)</span>
+</li>
+</ul>
+<p>This phenomenon is known as <span class="alert">non-collapsibility</span></p>
+</section><section id="recap-generalized-linear-mixed-effect-models-4" class="slide level2"><h2>Recap: (generalized) linear mixed effect models</h2>
+<p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(Y_{ij}) = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+ \epsilon_{ij}\]</span> <span class="math display">\[g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i\]</span></p>
+<p>The <span class="alert">fixed effects</span> are shared across everyone in the sample, while the <span class="alert">random effects</span> are unique to a particular cluster (however we define cluster)</p>
+<p><br> Interpretations of <span class="math inline">\(\beta_1\)</span> in a GLMM are <span class="alert">strictly conditional</span> because they are comparing 2 individuals with the same cluster membership, or have the same random effect value (<span class="math inline">\(g\left(E[Y_{ij} | \boldsymbol{X}_i, b_{0i}]\right)\)</span>)</p>
 <ul>
 <li><p>Often referred to as having individual-specific or cluster-specific interpretation</p></li>
 <li><p>Possible to extract marginal effects from conditional models, but often complicated and prone to bias</p></li>
 </ul>
-<div class="fragment">
 <p><span class="alert">What if we want to look at the marginal effect of an exposure – one that’s <em>averaged across</em> all clusters?</span></p>
-</div>
 </section><section id="marginal-models" class="slide level2"><h2>Marginal models</h2>
 <p>Basic idea: we want to account for clustering of data, but make inference about <span class="alert">population averages</span> (marginal effects)</p>
 <ul>
@@ -394,31 +493,47 @@ September 23, 2025
 <div class="fragment">
 <p><br> Rigid distributional assumptions got in the way of this in LMEs/GLMMs</p>
 <ul>
-<li>So for marginal models we want to use <span class="alert">fewer distributional assumptions</span>
-</li>
+<li><p>Adding random effects were how we were able to have non-0 covariance (<span class="math inline">\(Cov[Y_{ij},Y_{ik}]\ne 0\)</span>) while still allowing for our outcome to follow a proper probability distribution</p></li>
+<li><p>This allowed us to assume some things about our data and not have to estimate them</p></li>
+<li><p>So for marginal models we want to use <span class="alert">fewer distributional assumptions</span></p></li>
 </ul>
 <!-- . . . --><!-- - How can we account for correlation among outcome observations/non-0 covariance without the rigidity of distribution assumptions? -->
 </div>
 </section><section id="r-side-and-g-side-variance" class="slide level2"><h2>R-side and G-side variance</h2>
-<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{\gamma} + \vec{\epsilon}_i\]</span></p>
+<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
 <ul>
-<li><p>Recall that with LMEs and GLMMs, we modeled: <span class="math display">\[\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})\]</span></p></li>
-<li>
-<p>When using random effects (like in LMEs and GLMMs), some call this modeling with <span class="alert">G-side variance</span></p>
+<li><p>Recall that with LMEs and GLMMs, we modeled our <u>systematic variation</u> (random effects and within-cluster individual variation) as: <span class="math display">\[\vec{b}_0 \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})\]</span></p></li>
+<li><p>When using random effects (like in LMEs and GLMMs), some call this modeling with <span class="alert">G-side variance</span></p></li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>The <span class="math inline">\(\boldsymbol{G}\)</span> matrix with random intercepts looked like: <span class="math display">\[\begin{bmatrix}
+\sigma^2_b + \sigma^2_\epsilon &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
+\sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+\sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \sigma^2_\epsilon
+\end{bmatrix}\]</span></p>
+</div><div class="column" style="width:50%;">
+<p>The <span class="math inline">\(\boldsymbol{R}_i = \sigma^2_{\epsilon}\boldsymbol{I}\)</span> matrix for within-cluster individual variation looked like: <span class="math display">\[\begin{bmatrix}
+\sigma^2 &amp; 0 &amp; \dots &amp; 0 \\
+0 &amp; \ddots &amp; \dots &amp; 0 \\
+\vdots &amp; \dots &amp; \ddots &amp; \vdots\\
+0 &amp; \dots &amp; 0 &amp; \sigma^2
+\end{bmatrix}\]</span></p>
+</div>
+</div>
 <ul>
 <li><p>These random effects <span class="math inline">\(\vec{\gamma}\)</span> were difficult to marginalize out of the expectation when we used a non-identity link function</p></li>
 <li><p>What if instead we had <em>no</em> random effects (<span class="math inline">\(\boldsymbol{G}=0\)</span>), and modeled non-zero covariance using <span class="math inline">\(\vec{\epsilon}_i\)</span> and a <span class="math inline">\(\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}\)</span>?</p></li>
-</ul>
-</li>
 </ul></section><section id="r-side-and-g-side-variance-1" class="slide level2"><h2>R-side and G-side variance</h2>
-<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{\gamma} + \vec{\epsilon}_i\]</span></p>
+<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
 <ul>
-<li><p>Recall that with LMEs and GLMMs, we modeled: <span class="math display">\[\vec{\gamma} \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})\]</span></p></li>
-<li><p>When using random effects (like in LMEs and GLMMs), some call this modeling with <span class="alert">G-side variance</span></p></li>
+<li><p>Recall that with LMEs and GLMMs, we modeled our <u>systematic variation</u> (random effects and within-cluster variation) as: <span class="math display">\[\vec{b}_0 \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})\]</span></p></li>
+<li><p>When using random effects (like in LMEs and GLMMs), some call this modeling with G-side variance</p></li>
 <li>
-<p>When using <span class="math inline">\(\boldsymbol{G}=0\)</span>, we call this modeling with <span class="alert">R-side variance</span></p>
+<p>When using <span class="math inline">\(\boldsymbol{G}=0\)</span> (no random intercepts), we call this modeling with <span class="alert">R-side variance</span></p>
 <ul>
-<li><p><span class="alert">Marginal modeling</span> approaches tend to exclusively model with R-side variance</p></li>
+<li><p><span class="alert">Marginal modeling</span> approaches tend to exclusively model with <u>R-side variance</u></p></li>
 <li><p>Downside: this means we’re not modeling the outcome using a proper probability distribution (more on this soon…)</p></li>
 </ul>
 </li>
@@ -451,7 +566,7 @@ September 23, 2025
 </div><div class="column" style="width:50%;">
 <div class="fragment">
 <ol start="2" type="i">
-<li>The <span class="alert">within-cluster association</span> of the outcomes</li>
+<li>The <span class="alert">within-cluster association</span> of the outcomes (<span class="math inline">\(Corr[Y_{ij},Y_{ik}]\)</span>)</li>
 </ol>
 <ul>
 <li>Should depend on the means and a correlation parameter(s)</li>
@@ -702,8 +817,7 @@ September 23, 2025
 <p><span class="alert">But how do we use these components to estimate our regression coefficients?</span></p>
 <div class="fragment">
 <ul>
-<li>With OLS and LMEs/GLMMs, we had a likelihood-based estimating equation we could use to derive estimates for <span class="math inline">\(\beta\)</span>
-</li>
+<li>With OLS and LMEs/GLMMs, we had a likelihood-based estimating equation we could use to derive estimates for <span class="math inline">\(\beta\)</span> (see lecture 2.1)</li>
 </ul>
 </div>
 <div class="fragment">
@@ -755,8 +869,12 @@ September 23, 2025
 <p><span class="alert">What’s the effect of this?</span></p>
 <div class="fragment">
 <ul>
-<li><p>Need to estimate mean model parameters <span class="math inline">\(\beta\)</span> and variance/covariance/correlation parameters <span class="math inline">\(\varphi\)</span>, <span class="math inline">\(\vec{\alpha}\)</span></p></li>
-<li><p>Estimation of model parameters no longer done by maximum likelihood or REML, but by an iterative algorithm (like Newton-Raphson)</p></li>
+<li>Estimation of model parameters no longer done by maximum likelihood or REML, but by an iterative algorithm (like Newton-Raphson)</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>We can’t answer questions about cluster-specific trajectories like we can with GLMMs</li>
 </ul>
 </div>
 <div class="fragment">
@@ -766,14 +884,12 @@ September 23, 2025
 </div>
 <div class="fragment">
 <ul>
-<li>Also means we <span class="alert">need more data</span> to run this model 🙁</li>
+<li>Also means we <span class="alert">need more data</span> (specifically, more clusters) to run this model 🙁</li>
 </ul>
 </div>
 </section><section id="glmms-vs-gees" class="slide level2"><h2>GLMMs vs GEEs</h2>
 <p>We noted that GEEs are <em>marginal</em> models while GLMMS are <em>conditional</em> models…</p>
-<div class="fragment">
 <p><span class="alert">What are some other differences between GEEs and GLMMs?</span></p>
-</div>
 <div class="fragment">
 <table>
 <colgroup>
@@ -805,7 +921,7 @@ September 23, 2025
 <tr class="even">
 <td>Sample size requirements</td>
 <td>Moderately large (<span class="math inline">\(n &gt; 50\)</span>)</td>
-<td>Works with smaller sample sizes provided that the entire model is correctly specified</td>
+<td>Works with smaller numbers of clusters provided that the entire model is correctly specified</td>
 </tr>
 <tr class="odd">
 <td>Computational burden</td>
@@ -819,6 +935,7 @@ September 23, 2025
 </tr>
 </tbody>
 </table>
+<p><span class="alert">Big take away:</span> GLMMs and GEEs aren’t so much different models, as different ways of estimating models</p>
 </div>
 </section><section id="a-note-on-population-level-interpretation" class="slide level2"><h2>A note on “population”-level interpretation</h2>
 <p>GEEs are often touted as having “population”-level interpretations as opposed to GLMMs cluster-level ones</p>
@@ -829,6 +946,90 @@ September 23, 2025
 <ul>
 <li><p>If the data we’re using to build a GEE isn’t <span class="alert">representative of the population</span> we’re interested in, it’s not going to magically give us results generalizable to the population</p></li>
 <li><p>A more accurate description would be that GEEs give us sample-population-level interpretations while GLMMs give us sample-cluster-level interpretations</p></li>
+</ul></section><section id="gees-radon" class="slide level2"><h2>GEEs: radon</h2>
+<p>Let’s use our old Minnesota radon data we used back in lecture 1.2</p>
+<ul>
+<li>Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county</li>
+</ul>
+<p>We’d assume:</p>
+<ul>
+<li><p>Mean model:</p></li>
+<li><p>Variance:</p></li>
+<li><p>Correlation structure:</p></li>
+</ul></section><section id="gees-radon-1" class="slide level2"><h2>GEEs: radon</h2>
+<p>Let’s use our old Minnesota radon data we used back in lecture 2.1</p>
+<ul>
+<li>Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county</li>
+</ul>
+<p>We’d assume:</p>
+<ul>
+<li><p>Mean model: <span class="alert"><span class="math inline">\(E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})\)</span></span><br></p></li>
+<li><p>Variance: <span class="alert"><span class="math inline">\(Var[Y_{ij}] = \sigma^2\)</span></span></p></li>
+<li><p>Correlation structure: <span class="alert">exchangeable (just one correlation parameter to estimate)</span></p></li>
+</ul></section><section id="gees-radon-2" class="slide level2"><h2>GEEs: radon</h2>
+<p>Let’s run it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(gee)</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># run a GEE with exchangeable correlation clustered on counties #</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>radon_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>( log_radon <span class="sc">~</span> floor,</span>
+<span id="cb1-5"><a href="#cb1-5"></a>                  <span class="at">id=</span>cntyfips, <span class="co"># cluster ID needs to be a number, not names or categories</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>                  <span class="at">data=</span>radon.mn, <span class="at">corstr=</span><span class="st">"exchangeable"</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)       floor 
+  1.3624099  -0.5864218 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">summary</span>( radon_gee )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Estimate Naive S.E.   Naive z Robust S.E.  Robust z
+(Intercept)  1.5011024 0.05525251  27.16804  0.05101495 29.424759
+floor       -0.6698925 0.06583761 -10.17492  0.07746389 -8.647803</code></pre>
+</div>
+</div>
+<ul>
+<li><p><span class="math inline">\(\beta_1\)</span>: -0.6699</p></li>
+<li><p>Ignore the “naive” and “robust” SEs for now – we’ll talk about that more on Thursday</p></li>
+</ul></section><section id="gees-radon-3" class="slide level2"><h2>GEEs: radon</h2>
+<p>Let’s compare our GEE result with what we would get from an LME:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># run a LME with random county intercepts #</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>radon_lme <span class="ot">&lt;-</span> <span class="fu">lmer</span>( log_radon <span class="sc">~</span> floor <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>county),</span>
+<span id="cb5-5"><a href="#cb5-5"></a>                  <span class="at">data=</span>radon.mn )</span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="fu">summary</span>( radon_lme )<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Estimate Std. Error   t value
+(Intercept)  1.4923932 0.04955304 30.117088
+floor       -0.6628887 0.06765334 -9.798315</code></pre>
+</div>
+</div>
+<ul>
+<li><p>Exchangeable GEE <span class="math inline">\(\beta_1\)</span>: -0.6699</p></li>
+<li>
+<p>LME <span class="math inline">\(\beta_1\)</span>: -0.6629</p>
+<ul>
+<li><p>Not that different on point estimates!</p></li>
+<li><p>Where we’ll likely see the biggest differences is in the inference/95% CIs/standard errors… more on than Thursday</p></li>
+</ul>
+</li>
+</ul></section><section id="take-home-messages" class="slide level2"><h2>Take home messages</h2>
+<ul>
+<li>We add random effects to GLMMs to help <span class="alert">model non-0 covariance</span> (correlation between observations)</li>
+</ul>
+<p><br></p>
+<ul>
+<li>Because GLMMs are derived from the assumption that the outcome follows a specific probability distribution, it’s hard to get marginal interpretations of results because it’s <span class="alert">difficult separate out the random effects</span> when we have a <u>non-identity link function</u>
+</li>
+</ul>
+<p><br></p>
+<ul>
+<li>GEEs allow us to model the mean and covariance of a regression <span class="alert">separately</span> and in a way that doesn’t have distributional assumptions, so we can easily get the <span class="alert">population-averaged interpretation</span>
+</li>
+</ul>
+<p><br></p>
+<ul>
+<li>GEEs tend to be more robust to breaking assumptions, but we <span class="alert">need more clusters</span> to pay for that flexibility</li>
 </ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">

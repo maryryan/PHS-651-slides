@@ -54,13 +54,13 @@ library(qrcode)
 *The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
 :::
 
-::: {.absolute bottom=280 left=300 width=1500}
+::: {.absolute bottom=225 left=300 width=1500}
 
 Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1>
 
 :::
 
-::: {.absolute bottom=175 left=50 width=250}
+::: {.absolute bottom=120 left=50 width=250}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1"))
 ```
@@ -98,11 +98,11 @@ $$g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}
 
 ::: {.columns}
 
-::: {.column width="50%"}
-![*Figure modified from Harrison et al. (2018). "A brief introduction to mixed effects modelling and multi-model inference in ecology." Ecology.*](random-intercept.png){width="120%"}
+::: {.column width="60%"}
+![*Figure modified from Harrison et al. (2018). "A brief introduction to mixed effects modelling and multi-model inference in ecology." Ecology.*](random-intercept.png){width="70%"}
 :::
 
-::: {.column width="50%"}
+::: {.column width="40%"}
 $$\mu_{\text{group}} = \beta_0$$
 $$\alpha_1 = \beta_0 + b_{0i}$$
 :::
@@ -267,6 +267,17 @@ $$\begin{bmatrix}
 
 ::::
 
+---
+
+## R-side and G-side variance
+
+$$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_ib_{0i} + \vec{\epsilon}_i$$
+
+- Recall that with LMEs and GLMMs, we modeled our [systematic variation]{.underline} (random effects and within-cluster individual variation) as:
+$$\vec{b}_0 \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})$$
+
+- When using random effects (like in LMEs and GLMMs), some call this modeling with [G-side variance]{.alert}
+
    - These random effects $\vec{\gamma}$ were difficult to marginalize out of the expectation when we used a non-identity link function
    
    - What if instead we had *no* random effects ($\boldsymbol{G}=0$), and modeled non-zero covariance using $\vec{\epsilon}_i$ and a $\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}$?
@@ -277,7 +288,7 @@ $$\begin{bmatrix}
 
 $$g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_ib_{0i} + \vec{\epsilon}_i$$
 
-- Recall that with LMEs and GLMMs, we modeled our [systematic variation]{.underline} (random effects and within-cluster variation) as:
+- Recall that with LMEs and GLMMs, we modeled our [systematic variation]{.underline} (random effects and within-cluster individual variation) as:
 $$\vec{b}_0 \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})$$
 
 - When using random effects (like in LMEs and GLMMs), some call this modeling with G-side variance

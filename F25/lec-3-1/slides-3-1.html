@@ -411,10 +411,10 @@ September 23, 2025
 <p><em>If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.</em></p>
 <p><em>The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.</em></p>
 </div>
-<div class="absolute" style="left: 300px; bottom: 280px; width: 1500px; ">
+<div class="absolute" style="left: 300px; bottom: 225px; width: 1500px; ">
 <p>Slides found at: <a href="https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1" class="uri">https://maryryan.github.io/PHS-651-slides/F25/lec-3-1/slides-3-1</a></p>
 </div>
-<div class="absolute" style="left: 50px; bottom: 175px; width: 250px; ">
+<div class="absolute" style="left: 50px; bottom: 120px; width: 250px; ">
 <div class="cell">
 <div class="cell-output-display">
 <p><img data-src="slides-3-1_files/figure-revealjs/qr%20code-1.png" width="192"></p>
@@ -432,12 +432,12 @@ September 23, 2025
 </ul></section><section id="recap-generalized-linear-mixed-effect-models-1" class="slide level2"><h2>Recap: (generalized) linear mixed effect models</h2>
 <p>One way to account for clustering in analysis is with a <span class="alert">(generalized) linear mixed effects</span> model <span class="math display">\[g(Y_{ij}) = \color{red}{\beta_0 + U_{ij}\beta_1} + \color{blue}{Z_ib_{0i}}+ \epsilon_{ij}\]</span> <span class="math display">\[g(\vec{Y}_i) = \color{red}{\boldsymbol{X}_i\vec{\beta}} + \color{blue}{\vec{Z}_ib_{0i}}+\vec{\epsilon}_i\]</span></p>
 <div class="columns">
-<div class="column" style="width:50%;">
+<div class="column" style="width:60%;">
 <div class="quarto-figure quarto-figure-center">
-<figure><p><img data-src="random-intercept.png" style="width:120.0%"></p>
+<figure><p><img data-src="random-intercept.png" style="width:70.0%"></p>
 <figcaption><em>Figure modified from Harrison et al.&nbsp;(2018). “A brief introduction to mixed effects modelling and multi-model inference in ecology.” Ecology.</em></figcaption></figure>
 </div>
-</div><div class="column" style="width:50%;">
+</div><div class="column" style="width:40%;">
 <p><span class="math display">\[\mu_{\text{group}} = \beta_0\]</span> <span class="math display">\[\alpha_1 = \beta_0 + b_{0i}\]</span></p>
 </div>
 </div>
@@ -522,13 +522,21 @@ September 23, 2025
 \end{bmatrix}\]</span></p>
 </div>
 </div>
+</section><section id="r-side-and-g-side-variance-1" class="slide level2"><h2>R-side and G-side variance</h2>
+<p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
+<ul>
+<li><p>Recall that with LMEs and GLMMs, we modeled our <u>systematic variation</u> (random effects and within-cluster individual variation) as: <span class="math display">\[\vec{b}_0 \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})\]</span></p></li>
+<li>
+<p>When using random effects (like in LMEs and GLMMs), some call this modeling with <span class="alert">G-side variance</span></p>
 <ul>
 <li><p>These random effects <span class="math inline">\(\vec{\gamma}\)</span> were difficult to marginalize out of the expectation when we used a non-identity link function</p></li>
 <li><p>What if instead we had <em>no</em> random effects (<span class="math inline">\(\boldsymbol{G}=0\)</span>), and modeled non-zero covariance using <span class="math inline">\(\vec{\epsilon}_i\)</span> and a <span class="math inline">\(\boldsymbol{R}_i \ne \sigma^2_\epsilon \boldsymbol{I}\)</span>?</p></li>
-</ul></section><section id="r-side-and-g-side-variance-1" class="slide level2"><h2>R-side and G-side variance</h2>
+</ul>
+</li>
+</ul></section><section id="r-side-and-g-side-variance-2" class="slide level2"><h2>R-side and G-side variance</h2>
 <p><span class="math display">\[g(\vec{Y}_i) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_ib_{0i} + \vec{\epsilon}_i\]</span></p>
 <ul>
-<li><p>Recall that with LMEs and GLMMs, we modeled our <u>systematic variation</u> (random effects and within-cluster variation) as: <span class="math display">\[\vec{b}_0 \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})\]</span></p></li>
+<li><p>Recall that with LMEs and GLMMs, we modeled our <u>systematic variation</u> (random effects and within-cluster individual variation) as: <span class="math display">\[\vec{b}_0 \sim N(\vec{0}, \boldsymbol{G}),~~~ \vec{\epsilon}_i \sim N(\vec{0}, \boldsymbol{R}_i=\sigma_\epsilon^2\boldsymbol{I})\]</span></p></li>
 <li><p>When using random effects (like in LMEs and GLMMs), some call this modeling with G-side variance</p></li>
 <li>
 <p>When using <span class="math inline">\(\boldsymbol{G}=0\)</span> (no random intercepts), we call this modeling with <span class="alert">R-side variance</span></p>

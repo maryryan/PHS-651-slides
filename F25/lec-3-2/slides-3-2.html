@@ -606,7 +606,7 @@ Cov[\widehat{\beta_0},\widehat{\beta_1}] &amp; Var[\widehat{\beta_1}]\end{bmatri
 <div class="fragment">
 <ul>
 <li>
-<p>If we’d like to use a <span class="math inline">\(t\)</span>-distribution critical value instead of a standard Normal <span class="math inline">\(Z\)</span> critical value, approximate the <span class="alert">degrees of freedom as <span class="math inline">\(n-p\)</span></span>, or the number of clusters minus the number of parameters you’re estimating (for CIs, usually <span class="math inline">\(p=1\)</span>)</p>
+<p>If we’d like to use a <span class="math inline">\(t\)</span>-distribution critical value instead of a standard Normal <span class="math inline">\(Z\)</span> critical value, approximate the <span class="alert">degrees of freedom as <span class="math inline">\(n-p\)</span></span>, or <span class="math inline">\(\text{(the number of clusters)} - \text{(the number of parameters you're estimating})\)</span> (for CIs, usually <span class="math inline">\(p=1\)</span>)</p>
 <ul>
 <li>We <span class="alert">do not</span> use the Satterthwaite or Kenward-Roger degrees of freedom approximation – these were developed for LMEs/GLMMs and do not translate over to GEEs</li>
 </ul>
@@ -849,6 +849,37 @@ floor       -0.6698925 0.06583761 -10.17492  0.07746389 -8.647803</code></pre>
 </ul>
 </div>
 </div>
+</section><section id="take-home-messages" class="slide level2"><h2>Take home messages</h2>
+<ul>
+<li>Inference about <span class="math inline">\(\widehat\beta\)</span> like confidence intervals can be done using either <span class="alert">model-based</span> variance estimates or <span class="alert">robust/sandwich</span> variance estimates
+<ul>
+<li>Formulas and interpretations for confidence intervals are the same in either case, you’re just switching out which variance estimate you’re using</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
+<ul>
+<li>Inference using robust variance estimates should fix any misspecification we have about the covariance part of our model
+<ul>
+<li>It won’t fix any misspecification we have in our mean model, though!</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
+<ul>
+<li>Robust variance estimates can be used with any type of model
+<ul>
+<li>Very common to use with GEEs</li>
+<li>Uncommon to see it used with LMEs/GLMMs, but not wrong</li>
+</ul>
+</li>
+<li>Confidence intervals for GEEs can use either standard Normal <span class="math inline">\(Z\)</span> critical values, or <span class="math inline">\(t\)</span> critical values
+<ul>
+<li>If using <span class="math inline">\(t\)</span> critical values, you usually use <span class="math inline">\(df = \text{(# of clusters)} - \text{(# of regression coefficients you're performing inference on)}\)</span> <span class="math inline">\(\rightarrow\)</span> when doing inference on one <span class="math inline">\(\beta\)</span>, this usually means <span class="math inline">\(df= \text{(# of clusters)} - 1\)</span>
+</li>
+</ul>
+</li>
+</ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">
 

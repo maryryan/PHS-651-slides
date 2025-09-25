@@ -53,13 +53,13 @@ library(qrcode)
 *The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
 :::
 
-::: {.absolute bottom=50 left=260 width=1500}
+::: {.absolute bottom=225 left=300 width=1500}
 
 Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-3-2/slides-3-2>
 
 :::
 
-::: {.absolute bottom=0 left=100 width=150}
+::: {.absolute bottom=120 left=50 width=250}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-3-2/slides-3-2"))
 ```
@@ -67,21 +67,153 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-3-2/slides-3-2")
 
 ---
 
+## Roadmap
+
+1. Recap of marginal models/GEEs
+
+2. Model-based inference for regression coefficients from GEEs (i.e., confidence intervals)
+
+3. Example
+
+4. Robust inference for regression coefficients from GEEs (intro to robust/sandwich variance)
+
+5. Example
+
+---
+
 ## Recap: marginal models
 
-Last class we introduced the idea of marginal models
+Last class we introduced the idea of [marginal models]{.alert}
 
-- Marginal models have 2 components (or 3, depending on how you count)
+- Models where interpretation of regression coefficients $\beta$ depend [only]{.underline} on the other covariates/predictors in the model
 
-1. The marginal expectation of the outcome: $g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \vec{X}_{ij}\vec{\beta}$
+   - $E[Y_{ij}|\vec{X}_{ij}]$
+
+   - Interpretation does not depend on random effects
+   
+   - Comparing outcomes of 2 people with different exposures [regardless of cluster]{.alert}
+   
+   - This is [different]{.underline} than conditional models like LMEs/GLMMs, where you are comparing outcomes of 2 people [in the same cluster]{.alert} (or in clusters that have the exact same $b_{0i}$ value)
+      
+      - $E[Y_{ij}| \vec{X}_{ij}, b_{0i}]$
+   
+<br>
+
+- This is important because when we transform the outcome (like in logistic or log/Poisson regression), the [conditional and marginal effects/interpretations are not the same]{.alert}
+
+   - $E[Y_{ij}|\vec{X}_{ij}] \ne E[Y_{ij}| \vec{X}_{ij}, b_{0i}]$
+
+---
+
+## Recap: marginal models
+
+Marginal models have 2 components (or 3, depending on how you count) that we think of as specifying somewhat separately
+
+1. The marginal expectation of the outcome (AKA: the mean model): $g(E[Y_{ij}| \vec{X}_{ij}]) = g(\mu_{ij}) = \beta_0 + U_{ij}\beta_1$
+
+   - Need:
+      
+      - (1) link function $g(\cdot)$
+      
+      - (2) specify covariates/predictors and how you want to model them (linear, splines, etc.)
 
 2. The covariance of the outcome
 
    i. The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
 
-   ii. The within-cluster association of the outcomes (correlation structure)
+   ii. The within-cluster association of the outcomes (how we want to represent the correlation structure)
    
 - We use these to estimate our regression coefficients using [generalized estimating equations]{.alert}
+
+------------------------------------------------------------------------
+
+## Recap: types of correlation structures
+
+Last class we talked about 3 main types of correlation structures
+
+- Independence: assumes all observations in a cluster are completely uncorrelated with each other
+
+:::: {.columns}
+
+::: {.column width="50%"}
+$$\text{Correlation structure: }\begin{bmatrix}
+1 & 0 & \dots & 0 \\
+0 & \ddots & \dots & 0 \\
+\vdots & \dots & \ddots & \vdots\\
+0 & \dots & 0 & 1
+\end{bmatrix}$$
+:::
+
+::: {.column width="50%"}
+$$\text{Working covariance matrix }V_i=\begin{bmatrix}
+\sigma^2 & 0 & \dots & 0 \\
+0 & \ddots & \dots & 0 \\
+\vdots & \dots & \ddots & \vdots\\
+0 & \dots & 0 & \sigma^2
+\end{bmatrix}$$
+:::
+
+::::
+
+------------------------------------------------------------------------
+
+## Recap: types of correlation structures
+
+Last class we talked about 3 main types of correlation structures
+
+- Exchangeable: assumes all observations in a cluster are related/correlated to each other to the same degree ($\alpha$)
+
+:::: {.columns}
+
+::: {.column width="50%"}
+$$\begin{bmatrix}
+1 & \alpha & \dots & \alpha \\
+\alpha & \ddots & \dots & \alpha \\
+\vdots & \dots & \ddots & \vdots\\
+\alpha & \dots & \alpha & 1
+\end{bmatrix}$$
+:::
+
+::: {.column width="50%"}
+$$V_i=\begin{bmatrix}
+\sigma^2 & \sigma^2\alpha & \dots & \sigma^2\alpha \\
+\sigma^2\alpha & \ddots & \dots & \sigma^2\alpha \\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2\alpha & \dots & \sigma^2\alpha & \sigma^2
+\end{bmatrix}$$
+:::
+
+::::
+
+------------------------------------------------------------------------
+
+## Recap: types of correlation structures
+
+Last class we talked about 3 main types of correlation structures
+
+- Unstructured: no assumptions about correlation of 2 outcomes in same cluster; max flexibility, but inefficient since need to estimate many correlations
+
+:::: {.columns}
+
+::: {.column width="50%"}
+$$\begin{bmatrix}
+1 & \alpha_{12} & \dots & \alpha_{1n} \\
+\alpha_{21} & \ddots & \dots & \alpha_{2n} \\
+\vdots & \dots & \ddots & \vdots\\
+\alpha_{n1} & \dots & \alpha_{n(n-1)} & 1
+\end{bmatrix}$$
+:::
+
+::: {.column width="50%"}
+$$V_i=\begin{bmatrix}
+\sigma^2 & \sigma^2\alpha_{12} & \dots & \sigma^2\alpha_{1n} \\
+\sigma^2\alpha_{21} & \ddots & \dots & \sigma^2\alpha_{2n} \\
+\vdots & \dots & \ddots & \vdots\\
+\sigma^2\alpha_{n1} & \dots & \sigma^2\alpha_{n(n-1)} & \sigma^2
+\end{bmatrix}$$
+:::
+
+::::
 
 ---
 
@@ -96,7 +228,9 @@ $V_i = sd[Y_{ij}|\boldsymbol{X}] ~Corr[Y_{ij}, Y_{ik}] ~sd[Y_{ij}|\boldsymbol{X}
 Since this estimating equation [only depends on the mean $\mu_{ij}(\cdot)$ and the working (co)variance
 $V_i$]{.alert}, a GEE doesn't have to correspond to a full likelihood/distribution like a GLMM does
 
-- This means we have [fewer assumptions]{.alert} about how $Y_{ij}$ behaves
+- This means we have [fewer assumptions]{.alert} about how $Y_{ij}$ behaves 
+   
+   - Fewer assumptions $=$ less opportunity for model misspecification (violating assumptions)
 
 - We don't need to theoretically derive the covariance - we can just approximate it using the variance and the chosen correlation structure
 
@@ -116,7 +250,7 @@ Okay great we can use GEEs to get population-level interpretations of regression
 
 The "model-based" covariance matrix for $\widehat{\beta}$ looks like:
 
-$$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
+$$Cov[\widehat{\vec{\beta}}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}$$
 
    - $\left(\frac{\partial \mu_i}{\partial \beta}\right)^T$ deals with the transformation of $Y_{ij}$ to $g(\mu_{ij})$, and links in the $\beta$s
    
@@ -126,7 +260,13 @@ $$Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial
 
 The individual variances for each $\beta$ will be found along the diagonal of the covariance matrix:
 
-- $Var[\widehat{\beta}] = \text{diag}\left(Cov[\widehat{\beta}]\right)$
+- $Var[\widehat{\vec{\beta}}] = \text{diag}\left(Cov[\widehat{\vec{\beta}}]\right)$
+
+
+For a model with one exposure, $E[Y_{ij}] = \beta_0 + U_{ij}\beta_1$, the covariance matrix looks like:
+
+$$\begin{bmatrix}Var[\widehat{\beta_0}] & Cov[\widehat{\beta_0},\widehat{\beta_1}]\\
+Cov[\widehat{\beta_0},\widehat{\beta_1}] & Var[\widehat{\beta_1}]\end{bmatrix}$$
    
 ------------------------------------------------------------------------
 
@@ -152,10 +292,11 @@ $$\begin{align*}&\frac{\partial \mu_i}{\partial \beta} = \frac{\partial \boldsym
 
 ## Inference for $\widehat{\beta}$
 
-The confidence intervals for $\vec{\beta}$ will take the form:
+The confidence interval for a single $\widehat{\beta}$ (like $\widehat\beta_1$) will take the form:
 
-$$\begin{align*}&\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(\left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\right)\\
-&\rightarrow \widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(Cov[\widehat{\beta}]\right)\end{align*}$$
+$$\begin{align*}&\widehat{\beta} \pm Z_{1-\alpha/2} \text{diag}\left(\left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\right)\\
+&\rightarrow \widehat{\beta} \pm Z_{1-\alpha/2} \text{diag}\left(Cov[\widehat{\beta}]\right)\\
+&\rightarrow \widehat\beta \pm Z_{1-\alpha/2} Var[\widehat\beta]\end{align*}$$
 
 . . .
 
@@ -173,7 +314,7 @@ Let's see this in an example
 
 Let's use our old Minnesota radon data we used back in lecture 1.2
 
-- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county
+- Recall that we want to estimate how the floor we measure on ($U_{ij}$) affects log radon measurements ($Y_{ij}$) in Minnesota houses, which are clustered by county
 
 ```{r radon, echo=F}
 radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
@@ -187,7 +328,7 @@ radon.mn <- radon %>%
    dplyr::filter(state == "MN")
 ```
 
-We'd assume:
+Let's assume:
 
 - Mean model: 
 
@@ -201,11 +342,11 @@ We'd assume:
 
 Let's use our old Minnesota radon data we used back in lecture 2.1
 
-- Recall that we want to estimate how the floor we measure on affects radon measurements in Minnesota houses, which are clustered by county
+- Recall that we want to estimate how the floor we measure on ($U_{ij}$) affects log radon measurements ($Y_{ij}$) in Minnesota houses, which are clustered by county
 
-We'd assume:
+Let's assume:
 
-- Mean model: [$E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})$]{.alert}\
+- Mean model: [$E[\text{log radon}_{ij}|\vec{X}_{ij}] = \beta_0 + \beta_1(\text{floor}_{ij})$]{.alert} (multiple houses $j$ observed in county $i$)
 
 - Variance: [$Var[Y_{ij}] = \sigma^2$]{.alert}
 
@@ -237,7 +378,7 @@ summary( radon_gee )$coef
 [What about our inference?]{.alert}
 
 ::: {.fragment}
-- Model-based/"naive" 95% CI with a standard Normal $Z$ critical value: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`)
+- Model-based/"naive" 95% CI with a standard Normal $Z$ critical value: $\beta_{floor} \pm Z_{0.975}\times SE_{floor}=$ (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qnorm(0.975), 4)`)
 :::
 
 ::: {.fragment}
@@ -258,15 +399,17 @@ Another way to account for non-independent/clustered observations in inference i
 
 - We can use this correction, technically, on the SEs of any type of model
 
+. . .
+
 The sandwich variance estimator on an OLS model would look like:
 
-$$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
+$$Cov^*[\widehat{\vec{\beta}}] = B^{-1} A B^{-1}$$
 
 where
-$$\begin{align*}&B^{-1} = \left[\text{model-based covariance of }\beta\right]^{-1}= \left[\sigma^2\boldsymbol{X}^T\boldsymbol{X}\right]^{-1}\\
+$$\begin{align*}&B^{-1} = \left[\text{model-based covariance of }\vec{\beta}\right]= \left[\sigma^2\boldsymbol{X}^T\boldsymbol{X}\right]^{-1}\\
 &A = \left[\boldsymbol{X}^T (\vec{Y} - \hat{\vec{\mu}})(\vec{Y} - \hat{\vec{\mu}})^T \boldsymbol{X}\right]\end{align*}$$
 
-- $(\vec{Y} - \hat{\vec{\mu}})(\vec{Y} - \hat{\vec{\mu}})^T$ is the [empirical]{.alert} covariance of the outcome
+- $(\vec{Y} - \hat{\vec{\mu}})(\vec{Y} - \hat{\vec{\mu}})^T$ is the [empirical]{.alert} covariance of the outcome (squared residuals)
 
 ---
 
@@ -274,17 +417,17 @@ $$\begin{align*}&B^{-1} = \left[\text{model-based covariance of }\beta\right]^{-
 
 The sandwich variance estimator on an OLS model would look like:
 
-$$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
+$$Cov^*[\widehat{\vec{\beta}}] = B^{-1} A B^{-1}$$
 
 where
-$$\begin{align*}&B^{-1} = \left[\text{model-based covariance of }\beta\right]^{-1}= \left[\sigma^2\boldsymbol{X}^T\boldsymbol{X}\right]^{-1}\\
+$$\begin{align*}&B^{-1} = \left[\text{model-based covariance of }\vec{\beta}\right]= \left[\sigma^2\boldsymbol{X}^T\boldsymbol{X}\right]^{-1}\\
 &A = \left[\boldsymbol{X}^T (\vec{Y} - \hat{\vec{\mu}})(\vec{Y} - \hat{\vec{\mu}})^T \boldsymbol{X}\right]\end{align*}$$
 
 If there is [no clustering]{.alert} in the outcomes, the covariance between observations, $A \approx B$ and:
-$$\begin{align*}Cov^*[\widehat{\beta}] &= B^{-1} A B^{-1}\\
+$$\begin{align*}\text{(Robust covariance) }Cov^*[\widehat{\vec{\beta}}] &= B^{-1} A B^{-1}\\
 &\approx B^{-1} B B^{-1}\\
-& = B^{-1} = Cov[\widehat{\beta}]\end{align*}$$
-the robust variance is the same as the model-based variance!
+& = B^{-1} = Cov[\widehat{\vec{\beta}}] \text{(Model-based covariance)}\end{align*}$$
+the robust covariance is the same as the model-based covariance!
 
 ---
 
@@ -295,14 +438,13 @@ The sandwich variance estimator on an OLS model would look like:
 $$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
 
 where
-$$\begin{align*}&B^{-1} = \left[\text{model-based covariance of }\beta\right]^{-1}= \left[\sigma^2\boldsymbol{X}^T\boldsymbol{X}\right]^{-1}\\
+$$\begin{align*}&B^{-1} = \left[\text{model-based covariance of }\vec{\beta}\right]= \left[\sigma^2\boldsymbol{X}^T\boldsymbol{X}\right]^{-1}\\
 &A = \left[\boldsymbol{X}^T (\vec{Y} - \hat{\vec{\mu}})(\vec{Y} - \hat{\vec{\mu}})^T \boldsymbol{X}\right]\end{align*}$$
 
-If there is clustering, then the robust variance will generally be larger than the "naive" variance
+If there is clustering, then the robust variance will generally be [larger]{.alert} than the "naive" variance
 
-::: {.fragment}
-![](clustering-SE-meme){.absolute top=180 right=0 width="20%"}
-:::
+![](clustering-SE-meme){.absolute top=150 right=0 width="20%"}
+
 
 
 ---
@@ -311,14 +453,14 @@ If there is clustering, then the robust variance will generally be larger than t
 
 We can also use a [robust/sandwich variance]{.alert} estimator to perform inference on $\widehat{\beta}$ from a GEE model
 
-$$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
+$$Cov^*[\widehat{\vec{\beta}}] = B^{-1} A B^{-1}$$
 where
-$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
-&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
+$$\begin{align*}&B^{-1} = \left[\text{model-based covariance of } \vec{\beta}\right] = Cov[\widehat{\vec{\beta}}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)\right]^{-1}\\
+&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T V_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)\right]\end{align*}$$
    
 . . .
 
-This will give us (approximately) correct variance estimates for $\widehat{\beta}$ if we're [wrong]{.alert} about the correlation structure or marginal variance (model components 2.1 and 2.2)
+This will give us (approximately) correct variance estimates for $\widehat{\vec{\beta}}$ if we're [wrong]{.alert} about the correlation structure or marginal variance (model components 2.1 and 2.2)
 
 ---
 
@@ -328,12 +470,12 @@ We can also use a [robust/sandwich variance]{.alert} estimator to perform infere
 
 $$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
 where
-$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
-&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
+$$\begin{align*}&B^{-1} = \left[\text{model-based covariance of } \vec{\beta}\right] = Cov[\widehat{\vec{\beta}}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)\right]^{-1}\\
+&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T V_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)\right]\end{align*}$$
    
 If we're [right]{.alert} about model components 2.1 and 2.2, $A \approx B$ and:
-$$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1} \approx B^{-1} B B^{-1} = B^{-1} = Cov[\widehat{\beta}]$$
-the robust variance is the same as the model-based variance!
+$$\text{(Robust covariance) } Cov^*[\widehat{\beta}] = B^{-1} A B^{-1} \approx B^{-1} B B^{-1} = B^{-1} = Cov[\widehat{\beta}] \text{ (Model-based covariance)}$$
+the robust covariance is the same as the model-based covariance!
 
 ---
 
@@ -342,13 +484,12 @@ the robust variance is the same as the model-based variance!
 We can also use a [robust/sandwich variance]{.alert} estimator to perform inference on $\widehat{\beta}$ from a GEE model
 
 $$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
-where
-$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
-&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
    
-The confidence intervals for $\vec{\beta}$ will take about the same form, just using $Cov^*[\widehat{\beta}]$ instead of $Cov[\widehat{\beta}]$:
+The confidence intervals for $\vec{\beta}$ will take about the same form as the model-based ones we did before, but just using the robust (co)variance $Cov^*[\widehat{\vec{\beta}}]$ instead of the model-based (co)variance $Cov[\widehat{\beta}]$
 
-$$\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(Cov^*[\widehat{\beta}]\right) ~~~\text{ or }~~~ \widehat{\beta} \pm t_{\alpha/2; DoF=n-1} \text{diag}\left(Cov^*[\widehat{\beta}]\right)$$
+- For a single $\widehat\beta$ (like $\widehat\beta_1$):
+
+$$\widehat{\beta}_1 \pm Z_{1-\alpha/2}Var^*[\widehat{\beta}_1]\ ~~~\text{ or }~~~ \widehat{\beta_1} \pm t_{1-\alpha/2; DoF=n-1} Var^*[\widehat{\beta}_1]$$
 
 ---
 
@@ -357,9 +498,6 @@ $$\widehat{\beta} \pm Z_{\alpha/2} \text{diag}\left(Cov^*[\widehat{\beta}]\right
 We can also use a [robust/sandwich variance]{.alert} estimators to perform inference on $\widehat{\beta}$
 
 $$Cov^*[\widehat{\beta}] = B^{-1} A B^{-1}$$
-where
-$$\begin{align*}&B^{-1} = Cov[\widehat{\beta}] = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]^{-1}\\
-&A = \left[\sum_{i=1}^n \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1} (Y_i - \hat{\mu}_i)(Y_i - \hat{\mu}_i)^T V_i^{-1} \left(\frac{\partial \mu_i}{\partial \beta}\right)\right]\end{align*}$$
 
 Most people will use the sandwich variance estimator over the model-based variance (in GEEs) by default to cover their bases
 
@@ -374,7 +512,7 @@ Most people will use the sandwich variance estimator over the model-based varian
 Let's go back to our Minnesota radon example and see how using cluster-robust variance methods change the results
 
 <br>
-First, let's try a GEE model with an independence correlation structure
+First, let's intentionally misspecify our correlation structure and try a GEE model with an independence correlation structure
 
 ```{r gee indep}
 # run a GEE with independence correlation clustered on counties #
@@ -386,13 +524,14 @@ summary( radon_gee_indep )$coef
 
 :::: {.columns}
 ::: {.column width="45%"}
-
+::: {.fragment}
 [Model-based CIs]{.alert}
 
 - 95% CI with a standard Normal $Z$ critical value: (`r round(summary(radon_gee_indep)$coef[2,1] - summary(radon_gee_indep)$coef[2,2]*qnorm(0.975), 4)`, `r round(summary(radon_gee_indep)$coef[2,1] + summary(radon_gee_indep)$coef[2,2]*qnorm(0.975), 4)`)
 
 
 - 95% CI with a $t$ critical value and $df=84$: (`r round(summary(radon_gee_indep)$coef[2,1] - summary(radon_gee_indep)$coef[2,2]*qt(0.975,84), 4)`, `r round(summary(radon_gee_indep)$coef[2,1] + summary(radon_gee_indep)$coef[2,2]*qt(0.975,84), 4)`)
+:::
 :::
 
 ::: {.column width="5%"}
@@ -430,6 +569,9 @@ summary( radon_gee )$coef
 
 
 - 95% CI with a $t$ critical value and $df=84$: (`r round(summary(radon_gee)$coef[2,1] - summary(radon_gee)$coef[2,2]*qt(0.975,84), 4)`, `r round(summary(radon_gee)$coef[2,1] + summary(radon_gee)$coef[2,2]*qt(0.975,84), 4)`)
+:::
+
+::: {.column width="5%"}
 :::
 
 ::: {.column width="45%"}

@@ -65,13 +65,13 @@ radon.mn <- radon %>%
 *The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
 :::
 
-::: {.absolute bottom=50 left=260 width=1500}
+::: {.absolute bottom=225 left=300 width=1500}
 
 Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-4-1/slides-4-1>
 
 :::
 
-::: {.absolute bottom=0 left=100 width=150}
+::: {.absolute bottom=120 left=50 width=250}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-4-1/slides-4-1"))
 ```
@@ -79,41 +79,274 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-4-1/slides-4-1")
 
 ---
 
-## GEEs and non-Normal data
+## Roadmap
 
-We can also extend GEEs to non-Normal outcome data
+1. Recap of marginal models/GEEs
 
-Recall: GEEs find the $\beta$ that solves an estimating equation of the
+2. Extending GEEs to non-Normal outcome data types
+
+   2.1 Breaking down the generalized estimating equation
+   
+   2.2 Generalized estimating equation with count outcome
+   
+   2.3 Generalized estimating equation with binary (logit-transformed) outcome
+   
+   2.4 Generalized estimating equation with binary (non-transformed) outcome
+   
+3. Logistic GEE example
+
+4. Comparing conditional and marginal effects from GLMMs and GEEs
+
+
+---
+
+## Recap: Conditional and marginal effects, and GEEs
+
+Last week we talked about how we can use [generalized estimating equations]{.alert} to fit [marginal models]{.underline}
+
+- This would allow us to compare outcomes of 2 people with different exposures [regardless of cluster]{.underline} (marginal interpretation)
+
+<br>
+
+When we [do not]{.underline} transform our outcome (like with continuous Normal outcomes), what we get out of a linear mixed effect (LME) conditional model and a marginal GEE should be approximately the same
+
+- This is because we can collapse/simplify the conditional effect into the marginal effect when we are not transforming our outcome
+
+- $\text{conditional effect} = \text{marginal effect} \rightarrow E[Y_{ij} | \boldsymbol{X}, b_{0i}] = E[Y_{ij} | \boldsymbol{X}]$ (*The expected outcome given our model covariates/fixed effects and our random intercepts is equal to the expected outcome only given our model covariates/fixed effects*)
+
+---
+
+## Recap: Conditional and marginal effects
+
+When we transform our outcome in a GLMM with some [link function]{.alert} $g(\cdot)$,
+$$\begin{align*}g(E[Y_{ij}]) &= \boldsymbol{X}\vec{\beta} + Z_i b_{0i} + \epsilon_{ij}\\
+&= \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}\end{align*}$$
+then our conditional effect $E[Y_{ij}|\boldsymbol{X},b_{0i}]$ [is not equal to]{.underline} our marginal effect $E[Y_{ij}|\boldsymbol{X}]$
+
+- This is because we need to undo our transformation $g(\cdot)$ in order to remove the random effects from the expectation
+
+- Known as [non-collapsability]{.alert} because we cannot collapse the conditional effect into the marginal effect
+
+   - This means that if we want to get marginal effects, we need to use a model that is not an LME/GLMM
+
+<br>
+
+Common transformations that we use as the link function $g(\cdot)$ include $\log()$ and $\text{logit}()$
+
+- When we don't have any transformation on the outcome, we say that we're using an [identity]{.underline} link function (whatever comes out of the function is exactly the same as what we put into it)
+
+---
+
+## Recap: GEEs
+
+When we fit a GEE, we are making assumptions/decisions about 2 "models" or components:
+
+1. The [mean model]{.alert}: $g(E[Y_{ij}]) = \mu_{ij} = \boldsymbol{X}\vec{\beta} = \beta_0 + U_{ij}\beta_1$
+
+- includes our model covariates/fixed effects, and a transformation of the outcome/link function $g(\cdot)$
+
+2. The model of the [covariance]{.alert}, which includes:
+
+(i) the marginal variance of the outcome: $var[Y_{ij}] = \phi v(\mu_{ij})$
+
+    - $var(\mu_{ij})$ is the part of the variance that's related to $E[Y_{ij}]$
+   
+    - $\phi$ is the part of the variance that's independent of $E[Y_{ij}]$
+
+(ii) the correlation structure: a matrix that tells us how outcome observations in the same cluster are related to one another
+
+---
+
+## Recap: GEE assumptions
+
+GEEs have 3 assumptions:
+
+1. Our [mean model]{.alert} is correct (include all the covariates we need to isolate causal pathway, properly transforming the covariates, etc.)
+
+2. Individuals in different clusters are independent
+
+3. Our covariance model is *roughly* correct ($var[Y_{ij}]$ and the correlation structure)
+
+- If we are using [model-based]{.underline} standard errors to make 95% CIs: we're assuming the covariance model is correct in this case
+
+- If we are using [robust/sandwich]{.underline} standard errors to make 95% CIs: we want to try to get close to the true covariance model, but some misspecification is okay
+
+---
+
+## Recap: LME/GLMM assumptions
+
+This is different from LMEs/GLMMs, which have more assumptions:
+
+1. Our [mean model]{.alert} is correct (include all the covariates we need to isolate causal pathway, properly transforming the covariates, etc.)
+
+2. We have used the correct [random effects]{.alert}
+
+3. Individuals in different clusters are independent
+
+4. Our outcome $Y_{ij}$ follows the probability distribution implied by the LME/GLMM
+
+
+#4 is where GLMMs and GEEs are most different in terms of assumptions: GEEs don't imply a specific probability distribution
+
+- This is what allows us to model non-0 covariance without random effects to mess up us getting to the marginal effect $E[Y_{ij}|\boldsymbol{X}]$
+
+. . .
+
+[Today we are going to extend GEEs for use with non-Normal outcome data]{.alert}
+
+---
+
+## Math warning ahead
+
+In the next several slides I'm going to be breaking down the generalized estimating equation we use in GEEs
+
+$$\sum_{i=1}^N \left(\color{red}{\frac{\partial \mu_i}{\partial \vec{\beta}}}\right)^T \color{olive}{V_i^{-1}}[y_{ij} - \color{red}{\mu_{ij}}] = 0$$
+
+- What I want you to get out of this is *generally* what each of the $\color{red}{\text{red}}$ and $\color{olive}{\text{green}}$ portions of that equation are doing, and how that changes when we transform our outcome $Y_{ij}$
+
+- You don't have to follow all the math, but hopefully this will make the differences in the types of models we fit for different types of outcome data more clear
+
+---
+
+## The generalized estimating equation
+
+Recall, GEEs find the $\beta$ that solves an estimating equation of the
 general form:
-$$\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \beta}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}(\vec{\beta})] = 0$$
+$$\sum_{i=1}^N \left(\color{red}{\frac{\partial \mu_i}{\partial \vec{\beta}}}\right)^T \color{olive}{V_i^{-1}}[y_{ij} - \color{red}{\mu_{ij}}] = 0$$
+
+where
+
+$$g(\color{red}{\mu_{ij}}) = g(E[Y_{ij}]) = \boldsymbol{X}\vec{\beta} = \beta_0 + U_{ij}\beta_1$$
+
+and $\color{olive}{V_i^{-1}}$ is the $\color{olive}{\text{working covariance}}$ matrix $\rightarrow$ basically multiplies together our assumed $var[Y_{ij}]$ and correlation structure
+
+---
+
+## The generalized estimating equation & Normal data
+
+When we're working with continuous, Normal outcome data, the link function $g(\cdot)$ is the identity function (we're not transforming the outcome at all):
+$$g(\mu_{ij}) = \mu_{ij} = E[Y_{ij}] = \boldsymbol{X}\vec{\beta} = \beta_0 + U_{ij}\beta_1$$
+
+This means the estimating equation becomes:
+$$\sum_{i=1}^N (\color{red}{\boldsymbol{X}})^T V_i^{-1}[y_{ij} - \color{red}{\boldsymbol{X}\vec{\beta}}] = 0$$
+because the partial derivative of $\mu_{ij}$ with respect to $\vec{\beta}$ is:
+$$\frac{\partial \mu_{ij}}{\partial \vec{\beta}} = \frac{\partial \boldsymbol{X}\vec{\beta}}{\partial \vec{\beta}} = \boldsymbol{X}$$
+
+---
+
+## The generalized estimating equation & transformed data
+
+When we're working with outcome data that we need to [transform]{.alert}, then
+$$\frac{\partial \mu_{ij}}{\partial \vec{\beta}} \ne \boldsymbol{X}$$
+because $g(\mu_{ij}) = g(E[Y_{ij}]) = \boldsymbol{X}\vec{\beta}$
+
+- This means that $\mu_{ij} = g^{-1}(\boldsymbol{X}\vec{\beta})$, where $g^{-1}(\cdot)$ is the function that "undoes" $g(\cdot)$
+
+- For example, if the link function $g(x) = \log(x)$, then $g^{-1}(x) = e^x$
+
+So with transformed outcomes:
+
+$$\sum_{i=1}^N \left(\color{red}{\frac{\partial \mu_i}{\partial \vec{\beta}}}\right)^T V_i^{-1}[y_{ij} - \color{red}{\mu_{ij}}] = 0$$
+the red portions of the estimating equation account for the fact that our expected outcome $E[Y_{ij}]$ isn't just equal to $\boldsymbol{X}\vec{\beta} = \beta_0 + U_{ij}\beta_1$
+
+---
+
+## The generalized estimating equation & log-transformed data
+
+For example, let's say that our outcome $Y_{ij}$ is a count outcome
+
+- When modeling count outcomes, we usually use a log transformation: $\mu_{ij}=g(E[Y_{ij}]) = \log(E[Y_{ij}])$
+
+- Then the estimating equation is:
+
+$$\begin{align*}&\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}] = 0\\
+&\Rightarrow \sum_{i=1}^N \left(\frac{\partial \exp(\boldsymbol{X}\vec{\beta})}{\partial \vec{\beta}}\right)^T V_i^{-1}[y_{ij} - \exp(\boldsymbol{X}\vec{\beta})] = 0\\
+&\Rightarrow \sum_{i=1}^N \left(\boldsymbol{X}\exp(\boldsymbol{X}\vec{\beta})\right)^T V_i^{-1}[y_{ij} - \exp(\boldsymbol{X}\vec{\beta})] = 0\end{align*}$$
+
+
+---
+
+## The generalized estimating equation & log-transformed data
+
+For example, let's say that our outcome $Y_{ij}$ is a count outcome
+
+- When modeling count outcomes, we usually use a log transformation: $\mu_{ij}=g(E[Y_{ij}]) = \log(E[Y_{ij}])$
+
+- Then the estimating equation is:
+
+$$\begin{align*}&\sum_{i=1}^N \left(\frac{\partial \mu_i}{\partial \vec{\beta}}\right)^T V_i^{-1}[y_{ij} - \mu_{ij}] = 0\\
+&\Rightarrow \sum_{i=1}^N \left(\frac{\partial \exp(\boldsymbol{X}\vec{\beta})}{\partial \vec{\beta}}\right)^T V_i^{-1}[y_{ij} - \exp(\boldsymbol{X}\vec{\beta})] = 0\\
+&\Rightarrow \sum_{i=1}^N \left(\color{red}{\boldsymbol{X}\exp(\boldsymbol{X}\vec{\beta})}\right)^T V_i^{-1}[y_{ij} - \color{red}{\exp(\boldsymbol{X}\vec{\beta})}] = 0\end{align*}$$
+
+[The red portions are accounting for the fact that we've log-transformed our outcome]{.alert}
+
+---
+
+## The generalized estimating equation & log-transformed data
+
+For example, let's say that our outcome $Y_{ij}$ is a count outcome
+
+- When modeling count outcomes, we usually use a log transformation: $g(\mu_{ij})=g(E[Y_{ij}]) = \log(E[Y_{ij}])$
+
+- Then the estimating equation is: $\sum_{i=1}^N \left(\boldsymbol{X}\exp(\boldsymbol{X}\vec{\beta})\right)^T \color{olive}{V_i^{-1}}[y_{ij} - \exp(\boldsymbol{X}\vec{\beta})] = 0$
+
+When we model count outcomes, we also tend to assume either:
+
+1. $var[Y_{ij}] = g^{-1}(\mu_{ij})$ (like in a Poisson distribution where mean=variance)
+
+2. or $var[Y_{ij}] = \mu_{ij} (\mu_{\theta} + \mu_{ij} \sigma^2_{\theta}) = \sigma^2_{NB}(\mu_{ij})$ (like a Negative Binomial distribution where mean$\ne$variance)
+
+- Along with our correlation structure, this would go into define the $\color{olive}{\text{working covariance } V^{-1}}$
 
 . . .
 
-[So what's different?]{.alert}
 
-. . .
+[So what's different from before?]{.alert}
 
 - We have a link function $g(\cdot)$ that isn't the identity function
 
-. . .
+- The (co)variance $\color{olive}{V_i}$ will (likely) depend on $\color{red}{\mu_{ij}}$
 
-- Since $g(\cdot)$ isn't the identity function, $\left(\frac{\partial \mu_i}{\partial \beta}\right)^T \ne \boldsymbol{X}$
+   - With Normal data, $var[Y_{ij}]$ was independent of $\color{red}{\mu_{ij}}$
 
-. . .
 
-- The (co)variance $V_i$ will likely depend on $\mu_{ij}$
+---
 
-   - With Normal data, $v(\cdot)$ was independent of $\mu_{ij}$
+## The generalized estimating equation & logit-transformed data
    
+This would generally work the same way if we had binary outcome data and used a $\text{logit}(\cdot)$ transformation
+   
+- $g(\mu_{ij}) = g(E[Y_{ij}]) = logit(E[Y_{ij}]) = \boldsymbol{X}\vec{\beta}$, $\mu_{ij} = g^{-1}(E[Y_{ij}]) =  expit(\boldsymbol{X}\vec{\beta})$
+
+- $var[Y_{ij}] = g^{-1}(\mu_{ij})(1-g^{-1}(\mu_{ij})) = expit(\boldsymbol{X}\vec{\beta})[1-expit(\boldsymbol{X}\vec{\beta})]$ (like with Binomial data)
+
+
+$$\sum_{i=1}^N \left(\color{red}{\frac{\partial ~expit(\boldsymbol{X}\vec{\beta})}{\partial \vec{\beta}}}\right)^T \color{olive}{V_i^{-1}}[y_{ij} - \color{red}{expit(\boldsymbol{X}\vec{\beta}})] = 0$$
+
+<br>
+
+I won't do the derivative of the $expit(\cdot)$ function because it's kind of gross, but hopefully it's clear how [transforming]{.underline} our outcome also changes how we're estimating the regression coefficients $\beta$
+
+---
+
+## The generalized estimating equation & non-transformed binary data
+   
+If we had binary outcome data and used [no transformation]{.alert} (to talk about risk differences):
+$$g(\mu_{ij}) = \mu_{ij} = E[Y_{ij}] = E[Y_{ij}] = \boldsymbol{X}\vec{\beta}$$
+
+Making our estimating equation:
+$$\begin{align*}&\sum_{i=1}^N \left(\color{red}{\frac{\partial \boldsymbol{X}\vec{\beta}}{\partial \vec{\beta}}}\right)^T \color{olive}{V_i^{-1}}[y_{ij} - \color{red}{\boldsymbol{X}\vec{\beta}}] = 0\\
+&\Rightarrow \sum_{i=1}^N \left(\color{red}{\boldsymbol{X}}\right)^T \color{olive}{V_i^{-1}}[y_{ij} - \color{red}{\boldsymbol{X}\vec{\beta}}] = 0\end{align*}$$
+
+- But we'd still probably assume that the variance takes the form of what we'd get from a Binomial distribution since the data is binary: $var[Y_{ij}] = \mu_{ij}(1-\mu_{ij}) = \boldsymbol{X}\vec{\beta}(1-\boldsymbol{X}\vec{\beta})$ (like with Binomial data), affecting what $\color{olive}{V_i^{-1}}$ looks like
+
 ---
 
 ## GEEs: cancer remission
 
-Let's see how this would work with a binary outcome
+Let's see how this works in action with a binary outcome. Recall our cancer remission example from lecture 2.1
 
-- Recall our cancer remission example
-
-- Want to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment, adjusted for disease stage
+- We wanted to see whether years of physician experience impacts whether a patient’s lung cancer goes into remission after treatment, adjusted for disease stage
 
 ```{r cancer data cleaning, echo=F}
 library(gee)
@@ -308,7 +541,7 @@ Now let's try an analysis with our cancer remission example
 
 ## GLMMs vs GEEs: cancer remission
 
-First our LME model:
+First our GLMMl:
 
 $$\text{logit}(\text{remission}_{ij}) = \beta_0 + \beta_1(\text{experience}_i) + \beta_2(\text{Stage2}_{ij}) + \beta_3(\text{Stage3}_{ij}) + \beta_4(\text{Stage4}_{ij}) + b_{0i} + \epsilon_{ij}$$
 
@@ -325,7 +558,6 @@ summary( cancer_glmm )$tTable
 
 :::: {.columns}
 ::: {.column width="30%"}
-::: {.fragment}
 
 Logistic GLMM results:
 
@@ -333,7 +565,6 @@ Logistic GLMM results:
 
    - 95% CI: (`r round(exp(cancer_glmm$coefficients$fixed[2] - summary(cancer_glmm)$tTable[2,2]*qnorm(0.975)), 4)`, `r round(exp(cancer_glmm$coefficients$fixed[2] + summary(cancer_glmm)$tTable[2,2]*qnorm(0.975)), 4)`)
 
-:::
 :::
 
 ::: {.column width="30%"}

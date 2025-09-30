@@ -500,7 +500,7 @@ September 30, 2025
 </ol>
 <ul>
 <li><p>If we are using <u>model-based</u> standard errors to make 95% CIs: we’re assuming the covariance model is correct in this case</p></li>
-<li><p>If we are using <u>robust/sandwich</u> standard errors to make 95% CIs: we want to try to get close to the true covariance model, but some misspecification is okay</p></li>
+<li><p>If we are using <u>robust/sandwich</u> standard errors to make 95% CIs: we want to try to get close to the true covariance model, but some misspecification is okay because the robust standard error will correct it</p></li>
 </ul></section><section id="recap-lmeglmm-assumptions" class="slide level2"><h2>Recap: LME/GLMM assumptions</h2>
 <p>This is different from LMEs/GLMMs, which have more assumptions:</p>
 <ol type="1">
@@ -846,7 +846,7 @@ floor       -0.6628887 0.06765334 -9.798315</code></pre>
 'controlsAuto': true,
 'previewLinksAuto': false,
 'smaller': false,
-'pdfSeparateFragments': false,
+'pdfSeparateFragments': true,
 'autoAnimateEasing': "ease",
 'autoAnimateDuration': 1,
 'autoAnimateUnmatched': true,

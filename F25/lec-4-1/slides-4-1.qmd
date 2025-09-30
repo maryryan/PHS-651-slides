@@ -15,6 +15,7 @@ format:
       from: markdown+emoji
       fragment: true
       auto-stretch: false
+      pdf-separate-fragments: true
 execute: 
    eval: true
    echo: true
@@ -178,7 +179,7 @@ GEEs have 3 assumptions:
 
 - If we are using [model-based]{.underline} standard errors to make 95% CIs: we're assuming the covariance model is correct in this case
 
-- If we are using [robust/sandwich]{.underline} standard errors to make 95% CIs: we want to try to get close to the true covariance model, but some misspecification is okay
+- If we are using [robust/sandwich]{.underline} standard errors to make 95% CIs: we want to try to get close to the true covariance model, but some misspecification is okay because the robust standard error will correct it
 
 ---
 

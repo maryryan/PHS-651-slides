@@ -421,7 +421,14 @@ October 7, 2025
 </div>
 </div>
 </div>
-</section><section id="model-diagnostics" class="slide level2"><h2>Model diagnostics</h2>
+</section><section id="roadmap" class="slide level2"><h2>Roadmap</h2>
+<ul>
+<li><p>Modeling choices/assumptions for LMEs/GLMMs and GEEs</p></li>
+<li><p>Marginal and conditional residual analysis for LMEs/GLMMs</p></li>
+<li><p>Investigating over/under-dispersion in Poisson GLMMs/GEEs</p></li>
+<li><p>Influential observations in LMEs/GLMMs/GEEs: leverage and DFBETA</p></li>
+<li><p>Other diagnostics for GEEs</p></li>
+</ul></section><section id="model-diagnostics" class="slide level2"><h2>Model diagnostics</h2>
 <p>So far we’ve dealt with how to model correlated data</p>
 <ul>
 <li>But how do we assess whether the modeling choices we’ve made are sound?</li>
@@ -477,44 +484,60 @@ October 7, 2025
 </div>
 </div>
 </div>
-</section><section id="residual-analysis" class="slide level2"><h2>Residual analysis</h2>
+</section><section id="mixed-model-residual-analysis" class="slide level2"><h2>Mixed model residual analysis</h2>
+<p>Recall the form of a LME with one exposure variable <span class="math inline">\(U_{ij}\)</span> for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span>:</p>
+<p><span class="math display">\[\begin{align*}&amp;\vec{Y}_i = \boldsymbol{X}_{i}\vec{\beta} + Z_ib_{0i} + \vec{\epsilon}_{i}\\
+&amp;Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}\end{align*}\]</span></p>
 <p><span class="alert">Residuals</span> are the difference between the observed outcomes and the ones predicted by your model</p>
-<p><span class="math display">\[r_{ij} = Y_{ij} - \boldsymbol{X}_{ij}\widehat{\vec{\beta}}\]</span></p>
-<p>If the model <span class="alert">adequately captures</span> the systematic trend of the response, then <span class="alert">the residuals should exhibit no systematic pattern</span></p>
+<p><span class="math display">\[r_{ij} = Y_{ij} - \vec{X}_{ij}\widehat{\vec{\beta}}\]</span></p>
+<ul>
+<li>In mixed models, we refer to <span class="math inline">\(r_{ij}\)</span> as the <span class="alert">marginal residuals</span> (only subtracting the fixed effects)</li>
+</ul>
+<div class="fragment">
+<p>In mixed models, we <u>also</u> have <span class="alert">conditional residuals</span> (subtracting marginal and random effects): <span class="math display">\[r^c_{ij} = Y_{ij} - \left(\vec{X}_{ij}\widehat{\vec{\beta}} + Z_i \hat{b}_{i0}\right)\]</span></p>
+</div>
+</section><section id="mixed-model-residual-analysis-1" class="slide level2"><h2>Mixed model residual analysis</h2>
+<p>Recall the form of a LME with one exposure variable <span class="math inline">\(U_{ij}\)</span> for individual <span class="math inline">\(j\)</span> in cluster <span class="math inline">\(i\)</span>:</p>
+<p><span class="math display">\[\begin{align*}&amp;\vec{Y}_i = \boldsymbol{X}_{i}\vec{\beta} + Z_ib_{0i} + \vec{\epsilon}_{i}\\
+&amp;Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}\end{align*}\]</span></p>
+<p><span class="math display">\[\text{Marginal residuals: }r_{ij} = Y_{ij} - \vec{X}_{ij}\widehat{\vec{\beta}}\]</span></p>
+<p><span class="math display">\[\text{Conditional residuals: }r^c_{ij} = Y_{ij} - \left(\vec{X}_{ij}\widehat{\vec{\beta}} + Z_i \hat{b}_{i0}\right)\]</span></p>
+<p>If the model <u>adequately captures</u> the systematic trend of the response, then <u>the residuals should exhibit no systematic pattern</u></p>
 <ul>
 <li>i.e., they should be scattered fairly randomly around zero</li>
 </ul>
-<div class="fragment">
-<p>In mixed models, we also have conditional residuals (AKA level-1 residuals): <span class="math display">\[r^c_{ij} = Y_{ij} - \boldsymbol{X}_{ij}\widehat{\vec{\beta}} - Z_i \hat{b}_{i0}\]</span></p>
+<p>The marginal and conditional residuals will tell us different things about where we might be seeing misspecification/issues with model assumptions</p>
+</section><section id="marginal-residuals-vs-predictedfitted-response" class="slide level2"><h2>Marginal residuals vs predicted/fitted response</h2>
+<p><span class="alert">Marginal</span> residuals can be used to check for systematic departures from the model for the <span class="alert">mean response</span></p>
 <ul>
 <li>
-<span class="math inline">\(r_{ij}\)</span> would then be known as the marginal residuals</li>
-</ul>
-</div>
-</section><section id="residuals-vs-predictedfitted-response" class="slide level2"><h2>Residuals vs predicted/fitted response</h2>
-<p>Residuals can be used to check for systematic departures from the model for the <span class="alert">mean response</span></p>
+<p>We often do this by making a scatter plot of marginal residuals vs marginal predicted values</p>
 <ul>
-<li>
-<p>We often do this by making a scatter plot of residuals vs predicted values</p>
-<ul>
-<li>Fitting a smoothed curve (e.g., lowess) through the scatter plot is helpful in this respect</li>
+<li>Fitting a smoothed curve (e.g., lowess) through the scatter plot can help visualize any trends</li>
 </ul>
 </li>
 </ul>
 <p><img data-src="residual-plot-example.png" width="1000"></p>
-</section><section id="residuals-vs-predicted-response" class="slide level2"><h2>Residuals vs predicted response</h2>
-<p>Usually, if there is any systematic pattern in the residual indicates inadequacy of the model in some way</p>
+<div class="absolute" style="bottom: 250px; right: 0px; width: 45%; ">
 <ul>
-<li>Solution: re-fit the data with a more flexible model (e.g., interactions, quadratic terms, and perhaps more covariates)</li>
+<li>
+<p>Usually, any (major) systematic pattern in the residual indicates inadequacy of the model in some way</p>
+<ul>
+<li><p>Solution: re-fit the data with a more flexible model (e.g., interactions, quadratic terms, and perhaps more covariates)</p></li>
+<li><p>This only works for LMEs, though! Usually very hard to check functional form of covariates for logistic or log-linear GLMMs</p></li>
 </ul>
-<p><img data-src="residual-plot-example.png" width="1000"></p>
-<div class="absolute" style="bottom: 400px; right: 0px; width: 45%; ">
-<ul>
-<li><p>Plots of <span class="alert">conditional</span> residuals will tell you about how well the data fits your assumptions about the random intercepts (zero mean), the constant <span class="math inline">\(\epsilon_{ij}\)</span> variance assumption, and whether you have outlying subjects/clusters</p></li>
-<li><p>Plots of the <span class="alert">marginal</span> residuals will tell you about the adequacy of the fixed effects (appropriate functional form/transformation)</p></li>
+</li>
 </ul>
 </div>
-</section><section id="residuals-vs-predicted-response-1" class="slide level2"><h2>Residuals vs predicted response</h2>
+</section><section id="conditional-residuals-vs-predicted-response" class="slide level2"><h2>Conditional residuals vs predicted response</h2>
+<p>Conditional residuals can be used to check for overall model fit (mean response, use of random effects, or constant individual-level variance)</p>
+<p><img data-src="residual-plot-example.png" width="1000"></p>
+<div class="absolute" style="bottom: 380px; right: 0px; width: 45%; ">
+<ul>
+<li>Plots of <span class="alert">conditional</span> residuals against <span class="alert">conditional</span> fitted values will tell you about how well the data fits your assumptions about the random intercepts (zero mean), the constant <span class="math inline">\(\epsilon_{ij}\)</span> variance assumption, and whether you have outlying subjects/clusters</li>
+</ul>
+</div>
+</section><section id="conditional-residuals-vs-predicted-response-1" class="slide level2"><h2>Conditional residuals vs predicted response</h2>
 <p>In R, we can plot the model object to get a conditional residuals plot:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(lme4)</span>
@@ -533,17 +556,18 @@ October 7, 2025
 <li><p>Smoothed line not showing significant trends</p></li>
 </ul>
 </div>
-</section><section id="residuals-vs-predicted-response-2" class="slide level2"><h2>Residuals vs predicted response</h2>
-<p>We can also get the marginal residuals:</p>
+</section><section id="residuals-vs-predicted-response" class="slide level2"><h2>Residuals vs predicted response</h2>
+<p>We can also get the marginal residuals using the <code>hlm_diag()</code> function:</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="fu">library</span>(HLMdiag)</span>
 <span id="cb2-2"><a href="#cb2-2"></a></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># get various standardized and marginal residuals #</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a>radon_resid <span class="ot">&lt;-</span> <span class="fu">hlm_resid</span>(radon_lme,<span class="at">standardize=</span><span class="cn">TRUE</span>)</span>
-<span id="cb2-5"><a href="#cb2-5"></a></span>
-<span id="cb2-6"><a href="#cb2-6"></a><span class="fu">colnames</span>(radon_resid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># get various standardized residuals #</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>radon_resid <span class="ot">&lt;-</span> <span class="fu">hlm_resid</span>(radon_lme,</span>
+<span id="cb2-5"><a href="#cb2-5"></a>                         <span class="at">standardize=</span><span class="cn">TRUE</span>)</span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="fu">colnames</span>(radon_resid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "id"              "log_radon"       "floor"           "county"         
  [5] ".std.resid"      ".fitted"         ".std.ls.resid"   ".ls.fitted"     
@@ -565,142 +589,104 @@ October 7, 2025
 </div>
 <ul>
 <li>Since <code>floor</code> only takes on 2 values, our marginal fitted values only take on 2 values</li>
-</ul></section><section id="residuals-vs-predicted-response-3" class="slide level2"><h2>Residuals vs predicted response</h2>
-<p>We can also get the marginal residuals:</p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(redres)</span>
-<span id="cb5-2"><a href="#cb5-2"></a></span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># get various standardized and marginal residuals #</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a>radon_resid_redres <span class="ot">&lt;-</span> <span class="fu">hlm_resid</span>(radon_lme,<span class="at">standardize=</span><span class="cn">TRUE</span>)</span>
-<span id="cb5-5"><a href="#cb5-5"></a></span>
-<span id="cb5-6"><a href="#cb5-6"></a><span class="fu">colnames</span>(radon_resid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">library</span>(redres)</span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="fu">plot_redres</span>(radon_lme, <span class="at">type=</span><span class="st">"std_mar"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img data-src="slides-5-1_files/figure-revealjs/marg%20resid%20plot2%20redres-1.png" width="960"></p>
-</div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">plot_resqq</span>(radon_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img data-src="slides-5-1_files/figure-revealjs/marg%20resid%20plot2%20redres-2.png" width="960"></p>
-</div>
-</div>
-</div>
-</div>
-<ul>
-<li>Since <code>floor</code> only takes on 2 values, our marginal fitted values only take on 2 values</li>
-</ul></section><section id="residuals-vs-predicted-response-4" class="slide level2"><h2>Residuals vs predicted response</h2>
+</ul></section><section id="residuals-vs-predicted-response-1" class="slide level2"><h2>Residuals vs predicted response</h2>
 <p>We can also use <code>hlm_resid()</code> to get a nicer-looking conditional residuals plot than base R provides</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>radon_resid <span class="sc">%&gt;%</span> </span>
-<span id="cb8-2"><a href="#cb8-2"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>.fitted, <span class="at">y=</span>.std.resid))<span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a>   <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a>   <span class="fu">geom_smooth</span>(<span class="at">se=</span>F) <span class="sc">+</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a>   <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>radon_resid <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>.fitted, <span class="at">y=</span>.std.resid))<span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>   <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>   <span class="fu">geom_smooth</span>(<span class="at">se=</span>F, <span class="at">col=</span><span class="st">"orange"</span>) <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>   <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>, <span class="at">col=</span><span class="st">"blue"</span>, <span class="at">linetype=</span><span class="st">"dashed"</span>)<span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>   <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="slides-5-1_files/figure-revealjs/marg%20resid%20plot3-1.png" width="960"></p>
 </div>
 </div>
-</section><section id="residuals-vs-predicted-response-5" class="slide level2"><h2>Residuals vs predicted response</h2>
-<p>In SAS, we can add the <code>plots=residualpanel</code> option to the end of <code>PROC GLIMMIX</code></p>
+</section><section id="residuals-vs-predicted-response-2" class="slide level2"><h2>Residuals vs predicted response</h2>
+<div class="columns">
+<div class="column" style="width:65%;">
+<p>In SAS, we can add the <code>plots=studentpanel</code> option to the end of <code>PROC GLIMMIX</code> to look at the studentized residuals</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource sas number-lines code-with-copy"><code class="sourceCode"><span id="cb9-1"><a href="#cb9-1"></a>PROC GLIMMIX data=dance plots=residualpanel;</span>
-<span id="cb9-2"><a href="#cb9-2"></a>        class village_id dance_class_bin(REF="0");</span>
-<span id="cb9-3"><a href="#cb9-3"></a>        model gaitfollowup = dance_class_bin / dist = normal solution cl;</span>
-<span id="cb9-4"><a href="#cb9-4"></a>        random intercept / subject=village_id;</span>
-<span id="cb9-5"><a href="#cb9-5"></a>run;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource sas number-lines code-with-copy"><code class="sourceCode"><span id="cb6-1"><a href="#cb6-1"></a>PROC GLIMMIX data=dance plots=studentpanel(marginal conditional);</span>
+<span id="cb6-2"><a href="#cb6-2"></a>   class village_id dance_class_bin(REF="0");</span>
+<span id="cb6-3"><a href="#cb6-3"></a>   model gaitfollowup = dance_class_bin / dist = normal solution cl;</span>
+<span id="cb6-4"><a href="#cb6-4"></a>   random intercept / subject=village_id;</span>
+<span id="cb6-5"><a href="#cb6-5"></a>run;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="absolute" style="width: 45%; ">
 <ul>
 <li><p>Our residuals vs fitted plot would be the one in the top left</p></li>
-<li>
-<p><code>residualspanel</code> defaults to conditional residuals</p>
-<ul>
-<li>we can have it also print marginal residuals by changing the option to <code>plots=residualspanel(marginal conditional)</code>
-</li>
+<li><p><code>studentpanel</code> defaults to conditional residuals, but we can add <code>(marginal conditional)</code> to have SAS display both</p></li>
 </ul>
-</li>
-</ul>
+</div><div class="column" style="width:35%;">
+<p><img data-src="residualpanel_std.png" width="1000"></p>
 </div>
-<div class="absolute" style="bottom: 0px; right: 0px; ">
-<p><img data-src="residualpanel.png" width="1000"></p>
 </div>
 </section><section id="residuals-vs-covariates" class="slide level2"><h2>Residuals vs covariates</h2>
 <p>We can follow a similar strategy for checking the functional form of covariates</p>
 <ol type="1">
-<li><p>Plot residual vs covariate</p></li>
+<li><p>Plot (marginal) residual vs covariate</p></li>
 <li><p>If any systematic pattern, try adding a quadratic term for the covariate or transforming the covariate</p></li>
-</ol></section><section id="investigating-dispersion-in-poisson-models" class="slide level2"><h2>Investigating dispersion in Poisson models</h2>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>radon_resid <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>floor, <span class="at">y=</span>.chol.mar.resid))<span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a>   <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>   <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>, <span class="at">col=</span><span class="st">"blue"</span>, <span class="at">linetype=</span><span class="st">"dashed"</span>)<span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>   <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="slides-5-1_files/figure-revealjs/floor%20resid%20plot-1.png" width="960"></p>
+</div>
+</div>
+</section><section id="investigating-dispersion-in-poisson-glmms-recap-from-week-2-recorded-video" class="slide level2"><h2>Investigating dispersion in Poisson GLMMs (recap from week 2 recorded video)</h2>
 <p>Recall that Poisson GLMMs assume that the mean and variance of the data are the same</p>
 <ul>
 <li><p>When this assumption is broken, we say that <span class="alert">dispersion</span> is present</p></li>
 <li><p>If variance <span class="math inline">\(&gt;\)</span> mean, we have <span class="alert">over</span>dispersion</p></li>
 <li><p>If variance <span class="math inline">\(&lt;\)</span> mean, we have <span class="alert">under</span>dispersion</p></li>
 </ul>
-<div class="fragment">
 <p>If dispersion is present this is an indicator that we likely want to fit something like a Negative Binomial GLMM that allows variance <span class="math inline">\(\ne\)</span> mean</p>
 <ul>
 <li>If that does not fix the issue, it may be that the dispersion is caused by “excess” zeros - in this case, something like a zero-inflated Poisson or NB model might work better</li>
-</ul>
-</div>
-</section><section id="investigating-dispersion-in-poisson-models-1" class="slide level2"><h2>Investigating dispersion in Poisson models</h2>
+</ul></section><section id="investigating-dispersion-in-poisson-models-recap-from-week-2-recorded-video" class="slide level2"><h2>Investigating dispersion in Poisson models (recap from week 2 recorded video)</h2>
 <p>To see if dispersion is present, we can calculate the dispersion parameter using the squared sum of Pearson residuals: <span class="math display">\[\widehat\phi = \frac{\sum[\text{Pearson Residual}_{ij}^2]}{\text{Residual degrees of freedom}}\]</span></p>
 <ul>
 <li><p>Pearson residuals correct for the unequal variance in the raw residuals by dividing by the standard deviation - this includes an estimate of the dispersion paramter (which we’re extracting above)</p></li>
 <li><p><span class="math inline">\(\hat\phi\)</span> should be 1 if there is absolutely no dispersion</p></li>
 <li><p>Will usually expect this not to be <em>exactly</em> 1, but major departures (rule of thumb: <span class="math inline">\(&lt;0.75\)</span> or <span class="math inline">\(&gt;1.4\)</span>) indicate a NB model is likely better</p></li>
-</ul></section><section id="investigating-dispersion-in-poisson-models-2" class="slide level2"><h2>Investigating dispersion in Poisson models</h2>
-<p>SAS calculates and displays <span class="math inline">\(\hat\phi\)</span> in its default result output</p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li>For <code>PROC GLIMMIX method=QUAD</code>, the dispersion parameter is listed under “Pearson Chi-Square / DF” in the “fit statistics for conditional distribution” table</li>
-</ul>
+</ul></section><section id="investigating-dispersion-in-poisson-models-recap-from-week-2-recorded-video-1" class="slide level2"><h2>Investigating dispersion in Poisson models (recap from week 2 recorded video)</h2>
+<p>SAS calculates and displays <span class="math inline">\(\hat\phi\)</span> in its default result output - For <code>PROC GLIMMIX method=QUAD</code>, the dispersion parameter is listed under “Pearson Chi-Square / DF” in the “fit statistics for conditional distribution” table</p>
 <p><img data-src="glimmix_quad.png" width="700"></p>
-</div><div class="column" style="width:50%;">
-<ul>
-<li>For <code>PROC GLIMMIX</code> with PQL, the dispersion parameter is listed under “Gener. Chi-Square / DF” in the “fit statistics” table</li>
-</ul>
-<p><img data-src="glimmix_pql.png" width="700"></p>
-</div>
-</div>
 <!-- https://documentation.sas.com/doc/en/statcdc/14.2/statug/statug_glimmix_examples19.htm  -->
-</section><section id="investigating-dispersion-in-poisson-models-3" class="slide level2"><h2>Investigating dispersion in Poisson models</h2>
+</section><section id="investigating-dispersion-in-poisson-models-recap-from-week-2-recorded-video-2" class="slide level2"><h2>Investigating dispersion in Poisson models (recap from week 2 recorded video)</h2>
 <p>In R, we can calculate the dispersion parameter by hand:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="fu">library</span>(lme4)</span>
-<span id="cb10-2"><a href="#cb10-2"></a>awards_quad <span class="ot">&lt;-</span> <span class="fu">glmer</span>( awards <span class="sc">~</span> write <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> cid),</span>
-<span id="cb10-3"><a href="#cb10-3"></a>                      <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link=</span><span class="st">"log"</span>), <span class="at">data =</span> awards,</span>
-<span id="cb10-4"><a href="#cb10-4"></a>                      <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>) )</span>
-<span id="cb10-5"><a href="#cb10-5"></a></span>
-<span id="cb10-6"><a href="#cb10-6"></a><span class="co"># estimate dispersion parameter #</span></span>
-<span id="cb10-7"><a href="#cb10-7"></a><span class="co"># pearson weighted residual sum of squares divided by degrees of freedom #</span></span>
-<span id="cb10-8"><a href="#cb10-8"></a><span class="co"># if not dispersion, we want this to be 1 #</span></span>
-<span id="cb10-9"><a href="#cb10-9"></a><span class="fu">summary</span>(awards_quad)<span class="sc">$</span>devcomp<span class="sc">$</span>cmp[<span class="st">"pwrss"</span>] <span class="sc">/</span> <span class="fu">summary</span>(awards_quad)<span class="sc">$</span>AICtab[<span class="st">"df.resid"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb8-2"><a href="#cb8-2"></a>awards_quad <span class="ot">&lt;-</span> <span class="fu">glmer</span>( awards <span class="sc">~</span> write <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> cid),</span>
+<span id="cb8-3"><a href="#cb8-3"></a>                      <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link=</span><span class="st">"log"</span>), <span class="at">data =</span> awards,</span>
+<span id="cb8-4"><a href="#cb8-4"></a>                      <span class="at">control=</span><span class="fu">glmerControl</span>(<span class="at">optimizer=</span><span class="st">"bobyqa"</span>) )</span>
+<span id="cb8-5"><a href="#cb8-5"></a></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co"># estimate dispersion parameter #</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co"># pearson weighted residual sum of squares divided by degrees of freedom #</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="co"># if not dispersion, we want this to be 1 #</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="fu">summary</span>(awards_quad)<span class="sc">$</span>devcomp<span class="sc">$</span>cmp[<span class="st">"pwrss"</span>] <span class="sc">/</span> <span class="fu">summary</span>(awards_quad)<span class="sc">$</span>AICtab[<span class="st">"df.resid"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    pwrss 
 0.1233381 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># can also calculate the pearson RSS yourself #</span></span>
-<span id="cb12-2"><a href="#cb12-2"></a><span class="fu">sum</span>(<span class="fu">resid</span>(awards_quad, <span class="at">type=</span><span class="st">"pearson"</span>)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> <span class="fu">summary</span>(awards_quad)<span class="sc">$</span>AICtab[<span class="st">"df.resid"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># can also calculate the pearson RSS yourself #</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="fu">sum</span>(<span class="fu">resid</span>(awards_quad, <span class="at">type=</span><span class="st">"pearson"</span>)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> <span class="fu">summary</span>(awards_quad)<span class="sc">$</span>AICtab[<span class="st">"df.resid"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> df.resid 
 0.1233381 </code></pre>
 </div>
 </div>
-<div class="fragment">
 <p>This dispersion parameter is very small, so the data is likely very under-dispersed</p>
-</div>
-</section><section id="investigating-dispersion-in-poisson-models-4" class="slide level2"><h2>Investigating dispersion in Poisson models</h2>
+</section><section id="investigating-dispersion-in-poisson-models-recap-from-week-2-recorded-video-3" class="slide level2"><h2>Investigating dispersion in Poisson models (recap from week 2 recorded video)</h2>
 <p>We can also use the <code>testDispersion()</code> function</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># can use the testDisperson() function from DHARMa as well #</span></span>
-<span id="cb14-2"><a href="#cb14-2"></a><span class="fu">library</span>(DHARMa)</span>
-<span id="cb14-3"><a href="#cb14-3"></a><span class="fu">testDispersion</span>(awards_quad, <span class="at">type=</span><span class="st">"PearsonChisq"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># can use the testDisperson() function from DHARMa as well #</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="fu">library</span>(DHARMa)</span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="fu">testDispersion</span>(awards_quad, <span class="at">type=</span><span class="st">"PearsonChisq"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Parametric dispersion test via mean Pearson-chisq statistic
@@ -714,11 +700,6 @@ alternative hypothesis: two.sided</code></pre>
 <li><p>This provides a formal test for whether <span class="math inline">\(\hat{\phi} \ne 0\)</span> in addition to calculating the estimated <span class="math inline">\(\phi\)</span></p></li>
 <li><p>I would generally <span class="alert">not</span> pay much attention to the p-value - focus on the estimated value for <span class="math inline">\(\phi\)</span></p></li>
 </ul>
-<div class="fragment">
-<ul>
-<li>Unfortunately, can’t really get a dispersion parameter estimate for a model using PQL in R</li>
-</ul>
-</div>
 <div class="fragment">
 <p>If there’s dispersion in the mixed model, there will (likely) be dispersion in the marginal model</p>
 <ul>
@@ -738,14 +719,14 @@ alternative hypothesis: two.sided</code></pre>
 </section><section id="leverage-1" class="slide level2"><h2>Leverage</h2>
 <p>Observation-level leverage/Cook’s D</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="fu">library</span>(ggpubr)</span>
-<span id="cb16-2"><a href="#cb16-2"></a><span class="co"># looking at observation-level leverage #</span></span>
-<span id="cb16-3"><a href="#cb16-3"></a>radon_leverage_obs <span class="ot">&lt;-</span> <span class="fu">hlm_influence</span>(radon_lme, <span class="at">leverage=</span><span class="st">"overall"</span>)</span>
-<span id="cb16-4"><a href="#cb16-4"></a></span>
-<span id="cb16-5"><a href="#cb16-5"></a><span class="fu">ggarrange</span>(</span>
-<span id="cb16-6"><a href="#cb16-6"></a><span class="fu">dotplot_diag</span>(radon_leverage_obs<span class="sc">$</span>leverage.overall, <span class="at">cutoff=</span><span class="st">"internal"</span>, <span class="at">name=</span><span class="st">"leverage"</span>)<span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Leverage"</span>),</span>
-<span id="cb16-7"><a href="#cb16-7"></a><span class="fu">dotplot_diag</span>(radon_leverage_obs<span class="sc">$</span>cooksd, <span class="at">cutoff=</span><span class="st">"internal"</span>, <span class="at">name=</span><span class="st">"cooks.distance"</span>)<span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Cook's distance"</span>),</span>
-<span id="cb16-8"><a href="#cb16-8"></a><span class="at">ncol=</span><span class="dv">2</span>,<span class="at">nrow=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="co"># looking at observation-level leverage #</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a>radon_leverage_obs <span class="ot">&lt;-</span> <span class="fu">hlm_influence</span>(radon_lme, <span class="at">leverage=</span><span class="st">"overall"</span>)</span>
+<span id="cb14-4"><a href="#cb14-4"></a></span>
+<span id="cb14-5"><a href="#cb14-5"></a><span class="fu">ggarrange</span>(</span>
+<span id="cb14-6"><a href="#cb14-6"></a><span class="fu">dotplot_diag</span>(radon_leverage_obs<span class="sc">$</span>leverage.overall, <span class="at">cutoff=</span><span class="st">"internal"</span>, <span class="at">name=</span><span class="st">"leverage"</span>)<span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Leverage"</span>),</span>
+<span id="cb14-7"><a href="#cb14-7"></a><span class="fu">dotplot_diag</span>(radon_leverage_obs<span class="sc">$</span>cooksd, <span class="at">cutoff=</span><span class="st">"internal"</span>, <span class="at">name=</span><span class="st">"cooks.distance"</span>)<span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Cook's distance"</span>),</span>
+<span id="cb14-8"><a href="#cb14-8"></a><span class="at">ncol=</span><span class="dv">2</span>,<span class="at">nrow=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="slides-5-1_files/figure-revealjs/leverage-1.png" style="width:65.0%"></p>
 </div>
@@ -756,13 +737,13 @@ alternative hypothesis: two.sided</code></pre>
 </section><section id="leverage-2" class="slide level2"><h2>Leverage</h2>
 <p>Cluster-level leverage/Cook’s D</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># looking at observation-level leverage on the fixed effect estimates #</span></span>
-<span id="cb17-2"><a href="#cb17-2"></a>radon_leverage_cnty <span class="ot">&lt;-</span> <span class="fu">hlm_influence</span>(radon_lme, <span class="at">leverage=</span><span class="st">"overall"</span>, <span class="at">level=</span><span class="st">"county"</span>)</span>
-<span id="cb17-3"><a href="#cb17-3"></a></span>
-<span id="cb17-4"><a href="#cb17-4"></a><span class="fu">ggarrange</span>(</span>
-<span id="cb17-5"><a href="#cb17-5"></a><span class="fu">dotplot_diag</span>(radon_leverage_cnty<span class="sc">$</span>leverage.overall, <span class="at">cutoff=</span><span class="st">"internal"</span>, <span class="at">name=</span><span class="st">"leverage"</span>),</span>
-<span id="cb17-6"><a href="#cb17-6"></a><span class="fu">dotplot_diag</span>(radon_leverage_cnty<span class="sc">$</span>cooksd, <span class="at">cutoff=</span><span class="st">"internal"</span>, <span class="at">name=</span><span class="st">"cooks.distance"</span>),</span>
-<span id="cb17-7"><a href="#cb17-7"></a><span class="at">ncol=</span><span class="dv">2</span>,<span class="at">nrow=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># looking at observation-level leverage on the fixed effect estimates #</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>radon_leverage_cnty <span class="ot">&lt;-</span> <span class="fu">hlm_influence</span>(radon_lme, <span class="at">leverage=</span><span class="st">"overall"</span>, <span class="at">level=</span><span class="st">"county"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3"></a></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="fu">ggarrange</span>(</span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="fu">dotplot_diag</span>(radon_leverage_cnty<span class="sc">$</span>leverage.overall, <span class="at">cutoff=</span><span class="st">"internal"</span>, <span class="at">name=</span><span class="st">"leverage"</span>),</span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="fu">dotplot_diag</span>(radon_leverage_cnty<span class="sc">$</span>cooksd, <span class="at">cutoff=</span><span class="st">"internal"</span>, <span class="at">name=</span><span class="st">"cooks.distance"</span>),</span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="at">ncol=</span><span class="dv">2</span>,<span class="at">nrow=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="slides-5-1_files/figure-revealjs/leverage%20cluster-1.png" style="width:65.0%"></p>
 </div>
@@ -783,11 +764,11 @@ alternative hypothesis: two.sided</code></pre>
 </h2>
 <p>In SAS, we use the <code>PLOTS(UNPACK)=DFBETA</code> option:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource sas number-lines code-with-copy"><code class="sourceCode"><span id="cb18-1"><a href="#cb18-1"></a>proc genmod data=dance PLOTS(UNPACK)=DFBETA;</span>
-<span id="cb18-2"><a href="#cb18-2"></a>        class village_id dance_class_bin(REF="0");</span>
-<span id="cb18-3"><a href="#cb18-3"></a>        model gaitfollowup = dance_class_bin / dist = normal;</span>
-<span id="cb18-4"><a href="#cb18-4"></a>        repeated subject=village_id / type=exch;</span>
-<span id="cb18-5"><a href="#cb18-5"></a>run;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource sas number-lines code-with-copy"><code class="sourceCode"><span id="cb16-1"><a href="#cb16-1"></a>proc genmod data=dance PLOTS(UNPACK)=DFBETA;</span>
+<span id="cb16-2"><a href="#cb16-2"></a>        class village_id dance_class_bin(REF="0");</span>
+<span id="cb16-3"><a href="#cb16-3"></a>        model gaitfollowup = dance_class_bin / dist = normal;</span>
+<span id="cb16-4"><a href="#cb16-4"></a>        repeated subject=village_id / type=exch;</span>
+<span id="cb16-5"><a href="#cb16-5"></a>run;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="columns">
 <div class="column" data-widht="60%">
@@ -808,9 +789,25 @@ alternative hypothesis: two.sided</code></pre>
 </section><section id="other-diagnostics-for-gees" class="slide level2"><h2>Other diagnostics for GEEs</h2>
 <p>While we don’t do a lot of model testing for GEEs, we can compare the empirical estimates of the covariance structure to the model-based estimates</p>
 <ul>
-<li><p>For this we can compare the model-based and robust confidence intervals of regression coefficients</p></li>
-<li><p>If there is a large discrepancy, our robust variance estimator is probably doing the heavy lifting of correcting this for us</p></li>
+<li><p>For this we can compare the model-based and robust standard errors or confidence intervals of regression coefficients</p></li>
+<li>
+<p>If there is a large discrepancy, our robust variance estimator is probably doing the heavy lifting of correcting this for us</p>
+<ul>
+<li>What’s a “large” difference? Hard to say – it can be helpful to form a ratio <span class="math inline">\(\frac{\text{robust SE}}{\text{model-based SE}}\)</span> to see what percentage larger/smaller the robust standard error is compared to the model-based one</li>
+</ul>
+</li>
 <li><p>In this setting (non-longitudinal clustered data) though, we aren’t likely to see much discrepancy</p></li>
+</ul></section><section id="take-away-messages" class="slide level2"><h2>Take away messages</h2>
+<ul>
+<li>
+<p>More diagnostics available for assessing LMEs/GLMMs because we make more assumptions in those models</p>
+<ul>
+<li>Residual plots can be useful to assess whether modeled variance/covariance correctly (constant variance, random intercepts), and sometimes to assess functional form of fixed effect covariates</li>
+</ul>
+</li>
+<li><p>Influential observation analyses, like looking at leverage or DFBETA, can be useful for either LMEs/GLMMs or GEEs to see if “outlier” observations are strongly influencing the fit of our model</p></li>
+<li><p>We can assess how well we’ve modeled the covarinace in GEEs by comparing the model-based standard errors to the robust standard errors</p></li>
+<li><p>What if we want to compare 2 different models? We’ll get to this after the midterm</p></li>
 </ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">

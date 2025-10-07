@@ -41,7 +41,7 @@ library(qrcode)
 
 ::: {.absolute bottom=380 left=300 width=1500}
 
-Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/long-data/long-data">
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/long-data/long-data>
 
 :::
 

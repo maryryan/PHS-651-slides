@@ -72,11 +72,13 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-5-1/slides-5-1")
 
 - Modeling choices/assumptions for LMEs/GLMMs and GEEs
 
-- Marginal and conditional residual analysis for LMEs/GLMMs
+- (Some!) diagnostics we can use to assess modeling assumptions
 
-- Influential observations in LMEs/GLMMs/GEEs: leverage and DFBETA
+   - Marginal and conditional residual analysis for LMEs/GLMMs
 
-- Other diagnostics for GEEs
+   - Influential observations in LMEs/GLMMs/GEEs: leverage and DFBETA
+
+   - Other diagnostic strategies for GEEs
 
 ---
 
@@ -86,11 +88,7 @@ So far we've dealt with how to model correlated data
 
 - But how do we assess whether the modeling choices we've made are sound?
 
-. . .
-
 There are some analyses/diagnostics we can perform to explore this
-
-. . .
 
 - Heavy emphasis on [explore]{.alert}
 
@@ -99,8 +97,6 @@ There are some analyses/diagnostics we can perform to explore this
    - But we should assess whether there are [major discrepancies]{.alert} between what we've assumed and what's in the data
    
    - Use these as a temperature check for whether the model needs to be adjusted, how much confidence can be placed in estimates, and whether estimates need to be presented with caveats
-
-. . .
 
 Also, in the non-longitudinal clustered data settings, there are not many diagnostic checks for GEE models
 
@@ -117,6 +113,8 @@ Let's review the various modeling choices we've covered so far
 First, we can choose between conditional/mixed vs marginal models
 
 - Usually this will be driven by whether we want a conditional or population-averaged interpretation of our effects
+
+- After that, might be driven by how many clusters we have or how much variation in cluster size we have in our data
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -233,7 +231,7 @@ library(lme4)
 radon_lme <- lmer(log_radon ~ floor + (1 | county), data=radon.mn)
 ```
 
-We can get the marginal residuals in R using the `hlm_diag()` function:
+We can get the (standardized) marginal residuals in R using the `hlm_diag()` function:
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -284,7 +282,7 @@ Conditional residuals can be used to check for overall model fit (mean response,
 
 ## Conditional residuals vs predicted response
 
-In R, we can plot the model object to get a conditional residuals plot:
+In R, we can plot the model object to get a (standardized) conditional residuals plot:
 ```{r resid plot}
 library(lme4)
 
@@ -517,4 +515,4 @@ While we don't do a lot of stand-alone model testing for GEEs, we can compare th
 
 - We can assess how well we've modeled the covarinace in GEEs by comparing the model-based standard errors to the robust standard errors
 
-- What if we want to compare 2 different models? We'll get to this after the midterm
+- We can also perform diagnostics by fitting multiple models with different assumptions and compare them on model fit $\rightarrow$ we'll get to that after the midterm

@@ -424,18 +424,20 @@ October 7, 2025
 </section><section id="roadmap" class="slide level2"><h2>Roadmap</h2>
 <ul>
 <li><p>Modeling choices/assumptions for LMEs/GLMMs and GEEs</p></li>
+<li>
+<p>(Some!) diagnostics we can use to assess modeling assumptions</p>
+<ul>
 <li><p>Marginal and conditional residual analysis for LMEs/GLMMs</p></li>
 <li><p>Influential observations in LMEs/GLMMs/GEEs: leverage and DFBETA</p></li>
-<li><p>Other diagnostics for GEEs</p></li>
+<li><p>Other diagnostic strategies for GEEs</p></li>
+</ul>
+</li>
 </ul></section><section id="model-diagnostics" class="slide level2"><h2>Model diagnostics</h2>
 <p>So far we’ve dealt with how to model correlated data</p>
 <ul>
 <li>But how do we assess whether the modeling choices we’ve made are sound?</li>
 </ul>
-<div class="fragment">
 <p>There are some analyses/diagnostics we can perform to explore this</p>
-</div>
-<div class="fragment">
 <ul>
 <li>
 <p>Heavy emphasis on <span class="alert">explore</span></p>
@@ -446,19 +448,16 @@ October 7, 2025
 </ul>
 </li>
 </ul>
-</div>
-<div class="fragment">
 <p>Also, in the non-longitudinal clustered data settings, there are not many diagnostic checks for GEE models</p>
 <ul>
 <li><p>This is because we aren’t <em>assuming</em> much for GEEs - we’re estimating most of the covariance matrix</p></li>
 <li><p>So we’ll mostly be focusing on mixed models in this session</p></li>
-</ul>
-</div>
-</section><section id="modeling-choices" class="slide level2"><h2>Modeling choices</h2>
+</ul></section><section id="modeling-choices" class="slide level2"><h2>Modeling choices</h2>
 <p>Let’s review the various modeling choices we’ve covered so far</p>
 <p>First, we can choose between conditional/mixed vs marginal models</p>
 <ul>
-<li>Usually this will be driven by whether we want a conditional or population-averaged interpretation of our effects</li>
+<li><p>Usually this will be driven by whether we want a conditional or population-averaged interpretation of our effects</p></li>
+<li><p>After that, might be driven by how many clusters we have or how much variation in cluster size we have in our data</p></li>
 </ul>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -535,7 +534,7 @@ October 7, 2025
 </ul>
 </div>
 </section><section id="marginal-residuals-vs-predicted-response" class="slide level2"><h2>Marginal residuals vs predicted response</h2>
-<p>We can get the marginal residuals in R using the <code>hlm_diag()</code> function:</p>
+<p>We can get the (standardized) marginal residuals in R using the <code>hlm_diag()</code> function:</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
@@ -585,7 +584,7 @@ October 7, 2025
 </ul>
 </div>
 </section><section id="conditional-residuals-vs-predicted-response-1" class="slide level2"><h2>Conditional residuals vs predicted response</h2>
-<p>In R, we can plot the model object to get a conditional residuals plot:</p>
+<p>In R, we can plot the model object to get a (standardized) conditional residuals plot:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">library</span>(lme4)</span>
 <span id="cb4-2"><a href="#cb4-2"></a></span>
@@ -778,7 +777,7 @@ October 7, 2025
 </li>
 <li><p>Influential observation analyses, like looking at leverage or DFBETA, can be useful for either LMEs/GLMMs or GEEs to see if “outlier” observations are strongly influencing the fit of our model</p></li>
 <li><p>We can assess how well we’ve modeled the covarinace in GEEs by comparing the model-based standard errors to the robust standard errors</p></li>
-<li><p>What if we want to compare 2 different models? We’ll get to this after the midterm</p></li>
+<li><p>We can also perform diagnostics by fitting multiple models with different assumptions and compare them on model fit <span class="math inline">\(\rightarrow\)</span> we’ll get to that after the midterm</p></li>
 </ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">

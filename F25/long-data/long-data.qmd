@@ -1,0 +1,348 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1200
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      auto-stretch: false
+      pdf-separate-fragments: true
+execute: 
+   eval: true
+   echo: true
+---
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+```
+<h1> Week 5 Online Lecture: Longitudinal data </h1>
+
+<h2> PHS 651: Advanced regression methods </h2>
+
+<hr>
+
+<h3> Mary Ryan Baumann, PhD </h3>
+
+<h3> Week of October 8, 2025 </h3>
+
+<br>
+
+
+::: {.absolute bottom=380 left=300 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/long-data/long-data">
+
+:::
+
+::: {.absolute bottom=275 left=50 width=250}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/long-data/long-data"))
+```
+:::
+
+---
+
+## A new type of clustering
+
+:::: {.columns}
+::: {.column width="60%"}
+Previously we have discussed how outcome observations can be [clustered]{.alert} due to some kind of group membership that often dealt with where the observations came from in space or societal/institutional membership
+
+- Geographic groups (city, county, state, region, apartment/residential building, etc)
+
+- Institutional groups (schools, school districts, etc)
+
+- Social hierarchy groups (household, family, etc)
+
+We also briefly touched on scenarios where clustering occurred because we observed multiple observations for a single person ([person is the cluster]{.alert}):
+
+- Eyes in someone's head
+
+- Person answering multiple questions on one survey
+:::
+
+::: {.column width="40%"}
+::: {.fragment}
+A common element between these were that all observations came from the [same moment in time]{.alert}
+
+- We also call this a type of [cross-sectional]{.alert} (or latitudinal) sampling
+
+- This is about estimating the effect of an exposure on an outcome at a particular moment in time
+
+What if we wanted to observe how an exposure affects an outcome [across time?]{.alert}
+:::
+:::
+::::
+
+---
+
+## Longitudinal data
+
+[Longitudinal data]{.alert} occur when a research subject is observed [repeatedly]{.underline} through time
+
+- Primary goal of longitudinal data collection is to characterize [change in response over time]{.alert} and how factors/exposures impact that change
+
+. . .
+
+What's wrong with a cross-sectional study?
+
+- Just asking a different kind of question!
+
+- Only observe how exposure impacts outcome at a particular moment
+
+- No understanding of whether outcome changed while exposure was applied or whether it was always low/high
+
+   - Correlation vs causation
+
+- Can maybe get at between-subject differences, but not within-subject change
+
+---
+
+## Types of longitudinal studies
+
+There are 2 general types of longitudinal studies:
+
+1. Individuals recruited at a particular [chronological time point]{.alert} and repeatedly observed
+   
+   - Individuals match up on chronological time (date), but not necessarily lifecycle time
+   
+   - Sometimes called panel data
+
+2. Individuals recruited at a particular [lifecycle/event point]{.alert} and repeatedly observed
+
+   - e.g., from birth, from exposure
+   
+   - Individuals may not match up on chronological time
+   
+   - Sometimes called cohort data
+   
+Can also have combinations of the two!
+
+- Study that recruits everyone in a particular year for future repeated observation, but within the study has multiple age cohort they're recruiting to
+
+Putting a specific label on a study isn't as important as understanding how similar you would expect individuals to be at [study baseline]{.alert} (their first visit in the study)
+
+---
+
+## Longitudinal vs repeated cross-sectional data
+
+:::: {.columns}
+::: {.column width="50%"}
+Similar to "true" longitudinal data are [repeated cross-sectional data]{.alert}
+
+- In repeated cross-sectional studies, the same survey/assessment/measurement is collected repeatedly across time
+
+- However, the subjects at Time 1 are usually not the same as the subjects at Time 2
+
+Repeated cross-sectional studies may be longitudinal for a cluster/group (if that's how the data collection is designed), but not for the individual people
+
+- i.e., repeated cross-sectional observation of counties each year, but the people responding in a county are different from year to year
+
+This will limit how we can generalize our conclusions
+:::
+
+::: {.column width="50%"}
+![Figure from *Research Methods in Education* by Joseph Check
+& Russell K. Schutt](long-data-examples.jpg)
+:::
+::::
+
+---
+
+## Longitudinal vs repeated cross-sectional data
+
+For temporal trend in response, why isn't repeated cross-sectional data ideal?
+
+1. Systematic difference between cohorts (time-point samples)
+
+2. Between-individual variability
+
+3. No info on individual-level trajectory
+
+4. Cost (need to re-recruit at each time point)
+
+By comparing responses at different time points from the same subject, longitudinal analysis:
+
+- Removes systematic and random difference between individuals
+
+- Provides direct info on individual-level trajectory
+
+- Can reduce study cost (but still need to spend $ on retention!)
+
+---
+
+## Longitudinal data structure
+
+:::: {.columns}
+::: {.column widht="50%"}
+Most longitudinal data is structured such that the outcome and exposure are measured at baseline, and only the outcome is re-measured at each time point:
+
+![](long-structure.png)
+:::
+
+::: {.column width="50%"}
+We can also structure longitudinal data to repeatedly observe the exposure variable or other variables along with the outcome, but generally want all these observations to be happening at the same timepoint
+
+![](time-varying-long.png)
+:::
+::::
+
+Most longitudinal studies aim to have [balanced]{.alert} data
+
+- Same number of observations per individual, collected at the "same" time points
+
+---
+
+## Complications of longitudinal data
+
+Longitudinal data comes with some complications - some we've seen before and some that are new
+
+. . .
+
+1. Repeated measures on individuals are correlated
+
+   - Basic unit: individual at time x
+   
+   - Cluster/group unit: individual (across time)
+
+2. Variability often heterogeneous across time
+
+   - Within-cluster heterogeneity
+
+3. We may or may not expect an individual's observations to be correlated the same across time
+
+   - Would you expect your blood pressure today to have the same amount of correlation with your BP in a year versus in 10 years?
+   
+4. Greater possibility for [missing data]{.alert}
+
+   - Missing visits, study dropout, death...
+   
+5. Possibility for differential visit timing
+
+   - An annual visit for one person might be 9 months after their last, while for another it might be 18 months after
+
+---
+
+## Example: Treatment of lead-exposed children trial
+
+Exposure to lead during infancy is associated with substantial deficits in tests of cognitive ability
+
+- Chelation treatment of children with high lead levels usually requires injections and hospitalization
+
+- A new (at the time) agent, Succimer, can be given orally
+
+To test the effect of Succimer, a (longitudinal) [randomized trial]{.alert} was conducted examining changes in blood lead level during course of treatment
+
+- 100 children randomized to placebo or Succimer
+
+- Measures of blood lead level at baseline, 1, 4 and 6 weeks
+
+---
+
+## Example: Treatment of lead-exposed children trial
+
+:::: {.columns}
+::: {.column width="50%"}
+![](succ_tab1.png)
+:::
+
+::: {.column width="50%"}
+![](succ_tab2.png)
+:::
+::::
+
+---
+
+## Example: Treatment of lead-exposed children trial
+
+![](succ_plot.png){width="65%"}
+
+::: {.absolute right=0 top=200}
+This shows longitudinal trends of treatment groups
+:::
+
+---
+
+## Example: Six Cities study of air pollution and health
+
+Researchers wanted to study lung function growth in children and adolescents
+
+- Most children were [enrolled between the ages of six and seven]{.alert} and measurements were obtained annually until graduation from high school
+
+We'll focus on a randomly selected subset of the 300 female participants living in Topeka, Kansas
+
+- Response variable: Volume of air exhaled in the first second of spirometry manoeuvre, FEV1
+
+![](fev_tab1.png)
+
+---
+
+## Example: Six Cities study of air pollution and health
+
+![](fev_plot.png){width="65%"}
+
+::: {.absolute right=300 top=200}
+What do we see in this plot?
+:::
+
+---
+
+## Example: Menarche and body fat
+
+Researchers conducted a [prospective longitudinal]{.alert} study on body fat accumulation in a cohort of 162 girls from MIT Growth and Development study
+
+- At study start, all participants were pre-menarcheal (before 1st period) and not considered obese
+
+- Participants followed up with annual until 4 years after 1st period
+
+- Body fat measured at each exam
+
+---
+
+## Example: Menarche and body fat
+
+![](menarche1.png){width="65%"}
+
+::: {.absolute right=200 top=200}
+What do we see in this plot?
+:::
+
+---
+
+## Example: Menarche and body fat
+
+Consider an analysis of the changes in percent body fat before and after 1st period
+
+- For the purposes of these analyses "time" is coded as "time since menarche" and can be positive or negative
+
+- Study design is almost "balanced" if timing of measurement is defined as time since baseline measurement
+
+- Inherently [unbalanced]{.alert} when timing of measurements is defined as time since a participant experienced 1st period
+
+
+---
+
+## Example Menarche and body fat
+
+What differences do we see between these two plots?
+
+:::: {.columns}
+::: {.column width="50%"}
+![](menarche1.png){width="100%"}
+:::
+
+::: {.column width="50%"}
+![](menarche2.png){width="200%"}
+:::
+::::

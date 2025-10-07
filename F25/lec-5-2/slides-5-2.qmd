@@ -1,0 +1,138 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+      pdf-separate-fragments: true
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+```
+
+<h1>Lecture 5.2: Modeling the mean with longitudinal data</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>October 9, 2025</h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=100 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-5-2/slides-5-2>
+
+:::
+
+::: {.absolute bottom=50 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-5-2/slides-5-2"))
+```
+:::
+
+---
+
+### Longitudinal hypotheses
+
+![](long-hypotheses.png){width="45%"}
+
+::: {.absolute right=100 top=200 width="35%"}
+With longitudinal data, we are usually interested one of several types of hypotheses:
+
+1. Presence/absence of exposure group-by-time interaction effect
+
+2. Presence/absence of time effect
+
+3. Presence/absence of group effect
+:::
+
+---
+
+## Longitudinal reference groups
+
+In 552-style data we only dealt with reference groups with respect to exposure and additional adjustment covariates
+
+Previously in this class, we added cluster membership on top of that if we used conditional/mixed models
+
+Now, we may also need to add in reference groups with respect to within-cluster time
+
+- Everyone's "baseline" outcome measure may not be comparable
+
+---
+
+## Adjusting for baseline outcomes
+
+Let $Y_{i0}$ be the baseline outcome measurement for individual $i$, and $\{Y_{i1}, \dots, Y_{iJ}\}$ be the follow-up measurements at times 1 through $J$
+
+There are 4 main methods for handling baseline outcome measurements in longitudinal data
+
+1. Keep $Y_{i0}$ as part of the outcome vector, and use exposure group and time (and group-by-time interaction) as adjustment variables
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Exposure}_{ij}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+
+   - $\beta_1$ interpreted as expected difference in outcome between exposure groups [at baseline]{.alert}
+
+. . .
+
+2. Keep $Y_{i0}$ as part of the outcome vector, and use time and group-by-time interaction as adjustment variables (no group variable)
+
+$$E[Y_{ij}] = \beta_0 + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+
+   - Assumes group means at baseline are [equal]{.alert} ($\beta_1=0$)
+   
+   - This is a [bad assumption]{.alert} for observational studies, but usually fine for randomized trials
+---
+
+## Adjusting for baseline outcomes
+
+3. Use change from baseline $(Y_{ij} - Y_{i0})$ as outcome, and use exposure and time (and group-by-time interaction) as adjustment variables
+
+$$E[Y_{ij} - Y_{i0}] = \beta_0 + \beta_1 (\text{Exposure}_{ij}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+
+   - $\beta_1$ interpreted as expected difference in the change-from-baseline outcomes between exposure groups [at follow-up time 1]{.alert}
+
+. . .
+
+4. Use follow-up measurements *only* as outcome vector, and use $Y_{i0}$ as adjustment variable, along with exposure and time (and group-by-time interaction)
+
+$$E[Y_{ij}] = \beta_0 + \beta_{\text{baseline}}(Y_{i0}) + \beta_1 (\text{Exposure}_{ij}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+
+   - $\beta_1$ interpreted as expected difference in outcome between exposure groups at follow up time 1, who had the same baseline outcomes
+   
+   - Assumes group means at baseline are equal (no baseline-by-group effect) $\rightarrow$ [bad assumption]{.alert} for observational studies

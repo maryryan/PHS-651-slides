@@ -102,7 +102,7 @@ Also, in the non-longitudinal clustered data settings, there are not many diagno
 
 - This is because we aren't *assuming* much for GEEs - we're estimating most of the covariance matrix
 
-- So we'll mostly be focusing on mixed models in this session
+- So we'll mostly be focusing on [mixed models]{.underline} in this session
 
 ---
 
@@ -110,20 +110,20 @@ Also, in the non-longitudinal clustered data settings, there are not many diagno
 
 Let's review the various modeling choices we've covered so far
 
-First, we can choose between conditional/mixed vs marginal models
+First, we can choose between [conditional/mixed]{.underline} vs [marginal]{.underline} models
 
-- Usually this will be driven by whether we want a conditional or population-averaged interpretation of our effects
+- Usually this will be driven by whether we want a [conditional]{.underline} or [population-averaged]{.underline} interpretation of our effects
 
-- After that, might be driven by how many clusters we have or how much variation in cluster size we have in our data
+- After that, our decision might be driven by how many clusters we have or how much variation in cluster size we have in our data
 
 :::: {.columns}
 ::: {.column width="50%"}
 ::: {.fragment fragment-index=1}
 Within conditional/mixed models, we make decisions about:
 
-- Variable for random intercepts
+- Variable(s) for fixed effects (isolating causal pathway)/how we model them (linear, quadratic, splines, etc.)
 
-- Variable(s) for fixed effects (isolating causal pathway)
+- Variable for random intercepts
 
 - Outcome distribution
 
@@ -136,7 +136,7 @@ Within conditional/mixed models, we make decisions about:
 ::: {.fragment fragment-index=2}
 Within marginal models, we make decisions about:
 
-- How to specify the mean model/what variables to include to isolate causal pathway
+- How to specify the mean model/what variables to include to isolate causal pathway/how we model them (linear, quadratic, splines, etc.)
 
 - Marginal variance function
 
@@ -153,40 +153,39 @@ Within marginal models, we make decisions about:
 
 ## Mixed model residual analysis
 
-Recall the form of a LME with one exposure variable $U_{ij}$ for individual $j$ in cluster $i$:
+[Residuals]{.alert} are the difference between the observed outcomes ($Y$) and the ones predicted by your model ($\widehat Y$)
 
-$$\begin{align*}&\vec{Y}_i = \boldsymbol{X}_{i}\vec{\beta} + Z_ib_{0i} + \vec{\epsilon}_{i}\\
-&Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}\end{align*}$$
-
-[Residuals]{.alert} are the difference between the observed outcomes and the ones predicted by your model
-
-$$r_{ij} = Y_{ij} - \vec{X}_{ij}\widehat{\vec{\beta}}$$
-
-- In mixed models, we refer to $r_{ij}$ as the [marginal residuals]{.alert} (only subtracting the fixed effects)
-
-. . .
-
-In mixed models, we [also]{.underline} have [conditional residuals]{.alert} (subtracting marginal and random effects):
-$$r^c_{ij} = Y_{ij} - \left(\vec{X}_{ij}\widehat{\vec{\beta}} + Z_i \hat{b}_{i0}\right)$$
-
----
-
-## Mixed model residual analysis
-
-$$\begin{align*}&\vec{Y}_i = \boldsymbol{X}_{i}\vec{\beta} + Z_ib_{0i} + \vec{\epsilon}_{i}\\
-&Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}\end{align*}$$
-
-$$\text{Marginal residuals: }r_{ij} = Y_{ij} - \vec{X}_{ij}\widehat{\vec{\beta}}$$
-
-$$\text{Conditional residuals: }r^c_{ij} = Y_{ij} - \left(\vec{X}_{ij}\widehat{\vec{\beta}} + Z_i \hat{b}_{i0}\right)$$
-
-Residuals tell us about how well the model fits our actual data
+- Residuals tell us about how well the model fits our actual data
 
 - We'd ideally like these to be small, but often our goal isn't to *exactly* predict our outcome variable (recall the Harrell reading from Week 1!)
 
 - If the model [adequately captures]{.underline} the systematic trend of the response, then [the residuals should exhibit no systematic pattern]{.underline}
 
    - i.e., they should be scattered fairly randomly around zero
+   
+- We're usually using residual analysis to check
+
+   1. If we used the correct functional form for our covariates/confounders (linear, quadratic, splines, etc.)
+   
+   2. If assumptions about covariance seem to be (largely) correct (constant marginal variance, normality of random effects, random effects/residuals with mean 0)
+
+---
+
+## Mixed model residual analysis
+
+Recall the form of a LME with one exposure variable $U_{ij}$ for individual $j$ in cluster $i$:
+
+$$\begin{align*}&\vec{Y}_i = \boldsymbol{X}_{i}\vec{\beta} + Z_ib_{0i} + \vec{\epsilon}_{i}\\
+&Y_{ij} = \beta_0 + U_{ij}\beta_1 + Z_ib_{0i} + \epsilon_{ij}\end{align*}$$
+
+We have 2 types of residuals with mixed models:
+
+- [Marginal residuals]{.alert} (only subtracting the fixed effects):
+
+$$r_{ij} = Y_{ij} - \vec{X}_{ij}\widehat{\vec{\beta}}$$
+
+- And [conditional residuals]{.alert} (subtracting marginal and random effects):
+$$r^c_{ij} = Y_{ij} - \left(\vec{X}_{ij}\widehat{\vec{\beta}} + Z_i \hat{b}_{i0}\right)$$
 
 The marginal and conditional residuals will tell us different things about where we might be seeing misspecification/issues with model assumptions
 
@@ -395,7 +394,9 @@ We may also be interested in whether we have particularly influential observatio
 
 - [Leverage]{.alert} looks at how removing an observation/cluster affects predicted values/residuals -- it will tell us us about [extreme values in the predictor space]{.underline}
 
-- [Cook's distance]{.alert} looks at how removing an observation/cluster affects regression coefficients when [combined]{.underline}
+- [Cook's distance]{.alert} looks at how removing an observation/cluster affects regression coefficients when [combined]{.underline} (how removing one observation affects all fitted values)
+   
+   - Leverage is used to calculate Cook's distance
 
 Observations are allowed to be influential!
 
@@ -433,7 +434,7 @@ Looks like we have a lot of observations that are influential based on Cook's di
 
 Cluster-level leverage/Cook's D
 ```{r leverage cluster, out.width="65%"}
-# looking at observation-level leverage on the fixed effect estimates #
+# looking at county-level leverage #
 radon_leverage_cnty <- hlm_influence(radon_lme, leverage="overall", level="county")
 
 ggarrange(

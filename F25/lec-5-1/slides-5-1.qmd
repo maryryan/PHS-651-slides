@@ -399,6 +399,12 @@ We may also be interested in whether we have particularly influential observatio
 
 - [Cook's distance]{.alert} looks at how removing an observation/cluster affects regression coefficients when [combined]{.underline}
 
+Observations are allowed to be influential!
+
+- This breaks no assumptions
+
+- But if your results look very different with and without the influential observations, it might bring the validity of your results into question
+
 We can also see whether we have any particularly influential clusters as well
 
 Unfortunately `PROC GLIMMIX` doesn't have functionality for influence metrics, but R does
@@ -504,6 +510,8 @@ While we don't do a lot of stand-alone model testing for GEEs, we can compare th
 - More diagnostics available for assessing LMEs/GLMMs because we make more assumptions in those models
 
    - Residual plots can be useful to assess whether modeled variance/covariance correctly (constant variance, random intercepts), and sometimes to assess functional form of fixed effect covariates
+   
+   - I've found this tutorial of the `redres` library in R to be a helpful walkthrough of the different types of residuals and what they are useful for: <https://goodekat.github.io/redres/articles/redres-vignette.html#resids>
    
 - Influential observation analyses, like looking at leverage or DFBETA, can be useful for either LMEs/GLMMs or GEEs to see if "outlier" observations are strongly influencing the fit of our model
 

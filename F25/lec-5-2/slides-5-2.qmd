@@ -68,6 +68,133 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-5-2/slides-5-2")
 
 ---
 
+## Roadmap
+
+- Recap: longitudinal studies and data
+
+- Longitudinal hypotheses:
+   1. Time effect
+   2. Exposure group effect
+   3. Exposure group-by-time interaction effect
+   
+- Adjusting for baseline outcomes
+
+---
+
+## Recap: Longitudinal data
+
+[Longitudinal data]{.alert} occur when a research subject is observed [repeatedly]{.underline} through time
+
+- Primary goal of longitudinal data collection is to characterize [how an outcome changes over time]{.alert} and how factors/exposures impact that change
+
+There are 2 general types of longitudinal studies:
+
+1. Individuals recruited at a particular [chronological time point]{.alert} and repeatedly observed
+   
+   - Individuals match up on chronological time (date), but not necessarily lifecycle time
+
+2. Individuals recruited at a particular [lifecycle/event point]{.alert} and repeatedly observed
+
+   - e.g., from birth, from exposure
+   
+   - Individuals may not match up on chronological time
+   
+- Can also have combinations of the two!
+
+- Putting a specific label on a study isn't as important as understanding how similar you would expect individuals to be at [study baseline]{.alert} (their first visit in the study)
+
+---
+
+## Longitudinal data structure
+
+:::: {.columns}
+::: {.column widht="50%"}
+Much longitudinal data is structured such that the outcome and exposure are measured at baseline, and only the outcome is re-measured at each time point:
+
+![](long-structure.png)
+:::
+
+::: {.column width="50%"}
+We can also structure longitudinal data to repeatedly observe the exposure variable or other variables along with the outcome, but generally want all these observations to be happening at the same timepoint
+
+![](time-varying-long.png)
+:::
+::::
+
+Most longitudinal studies aim to have [balanced]{.alert} data
+
+- Same number of observations per individual, collected at the "same" time points
+
+---
+
+## Complications of longitudinal data
+
+Longitudinal data comes with some complications - some we've seen before and some that are new
+
+1. Repeated measures on individuals are correlated
+
+   - Basic unit: individual at time x
+   
+   - Cluster/group unit: individual (across time)
+
+2. Variability often heterogeneous across time
+
+   - Within-cluster heterogeneity
+
+3. We may or may not expect an individual's observations to be correlated the same across time
+
+   - Would you expect your blood pressure today to have the same amount of correlation with your BP in a year versus in 10 years?
+   
+4. Greater possibility for [missing data]{.alert}
+
+   - Missing visits, study dropout, death...
+   
+5. Possibility for differential visit timing
+
+   - An annual visit for one person might be 9 months after their last, while for another it might be 18 months after
+
+---
+
+## Complications of longitudinal data
+
+Longitudinal data comes with some complications - some we've seen before and some that are new
+
+1. Repeated measures on individuals are correlated
+
+2. Variability often heterogeneous across time
+
+3. We may or may not expect an individual's observations to be correlated the same across time
+   
+4. Greater possibility for missing data
+   
+5. Possibility for differential visit timing
+
+[Our goal today will be to understand how some of these complications impact how we form our mean model]{.alert}
+
+---
+
+## Modeling the mean with repeated measures
+
+When dealing with non-longitudinal data, we (usually) have one primary type of research question for our models: *"How does the outcome differ in exposure and non-exposure groups?"*
+
+- With longitudinal data, we may also be interested in a research question like this
+
+. . .
+
+However, we need to be more specific about [how we're comparing the outcome in the exposure groups]{.alert}
+
+- Differences in outcome at last measurement time?
+
+- Differences in the outcome change from baseline?
+
+- Differences in outcome trend over time?
+
+. . .
+
+Understanding how we want to compare outcomes between the exposure groups will help us understand what our reference groups are
+
+---
+
 ### Longitudinal hypotheses
 
 ![](long-hypotheses.png){width="45%"}
@@ -79,8 +206,230 @@ With longitudinal data, we are usually interested one of several types of hypoth
 
 2. Presence/absence of time effect
 
-3. Presence/absence of group effect
+3. Presence/absence of exposure group effect
+
+[Match up the hypotheses to their corresponding graphical representation on the left]{.alert}
 :::
+
+---
+
+## Time effect hypothesis
+
+Longitudinal data repeatedly observes the outcome in an individual
+
+- Along with the outcome measurements, we also observe the timing of these measurements
+
+- Timing can be measured categorically (e.g., "visit 1, visit 2...") or numerically (e.g., number of days since study entry)
+
+. . .
+
+One of the most basic ways we might analyze longitudinal data is to try to model how the outcome changes over time across the entire study population (not looking at exposure groups)
+
+[How might we model this?]{.alert}
+
+---
+
+## Time effect hypothesis: Categorical time
+
+One of the most basic ways we might analyze longitudinal data is to try to model how the outcome changes over time across the entire study population (not looking at exposure groups)
+
+Say we observe the outcome in an individual *i* across *J* measurement occasions: $Y_{ij}$
+
+One representation:
+
+$$E[Y_{ij}] = \beta_0 I(\text{Baseline}_{ij}) + \beta_1 I(\text{Visit 1}_{ij}) + \beta_2 I(\text{Visit 2}_{ij}) + \dots \beta_J I(\text{Visit J}_{ij}),$$
+
+where $I(\cdot)$ is an indicator function/dummy variable
+
+. . .
+
+- Each $\beta$ represents the average outcome at a particular categorical time point
+
+   - If $\beta_0 = \beta_1 = \dots = \beta_J$, the outcome is not changing across time
+   
+---
+
+## Time effect hypothesis: Categorical time
+
+Say we observe the outcome in an individual *i* across *J* measurement occasions: $Y_{ij}$
+
+An alternative representation:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 I(\text{Visit 1}_{ij}) + \beta_2 I(\text{Visit 2}_{ij}) + \dots \beta_J I(\text{Visit J}_{ij})$$
+
+. . .
+
+- $\beta_0$ represents the average outcome at baseline
+
+- All other regression coefficients represent the [difference]{.alert} in average outcomes between a particular categorical time point and baseline 
+
+   - If $\beta_1 = \dots = \beta_J = 0$, the outcome is not changing across time
+   
+:::: {.columns}
+::: {.column width="50%"}
+::: {.fragment}
+Neither representation makes an assumption about how outcomes change (or don't) from time point to time point
+
+- Could increase, then decrease, then increase slightly, then increase even more, etc
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+Both representations assume that "visits" are happening at the same time for everyone (or are at least at comparable times)
+
+- No sense of "distance" between visits
+
+- What if this is not true?
+:::
+:::
+::::
+
+---
+
+## Time effect hypothesis: Numerical time
+
+Say we observe the outcome in an individual *i* across *J* measurement occasions: $Y_{ij}$
+
+If we let $\text{Time}_{ij}$ represent the exact time since study entry that participant *i* is observed for visit *j*, we could model as:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij})$$
+
+. . .
+
+- $\beta_0$ represents the average outcome at baseline (0 time since study entry)
+
+- $\beta_1$ represents average difference in outcomes comparing measurements [1 time unit apart]{.alert}
+
+   - If $\beta_1 = 0$, the outcome is not changing across time
+   
+   - Like a weighted average of the categorical time effects we saw before
+
+---
+
+## Time effect hypothesis: Numerical time
+
+If we let $\text{Time}_{ij}$ represent the exact time since study entry that participant *i* is observed for visit *j*, could model as:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij})$$
+
+- $\beta_0$ represents the average outcome at baseline (0 time since study entry)
+
+- $\beta_1$ represents average difference in outcomes comparing measurements 1 time unit apart
+
+:::: {.columns}
+::: {.column width="60%"}
+This makes strong assumption that the outcome is [linearly]{.alert} associated with time
+
+- Will see same change in outcome whether we're comparing outcomes at Baseline vs week 1 or at week 10 vs week 11
+
+::: {.fragment}
+- Could alter this assumption by adding polynomial time effects:
+
+   - e.g., Quadratic time effect: $E[Y_{ij}] = \beta_0 + \beta_1 (\text{Time}_{ij}) + \beta_2 (\text{Time}_{ij})^2$
+:::
+:::
+
+::: {.column width="40%"}
+::: {.fragment}
+Makes no assumption about timing of observations across participants/clusters
+
+- "Smooths out" timing irregularities
+:::
+:::
+::::
+
+---
+
+## Exposure group effect hypothesis
+
+Now we might want to compare outcomes between exposure groups
+
+- Let $U_{i0}$ be an exposure indicator for participant *i*, collected at baseline
+
+[How might we model this?]{.alert}
+
+---
+
+## Exposure group effect hypothesis
+
+Now we might want to compare outcomes between exposure groups
+
+- Let $U_{i0}$ be an exposure indicator for participant *i*, collected at baseline
+
+For illustration, assume we want to fit a linear effect for numerically-observed time:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij})$$
+
+. . .
+
+- $\beta_0$ represents the average outcome at baseline (0 time since study entry) in the unexposed group
+
+- $\beta_1$ represents the average difference in outcomes between the exposed and unexposed groups, [conditional on measurement time]{.alert}
+
+   - If $\beta_1 = 0$, there is no difference in (similarly-timed) outcomes between exposure groups
+   
+---
+
+## Exposure group effect hypothesis
+
+We could generalize this to let exposure group membership change with time: $U_{ij}$
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{ij}) + \beta_2 (\text{Time}_{ij})$$
+
+. . .
+
+- We must be extra careful here with our interpretation of $\beta_1$
+
+   - $\beta_1$ only maintains its causal interpretation if $U_{i(j+1)}$ is not predicted by $Y_{ij}$ given $U_{ij}$; otherwise, we say that $Y_{ij}$ [confounds]{.alert} the relationship between $Y_{i(j+1)}$ and $U_{i(j+1)}$
+
+. . .
+
+Both representations assume that the effect of exposure is constant across time
+
+- Doesn't matter if comparing exposed/unexposed at Week 1 or Week 24
+
+- What if this is not true?
+
+---
+
+## Exposure group $\times$ time effect hypothesis
+
+Now we might want to compare change in outcomes over time between exposure groups
+
+- Let $U_{i0}$ be an exposure indicator for participant *i* collected at baseline, and assume we want to fit a linear effect for numerically-observed time:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 (U_{i0} \times\text{Time}_{ij})$$
+
+::: {.fragment fragment-index=1}
+
+[What do the regression coefficients represent?]{.alert}
+
+- $\beta_0$: [Average outcome in the unexposed group at time 0]{.alert .fragment fragment-index=2}
+
+- $\beta_1$: [Average outcome in the exposed group at time 0]{.alert .fragment fragment-index=2}
+
+- $\beta_2$: [Average difference in unexposed outcomes measured 1 time-unit apart]{.alert .fragment fragment-index=2}
+
+- $(\beta_1 + \beta_3)$: [Average difference in outcomes in exposed and unexposed groups, both measured at the same non-baseline time]{.alert .fragment fragment-index=2}
+
+- $(\beta_2 + \beta_3)$: [Average difference in outcomes among the exposed group, both measured 1 not-baseline time unit apart]{.alert .fragment fragment-index=2}
+
+- $\beta_3$: [The effect of of exposure group on outcome changes with time]{.alert .fragment fragment-index=2}
+
+:::
+
+---
+
+## Exposure group $\times$ time effect hypothesis
+
+Now we might want to compare change in outcomes over time between exposure groups
+
+- Let $U_{i0}$ be an exposure indicator for participant *i* collected at baseline, and assume we want to fit a linear effect for numerically-observed time:
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 (\text{Time}_{ij}) + \beta_3 (U_{i0} \times\text{Time}_{ij})$$
+
+If we were dealing with categorical time, would need to interact exposure variable with **each** time point indicator
 
 ---
 
@@ -98,41 +447,53 @@ Now, we may also need to add in reference groups with respect to within-cluster 
 
 ## Adjusting for baseline outcomes
 
-Let $Y_{i0}$ be the baseline outcome measurement for individual $i$, and $\{Y_{i1}, \dots, Y_{iJ}\}$ be the follow-up measurements at times 1 through $J$
-
 There are 4 main methods for handling baseline outcome measurements in longitudinal data
 
 1. Keep $Y_{i0}$ as part of the outcome vector, and use exposure group and time (and group-by-time interaction) as adjustment variables
 
-$$E[Y_{ij}] = \beta_0 + \beta_1 (\text{Exposure}_{ij}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+$$E[Y_{ij}] = \beta_0 + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})$$
 
    - $\beta_1$ interpreted as expected difference in outcome between exposure groups [at baseline]{.alert}
+   
+   - [This is the recommended strategy for observational studies]{.alert}
 
-. . .
+---
+
+## Adjusting for baseline outcomes
 
 2. Keep $Y_{i0}$ as part of the outcome vector, and use time and group-by-time interaction as adjustment variables (no group variable)
 
-$$E[Y_{ij}] = \beta_0 + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+$$E[Y_{ij}] = \beta_0 + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})$$
 
    - Assumes group means at baseline are [equal]{.alert} ($\beta_1=0$)
    
-   - This is a [bad assumption]{.alert} for observational studies, but usually fine for randomized trials
+   - [This is a bad assumption for observational studies, but can be fine for randomized trials]{.alert}
+   
 ---
 
 ## Adjusting for baseline outcomes
 
 3. Use change from baseline $(Y_{ij} - Y_{i0})$ as outcome, and use exposure and time (and group-by-time interaction) as adjustment variables
 
-$$E[Y_{ij} - Y_{i0}] = \beta_0 + \beta_1 (\text{Exposure}_{ij}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+$$E[Y_{ij} - Y_{i0}] = \beta_0 + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})$$
 
-   - $\beta_1$ interpreted as expected difference in the change-from-baseline outcomes between exposure groups [at follow-up time 1]{.alert}
+   - $(\beta_1 + \beta_3)$ interpreted as expected difference in the change-from-baseline outcomes between exposure groups [at same follow-up time]{.alert} (conditional on follow-up time)
+   
+   - $\beta_0$ only meaningful if choose another reference time besides baseline (because change from baseline at time 0 is 0 for everyone)
+   
+   - There is also some good epi literature that suggests analyzing change scores doesn't estimate causal effects: see Tennant et al. (2022) "Analyses of ‘change scores’ do not estimate causal effects in observational data" *IJE*
 
-. . .
+---
+
+## Adjusting for baseline outcomes
 
 4. Use follow-up measurements *only* as outcome vector, and use $Y_{i0}$ as adjustment variable, along with exposure and time (and group-by-time interaction)
 
-$$E[Y_{ij}] = \beta_0 + \beta_{\text{baseline}}(Y_{i0}) + \beta_1 (\text{Exposure}_{ij}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Exposure}_{ij} \times \text{Time}_{ij})$$
+$$E[Y^*_{ij}] = \beta_0 + \beta_{\text{baseline}}(Y_{i0}) + \beta_1 (\text{U}_{i0}) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{U}_{i0} \times \text{Time}_{ij})$$
 
-   - $\beta_1$ interpreted as expected difference in outcome between exposure groups at follow up time 1, who had the same baseline outcomes
+   - $(\beta_1 + \beta_3)$ interpreted as expected difference in outcome between exposure groups at same follow-up time, [who had the same baseline outcomes]{.alert}
+   
+   - $\beta_0$ only meaningful if choose another reference time besides baseline
    
    - Assumes group means at baseline are equal (no baseline-by-group effect) $\rightarrow$ [bad assumption]{.alert} for observational studies
+   

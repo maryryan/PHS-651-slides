@@ -591,3 +591,5 @@ However, only a subset of them are available for GEEs. Namely:
 - Exchangeable
 
 - Autoregressive
+
+- Toeplitz (shows up at M-dependent)

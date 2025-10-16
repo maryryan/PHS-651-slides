@@ -766,28 +766,30 @@ $ age14  &lt;dbl&gt; 23.0, 25.5, 26.0, 26.5, 23.5, 22.5, 25.0, 24.0, 21.5, 19.5,
 <p>Let’s look at what the “raw” covariance matrix for this data looks like:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>dental <span class="sc">%&gt;%</span> </span>
-<span id="cb10-2"><a href="#cb10-2"></a>   <span class="fu">select</span>(age8,age10,age14) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2"></a>   <span class="fu">select</span>(age8,age10,age12,age14) <span class="sc">%&gt;%</span> </span>
 <span id="cb10-3"><a href="#cb10-3"></a>   <span class="fu">cov</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          age8    age10    age14
-age8  5.925926 3.285256 4.039886
-age10 3.285256 4.653846 4.532051
-age14 4.039886 4.532051 7.654558</code></pre>
+<pre><code>          age8    age10    age12    age14
+age8  5.925926 3.285256 4.875356 4.039886
+age10 3.285256 4.653846 3.858974 4.532051
+age12 4.875356 3.858974 7.938746 6.197293
+age14 4.039886 4.532051 6.197293 7.654558</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <p>and the “raw” correlation matrix:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>dental <span class="sc">%&gt;%</span> </span>
-<span id="cb12-2"><a href="#cb12-2"></a>   <span class="fu">select</span>(age8,age10,age14) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="#cb12-2"></a>   <span class="fu">select</span>(age8,age10,age12,age14) <span class="sc">%&gt;%</span> </span>
 <span id="cb12-3"><a href="#cb12-3"></a>   <span class="fu">correlate</span>(<span class="at">diagonal =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 4
-  term   age8 age10 age14
-  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 age8  1     0.626 0.600
-2 age10 0.626 1     0.759
-3 age14 0.600 0.759 1    </code></pre>
+<pre><code># A tibble: 4 × 5
+  term   age8 age10 age12 age14
+  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 age8  1     0.626 0.711 0.600
+2 age10 0.626 1     0.635 0.759
+3 age12 0.711 0.635 1     0.795
+4 age14 0.600 0.759 0.795 1    </code></pre>
 </div>
 </div>
 </div>

@@ -516,7 +516,7 @@ Let's look at what the "raw" covariance matrix for this data looks like:
 
 ```{r dental cov}
 dental %>% 
-   select(age8,age10,age14) %>% 
+   select(age8,age10,age12,age14) %>% 
    cov()
 ```
 :::
@@ -526,7 +526,7 @@ and the "raw" correlation matrix:
 
 ```{r dental cor}
 dental %>% 
-   select(age8,age10,age14) %>% 
+   select(age8,age10,age12,age14) %>% 
    correlate(diagonal = 1)
 ```
 :::

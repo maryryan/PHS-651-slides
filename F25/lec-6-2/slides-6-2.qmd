@@ -1,0 +1,526 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+      pdf-separate-fragments: true
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+```
+
+<h1>Lecture 6.2: Modeling covariance with longitudinal data</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>October 16, 2025</h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=100 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-6-2/slides-6-2>
+
+:::
+
+::: {.absolute bottom=50 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-6-2/slides-6-2"))
+```
+:::
+
+---
+
+## Roadmap
+
+- Recap: longitudinal data
+
+- Introducing more complex types of correlation/covariance structures
+
+   - Unstructured
+   
+   - Exchangeable/compound symmetry
+   
+   - Toeplitz
+   
+   - Autoregressive
+   
+   - Exponential
+   
+   - Banded
+
+---
+
+## Recap: Longitudinal data
+
+[Longitudinal data]{.alert} occur when a research subject is observed [repeatedly]{.underline} through time
+
+- Primary goal of longitudinal data collection is to characterize [how an outcome changes over time]{.alert} and how factors/exposures impact that change
+
+
+![](long-hypotheses.png){width="35%"}
+
+::: {.absolute right=100 top=300 width="45%"}
+With longitudinal data, we are usually interested one of several types of hypotheses:
+
+1. Presence/absence of exposure group-by-time interaction effect
+
+2. Presence/absence of exposure group effect
+
+3. Presence/absence of time effect
+
+:::
+
+
+---
+
+## Recap: More complications of longitudinal data
+
+Longitudinal data comes with some additional complications - some we've seen before and some that are new
+
+1. Repeated measures on individuals are [correlated]{.alert}
+
+   - Basic unit: individual at time x
+   
+   - Cluster/group unit: individual (across time)
+
+2. Variability often [heterogeneous across time]{.underline}
+
+3. We may or may not expect an individual's observations to be [correlated the same across time]{.alert}
+
+   - Would you expect your blood pressure today to have the same amount of correlation with your BP in a year versus in 10 years?
+
+4. Possibility for [differential visit timing]{.underline}
+
+5. Greater possibility for [missing data]{.underline} (take PHS 661 for more details!)
+   
+[Today we'll be focusing on how longitudinal data unlocks more complex types of correlation and covariance structures than we've seen in the past]{.alert}
+
+---
+
+## Longitudinal covariance/correlation structures
+
+Now that we have time handled in the mean model, we can think about how longitudinal data affects covariance/correlation structures
+
+Previously we touched on some basic correlation structures for clustered, non-longitudinal data
+
+- Remember: independence, exchangeable, unstructured from Lectures 3.1 - 4.1
+
+. . .
+
+With longitudinal data, there are a much wider range of potential structures
+
+- We'll explore some of those today
+
+---
+
+## Longitudinal covariance/correlation structures
+
+As an illustration, we'll use data are from a study of dental growth measurements
+
+- Dental data were obtained from 11 girls and 16 boys
+
+- Each child was enrolled at age 8, and was re-measured every 2 years until age 14
+
+- To measure how a child's mouth and head is growing, researchers measured the distance (mm) from the center of the pituitary gland to the pteryomaxillary fissure
+
+```{r dental data, echo=F}
+dental <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/dental-data.txt", sep="")
+colnames(dental) <- c("ID", "Gender", "age8", "age10", "age12", "age14")
+glimpse(dental)
+
+dental_long <- dental %>% 
+   pivot_longer(!(c(ID, Gender)), names_to="age", values_to="distance_mm") %>% 
+   mutate(age = case_when(age=="age8" ~ 8,
+                          age=="age10" ~ 10,
+                          age=="age12" ~ 12,
+                          age=="age14" ~ 14
+                          ),
+          ID = factor(ID))
+```
+
+---
+
+## Example: dental data
+
+To get an idea of what each child's trajectory looks like over time, we can make a [spaghetti plot]{.alert}
+
+<br>
+
+:::: {.columns}
+::: {.column width="50%"}
+
+```{r dental data spaghetti}
+dental_long %>% 
+   ggplot(aes(x=age,y=distance_mm, color=ID))+
+   geom_line()+
+   theme_minimal()
+```
+
+:::
+
+::: {.column width="10%"}
+:::
+
+::: {.column width="40%"}
+- What are we observing here?
+
+<br>
+
+- How do we think the longitudinal nature of the data would impact how measurements [within a child]{.underline} are related?
+:::
+::::
+
+---
+
+## Unstructured covariance/correlation
+
+:::: {.columns}
+::: {.column width="50%"}
+Let's look at what the "raw" covariance matrix for this data looks like:
+
+```{r dental cov}
+dental %>% 
+   select(age8,age10,age14) %>% 
+   cov()
+```
+:::
+
+::: {.column width="50%"}
+and the "raw" correlation matrix:
+
+```{r dental cor}
+library(corrr)
+dental %>% 
+   select(age8,age10,age14) %>% 
+   correlate(diagonal = 1)
+```
+:::
+::::
+
+. . .
+
+[What do we see?]{.alert}
+
+---
+
+## Unstructured covariance/correlation
+
+:::: {.columns}
+::: {.column width="50%"}
+Let's look at what the "raw" covariance matrix for this data looks like:
+
+```{r dental cov2, echo=F}
+dental %>% select(age8,age10,age14) %>% cov()
+```
+:::
+
+::: {.column width="50%"}
+and the "raw" correlation matrix:
+
+```{r dental cor2, echo=F}
+library(corrr)
+dental %>% select(age8,age10,age14) %>% correlate(diagonal = 1)
+```
+:::
+::::
+
+Using an [unstructured]{.alert} correlation/covariance structure gives us the most flexibility/robustness because we make no assumptions about what patterns we should be seeing
+
+But...
+
+- only appropriate when data is [balanced]{.alert}
+
+   - How would we create the covariance matrix if measurement times aren't standardized?
+
+- hard to estimate when there are lots of measurement visits/occasions
+
+In these cases, it is often helpful to impose a [structure]{.alert} on the covariance/correlation when we create our model
+
+---
+
+## Covariance Pattern Models
+
+When attempting to impose some structure on the covariance, a subtle balance needs to be struck
+
+- [Too little structure]{.alert} means too many parameters to estimate, which means imprecise point estimate ([large variance]{.alert})
+
+- [Too much structure]{.alert} means more opportunity for mis-specification, which means inaccurate point estimates ([large bias]{.alert})
+
+   - Classic trade-off between bias (being right) and variance (being precise)
+   
+<br>
+
+As we move through the rest of this topic, we might not always be able to [directly]{.alert} apply these structures (depending on the type of model we're fitting)
+
+- But it can be helpful to use these to think about [how the observations with a cluster relate to one another]{.alert}
+
+- This will help us to think through what we [can]{.underline} do within our model to get our covariance to look like the structure we're envisioning
+
+---
+
+## Covariance/correlation structures
+
+We'll cover and compare several types of covariance/correlation sturctures today:
+
+- Unstructured ✅
+
+- Exchangeable/compound symmetry
+
+- Toeplitz
+
+- Autoregressive
+
+- Exponential
+
+- Banded
+
+---
+
+## Exchangeable correlation/compound symmetry
+
+[Compound symmetry/exchangeable correlation]{.alert} assumes:
+
+- Correlation is the same across all observations in the cluster
+
+- We saw this one before in lectures 1.2, 2.1, 3.1, and 4.1!
+
+$$\begin{bmatrix}
+1 & \alpha & \dots & \alpha\\
+\alpha & \ddots & \dots & \alpha\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha & \dots & \alpha & 1
+\end{bmatrix}$$
+
+You'll always be estimating a single correlation $\alpha$, regardless of cluster size $n$
+
+This pattern has strong assumptions (measurements are exchangeable/equally correlated despite having different time distances)
+
+- [This may not be valid with longitudinal data]{.alert}
+
+---
+
+## Toeplitz correlation
+
+[Toeplitz]{.alert} assumes:
+
+- Correlation is different between each observation
+
+   - The correlation between two observations depends only on the [number of time points]{.alert} separating them
+
+$$\begin{bmatrix}
+1 & \alpha_1 & \dots & \alpha_{n-1}\\
+\alpha_1 & \ddots & \dots & \alpha_{n-2}\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha_{n-1} & \dots & \alpha_1 & 1
+\end{bmatrix}$$
+
+You'll be estimating $(n-1)$ correlation parameters
+
+[Only appropriate when measurements are (approximately) equally spaced!!]{.alert}
+
+
+---
+
+## Autoregressive correlation
+
+An [autoregressive]{.alert} structure assumes:
+
+- Correlation gradually decreases as the distance between observations grows
+
+- A special case of the Toeplitz structure
+
+$$\begin{bmatrix}
+1 & \alpha^1 & \dots & \alpha^{n-1}\\
+\alpha^1 & \ddots & \dots & \alpha^{n-2}\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha^{n-1} & \dots & \alpha^1 & 1
+\end{bmatrix}$$
+
+You'll always be estimating a single correlation $\alpha$, regardless of $n$
+
+Means less correlation for measurements taken farther apart; but [only appropriate when the measurements are (approximately) equally spaced]{.alert}
+
+---
+
+## Unevenly timed observations
+
+All the structures we've looked at so far have assumed that our observed times points are approximately equally spaced
+
+- This is appropriate when we have a lot of control in observation timing...
+
+. . .
+
+... But it's not uncommon to have observation time points that **aren't** always evenly spaced!
+
+- Think of a study where you start out with weekly observations, then move to monthly, then annual
+
+. . .
+
+How do we handle this?
+
+----
+
+## Exponential correlation
+
+When measurement occasions are not equally-spaced over time, we can the autoregressive model can be generalized
+
+- Let $\{t_{i1}, t_{i2}, \dots, t_{in_i}\}$ denote the observation times for the *i*th individual
+
+. . .
+
+- The correlations are given by:
+$$Corr(Y_{ij}, Y_{ik}) = \alpha^{|t_{ij} - t_{ik}|}$$
+
+   - Instead of looking at the how far apart the observation numbers are (e.g., visit 1 vs visit 2), it [looks at the actual distance between the observation times]{.alert}
+
+This structure is invariant under linear transformation of the time scale
+
+Unlike the Toeplitz and autoregression structures, the exponential structure can easily handle unbalanced data because it is based on [time as a continuum]{.alert}
+
+---
+
+## Banded correlation
+
+All of the previous structures have have required us to estimate some parameter for all off-diagonal matrix elements
+
+- What if we know at some point the correlation between observations will go to 0? [Enter the banded structure!]{.alert}
+
+The banded structure assumes correlation is 0 beyond some specified interval
+
+- Possible to apply a banded pattern to any of the correlation pattern models considered so far
+
+---
+
+## Banded correlation
+
+A banded Toeplitz structure with a band size of 3 looks like:
+
+$$\begin{bmatrix}
+1 & \alpha_1 & \alpha_2 & 0 & \dots & 0\\
+\alpha_1 & 1 & \alpha_1 & \ddots & \dots & 0\\
+\alpha_2 & \alpha_1 & 1 &\ddots & \dots & 0\\
+0 & \alpha_2 & \alpha_1& \ddots & \dots & 0\\
+\vdots && \dots && \ddots & \vdots\\
+0 && \dots &\alpha_2 & \alpha_1 & 1
+\end{bmatrix}$$
+
+---
+
+## Banded correlation
+
+A banded autoregression structure with a band size of 4 looks like:
+$$\begin{bmatrix}
+1 & \alpha^1 & \alpha^2 & \alpha^3 & 0 & \dots & 0\\
+\alpha^1 & 1 & \alpha^1 & \alpha^2& \ddots & \dots & 0\\
+\alpha^2 & \alpha^1 & 1 & \alpha^1&\ddots & \dots & 0\\
+\alpha^3 & \alpha^2 & \alpha^1 & 1& \ddots & \dots & 0\\
+\vdots && \dots && \ddots && \vdots\\
+0 && \dots & \alpha^3&\alpha^2 & \alpha^1 & 1
+\end{bmatrix}$$
+
+---
+
+## Banded correlation
+
+A banded exponential structure with a band size of 4 looks like:
+$$\begin{bmatrix}
+1 & \alpha^{|t_{i1}-t_{i2}|} & \alpha^{|t_{i1}-t_{i3}|} & \alpha^{|t_{i1}-t_{i4}|} & 0 & \dots & 0\\
+\alpha^{|t_{i1}-t_{i2}|} & 1 & \alpha^{|t_{i1}-t_{i2}|} & \alpha^2& \ddots & \dots & 0\\
+\alpha^{|t_{i1}-t_{i3}|} & \alpha^{|t_{i1}-t_{i2}|} & 1 & \alpha^{|t_{i1}-t_{i2}|} &\ddots & \dots & 0\\
+\alpha^{|t_{i1}-t_{i4}|} & \alpha^{|t_{i1}-t_{i3}|} & \alpha^{|t_{i1}-t_{i2}|} & 1& \ddots & \dots & 0\\
+\vdots && \dots && \ddots && \vdots\\
+0 && \dots & \alpha^{|t_{i1}-t_{i4}|}&\alpha^{|t_{i1}-t_{i3}|} & \alpha^{|t_{i1}-t_{i2}|} & 1
+\end{bmatrix}$$
+
+---
+
+## Covariance matrices
+
+To get the covariance matrix under any of these patterns, we multiply them by the outcome variance, $\sigma^2$:
+
+<br>
+
+$$\sigma^2\begin{bmatrix}
+1 & \alpha & \dots & \alpha\\
+\alpha & \ddots & \dots & \alpha\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha & \dots & \alpha & 1
+\end{bmatrix}
+~~~~~~\sigma^2 \begin{bmatrix}
+1 & \alpha_1 & \dots & \alpha_{n-1}\\
+\alpha_1 & \ddots & \dots & \alpha_{n-2}\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha_{n-1} & \dots & \alpha_1 & 1
+\end{bmatrix}
+~~~~~~\sigma^2 \begin{bmatrix}
+1 & \alpha^1 & \dots & \alpha^{n-1}\\
+\alpha^1 & \ddots & \dots & \alpha^{n-2}\\
+\vdots & \dots & \ddots & \vdots\\
+\alpha^{n-1} & \dots & \alpha^1 & 1
+\end{bmatrix}$$
+
+<br>
+
+This assumes that our that our total variation for an individual $\sigma^2$ [does not]{.underline} change over time
+
+- Unfortunately, when we apply these covariance models to GEEs, there's no way to be able to incorporate heterogeneous (time-varying) variance estimates
+
+- However, in coming classes we'll see how we can incorporate time-varying variance into mixed models!
+
+---
+
+## Availability of structures in software
+
+All of these structures are available *somewhere*
+
+- Primarily in the `REPEATED` statement `PROC MIXED` procedure in SAS
+   
+   - Allows you to fit covariance structures on the individual variance, while also fitting random effects $\Rightarrow$ more on this in another lecture
+
+<br>
+
+However, only a subset of them are available for GEEs. Namely:
+
+- Unstructured
+
+- Exchangeable
+
+- Autoregressive

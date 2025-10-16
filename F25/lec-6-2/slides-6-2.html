@@ -435,6 +435,7 @@ October 16, 2025
 <li><p>Banded</p></li>
 </ul>
 </li>
+<li><p>Availability in software</p></li>
 </ul></section><section id="recap-longitudinal-data" class="slide level2"><h2>Recap: Longitudinal data</h2>
 <p><span class="alert">Longitudinal data</span> occur when a research subject is observed <u>repeatedly</u> through time</p>
 <ul>
@@ -476,43 +477,30 @@ October 16, 2025
 <ul>
 <li>Remember: independence, exchangeable, unstructured from Lectures 3.1 - 4.1</li>
 </ul>
-<div class="fragment">
+<p><br></p>
 <p>With longitudinal data, there are a much wider range of potential structures</p>
 <ul>
 <li>We’ll explore some of those today</li>
-</ul>
-</div>
-</section><section id="longitudinal-covariancecorrelation-structures-1" class="slide level2"><h2>Longitudinal covariance/correlation structures</h2>
-<p>As an illustration, we’ll use data are from a study of dental growth measurements</p>
+</ul></section><section id="longitudinal-covariancecorrelation-structures-1" class="slide level2"><h2>Longitudinal covariance/correlation structures</h2>
+<p>As an illustration, we’ll use data from a study on weightlighting programs</p>
+<p>Subjects were assigned to one of two weightlifting programs to increase muscle strength</p>
 <ul>
-<li><p>Dental data were obtained from 11 girls and 16 boys</p></li>
-<li><p>Each child was enrolled at age 8, and was re-measured every 2 years until age 14</p></li>
-<li><p>To measure how a child’s mouth and head is growing, researchers measured the distance (mm) from the center of the pituitary gland to the pteryomaxillary fissure</p></li>
+<li><p>Treatment 1: number of repetitions of the exercises was increased as subjects became stronger</p></li>
+<li><p>Treatment 2: number of repetitions was held constant but amount of weight was increased as subjects became stronger</p></li>
 </ul>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 27
-Columns: 6
-$ ID     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, …
-$ Gender &lt;chr&gt; "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "M", "M"…
-$ age8   &lt;dbl&gt; 21.0, 21.0, 20.5, 23.5, 21.5, 20.0, 21.5, 23.0, 20.0, 16.5, 24.…
-$ age10  &lt;dbl&gt; 20.0, 21.5, 24.0, 24.5, 23.0, 21.0, 22.5, 23.0, 21.0, 19.0, 25.…
-$ age12  &lt;dbl&gt; 21.5, 24.0, 24.5, 25.0, 22.5, 21.0, 23.0, 23.5, 22.0, 19.0, 28.…
-$ age14  &lt;dbl&gt; 23.0, 25.5, 26.0, 26.5, 23.5, 22.5, 25.0, 24.0, 21.5, 19.5, 28.…</code></pre>
-</div>
-</div>
-</section><section id="example-dental-data" class="slide level2"><h2>Example: dental data</h2>
-<p>To get an idea of what each child’s trajectory looks like over time, we can make a <span class="alert">spaghetti plot</span></p>
+<p>Measurements of body strength were taken at baseline (day 0) and on days 2, 4, 6, 8, 10, and 12</p>
+</section><section id="example-exercise-therapy-trial" class="slide level2"><h2>Example: Exercise Therapy Trial</h2>
+<p>To get an idea of what each participant’s trajectory looks like over time, we can make a <span class="alert">spaghetti plot</span></p>
 <p><br></p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>dental_long <span class="sc">%&gt;%</span> </span>
-<span id="cb2-2"><a href="#cb2-2"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>distance_mm, <span class="at">color=</span>ID))<span class="sc">+</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a>   <span class="fu">geom_line</span>()<span class="sc">+</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a>   <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>exercise_long <span class="sc">%&gt;%</span> </span>
+<span id="cb1-2"><a href="#cb1-2"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>day,<span class="at">y=</span>strength, <span class="at">color=</span>ID))<span class="sc">+</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>   <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>   <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="slides-6-2_files/figure-revealjs/dental%20data%20spaghetti-1.png" width="960"></p>
+<p><img data-src="slides-6-2_files/figure-revealjs/exercise%20spaghetti-1.png" width="960"></p>
 </div>
 </div>
 </div><div class="column" style="width:10%;">
@@ -523,70 +511,54 @@ $ age14  &lt;dbl&gt; 23.0, 25.5, 26.0, 26.5, 23.5, 22.5, 25.0, 24.0, 21.5, 19.5,
 </ul>
 <p><br></p>
 <ul>
-<li>How do we think the longitudinal nature of the data would impact how measurements <u>within a child</u> are related?</li>
+<li>How do we think the longitudinal nature of the data would impact how measurements <u>within a participant</u> are related?</li>
 </ul>
 </div>
 </div>
-</section><section id="unstructured-covariancecorrelation" class="slide level2"><h2>Unstructured covariance/correlation</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
+</section><section id="example-exercise-therapy-trial-1" class="slide level2"><h2>Example: Exercise Therapy Trial</h2>
 <p>Let’s look at what the “raw” covariance matrix for this data looks like:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>dental <span class="sc">%&gt;%</span> </span>
-<span id="cb3-2"><a href="#cb3-2"></a>   <span class="fu">select</span>(age8,age10,age14) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-3"><a href="#cb3-3"></a>   <span class="fu">cov</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>exercise <span class="sc">%&gt;%</span> <span class="fu">select</span>(day0, day2, day4, day6, day8, day12) <span class="sc">%&gt;%</span> <span class="fu">cov</span>(<span class="at">use=</span><span class="st">"pairwise.complete.obs"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          age8    age10    age14
-age8  5.925926 3.285256 4.039886
-age10 3.285256 4.653846 4.532051
-age14 4.039886 4.532051 7.654558</code></pre>
+<pre><code>           day0      day2     day4      day6     day8     day12
+day0   9.866366 10.214286 10.47857  9.154762 10.21747  9.441379
+day2  10.214286 11.050000 11.32689  9.478992 10.75758  9.740148
+day4  10.478571 11.326891 12.70714 11.072269 12.54451 11.227586
+day6   9.154762  9.478992 11.07227 10.478571 10.69318 10.357143
+day8  10.217469 10.757576 12.54451 10.693182 13.74332 12.317460
+day12  9.441379  9.740148 11.22759 10.357143 12.31746 13.613793</code></pre>
 </div>
 </div>
-</div><div class="column" style="width:50%;">
-<p>and the “raw” correlation matrix:</p>
+<p>and the “raw” correlation matrix</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(corrr)</span>
-<span id="cb5-2"><a href="#cb5-2"></a>dental <span class="sc">%&gt;%</span> </span>
-<span id="cb5-3"><a href="#cb5-3"></a>   <span class="fu">select</span>(age8,age10,age14) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-4"><a href="#cb5-4"></a>   <span class="fu">correlate</span>(<span class="at">diagonal =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">library</span>(corrr)</span>
+<span id="cb4-2"><a href="#cb4-2"></a>exercise <span class="sc">%&gt;%</span> <span class="fu">select</span>(day0, day2, day4, day6, day8, day12) <span class="sc">%&gt;%</span> <span class="fu">correlate</span>(<span class="at">diagonal =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 4
-  term   age8 age10 age14
-  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 age8  1     0.626 0.600
-2 age10 0.626 1     0.759
-3 age14 0.600 0.759 1    </code></pre>
+<pre><code># A tibble: 6 × 7
+  term   day0  day2  day4  day6  day8 day12
+  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 day0  1     0.968 0.926 0.896 0.865 0.821
+2 day2  0.968 1     0.936 0.873 0.856 0.810
+3 day4  0.926 0.936 1     0.959 0.953 0.904
+4 day6  0.896 0.873 0.959 1     0.957 0.905
+5 day8  0.865 0.856 0.953 0.957 1     0.944
+6 day12 0.821 0.810 0.904 0.905 0.944 1    </code></pre>
 </div>
 </div>
-</div>
-</div>
-<div class="fragment">
-<p><span class="alert">What do we see?</span></p>
-</div>
-</section><section id="unstructured-covariancecorrelation-1" class="slide level2"><h2>Unstructured covariance/correlation</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Let’s look at what the “raw” covariance matrix for this data looks like:</p>
+</section><section id="example-exercise-therapy-trial-2" class="slide level2"><h2>Example: Exercise Therapy Trial</h2>
+<p>Correlation matrix:</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>exercise <span class="sc">%&gt;%</span> <span class="fu">select</span>(day0, day2, day4, day6, day8, day12) <span class="sc">%&gt;%</span> <span class="fu">correlate</span>(<span class="at">diagonal =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          age8    age10    age14
-age8  5.925926 3.285256 4.039886
-age10 3.285256 4.653846 4.532051
-age14 4.039886 4.532051 7.654558</code></pre>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<p>and the “raw” correlation matrix:</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 4
-  term   age8 age10 age14
-  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 age8  1     0.626 0.600
-2 age10 0.626 1     0.759
-3 age14 0.600 0.759 1    </code></pre>
-</div>
-</div>
+<pre><code># A tibble: 6 × 7
+  term   day0  day2  day4  day6  day8 day12
+  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 day0  1     0.968 0.926 0.896 0.865 0.821
+2 day2  0.968 1     0.936 0.873 0.856 0.810
+3 day4  0.926 0.936 1     0.959 0.953 0.904
+4 day6  0.896 0.873 0.959 1     0.957 0.905
+5 day8  0.865 0.856 0.953 0.957 1     0.944
+6 day12 0.821 0.810 0.904 0.905 0.944 1    </code></pre>
 </div>
 </div>
 <p>Using an <span class="alert">unstructured</span> correlation/covariance structure gives us the most flexibility/robustness because we make no assumptions about what patterns we should be seeing</p>
@@ -743,6 +715,85 @@ age14 4.039886 4.532051 7.654558</code></pre>
 \vdots &amp;&amp; \dots &amp;&amp; \ddots &amp;&amp; \vdots\\
 0 &amp;&amp; \dots &amp; \alpha^{|t_{i1}-t_{i4}|}&amp;\alpha^{|t_{i1}-t_{i3}|} &amp; \alpha^{|t_{i1}-t_{i2}|} &amp; 1
 \end{bmatrix}\]</span></p>
+</section><section id="example-dental-data" class="slide level2"><h2>Example: dental data</h2>
+<p>As another example, we’ll use data are from a study of dental growth measurements</p>
+<ul>
+<li><p>Dental data were obtained from 11 girls and 16 boys</p></li>
+<li><p>Each child was enrolled at age 8, and was re-measured every 2 years until age 14</p></li>
+<li><p>To measure how a child’s mouth and head is growing, researchers measured the distance (mm) from the center of the pituitary gland to the pteryomaxillary fissure</p></li>
+</ul>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 27
+Columns: 6
+$ ID     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, …
+$ Gender &lt;chr&gt; "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "M", "M"…
+$ age8   &lt;dbl&gt; 21.0, 21.0, 20.5, 23.5, 21.5, 20.0, 21.5, 23.0, 20.0, 16.5, 24.…
+$ age10  &lt;dbl&gt; 20.0, 21.5, 24.0, 24.5, 23.0, 21.0, 22.5, 23.0, 21.0, 19.0, 25.…
+$ age12  &lt;dbl&gt; 21.5, 24.0, 24.5, 25.0, 22.5, 21.0, 23.0, 23.5, 22.0, 19.0, 28.…
+$ age14  &lt;dbl&gt; 23.0, 25.5, 26.0, 26.5, 23.5, 22.5, 25.0, 24.0, 21.5, 19.5, 28.…</code></pre>
+</div>
+</div>
+</section><section id="example-dental-data-1" class="slide level2"><h2>Example: dental data</h2>
+<p>To get an idea of what each child’s trajectory looks like over time, we can make a <span class="alert">spaghetti plot</span></p>
+<p><br></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>dental_long <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>distance_mm, <span class="at">color=</span>ID))<span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>   <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>   <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="slides-6-2_files/figure-revealjs/dental%20data%20spaghetti-1.png" width="960"></p>
+</div>
+</div>
+</div><div class="column" style="width:10%;">
+
+</div><div class="column" style="width:40%;">
+<ul>
+<li>What are we observing here?</li>
+</ul>
+<p><br></p>
+<ul>
+<li>How do we think the longitudinal nature of the data would impact how measurements <u>within a child</u> are related?</li>
+</ul>
+</div>
+</div>
+</section><section id="unstructured-covariancecorrelation" class="slide level2"><h2>Unstructured covariance/correlation</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Let’s look at what the “raw” covariance matrix for this data looks like:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>dental <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2"></a>   <span class="fu">select</span>(age8,age10,age14) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3"></a>   <span class="fu">cov</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          age8    age10    age14
+age8  5.925926 3.285256 4.039886
+age10 3.285256 4.653846 4.532051
+age14 4.039886 4.532051 7.654558</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p>and the “raw” correlation matrix:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>dental <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="#cb12-2"></a>   <span class="fu">select</span>(age8,age10,age14) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-3"><a href="#cb12-3"></a>   <span class="fu">correlate</span>(<span class="at">diagonal =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  term   age8 age10 age14
+  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 age8  1     0.626 0.600
+2 age10 0.626 1     0.759
+3 age14 0.600 0.759 1    </code></pre>
+</div>
+</div>
+</div>
+</div>
+<p><span class="alert">What do we see?</span></p>
+<p>Is there a structure we’ve covered that could fit well to this?</p>
 </section><section id="covariance-matrices" class="slide level2"><h2>Covariance matrices</h2>
 <p>To get the covariance matrix under any of these patterns, we multiply them by the outcome variance, <span class="math inline">\(\sigma^2\)</span>:</p>
 <p><br></p>

@@ -85,6 +85,8 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-6-2/slides-6-2")
    - Exponential
    
    - Banded
+   
+- Availability in software
 
 ---
 
@@ -143,7 +145,7 @@ Previously we touched on some basic correlation structures for clustered, non-lo
 
 - Remember: independence, exchangeable, unstructured from Lectures 3.1 - 4.1
 
-. . .
+<br>
 
 With longitudinal data, there are a much wider range of potential structures
 
@@ -153,43 +155,47 @@ With longitudinal data, there are a much wider range of potential structures
 
 ## Longitudinal covariance/correlation structures
 
-As an illustration, we'll use data are from a study of dental growth measurements
+As an illustration, we'll use data from a study on weightlighting programs 
 
-- Dental data were obtained from 11 girls and 16 boys
+Subjects were assigned to one of two weightlifting programs to increase muscle strength
 
-- Each child was enrolled at age 8, and was re-measured every 2 years until age 14
+- Treatment 1: number of repetitions of the exercises was increased as subjects became stronger
 
-- To measure how a child's mouth and head is growing, researchers measured the distance (mm) from the center of the pituitary gland to the pteryomaxillary fissure
+- Treatment 2: number of repetitions was held constant but amount of weight was increased as subjects became stronger
 
-```{r dental data, echo=F}
-dental <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/dental-data.txt", sep="")
-colnames(dental) <- c("ID", "Gender", "age8", "age10", "age12", "age14")
-glimpse(dental)
-
-dental_long <- dental %>% 
-   pivot_longer(!(c(ID, Gender)), names_to="age", values_to="distance_mm") %>% 
-   mutate(age = case_when(age=="age8" ~ 8,
-                          age=="age10" ~ 10,
-                          age=="age12" ~ 12,
-                          age=="age14" ~ 14
-                          ),
-          ID = factor(ID))
-```
+Measurements of body strength were taken at baseline (day 0) and on days 2, 4, 6, 8, 10, and 12
 
 ---
 
-## Example: dental data
+## Example: Exercise Therapy Trial
 
-To get an idea of what each child's trajectory looks like over time, we can make a [spaghetti plot]{.alert}
+To get an idea of what each participant's trajectory looks like over time, we can make a [spaghetti plot]{.alert}
 
 <br>
 
 :::: {.columns}
 ::: {.column width="50%"}
 
-```{r dental data spaghetti}
-dental_long %>% 
-   ggplot(aes(x=age,y=distance_mm, color=ID))+
+```{r exercise0, echo=F}
+exercise <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/exercise-data.txt", sep="", na.strings=".")
+colnames(exercise) <- c("ID", "PROGRAM", "day0","day2", "day4", "day6", "day8", "day10", "day12")
+
+exercise_long <- exercise %>% 
+   pivot_longer(!(c(ID, PROGRAM)), names_to="day", values_to="strength") %>% 
+      mutate(day = case_when(day=="day0" ~ 0,
+                          day=="day2" ~ 2,
+                          day=="day4" ~ 4,
+                          day=="day6" ~ 6,
+                          day=="day8" ~ 8,
+                          day=="day10" ~ 10,
+                          day=="day12" ~ 12
+                          ),
+          ID = factor(ID))
+```
+
+```{r exercise spaghetti}
+exercise_long %>% 
+   ggplot(aes(x=day,y=strength, color=ID))+
    geom_line()+
    theme_minimal()
 ```
@@ -204,63 +210,34 @@ dental_long %>%
 
 <br>
 
-- How do we think the longitudinal nature of the data would impact how measurements [within a child]{.underline} are related?
+- How do we think the longitudinal nature of the data would impact how measurements [within a participant]{.underline} are related?
 :::
 ::::
 
 ---
 
-## Unstructured covariance/correlation
+## Example: Exercise Therapy Trial
 
-:::: {.columns}
-::: {.column width="50%"}
 Let's look at what the "raw" covariance matrix for this data looks like:
-
-```{r dental cov}
-dental %>% 
-   select(age8,age10,age14) %>% 
-   cov()
+```{r exercise1}
+exercise %>% select(day0, day2, day4, day6, day8, day12) %>% cov(use="pairwise.complete.obs")
 ```
-:::
 
-::: {.column width="50%"}
-and the "raw" correlation matrix:
-
-```{r dental cor}
+and the "raw" correlation matrix
+```{r exercise2}
 library(corrr)
-dental %>% 
-   select(age8,age10,age14) %>% 
-   correlate(diagonal = 1)
+exercise %>% select(day0, day2, day4, day6, day8, day12) %>% correlate(diagonal = 1)
 ```
-:::
-::::
 
-. . .
-
-[What do we see?]{.alert}
 
 ---
 
-## Unstructured covariance/correlation
+## Example: Exercise Therapy Trial
 
-:::: {.columns}
-::: {.column width="50%"}
-Let's look at what the "raw" covariance matrix for this data looks like:
-
-```{r dental cov2, echo=F}
-dental %>% select(age8,age10,age14) %>% cov()
+Correlation matrix:
+```{r exercise22}
+exercise %>% select(day0, day2, day4, day6, day8, day12) %>% correlate(diagonal = 1)
 ```
-:::
-
-::: {.column width="50%"}
-and the "raw" correlation matrix:
-
-```{r dental cor2, echo=F}
-library(corrr)
-dental %>% select(age8,age10,age14) %>% correlate(diagonal = 1)
-```
-:::
-::::
 
 Using an [unstructured]{.alert} correlation/covariance structure gives us the most flexibility/robustness because we make no assumptions about what patterns we should be seeing
 
@@ -469,6 +446,96 @@ $$\begin{bmatrix}
 \vdots && \dots && \ddots && \vdots\\
 0 && \dots & \alpha^{|t_{i1}-t_{i4}|}&\alpha^{|t_{i1}-t_{i3}|} & \alpha^{|t_{i1}-t_{i2}|} & 1
 \end{bmatrix}$$
+
+---
+
+## Example: dental data
+
+As another example, we'll use data are from a study of dental growth measurements
+
+- Dental data were obtained from 11 girls and 16 boys
+
+- Each child was enrolled at age 8, and was re-measured every 2 years until age 14
+
+- To measure how a child's mouth and head is growing, researchers measured the distance (mm) from the center of the pituitary gland to the pteryomaxillary fissure
+
+```{r dental data, echo=F}
+dental <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/dental-data.txt", sep="")
+colnames(dental) <- c("ID", "Gender", "age8", "age10", "age12", "age14")
+glimpse(dental)
+
+dental_long <- dental %>% 
+   pivot_longer(!(c(ID, Gender)), names_to="age", values_to="distance_mm") %>% 
+   mutate(age = case_when(age=="age8" ~ 8,
+                          age=="age10" ~ 10,
+                          age=="age12" ~ 12,
+                          age=="age14" ~ 14
+                          ),
+          ID = factor(ID))
+```
+
+---
+
+## Example: dental data
+
+To get an idea of what each child's trajectory looks like over time, we can make a [spaghetti plot]{.alert}
+
+<br>
+
+:::: {.columns}
+::: {.column width="50%"}
+
+```{r dental data spaghetti}
+dental_long %>% 
+   ggplot(aes(x=age,y=distance_mm, color=ID))+
+   geom_line()+
+   theme_minimal()
+```
+
+:::
+
+::: {.column width="10%"}
+:::
+
+::: {.column width="40%"}
+- What are we observing here?
+
+<br>
+
+- How do we think the longitudinal nature of the data would impact how measurements [within a child]{.underline} are related?
+:::
+::::
+
+---
+
+## Unstructured covariance/correlation
+
+:::: {.columns}
+::: {.column width="50%"}
+Let's look at what the "raw" covariance matrix for this data looks like:
+
+```{r dental cov}
+dental %>% 
+   select(age8,age10,age14) %>% 
+   cov()
+```
+:::
+
+::: {.column width="50%"}
+and the "raw" correlation matrix:
+
+```{r dental cor}
+dental %>% 
+   select(age8,age10,age14) %>% 
+   correlate(diagonal = 1)
+```
+:::
+::::
+
+
+[What do we see?]{.alert}
+
+Is there a structure we've covered that could fit well to this?
 
 ---
 

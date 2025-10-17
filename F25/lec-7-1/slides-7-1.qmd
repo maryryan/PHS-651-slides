@@ -1,0 +1,259 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+      pdf-separate-fragments: true
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(gridExtra)
+library(qrcode)
+library(corrr)
+```
+
+<h1>Lecture 7.1: Longitudinal GEEs</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>October 21, 2025</h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=100 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-7-1/slides-7-1>
+
+:::
+
+::: {.absolute bottom=50 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-7-1/slides-7-1"))
+```
+:::
+
+---
+
+## Roadmap
+
+
+---
+
+## Concepts to practice
+
+Last week we talked about how longitudinal data can impact how we formulate our [mean model]{.alert}
+
+- Need to include [time]{.alert} as a regression coefficient
+
+- May be interested in exposure-by-time [interaction]{.alert}
+
+$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 t_{ij} + \beta_3 (U_{i0} \times t_{ij})$$
+
+. . .
+
+We also talked about how it impacts our [correlation/covariance matrix]{.alert}, and the types of correlation structures that may be appropriate
+
+- Exchangeable, Toeplitz, autoregressive, exponential, unstructured...
+
+But how do we apply correlation/covariance structures to a modeling framework?
+
+- Two ways:
+
+   1. Adding (additional) random effects to a mixed model to [induce a correlation/covariance structure]{.alert} (next week)
+   
+   2. [Directly applying the correlation structure]{.alert} to the covariance matrix in a GEE [- we'll start here]{.alert}
+
+---
+
+## Recap: Non-longitudinal GEEs
+
+Recall: a GEE has 2 main components
+
+1. Marginal expectation of the outcome ("the mean model"): $E[Y_{ij}|X_{ij}]=\mu_{ij} = \boldsymbol{X}\vec{\beta}$
+
+<br>
+
+2. The covariance of the outcome $V_i$
+
+   2.1 The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
+   
+   <br>
+   
+   2.2 The within-cluster association of the outcome ("correlation structure")
+
+---
+
+## Longitudinal GEEs
+
+We can easily extend this framework to longitudinal data
+
+[How would we modify each of the components for longitudinal data?]{.alert}
+
+1. Marginal expectation of the outcome
+
+<br>
+<br>
+<br>
+
+2.1 The marginal variance of the outcome
+
+<br>
+<br>
+<br>
+
+2.2 The within-cluster association of the outcome ("correlation structure")
+
+<br>
+<br>
+<br>
+
+---
+
+## Longitudinal GEEs
+
+We can easily extend this framework to longitudinal data
+
+1. Marginal expectation of the outcome
+
+   - Simply add time (and possibly exposure-by-time interactions) to the mean model
+
+$$g(E[Y_{ij}]) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + \beta_3(U_{i0} \times t_{ij})$$
+
+. . .
+
+2.1 The marginal variance of the outcome
+
+   - Will probably stay the same, unless we want different variances at different time points (heterogeneous variance)
+
+$$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
+
+. . .
+
+2.2 The within-cluster association of the outcome ("correlation structure")
+
+   - Can use some of the more complex correlation structures we talked about in Lecture 7!
+
+---
+
+## Example: Exercise therapy trial
+
+Recall the exercise therapy trial from last week:
+
+- Subjects were assigned to one of two weightlifting programs to increase muscle strength
+
+   - Treatment 1: number of repetitions of the exercises was increased as subjects became stronger
+
+   - Treatment 2: number of repetitions was held constant but amount of weight was increased as subjects became stronger
+
+- Measurements of body strength were taken at baseline (0) and on days 2, 4, 6, 8, 10, and 12
+
+```{r exercise, echo=F}
+exercise <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/exercise-data.txt", sep="", na.strings=".")
+colnames(exercise) <- c("ID", "PROGRAM", "day0","day2", "day4", "day6", "day8", "day10", "day12")
+exercise_long <- exercise %>% 
+   pivot_longer(!(c("ID","PROGRAM")), names_to="time", values_to="strength") %>% 
+   mutate(time=parse_number(time))
+
+exercise_long_complete <- exercise_long %>% 
+   filter(complete.cases(.))
+
+glimpse(exercise_long)
+```
+
+---
+
+## Example: Exercise therapy trial
+
+:::: {.columns}
+::: {.column width="40%"}
+Some general summary statistics:
+```{r exercise summary2, echo=F}
+exercise_long %>% 
+   summarize(mean=mean(strength,na.rm=T), var=var(strength, na.rm=T))
+```
+
+And by time point:
+
+```{r exercise summary, echo=F}
+exercise_long %>% 
+   group_by(time) %>% 
+   summarize(mean=mean(strength,na.rm=T), var=var(strength, na.rm=T))
+```
+:::
+
+::: {.column width="60%"}
+Taking a look at the raw correlation:
+
+```{r correlation}
+exercise %>%
+   select(day0, day2, day4, day6, day8, day12) %>% 
+   correlate(diagonal = 1)
+```
+
+[What correlation structure(s) might be appropriate here?]{.alert}
+:::
+::::
+
+---
+
+## Example: Exercise therapy trial
+
+1. Marginal expectation of the outcome: $E[\text{body strength}_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})$
+
+2.1 The marginal variance of the outcome: $\sigma^2$
+
+2.2 Correlation structure: autoregressive (equal spacing)
+
+```{r gee, output=F}
+library(gee)
+
+# fitting an autoregression, distance 1 correlation structure #
+exercise_gee <- gee(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="AR-M", Mv=1)
+```
+
+---
+
+## Example: Exercise therapy trial
+
+If we fit the GEE...
+```{r gee2}
+summary(exercise_gee)$coefficients
+
+summary(exercise_gee)$working.correlation
+
+summary(exercise_gee)$scale
+```

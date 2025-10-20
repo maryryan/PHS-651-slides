@@ -422,7 +422,18 @@ October 21, 2025
 </div>
 </div>
 </section><section id="roadmap" class="slide level2"><h2>Roadmap</h2>
-</section><section id="concepts-to-practice" class="slide level2"><h2>Concepts to practice</h2>
+<ul>
+<li><p>How longitudinal data impacts GEE mean model</p></li>
+<li>
+<p>How longitudinal data impacts GEE (working) covariance model</p>
+<ul>
+<li><p>impacts the marginal variance</p></li>
+<li><p>impacts assumptions about correlation structure</p></li>
+</ul>
+</li>
+<li><p>Interpretations under longitudinal GEEs</p></li>
+<li><p>Inference for simple slopes/linear contrasts (combinations of regression coefficients)</p></li>
+</ul></section><section id="concepts-to-practice" class="slide level2"><h2>Concepts to practice</h2>
 <p>Last week we talked about how longitudinal data can impact how we formulate our <span class="alert">mean model</span></p>
 <ul>
 <li><p>Need to include <span class="alert">time</span> as a regression coefficient</p></li>
@@ -448,7 +459,7 @@ October 21, 2025
 </section><section id="recap-non-longitudinal-gees" class="slide level2"><h2>Recap: Non-longitudinal GEEs</h2>
 <p>Recall: a GEE has 2 main components</p>
 <ol type="1">
-<li>Marginal expectation of the outcome (“the mean model”): <span class="math inline">\(E[Y_{ij}|X_{ij}]=\mu_{ij} = \boldsymbol{X}\vec{\beta}\)</span>
+<li>Marginal expectation of the outcome (“the mean model”): <span class="math inline">\(E[Y_{ij}|X_{ij}]=\mu_{ij} = \boldsymbol{X}\vec{\beta} = \beta_0 +\beta_1U_{ij}\)</span>
 </li>
 </ol>
 <p><br></p>
@@ -484,14 +495,14 @@ October 21, 2025
 <div class="fragment">
 <p>2.1 The marginal variance of the outcome</p>
 <ul>
-<li>Will probably stay the same, unless we want different variances at different time points (heterogeneous variance)</li>
+<li>Will stay the same as how we specified it in non-longitudinal data</li>
 </ul>
 <p><span class="math display">\[Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})\]</span></p>
 </div>
 <div class="fragment">
 <p>2.2 The within-cluster association of the outcome (“correlation structure”)</p>
 <ul>
-<li>Can use some of the more complex correlation structures we talked about in Lecture 7!</li>
+<li>Can use some of the more complex correlation structures we talked about in Lecture 6.2!</li>
 </ul>
 </div>
 </section><section id="example-exercise-therapy-trial" class="slide level2"><h2>Example: Exercise therapy trial</h2>
@@ -510,7 +521,7 @@ October 21, 2025
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 259
 Columns: 4
-$ ID       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3…
+$ ID       &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3…
 $ PROGRAM  &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
 $ time     &lt;dbl&gt; 0, 2, 4, 6, 8, 10, 12, 0, 2, 4, 6, 8, 10, 12, 0, 2, 4, 6, 8, …
 $ strength &lt;int&gt; 79, NA, 79, 80, 80, 78, 80, 83, 83, 85, 85, 86, 87, 87, 81, 8…</code></pre>
@@ -581,7 +592,8 @@ $ strength &lt;int&gt; 79, NA, 79, 80, 80, 78, 80, 83, 83, 85, 85, 86, 87, 87, 8
 </section><section id="example-exercise-therapy-trial-3" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <p>If we fit the GEE…</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">summary</span>(exercise_gee)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="do">## regression coefficients ##</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="fu">summary</span>(exercise_gee)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                Estimate Naive S.E.    Naive z Robust S.E.   Robust z
 (Intercept)  78.70385841 1.82575181 43.1076436  1.78212396 44.1629540
@@ -589,7 +601,8 @@ PROGRAM       1.21590821 1.11087836  1.0945467  1.05911780  1.1480387
 time          0.02677661 0.10385364  0.2578303  0.13378210  0.2001509
 PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">summary</span>(exercise_gee)<span class="sc">$</span>working.correlation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="do">## "working" correlation under the autoregressive assumption ##</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="fu">summary</span>(exercise_gee)<span class="sc">$</span>working.correlation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
 [1,] 1.0000000 0.9524330 0.9071285 0.8639791 0.8228822 0.7837401 0.7464599
@@ -600,9 +613,64 @@ PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pr
 [6,] 0.7837401 0.8228822 0.8639791 0.9071285 0.9524330 1.0000000 0.9524330
 [7,] 0.7464599 0.7837401 0.8228822 0.8639791 0.9071285 0.9524330 1.0000000</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">summary</span>(exercise_gee)<span class="sc">$</span>scale</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="do">## scale = marginal variance ##</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="fu">summary</span>(exercise_gee)<span class="sc">$</span>scale</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 11.29173</code></pre>
+</div>
+</div>
+<p>Scale is (roughly) the time-averaged marginal variance!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>exercise_long <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">var=</span><span class="fu">var</span>(strength, <span class="at">na.rm=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+    var
+  &lt;dbl&gt;
+1  11.7</code></pre>
+</div>
+</div>
+</section><section id="example-exercise-therapy-trial-4" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<ol type="1">
+<li>Marginal expectation of the outcome: <span class="math inline">\(E[\text{body strength}_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})\)</span>
+</li>
+</ol>
+<p>2.1 The marginal variance of the outcome: <span class="math inline">\(\sigma^2\)</span></p>
+<p>2.2 Correlation structure: Banded Toeplitz (3 bands)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">library</span>(gee)</span>
+<span id="cb15-2"><a href="#cb15-2"></a></span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="co"># fitting an autoregression, distance 1 correlation structure #</span></span>
+<span id="cb15-4"><a href="#cb15-4"></a>exercise_gee_toe <span class="ot">&lt;-</span> <span class="fu">gee</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
+<span id="cb15-5"><a href="#cb15-5"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"stat_M_dep"</span>, <span class="at">Mv=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> (Intercept)      PROGRAM         time PROGRAM:time 
+ 79.08355923   1.15036022   0.05457260   0.03571805 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="do">## regression coefficients ##</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="fu">summary</span>(exercise_gee_toe)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                Estimate Naive S.E.    Naive z Robust S.E.   Robust z
+(Intercept)  79.51189760  2.3057548 34.4841079   1.5495828 51.3118096
+PROGRAM       1.05527862  1.3924941  0.7578334   1.0274282  1.0271069
+time         -0.08949822  0.2320274 -0.3857227   0.2409023 -0.3715124
+PROGRAM:time  0.15144418  0.1405790  1.0772886   0.1400647  1.0812444</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="do">## "working" correlation under the autoregressive assumption ##</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="fu">summary</span>(exercise_gee_toe)<span class="sc">$</span>working.correlation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
+[1,] 1.0000000 0.9477644 0.8984047 0.8295975 0.0000000 0.0000000 0.0000000
+[2,] 0.9477644 1.0000000 0.9477644 0.8984047 0.8295975 0.0000000 0.0000000
+[3,] 0.8984047 0.9477644 1.0000000 0.9477644 0.8984047 0.8295975 0.0000000
+[4,] 0.8295975 0.8984047 0.9477644 1.0000000 0.9477644 0.8984047 0.8295975
+[5,] 0.0000000 0.8295975 0.8984047 0.9477644 1.0000000 0.9477644 0.8984047
+[6,] 0.0000000 0.0000000 0.8295975 0.8984047 0.9477644 1.0000000 0.9477644
+[7,] 0.0000000 0.0000000 0.0000000 0.8295975 0.8984047 0.9477644 1.0000000</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="do">## scale = marginal variance ##</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="fu">summary</span>(exercise_gee_toe)<span class="sc">$</span>scale</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 11.6281</code></pre>
 </div>
 </div>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>

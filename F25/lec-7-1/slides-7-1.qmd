@@ -69,6 +69,17 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-7-1/slides-7-1")
 
 ## Roadmap
 
+- How longitudinal data impacts GEE mean model
+
+- How longitudinal data impacts GEE (working) covariance model
+
+   - impacts the marginal variance
+   
+   - impacts assumptions about correlation structure
+   
+- Interpretations under longitudinal GEEs
+
+- Inference for simple slopes/linear contrasts (combinations of regression coefficients)
 
 ---
 
@@ -102,7 +113,7 @@ But how do we apply correlation/covariance structures to a modeling framework?
 
 Recall: a GEE has 2 main components
 
-1. Marginal expectation of the outcome ("the mean model"): $E[Y_{ij}|X_{ij}]=\mu_{ij} = \boldsymbol{X}\vec{\beta}$
+1. Marginal expectation of the outcome ("the mean model"): $E[Y_{ij}|X_{ij}]=\mu_{ij} = \boldsymbol{X}\vec{\beta} = \beta_0 +\beta_1U_{ij}$
 
 <br>
 
@@ -156,7 +167,7 @@ $$g(E[Y_{ij}]) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + \beta_3(U_{i0} \times
 
 2.1 The marginal variance of the outcome
 
-   - Will probably stay the same, unless we want different variances at different time points (heterogeneous variance)
+   - Will stay the same as how we specified it in non-longitudinal data
 
 $$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
 
@@ -164,7 +175,7 @@ $$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
 
 2.2 The within-cluster association of the outcome ("correlation structure")
 
-   - Can use some of the more complex correlation structures we talked about in Lecture 7!
+   - Can use some of the more complex correlation structures we talked about in Lecture 6.2!
 
 ---
 
@@ -183,9 +194,18 @@ Recall the exercise therapy trial from last week:
 ```{r exercise, echo=F}
 exercise <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/exercise-data.txt", sep="", na.strings=".")
 colnames(exercise) <- c("ID", "PROGRAM", "day0","day2", "day4", "day6", "day8", "day10", "day12")
+
 exercise_long <- exercise %>% 
-   pivot_longer(!(c("ID","PROGRAM")), names_to="time", values_to="strength") %>% 
-   mutate(time=parse_number(time))
+   pivot_longer(!(c(ID, PROGRAM)), names_to="time", values_to="strength") %>% 
+      mutate(time = case_when(time=="day0" ~ 0,
+                          time=="day2" ~ 2,
+                          time=="day4" ~ 4,
+                          time=="day6" ~ 6,
+                          time=="day8" ~ 8,
+                          time=="day10" ~ 10,
+                          time=="day12" ~ 12
+                          ),
+          ID = factor(ID))
 
 exercise_long_complete <- exercise_long %>% 
    filter(complete.cases(.))
@@ -251,9 +271,44 @@ exercise_gee <- gee(strength ~ PROGRAM*time, id=ID,
 
 If we fit the GEE...
 ```{r gee2}
+## regression coefficients ##
 summary(exercise_gee)$coefficients
 
+## "working" correlation under the autoregressive assumption ##
 summary(exercise_gee)$working.correlation
 
+## scale = marginal variance ##
 summary(exercise_gee)$scale
+```
+
+Scale is (roughly) the time-averaged marginal variance!
+```{r exercise var}
+exercise_long %>% summarize(var=var(strength, na.rm=T))
+```
+
+---
+
+## Example: Exercise therapy trial
+
+1. Marginal expectation of the outcome: $E[\text{body strength}_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})$
+
+2.1 The marginal variance of the outcome: $\sigma^2$
+
+2.2 Correlation structure: Banded Toeplitz (3 bands)
+
+```{r gee toe}
+library(gee)
+
+# fitting an autoregression, distance 1 correlation structure #
+exercise_gee_toe <- gee(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="stat_M_dep", Mv=3)
+
+## regression coefficients ##
+summary(exercise_gee_toe)$coefficients
+
+## "working" correlation under the autoregressive assumption ##
+summary(exercise_gee_toe)$working.correlation
+
+## scale = marginal variance ##
+summary(exercise_gee_toe)$scale
 ```

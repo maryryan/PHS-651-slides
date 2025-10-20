@@ -520,11 +520,12 @@ October 21, 2025
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 259
-Columns: 4
+Columns: 5
 $ ID       &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3…
 $ PROGRAM  &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
 $ time     &lt;dbl&gt; 0, 2, 4, 6, 8, 10, 12, 0, 2, 4, 6, 8, 10, 12, 0, 2, 4, 6, 8, …
-$ strength &lt;int&gt; 79, NA, 79, 80, 80, 78, 80, 83, 83, 85, 85, 86, 87, 87, 81, 8…</code></pre>
+$ strength &lt;int&gt; 79, NA, 79, 80, 80, 78, 80, 83, 83, 85, 85, 86, 87, 87, 81, 8…
+$ time_cat &lt;fct&gt; 0, 2, 4, 6, 8, 10, 12, 0, 2, 4, 6, 8, 10, 12, 0, 2, 4, 6, 8, …</code></pre>
 </div>
 </div>
 </section><section id="example-exercise-therapy-trial-1" class="slide level2"><h2>Example: Exercise therapy trial</h2>
@@ -586,37 +587,57 @@ $ strength &lt;int&gt; 79, NA, 79, 80, 80, 78, 80, 83, 83, 85, 85, 86, 87, 87, 8
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">library</span>(gee)</span>
 <span id="cb6-2"><a href="#cb6-2"></a></span>
 <span id="cb6-3"><a href="#cb6-3"></a><span class="co"># fitting an autoregression, distance 1 correlation structure #</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a>exercise_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
+<span id="cb6-4"><a href="#cb6-4"></a>exercise_gee <span class="ot">&lt;-</span> <span class="fu">gee</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time_cat, <span class="at">id=</span>ID,</span>
 <span id="cb6-5"><a href="#cb6-5"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"AR-M"</span>, <span class="at">Mv=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section><section id="example-exercise-therapy-trial-3" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<div class="cell">
+<style type="text/css">
+.reveal code {
+  max-height: 100% !important;
+}
+</style>
+</div>
 <p>If we fit the GEE…</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="do">## regression coefficients ##</span></span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="fu">summary</span>(exercise_gee)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                Estimate Naive S.E.    Naive z Robust S.E.   Robust z
-(Intercept)  78.70385841 1.82575181 43.1076436  1.78212396 44.1629540
-PROGRAM       1.21590821 1.11087836  1.0945467  1.05911780  1.1480387
-time          0.02677661 0.10385364  0.2578303  0.13378210  0.2001509
-PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pre>
+<pre><code>                     Estimate Naive S.E.    Naive z Robust S.E.   Robust z
+(Intercept)        78.5802978  1.8589211 42.2719919   1.7228773 45.6099210
+PROGRAM             1.2455974  1.1310265  1.1012981   1.0324198  1.2064834
+time_cat2           1.1179320  0.5690630  1.9645135   0.4856072  2.3021324
+time_cat4           1.2217142  0.7743879  1.5776514   0.7355219  1.6610168
+time_cat6           0.7762615  0.9445557  0.8218271   0.9117670  0.8513814
+time_cat8           0.9278049  1.0723980  0.8651684   1.2181803  0.7616318
+time_cat10          0.8510236  1.1887297  0.7159101   1.4434483  0.5895767
+time_cat12          0.4118204  1.2558255  0.3279280   1.5253309  0.2699876
+PROGRAM:time_cat2  -0.2488623  0.3458366 -0.7195950   0.2841007 -0.8759649
+PROGRAM:time_cat4  -0.1501776  0.4750334 -0.3161411   0.4406937 -0.3407755
+PROGRAM:time_cat6   0.4232290  0.5749298  0.7361403   0.5306853  0.7975140
+PROGRAM:time_cat8   0.3360208  0.6556499  0.5125004   0.6788547  0.4949820
+PROGRAM:time_cat10  0.4293408  0.7255440  0.5917502   0.7878519  0.5449512
+PROGRAM:time_cat12  0.7958870  0.7747994  1.0272169   0.8478324  0.9387315</code></pre>
 </div>
+</div>
+</section><section id="example-exercise-therapy-trial-4" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="do">## "working" correlation under the autoregressive assumption ##</span></span>
 <span id="cb9-2"><a href="#cb9-2"></a><span class="fu">summary</span>(exercise_gee)<span class="sc">$</span>working.correlation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-[1,] 1.0000000 0.9524330 0.9071285 0.8639791 0.8228822 0.7837401 0.7464599
-[2,] 0.9524330 1.0000000 0.9524330 0.9071285 0.8639791 0.8228822 0.7837401
-[3,] 0.9071285 0.9524330 1.0000000 0.9524330 0.9071285 0.8639791 0.8228822
-[4,] 0.8639791 0.9071285 0.9524330 1.0000000 0.9524330 0.9071285 0.8639791
-[5,] 0.8228822 0.8639791 0.9071285 0.9524330 1.0000000 0.9524330 0.9071285
-[6,] 0.7837401 0.8228822 0.8639791 0.9071285 0.9524330 1.0000000 0.9524330
-[7,] 0.7464599 0.7837401 0.8228822 0.8639791 0.9071285 0.9524330 1.0000000</code></pre>
+[1,] 1.0000000 0.9536660 0.9094789 0.8673391 0.8271519 0.7888267 0.7522772
+[2,] 0.9536660 1.0000000 0.9536660 0.9094789 0.8673391 0.8271519 0.7888267
+[3,] 0.9094789 0.9536660 1.0000000 0.9536660 0.9094789 0.8673391 0.8271519
+[4,] 0.8673391 0.9094789 0.9536660 1.0000000 0.9536660 0.9094789 0.8673391
+[5,] 0.8271519 0.8673391 0.9094789 0.9536660 1.0000000 0.9536660 0.9094789
+[6,] 0.7888267 0.8271519 0.8673391 0.9094789 0.9536660 1.0000000 0.9536660
+[7,] 0.7522772 0.7888267 0.8271519 0.8673391 0.9094789 0.9536660 1.0000000</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="do">## scale = marginal variance ##</span></span>
 <span id="cb11-2"><a href="#cb11-2"></a><span class="fu">summary</span>(exercise_gee)<span class="sc">$</span>scale</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 11.29173</code></pre>
+<pre><code>[1] 11.67791</code></pre>
 </div>
 </div>
 <p>Scale is (roughly) the time-averaged marginal variance!</p>
@@ -629,7 +650,7 @@ PROGRAM:time  0.06831614 0.06400728  1.0673184  0.07454375  0.9164570</code></pr
 1  11.7</code></pre>
 </div>
 </div>
-</section><section id="example-exercise-therapy-trial-4" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+</section><section id="example-exercise-therapy-trial-5" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <ol type="1">
 <li>Marginal expectation of the outcome: <span class="math inline">\(E[\text{body strength}_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})\)</span>
 </li>

@@ -205,6 +205,7 @@ exercise_long <- exercise %>%
                           time=="day10" ~ 10,
                           time=="day12" ~ 12
                           ),
+             time_cat=as.factor(time),
           ID = factor(ID))
 
 exercise_long_complete <- exercise_long %>% 
@@ -261,7 +262,7 @@ exercise %>%
 library(gee)
 
 # fitting an autoregression, distance 1 correlation structure #
-exercise_gee <- gee(strength ~ PROGRAM*time, id=ID,
+exercise_gee <- gee(strength ~ PROGRAM*time_cat, id=ID,
                     data=exercise_long, corstr="AR-M", Mv=1)
 ```
 
@@ -269,11 +270,23 @@ exercise_gee <- gee(strength ~ PROGRAM*time, id=ID,
 
 ## Example: Exercise therapy trial
 
+```{css, echo=FALSE}
+.reveal code {
+  max-height: 100% !important;
+}
+```
+
 If we fit the GEE...
 ```{r gee2}
 ## regression coefficients ##
 summary(exercise_gee)$coefficients
+```
 
+---
+
+## Example: Exercise therapy trial
+
+```{r gee3}
 ## "working" correlation under the autoregressive assumption ##
 summary(exercise_gee)$working.correlation
 

@@ -69,15 +69,15 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-7-1/slides-7-1")
 
 ## Roadmap
 
-- How longitudinal data impacts GEE mean model
+- How longitudinal data impacts a GEE's [mean model]{.underline}
 
-- How longitudinal data impacts GEE (working) covariance model
+- How longitudinal data impacts a GEE's [(working) covariance model]{.underline}
 
    - impacts the marginal variance
    
    - impacts assumptions about correlation structure
    
-- Interpretations under longitudinal GEEs
+- Interpretations of regression coefficients under longitudinal GEEs (continuous, Normal outcomes)
 
 - Inference for simple slopes/linear contrasts (combinations of regression coefficients)
 
@@ -91,9 +91,11 @@ Last week we talked about how longitudinal data can impact how we formulate our 
 
 - May be interested in exposure-by-time [interaction]{.alert}
 
-$$E[Y_{ij}] = \beta_0 + \beta_1 (U_{i0}) + \beta_2 t_{ij} + \beta_3 (U_{i0} \times t_{ij})$$
+$$E[Y_{ij}] = \beta_0 + \beta_1 U_{i0} + \beta_2 \text{Time}_{ij} + \beta_3 (U_{i0} \times \text{Time}_{ij})$$
 
-. . .
+---
+
+## Concepts to practice
 
 We also talked about how it impacts our [correlation/covariance matrix]{.alert}, and the types of correlation structures that may be appropriate
 
@@ -113,17 +115,20 @@ But how do we apply correlation/covariance structures to a modeling framework?
 
 Recall: a GEE has 2 main components
 
-1. Marginal expectation of the outcome ("the mean model"): $E[Y_{ij}|X_{ij}]=\mu_{ij} = \boldsymbol{X}\vec{\beta} = \beta_0 +\beta_1U_{ij}$
+1. Marginal expectation of the outcome ("the [mean model]{.alert}"):
+$$g(E[Y_{ij}|\vec{X}_{ij}])=g(\mu_{ij}) = \boldsymbol{X}\vec{\beta} = \beta_0 +\beta_1U_{ij}$$
 
-<br>
+2. The [covariance]{.alert} of the outcome $V_i^{-1}$
 
-2. The covariance of the outcome $V_i$
-
-   2.1 The marginal variance of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
+   2.1 The [marginal variance]{.alert} of the outcome: $Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$
+   
+   - What form does the variance take? What's the realtionship between the mean and the variance?
+   
+   - Normal/Gaussian, Binomial/Bernoulli/Binary, Poisson, Negative Binomial, etc.
    
    <br>
    
-   2.2 The within-cluster association of the outcome ("correlation structure")
+   2.2 The within-cluster association of the outcome (["correlation structure"]{.alert})
 
 ---
 
@@ -161,9 +166,7 @@ We can easily extend this framework to longitudinal data
 
    - Simply add time (and possibly exposure-by-time interactions) to the mean model
 
-$$g(E[Y_{ij}]) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + \beta_3(U_{i0} \times t_{ij})$$
-
-. . .
+$$g(E[Y_{ij}|\vec{X}_{ij}]) = \beta_0 + \beta_1U_{i0} + \beta_2\text{Time}_{ij} + \beta_3(U_{i0} \times \text{Time}_{ij})$$
 
 2.1 The marginal variance of the outcome
 
@@ -171,7 +174,6 @@ $$g(E[Y_{ij}]) = \beta_0 + \beta_1U_{i0} + \beta_2t_{ij} + \beta_3(U_{i0} \times
 
 $$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
 
-. . .
 
 2.2 The within-cluster association of the outcome ("correlation structure")
 
@@ -181,13 +183,13 @@ $$Var[Y_{ij}|\vec{X}_{ij}] = \varphi v(\mu_{ij})$$
 
 ## Example: Exercise therapy trial
 
-Recall the exercise therapy trial from last week:
+Let's apply this to an example. Recall the exercise therapy trial from last week:
 
-- Subjects were assigned to one of two weightlifting programs to increase muscle strength
+- Participants were randomized to one of two weightlifting programs to increase muscle strength
 
-   - Treatment 1: number of repetitions of the exercises was increased as subjects became stronger
+   - Program 1: [number of repetitions]{.underline} of the exercises was increased as participants became stronger, but weight was kept constant
 
-   - Treatment 2: number of repetitions was held constant but amount of weight was increased as subjects became stronger
+   - Program 2: number of repetitions was held constant but [amount of weight]{.underline} was increased as participants became stronger
 
 - Measurements of body strength were taken at baseline (0) and on days 2, 4, 6, 8, 10, and 12
 
@@ -206,6 +208,7 @@ exercise_long <- exercise %>%
                           time=="day12" ~ 12
                           ),
              time_cat=as.factor(time),
+             PROGRAM = as.factor(PROGRAM),
           ID = factor(ID))
 
 exercise_long_complete <- exercise_long %>% 
@@ -213,6 +216,8 @@ exercise_long_complete <- exercise_long %>%
 
 glimpse(exercise_long)
 ```
+
+Let's have Program 1 be our reference group
 
 ---
 
@@ -240,7 +245,7 @@ Taking a look at the raw correlation:
 
 ```{r correlation}
 exercise %>%
-   select(day0, day2, day4, day6, day8, day12) %>% 
+   select(day0, day2, day4, day6, day8, day10, day12) %>% 
    correlate(diagonal = 1)
 ```
 
@@ -252,23 +257,88 @@ exercise %>%
 
 ## Example: Exercise therapy trial
 
-1. Marginal expectation of the outcome: $E[\text{body strength}_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})$
+[How would we specify the 3 GEE components for this question?]{.alert}
 
-2.1 The marginal variance of the outcome: $\sigma^2$
+1. Marginal expectation of the outcome:
 
-2.2 Correlation structure: autoregressive (equal spacing)
+[Linear, continuous time: $$\color{red}{E[\text{body strength}_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Program}_i \times \text{Time}_{ij})}$$]{.alert .fragment fragment-index=1}
+[OR [Categorical time:]{.alert}]{.fragment fragment-index=1}
 
-```{r gee, output=F}
+[$$\color{red}{\begin{align*}E[\text{body strength}_{ij}] = &\beta_0 + \beta_1(\text{Program}_i) + \beta_2I(\text{Time}_{ij}=2) + \beta_3I(\text{Time}_{ij}=4) + \beta_4I(\text{Time}_{ij}=6)\\ 
+&+ \beta_5I(\text{Time}_{ij}=8) + \beta_6I(\text{Time}_{ij}=10) + \beta_7I(\text{Time}_{ij}=12)\\
+&+ \beta_8[\text{Program}_i \times I(\text{Time}_{ij}=2)] + \beta_9[\text{Program}_i \times I(\text{Time}_{ij}=4)]\\
+&+ \beta_{10}[\text{Program}_i \times I(\text{Time}_{ij}=6)]+ \beta_{11}[\text{Program}_i \times I(\text{Time}_{ij}=8)]\\
+&+ \beta_{12}[\text{Program}_i \times I(\text{Time}_{ij}=10)]+ \beta_{13}[\text{Program}_i \times I(\text{Time}_{ij}=12)]\end{align*}}$$]{.alert .fragment fragment-index=1}
+
+2.1 The marginal variance of the outcome: [$\color{red}{\sigma^2}$ (Normal/Gaussian)]{.fragment fragment-index=1}
+
+2.2 Correlation structure: [autoregressive (equal spacing)]{.alert .fragment fragment-index=1}
+
+---
+
+## Example: Exercise therapy trial (continuous time )
+
+Let's start by fitting the model with continuous time:
+```{r gee cont, output=F}
 library(gee)
+# fitting an autoregressive, distance 1 correlation structure #
+exercise_gee_cont <- gee(strength ~ PROGRAM*time, id=ID, data=exercise_long, corstr="AR-M", Mv=1)
+```
 
-# fitting an autoregression, distance 1 correlation structure #
-exercise_gee <- gee(strength ~ PROGRAM*time_cat, id=ID,
-                    data=exercise_long, corstr="AR-M", Mv=1)
+```{r gee cont2}
+summary(exercise_gee_cont)$coefficients
+```
+
+$\widehat\beta_1=$ `r round(summary(exercise_gee_cont)$coefficients[2,1],2)`: [The body strength score of Program 2 participants at baseline (day 0) is, on average, [`r round(summary(exercise_gee_cont)$coefficients[2,1],2)` points greater]{.alert} than the baseline body strength score of Program 1 participants.]{.fragment fragment-index=1}
+
+<br>
+
+$\widehat\beta_2(1)=$ `r round(summary(exercise_gee_cont)$coefficients[3,1],3)`: [The difference in body strength scores of Program 1 participants measured 1 day apart is, on average, [`r round(summary(exercise_gee_cont)$coefficients[3,1],3)` greater]{.alert} on the later day compared to the earlier day.]{.fragment fragment-index=1}
+
+<br>
+
+$\widehat\beta_1 + \widehat\beta_3(2)=$ `r round(summary(exercise_gee_cont)$coefficients[2,1],2)`+ `r round(summary(exercise_gee_cont)$coefficients[4,1],2)`(2): [The body strength score of Program 2 participants measured on Day 2 is, on average, [`r round(summary(exercise_gee_cont)$coefficients[2,1]+summary(exercise_gee_cont)$coefficients[4,1]*2,2)` greater]{.alert} compared to participants in Program 1 measured at the same timepoint.]{.fragment fragment-index=1}
+
+---
+
+## Example: Exercise therapy trial (continuous time)
+
+We can also output the "working" correlation under our autoregressive assumption:
+
+```{r gee cont 3}
+summary(exercise_gee_cont)$working.correlation
+```
+
+... and compare back to our "raw" correlation structure:
+```{r correlation2}
+exercise %>%
+   select(day0, day2, day4, day6, day8, day10, day12) %>% 
+   correlate(diagonal = 1)
 ```
 
 ---
 
-## Example: Exercise therapy trial
+## Example: Exercise therapy trial (categorical time)
+
+We can also look at the estimate of the marginal variance under our assumption that it takes on a Normal/Gaussian form (often output in software as the "scale" estimate):
+
+```{r gee cont 4}
+## scale = marginal variance ##
+summary(exercise_gee_cont)$scale
+```
+
+<br>
+
+We can compare this to our "raw" variance estimate (taken across everyone's outcomes across time):
+```{r exercise var2}
+exercise_long %>% summarize(var=var(strength, na.rm=T))
+```
+
+The scale estimate is roughly close to the "raw" variance, but not exactly on...
+
+---
+
+## Example: Exercise therapy trial (categorical time)
 
 ```{css, echo=FALSE}
 .reveal code {
@@ -276,52 +346,270 @@ exercise_gee <- gee(strength ~ PROGRAM*time_cat, id=ID,
 }
 ```
 
-If we fit the GEE...
+What happens if we fit the GEE with [categorical]{.alert} time?
+```{r gee, output=F}
+# fitting an autoregression, distance 1 correlation structure #
+exercise_gee <- gee(strength ~ PROGRAM*time_cat, id=ID,
+                    data=exercise_long, corstr="AR-M", Mv=1)
+```
+
 ```{r gee2}
 ## regression coefficients ##
 summary(exercise_gee)$coefficients
 ```
 
+Coefficients comparing Program 2, Day 2 scores and Program 1, Day 2 scores?
+
+- $\widehat\beta_2 + \widehat\beta_9 =$ `r round(summary(exercise_gee)$coefficients[2,1],3)` + `r round(summary(exercise_gee)$coefficients[9,1],3)` = `r round(summary(exercise_gee)$coefficients[2,1] + summary(exercise_gee)$coefficients[9,1],3)`
+
 ---
 
-## Example: Exercise therapy trial
+## Example: Exercise therapy trial (categorical time)
+
+We can also output the "working" correlation under our autoregressive assumption:
 
 ```{r gee3}
-## "working" correlation under the autoregressive assumption ##
 summary(exercise_gee)$working.correlation
+```
 
+... and compare back to our "raw" correlation structure:
+```{r correlation3}
+exercise %>%
+   select(day0, day2, day4, day6, day8, day10, day12) %>% 
+   correlate(diagonal = 1)
+```
+
+---
+
+## Example: Exercise therapy trial (categorical time)
+
+We can also look at the estimate of the marginal variance under our assumption that it takes on a Normal/Gaussian form:
+
+```{r gee4}
 ## scale = marginal variance ##
 summary(exercise_gee)$scale
 ```
 
-Scale is (roughly) the time-averaged marginal variance!
+<br>
+
+Much closer to the time-averaged marginal variance than before!
 ```{r exercise var}
 exercise_long %>% summarize(var=var(strength, na.rm=T))
 ```
+This is likely because time does not actually behave strictly linearly in this data (like we had in the previous model), so modeling time as categorical helps inform the variance estimate
+
+- Departure from non-longitudinal data, where we could think modeling the mean and the covariance more independently in GEEs
 
 ---
 
 ## Example: Exercise therapy trial
 
-1. Marginal expectation of the outcome: $E[\text{body strength}_{ij}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2t_{ij} + \beta_3(\text{Program}_i \times t_{ij})$
-
-2.1 The marginal variance of the outcome: $\sigma^2$
-
-2.2 Correlation structure: Banded Toeplitz (3 bands)
-
-```{r gee toe}
-library(gee)
-
-# fitting an autoregression, distance 1 correlation structure #
-exercise_gee_toe <- gee(strength ~ PROGRAM*time, id=ID,
-                    data=exercise_long, corstr="stat_M_dep", Mv=3)
-
-## regression coefficients ##
-summary(exercise_gee_toe)$coefficients
-
-## "working" correlation under the autoregressive assumption ##
-summary(exercise_gee_toe)$working.correlation
-
-## scale = marginal variance ##
-summary(exercise_gee_toe)$scale
+```{r spaghetti, out.width="80%"}
+exercise_long %>% 
+   ggplot(aes(x=time,y=strength, color=ID, group=ID))+
+   geom_line(size=1.2)+
+   theme_minimal()
 ```
+
+---
+
+## Inference for simple slopes/linear contrasts
+
+Earlier in the example we were able to get a [point estimate]{.alert} for differences between specific groups by adding together regression coefficients
+
+- Think:
+   - Baseline Program 2 vs Baseline Program 1 ($\widehat\beta_1$)
+   - Day 2 Program 2 vs Day 2 Program 1 ($\widehat\beta_1 + \widehat\beta_3(2)$)
+   - Day 1 Program 1 vs Baseline Program 1 ($\widehat\beta_2(1)$)
+   
+But how would we perform inference (get [confidence intervals]{.alert}) for those combinations of coefficients?
+
+- Normally we just plug the coefficient estimate $\widehat\beta$ and the standard error for that coefficient we get from the output table into the confidence interval equation:
+
+$$\widehat\beta \pm Z_{1-\alpha/2} \times SE[\beta]$$
+
+- But when we're combining coefficients, we can't just add together their standard errors!
+
+   - Need to account for [covariance between coefficients]{.alert}
+
+
+---
+
+## Inference for simple slopes/linear contrasts
+
+Say we wanted to get the confidence interval for $\widehat\beta_1 + \widehat\beta_3(2)$ using our continuous time model (for simplicity)
+
+The SE for $\widehat\beta_1 + \widehat\beta_3(2)$ would be: $\sqrt{Var[\beta_1] + 2^2Var[\beta_3] + (2\times2Cov[\beta_1, \beta_3])}$
+
+<br>
+
+Several ways we could do this (in R):
+
+- The by-hand way
+
+- The matrix algebra way
+
+- The function way
+
+<br>
+
+In SAS, you can also do the "by hand" way, but you can also use the `ESTIMATE` statement within `PROC GENMOD`
+
+---
+
+## Inference for simple slopes/linear contrasts: by hand
+
+Say we wanted to get the confidence interval for $\widehat\beta_1 + \widehat\beta_3(2)$ 
+
+To do this the [by-hand]{.alert} way:
+
+- Step 1: pull up the (robust) covariance matrix:
+```{r covariance matrix}
+exercise_gee_cont$robust.variance
+```
+
+- Step 2: identify the values we need:
+   - $Var[\beta_1]=$ `r round(exercise_gee_cont$robust.variance[2,2],3)`
+   - $Var[\beta_3]=$ `r round(exercise_gee_cont$robust.variance[4,4],3)`
+   - $Cov[\beta_1, \beta_3]=$ `r round(exercise_gee_cont$robust.variance[4,2],3)`
+
+---
+
+## Inference for simple slopes/linear contrasts: by hand
+
+Say we wanted to get the confidence interval for $\widehat\beta_1 + \widehat\beta_3(2)$
+
+To do this the [by-hand]{.alert} way:
+
+- Step 3: plug them into the SE formula
+
+$\sqrt{Var[\beta_1] + 2^2Var[\beta_3] + (2\times2Cov[\beta_1, \beta_3])} = \sqrt{1.122 + 2^2(0.006) + 2*2(-0.017)}=$ `r round(sqrt(1.122 + 4*0.006 + 4*(-0.017)),3)`
+
+<br>
+
+- Step 4: plug the point estimate and SE into the confidence interval formula
+
+$[\widehat\beta_1 + \widehat\beta_3(2)] \pm 1.96\times SE[\widehat\beta_1 + \widehat\beta_3(2)] =$ `r round(summary(exercise_gee_cont)$coefficients[2,1] + 2*summary(exercise_gee_cont)$coefficients[4,1],3)` $\pm 1.96 \times$ `r round(sqrt(1.122 + 4*0.006 + 4*(-0.017)),3)` = (`r round(summary(exercise_gee_cont)$coefficients[2,1] + 2*summary(exercise_gee_cont)$coefficients[4,1] - 1.96 *sqrt(1.122 + 4*0.006 + 4*(-0.017)),3)`, `r round(summary(exercise_gee_cont)$coefficients[2,1] + 2*summary(exercise_gee_cont)$coefficients[4,1] + 1.96 *sqrt(1.122 + 4*0.006 + 4*(-0.017)),3)`)
+
+<br>
+
+[We are 95% confident that the body strength score of Program 2 participants measured at Day 2 is between `r abs(round(summary(exercise_gee_cont)$coefficients[2,1] + 2*summary(exercise_gee_cont)$coefficients[4,1] - 1.96 *sqrt(1.122 + 4*0.006 + 4*(-0.017)),3))` points lower and `r round(summary(exercise_gee_cont)$coefficients[2,1] + 2*summary(exercise_gee_cont)$coefficients[4,1] + 1.96 *sqrt(1.122 + 4*0.006 + 4*(-0.017)),3)` greater than that of the Program 1 participants measured on the same day.]{.alert}
+
+
+---
+
+## Inference for simple slopes/linear contrasts: matrix algebra
+
+Say we wanted to get the confidence interval for $\widehat\beta_1 + \widehat\beta_3(2)$
+
+To do this the [matrix algebra]{.alert} way:
+
+- Step 1: Create a row vector our 4 regression coefficients: $(\widehat\beta_0, \widehat\beta_1,\widehat\beta_2,\widehat\beta_3)$
+
+<br>
+
+- Step 2: Put the values we want to multiple each of those coefficients by: $(0, 1, 0, 2)$ would get us $\widehat\beta_1 + \widehat\beta_3(2)$
+
+<br>
+
+- Step 3: Use matrix algebra to calculate the SE: $\sqrt{Var[\beta_1] + 2^2Var[\beta_3] + (2\times2Cov[\beta_1, \beta_3])}$
+
+<br>
+
+- Step 4: Plug in to the confidence interval formula
+
+---
+
+## Inference for simple slopes/linear contrasts: matrix algebra
+
+Say we wanted to get the confidence interval for $\widehat\beta_1 + \widehat\beta_3(2)$
+
+To do this the [matrix algebra]{.alert} way:
+
+```{r simple slope}
+# Step 1 & 2 #
+contrast <- c(0,1,0,2)
+
+# Step 3 #
+contrast.var <- t(contrast) %*% exercise_gee_cont$robust.variance %*% contrast
+
+contrast.SE <- sqrt( contrast.var )
+
+# Step 4 #
+point_estimate <- summary(exercise_gee_cont)$coefficients[2,1] + 2*summary(exercise_gee_cont)$coefficients[4,1]
+
+ci_lower <- point_estimate - 1.96*contrast.SE
+ci_upper <- point_estimate + 1.96*contrast.SE
+
+paste0(point_estimate, " (",ci_lower, ", ", ci_upper,")")
+```
+
+---
+
+## Inference for simple slopes/linear contrasts: via a function
+
+Say we wanted to get the confidence interval for $\widehat\beta_1 + \widehat\beta_3(2)$
+
+If we wanted to do this [via a function]{.alert}:
+
+- Step 1: Fit the GEE using the `geese()` function from the `geepack` library (this may get us slightly different values from the `gee()` function)
+
+```{r geese}
+library(geepack)
+exercise_geese <- geese(strength ~ PROGRAM*time, id=ID, data=exercise_long, corstr="ar1")
+```
+
+- Step 2: use the `contrast()` function from the `contrast` library (doesn't work with models fit with the `gee()` function 🥲)
+
+```{r contrast geese}
+library(contrast)
+contrast( exercise_geese, 
+          # define the first group #
+          list(PROGRAM = "2", time=2),
+          # then define the second group you're subtracting from #
+          list(PROGRAM = "1", time=2) )
+```
+
+---
+
+## Take home messages
+
+<br>
+
+- Need to specify/assume more complex correlation structures when fitting GEEs with longitudinal data
+
+<br>
+
+- The form we assume for the marginal variance (Normal, Binomial, etc.) shouldn't change much when in a longitudinal data setting but...
+   
+   - [how we specify time in the mean model]{.alert} may have an impact on the marginal variance estimate!
+
+<br>
+
+- We often need to calculate confidence intervals for [combinations of regression coefficients]{.alert} when modeling longitudinal data
+
+   - That means we need to calculate SE for the combination, not just add up the separate SEs for each coefficient!
+   
+---
+
+## Take home messages
+
+Today we talked about GEEs in the context of continuous Normal outcomes (identity link), but everything here also applies to GEEs for binary outcomes or count outcomes!
+
+- For non-Normal outcomes, [how we model time in the mean model maybe has *larger* impact]{.alert} on the marginal variance, since these data often have an explicit relationship between the mean and the variance
+
+<br>
+
+- If we use a log or logit link, we would need to [exponentiate]{.alert} our regression coefficients and [exponentiate]{.alert} our confidence intervals (just like with non-longitudinal data) for interpretation
+
+<br>
+
+- The interpretations would follow the same convention as they did for their respective non-longitudinal data models:
+   
+   - Odds ratios for binary outcomes with [logit]{.underline} links
+   
+   - Risk ratios for binary outcomes with [log]{.underline} links
+   
+   - Risk difference for binary outcomes with [identity]{.underline} links
+   
+   - Incidence rate ratios for count outcomes with [log]{.underline} links

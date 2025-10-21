@@ -53,13 +53,13 @@ library(corrr)
 *The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
 :::
 
-::: {.absolute bottom=100 left=260 width=1500}
+::: {.absolute bottom=200 left=260 width=1500}
 
 Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-7-1/slides-7-1>
 
 :::
 
-::: {.absolute bottom=50 left=100 width=150}
+::: {.absolute bottom=150 left=100 width=150}
 ```{r qr code, echo=F, fig.height=2, fig.width=2}
 plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-7-1/slides-7-1"))
 ```

@@ -360,7 +360,7 @@ summary(exercise_gee)$coefficients
 
 Coefficients comparing Program 2, Day 2 scores and Program 1, Day 2 scores?
 
-- $\widehat\beta_2 + \widehat\beta_9 =$ `r round(summary(exercise_gee)$coefficients[2,1],3)` + `r round(summary(exercise_gee)$coefficients[9,1],3)` = `r round(summary(exercise_gee)$coefficients[2,1] + summary(exercise_gee)$coefficients[9,1],3)`
+- $\widehat\beta_1 + \widehat\beta_9 =$ `r round(summary(exercise_gee)$coefficients[2,1],3)` + `r round(summary(exercise_gee)$coefficients[9,1],3)` = `r round(summary(exercise_gee)$coefficients[2,1] + summary(exercise_gee)$coefficients[9,1],3)`
 
 ---
 

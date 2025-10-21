@@ -318,7 +318,7 @@ exercise %>%
 
 ---
 
-## Example: Exercise therapy trial (categorical time)
+## Example: Exercise therapy trial (continuous time)
 
 We can also look at the estimate of the marginal variance under our assumption that it takes on a Normal/Gaussian form (often output in software as the "scale" estimate):
 

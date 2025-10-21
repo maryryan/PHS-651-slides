@@ -639,7 +639,7 @@ PROGRAM2:time  0.06831614 0.06400728  1.067318  0.07454375  0.916457</code></pre
 7 day12 0.821 0.810 0.904 0.905 0.944 0.958 1    </code></pre>
 </div>
 </div>
-</section><section id="example-exercise-therapy-trial-categorical-time" class="slide level2"><h2>Example: Exercise therapy trial (categorical time)</h2>
+</section><section id="example-exercise-therapy-trial-continuous-time-2" class="slide level2"><h2>Example: Exercise therapy trial (continuous time)</h2>
 <p>We can also look at the estimate of the marginal variance under our assumption that it takes on a Normal/Gaussian form (often output in software as the “scale” estimate):</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="do">## scale = marginal variance ##</span></span>
@@ -660,7 +660,7 @@ PROGRAM2:time  0.06831614 0.06400728  1.067318  0.07454375  0.916457</code></pre
 </div>
 </div>
 <p>The scale estimate is roughly close to the “raw” variance, but not exactly on…</p>
-</section><section id="example-exercise-therapy-trial-categorical-time-1" class="slide level2"><h2>Example: Exercise therapy trial (categorical time)</h2>
+</section><section id="example-exercise-therapy-trial-categorical-time" class="slide level2"><h2>Example: Exercise therapy trial (categorical time)</h2>
 <div class="cell">
 <style type="text/css">
 .reveal code {
@@ -699,7 +699,7 @@ PROGRAM2:time_cat12  0.7958870  0.7747994  1.0272169   0.8478324   0.9387315</co
 <ul>
 <li>
 <span class="math inline">\(\widehat\beta_1 + \widehat\beta_9 =\)</span> 1.246 + -0.249 = 0.997</li>
-</ul></section><section id="example-exercise-therapy-trial-categorical-time-2" class="slide level2"><h2>Example: Exercise therapy trial (categorical time)</h2>
+</ul></section><section id="example-exercise-therapy-trial-categorical-time-1" class="slide level2"><h2>Example: Exercise therapy trial (categorical time)</h2>
 <p>We can also output the “working” correlation under our autoregressive assumption:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">summary</span>(exercise_gee)<span class="sc">$</span>working.correlation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -732,7 +732,7 @@ PROGRAM2:time_cat12  0.7958870  0.7747994  1.0272169   0.8478324   0.9387315</co
 7 day12 0.821 0.810 0.904 0.905 0.944 0.958 1    </code></pre>
 </div>
 </div>
-</section><section id="example-exercise-therapy-trial-categorical-time-3" class="slide level2"><h2>Example: Exercise therapy trial (categorical time)</h2>
+</section><section id="example-exercise-therapy-trial-categorical-time-2" class="slide level2"><h2>Example: Exercise therapy trial (categorical time)</h2>
 <p>We can also look at the estimate of the marginal variance under our assumption that it takes on a Normal/Gaussian form:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="do">## scale = marginal variance ##</span></span>

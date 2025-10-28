@@ -69,6 +69,26 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-8-1/slides-8-1")
 
 ## Roadmap
 
+- Recap: non-longitudinal GLMMs
+
+- Interpretation of GLMM $\beta$s when adding time as a fixed effect
+
+- Adding random slopes to a GLMM
+
+   - How this changes the outcome covariance matrix (math optional)
+   
+- Data example
+
+   - Interpretations of $\beta$s under GLMM with random intercepts *and* slopes
+   
+   - Calculating simple slopes/linear constrasts
+   
+   - How variance/covariance changes with time
+   
+- Appendices
+
+   - Other ways to account for longitudinal correlation in mixed effect-type models
+
 
 ---
 
@@ -78,7 +98,7 @@ The last few weeks we've talked about how longitudinal data impacts our [correla
 
 - Exchangeable, Toeplitz, autoregressive, exponential, unstructured...
 
-But how do we apply correlation/covariance structures to a modeling framework?
+**But how do we apply correlation/covariance structures to a modeling framework?**
 
 - Two ways:
 
@@ -104,7 +124,14 @@ $$g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}$$
 
 - We called $b_{0i}$ the [random intercept]{.alert}
 
-The random intercept induced an [exchangeable]{.alert} covariance matrix:
+---
+
+## Recap: Non-longitudinal GLMMs
+
+<br>
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}$$
+
+Including a random intercept induced an [exchangeable]{.alert} covariance matrix:
 $$\begin{align*}Cov[\vec{Y}_i] &= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
 &=\begin{bmatrix}
 \sigma^2_b & \sigma^2_b & \dots & \sigma^2_b\\
@@ -123,16 +150,22 @@ $$\begin{align*}Cov[\vec{Y}_i] &= [\text{cluster-to-cluster variation}] + [\text
 \sigma^2_b & \dots & \sigma^2_b & \sigma^2_b + \sigma^2_\epsilon
 \end{bmatrix}\end{align*}$$
 
+- $\sigma^2_\epsilon$: within-cluster member-to-member variance
+
+- $\sigma^2_b$: cluster-to-cluster variation
+
+- $\sigma^2_b + \sigma^2_\epsilon$: total variance
+
 ---
 
 ## Recap: Non-longitudinal GLMMs
 
-Recall the random effects model we used for non-longitudinal clustered data:
+<br>
 $$g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}$$
 
-If the correlation between 2 outcome observations in cluster *i* is: $$Corr[Y_{ij}, Y_{ik}] = \sigma^2_b/(\sigma^2_b + \sigma^2_\epsilon) = \sigma^2_b/\sigma^2= \alpha,$$ we can rewrite the covariance matrix $Cov[\vec{Y}_i]$ as:
+We can approximate the [correlation]{.alert} between 2 outcome observations in cluster *i* via the [ICC]{.alert}: $$Corr[Y_{ij}, Y_{ik}] = \sigma^2_b/(\sigma^2_b + \sigma^2_\epsilon) = \sigma^2_b/\sigma^2= \alpha,$$ we can rewrite the covariance matrix $Cov[\vec{Y}_i]$ as:
 
-$$\sigma^2\begin{bmatrix}
+$$[marginal variance] \times [correlation structure] = \sigma^2\begin{bmatrix}
 1 & \alpha & \dots & \alpha\\
 \alpha& \ddots & \dots & \alpha\\
 \vdots & \dots & \ddots & \vdots\\
@@ -145,7 +178,7 @@ which looks much more like the exchangeable covariance structure we see in GEEs!
 
 ## Recap: Non-longitudinal GLMMs
 
-Recall the random effects model we used for non-longitudinal clustered data:
+<br>
 $$g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}$$
 
 :::: {.columns}
@@ -159,21 +192,24 @@ $$b_{0i} \sim N(0, \sigma^2_b) ~~~~~~~ \epsilon_{ij} \sim (0, \sigma^2_{\epsilon
 
 ::: {.column width="50%"}
 Or to write more generally:
-$$Cov[\vec{Y}_i] = \vec{Z}_i\boldsymbol{G}\vec{Z}_i^T + \boldsymbol{R_i}$$
+$$Cov[\vec{Y}_i] = \vec{Z}_i\boldsymbol{G}\vec{Z}_i^T + \boldsymbol{R_i},$$
+where:
 
-<br>
+- $\boldsymbol{G}$ is the covariance matrix for the random effects $b_i$
 
-[With this reminder of how non-longitudinal GLMMs work, now let's try to extend them to work with longitudinal data measured over time]{.alert}
+- $\boldsymbol{R}_i$ is the covariance matrix for the within-cluster individual variation $\epsilon_{ij}$
+
 :::
 ::::
 
+[With this reminder of how non-longitudinal GLMMs work, now let's try to extend them to work with longitudinal data measured over time]{.alert}
 
 ---
 
 ## Longitudinal GLMMs
 
-Let's start by just adding a covariate for time (could also include interaction but leaving it off here to focus on main effect interpretations):
-$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}$$
+Let's start by just adding a covariate for time to a model of a continuous, Normal outcome (could add exposure-by-time interaction, but focusing on main effects here for simplicity):
+$$Y_{ij} = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}$$
 
 What is the interpretation of:
 
@@ -181,15 +217,34 @@ What is the interpretation of:
 
 <br>
 
-- $\beta_0 + b_{0i}$:
+- $\beta_0 + b_{0i}$: 
 
 <br>
 
-- $\beta_1$:
+- $\beta_1$: 
 
 <br>
 
-- $\beta_2$:
+- $\beta_2$: 
+
+
+---
+
+## Longitudinal GLMMs
+
+Let's start by just adding a covariate for time to a model of a continuous, Normal outcome (could add exposure-by-time interaction, but focusing on main effects here for simplicity):
+$$Y_{ij} = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}$$
+
+What is the interpretation of:
+
+- $\beta_0$: The average outcome at baseline under the unexposed/reference condition for variable $U$
+
+- $\beta_0 + b_{0i}$: The average outcome for persion *i* at baseline under the unexposed/reference condition for variable $U$
+
+- $\beta_1$: The average difference in outcomes between the unexposed/reference and exposed conditions, both measured at the same timepoint
+
+- $\beta_2$: Within the same person, the average difference in outcomes that are measured one time unit apart under the same condition ([within-person rate of change]{.underline})
+
 
 ---
 
@@ -249,9 +304,19 @@ Consider a model with intercepts [and slopes]{.alert} that vary randomly among i
 
 $$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_{i0} + \color{green}{b_{1i}(\text{Time}_{ij})} + \epsilon_{ij}$$
 
+:::: {.columns}
+::: {.column width="40%"}
+![](rand-slope.png)
+:::
+
+::: {.column width="60%"}
 - This model suggests that individuals vary not only in their baseline level of response (when $t_{i1} = 0$), but also in terms of their changes in the response over time
 
-![](rand-slope.png){width="40%"}
+<br>
+
+- This doesn't change the interpretation of any of the $\beta$'s (should still be subject/cluster-specific), just allows for variance to come from an additional source (here, time)
+:::
+::::
 
 ---
 
@@ -273,40 +338,56 @@ $$Cov[b_{0i}, b_{1i}] = \sigma_{b0,b1}$$
 
 ---
 
+## Random slope and intercept model: matrix notation
+
+$$g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_{i0} + \color{green}{b_{1i}(\text{Time}_{ij})} + \epsilon_{ij}$$
+
+Often, we can rewrite this model more compactly in matrix notation:
+
+$$g(\vec{Y}_{i}) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_i + \vec\epsilon_{i},$$
+where
+
+$$\boldsymbol{X}_i = \begin{bmatrix}1 & U_{i0}\\
+1 & U_{i1}\\
+\vdots & \\
+1 & U_{in}\end{bmatrix}~~~ \vec\beta = \begin{bmatrix}\beta_0\\
+\beta_1\end{bmatrix} ~~~ \boldsymbol{Z}_i = \begin{bmatrix}1 & \text{Time}_{i1}\\
+1 & \text{Time}_{i1}\\
+\vdots \\
+1 & \text{Time}_{in}\end{bmatrix} ~~~ \vec b_i = \begin{bmatrix}b_{i0}\\
+b_{i1}\end{bmatrix} ~~~ \vec\epsilon_i = \begin{bmatrix}\epsilon_{i1}\\
+\vdots\\
+\epsilon_{in}\end{bmatrix}$$
+
+
+---
+
 ## Variance/covariance of random effects
 
-In fact, the vector of random effects, $\vec{b}_i$, are assumed to have a [multivariate normal distribution]{.alert} with mean zero and covariance matrix $\boldsymbol{G}$ (a fancy way of saying "distributed Normal with non-0 covariance")
+The vector of random effects, $\vec{b}_i$, are assumed to be distributed Normally with mean zero and covariance matrix $\boldsymbol{G}$ 
 
-$$\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})$$
+$$\vec{b}_i \sim N(\vec{0}, \boldsymbol{G})$$
 
-:::: {.columns}
-::: {.column width="50%"}
+<br>
+
 For example, in the random intercepts and slopes model we considered earlier, we might write the covariance matrix between the random intercepts and slopes to be:
 $$\boldsymbol{G}=Cov[b_{0i}, b_{1i}]=\begin{bmatrix}
 \sigma^2_{b0} & \sigma_{b0,b1}\\
 \sigma_{b0,b1} &  \sigma^2_{b1}\end{bmatrix}$$
-:::
 
-::: {.column width="50%"}
-Could also re-formulate $Cov[b_{0i}, b_{1i}]$ to be $\alpha\sigma^*_{b0,b1}$, which would get us:
-$$\boldsymbol{G} = \begin{bmatrix}
-\sigma^2_{b0} & \alpha\sigma^*_{b0,b1}\\
-\alpha\sigma^*_{b0,b1} &  \sigma^2_{b1}\end{bmatrix}$$
-:::
-::::
 
 ---
 
 ## Variance/covariance of the outcome
 
-What does this mean for the covariance matrix of the outcome?
+What does this mean for the covariance matrix of the [outcome]{.underline}?
 
 If we assume the within-individual errors are independent, then the [variance of a single outcome measure]{.alert} is:
 $$\begin{align*}Var[Y_{ij}] &= Var[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}]\\
 &= Var[\boldsymbol{Z}_i \vec{b}_{i}+\epsilon_{ij}]\\
 &= Var[\vec{Z}_{1i} b_{0i} + (\text{Time}_{ij}) b_{1i} +\epsilon_{ij}]\\
 &= Var[\vec{Z}_{1i} b_{0i}] + Var[(\text{Time}_{ij}) b_{1i}] + 2Cov[\vec{Z}_{1i} b_{0i}, (\text{Time}_{ij}) b_{1i}]+Var[\epsilon_{ij}]\\
-&= \sigma^2_{b0} + (\text{Time}_{ij})^2\sigma^2_{b1}+ 2(\text{Time}_{ij})\sigma_{b0,b1} + \sigma^2_{\epsilon}\end{align*}$$
+&= \sigma^2_{b0} + [\text{Time}_{ij})^2\sigma^2_{b1}+ 2(\text{Time}_{ij}]\sigma_{b0,b1} + \sigma^2_{\epsilon}\end{align*}$$
 
 [The variance of our outcome can change with time!]{.alert}
 
@@ -314,7 +395,7 @@ $$\begin{align*}Var[Y_{ij}] &= Var[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_
 
 ## Variance/covariance of the outcome
 
-What does this mean for the covariance matrix of the outcome?
+What does this mean for the covariance matrix of the [outcome]{.underline}?
 
 If we assume the within-individual errors are independent, then the variance of a single outcome measure is:
 $$Var[Y_{ij}] = \sigma^2_{b0} + (\text{Time}_{ij})^2\sigma^2_{b1}+ 2(\text{Time}_{ij})\sigma_{b0,b1} + \sigma^2_{\epsilon}$$
@@ -324,7 +405,7 @@ And the covariance between 2 outcome measures in the same cluster is:
 $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= Cov[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}, \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ik}]\\
 &= Cov[\vec{Z}_{1i}b_{0i} +(\text{Time}_{ij})b_{1i}+\epsilon_{ij}, \vec{Z}_{1i}b_{0i}+(\text{Time}_{ik})b_{1i}+\epsilon_{ik}]\\
 &\dots\\
-&= \sigma^2_{b0} + ((\text{Time}_{ij}) + (\text{Time}_{ik}))\sigma_{b0,b1} + (\text{Time}_{ij})(\text{Time}_{ik})\sigma^2_{b1}\end{align*}$$
+&= \sigma^2_{b0} + [(\text{Time}_{ij}) + (\text{Time}_{ik})]\sigma_{b0,b1} + (\text{Time}_{ij})(\text{Time}_{ik})\sigma^2_{b1}\end{align*}$$
 
 [The covariance between outcomes in a cluster also changes with time!]{.alert}
 
@@ -354,6 +435,8 @@ In general, [any slope $\beta$ from our fixed effects]{.alert} can be allowed to
 ## Random effects & correlation structures
 
 When we just had random intercepts it was very clear how this created an exchangeable correlation/covariance matrix
+
+<br>
 
 [Do we get a similar result when we add random slopes?]{.alert}
 
@@ -387,8 +470,8 @@ Recall the exercise therapy trial from last week:
 
 $$\text{body strength}_{ij} = \beta_0 + \beta_1(\text{Program}_i) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Program}_i \times \text{Time}_{ij}) + b_{0i}(\text{ID}_i) + b_{1i}(\text{Time}_{ij}) + \epsilon_{ij}$$
 
-$$\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})$$
-$$\vec{\epsilon}_i \sim (\vec{0}, \sigma^2_\epsilon\boldsymbol{I})$$
+$$\vec{b}_i \sim N(\vec{0}, \boldsymbol{G})$$
+$$\vec{\epsilon}_i \sim (\vec{0}, \boldsymbol{R}_i=\sigma^2_\epsilon\boldsymbol{I})$$
 
 ---
 
@@ -431,18 +514,112 @@ exercise_lme <- lmer(strength~PROGRAM*time + (time | ID),
                       data = exercise_long)
 summary(exercise_lme)
 ```
-:::
-
-::: {.column width="45%"}
 ```{r exercise lme2, echo=F}
 library(lme4)
 
 exercise_lme <- lmer( strength ~ PROGRAM*time + (time | ID),
                       data = exercise_long )
+exercise_lme_ci <-confint(exercise_lme)
+b23_L <- c(0,0,1,1)
+b13_L <- c(0,1,0,1)
+
+b23_ci_l <- b23_L %*%summary(exercise_lme)$coef[,1]  - qnorm(0.975)*t(b23_L)%*%summary(exercise_lme)$vcov%*%b23_L
+b23_ci_u <- b23_L %*%summary(exercise_lme)$coef[,1] + qnorm(0.975)*t(b23_L)%*%summary(exercise_lme)$vcov%*%b23_L
+
+b13_ci_l <- b13_L %*%summary(exercise_lme)$coef[,1] - qnorm(0.975)*t(b13_L)%*%summary(exercise_lme)$vcov%*%b13_L
+b13_ci_u <- b13_L %*%summary(exercise_lme)$coef[,1] + qnorm(0.975)*t(b13_L)%*%summary(exercise_lme)$vcov%*%b13_L
+```
+
+
+What's the interpretation of:
+
+- $\beta_1$ (Program): 
+
+<br>
+
+- $\beta_2$ (Time): 
+
+<br>
+
+- $\beta_3$ (interaction): 
+:::
+
+::: {.column width="45%"}
+```{r exercise lme3, echo=F}
 summary(exercise_lme)
 ```
 :::
 ::::
+
+---
+
+## Example: Exercise therapy trial
+
+:::: {.columns}
+::: {.column width="55%"}
+
+What's the interpretation of:
+
+- $\beta_1$ (Program): The average difference in strength between programs 2 and 1 at baseline is `r round(summary(exercise_lme)$coef[2,1],3)`. We are 95% confident the true difference is between $\widehat\beta_1 \pm 1.96\times$ `r round(summary(exercise_lme)$coef[2,2],3)` = (`r round(exercise_lme_ci[6,1], 3)`, `r round(exercise_lme_ci[6,2], 3)`).
+
+- $\beta_2$ (Time): Within the same person in Program 1 (reference group), the average difference in strength measured 1 day apart is `r round(summary(exercise_lme)$coef[3,1],3)`. We are 95% confident the true difference is between $\widehat\beta_2 \pm 1.96\times$ `r round(summary(exercise_lme)$coef[3,2],3)` = (`r round(exercise_lme_ci[7,1], 3)`, `r round(exercise_lme_ci[7,2], 3)`).
+
+- $\beta_3$ (interaction): Within the same person, the average difference in strength rates of change between Program 2 and Program 1 is `r round(summary(exercise_lme)$coef[4,1],3)`. We are 95% confident the true difference is between $\widehat\beta_2 \pm 1.96\times$ `r round(summary(exercise_lme)$coef[4,2],3)` = (`r round(exercise_lme_ci[8,1], 3)`, `r round(exercise_lme_ci[8,2], 3)`).
+:::
+
+::: {.column width="45%"}
+```{r exercise lme4, echo=F}
+summary(exercise_lme)
+```
+:::
+::::
+
+---
+
+## Example: Exercise therapy trial
+
+:::: {.columns}
+::: {.column width="55%"}
+What about the combinations of Program/Time and the interaction?
+
+- $(\beta_2 + \beta_3)$: [Within the same person in Program 2, the average difference in strength measured 1 day apart is `r round(summary(exercise_lme)$coef[3,1] + summary(exercise_lme)$coef[4,1],3)`. We are 95% confident the true difference is between $\widehat\beta_2 + \widehat\beta_3 \pm 1.96\times$ `r round(t(b23_L)%*%summary(exercise_lme)$vcov%*%b23_L, 3)` = (`r round(b23_ci_l, 3)`, `r round(b23_ci_u, 3)`).]{.fragment fragment-index=1}
+
+<br>
+
+- $(\beta_1 + \beta_3)$: [Within the same person, the average difference in strength in Programs 2 and 1, measured on the same day is `r round(summary(exercise_lme)$coef[2,1] + summary(exercise_lme)$coef[4,1],3)`. We are 95% confident the true difference is between $\widehat\beta_2 + \widehat\beta_3 \pm 1.96\times$ `r round(t(b13_L)%*%summary(exercise_lme)$vcov%*%b13_L, 3)` = (`r round(b13_ci_l, 3)`, `r round(b13_ci_u, 3)`).]{.fragment fragment-index=1}
+
+[Where are we getting the standard errors from? Linear contrasts!]{.alert .fragment fragment-index=2}
+:::
+
+
+::: {.column width="45%"}
+```{r exercise lme5, echo=F}
+summary(exercise_lme)
+```
+:::
+::::
+
+---
+
+## Example: Exercise therapy trial
+
+Standard error for $\widehat\beta_2 + \widehat\beta_3$:
+
+1. Create contrast vector: $L=(0,0,1,1)$
+
+2. Get the coefficient variance-covariance matrix:
+```{r vcov}
+summary(exercise_lme)$vcov
+```
+
+
+3. Multiply the coefficient variance-covariance matrix `summary(exercise_lme)$vcov` by the contrast vector
+```{r vcov2}
+b23_L <- c(0,0,1,1)
+
+b23_SE <- t(b23_L) %*% summary(exercise_lme)$vcov %*% b23_L
+b23_SE
+```
 
 ---
 
@@ -453,7 +630,7 @@ We can also get estimates of the random effects covariance matrix:
 VarCorr(exercise_lme)[["ID"]]
 ```
 
-And we can estimate the variance of an outcome at a particular time:
+And use these to estimate the variance of an outcome at a particular time:
 $$\begin{align*}Var[Y_{ij}] &= \sigma^2_{b0} + (\text{Time}_{ij})^2\sigma^2_{b1}+ 2(\text{Time}_{ij})\sigma_{b0,b1} + \sigma^2_{\epsilon}\\
 &= 9.953 + (\text{Time}_{ij})^20.034 + 2(\text{Time}_{ij})(-0.017) + \sigma^2_\epsilon\end{align*}$$
 
@@ -466,7 +643,7 @@ We can also get estimates of the random effects covariance matrix:
 VarCorr(exercise_lme)[["ID"]]
 ```
 
-And the covariance between outcomes at different times:
+As well as the covariance between outcomes at different times:
 
 :::: {.columns}
 ::: {.column width="50%}
@@ -489,6 +666,28 @@ $$\begin{align*}Cov[Y_{ij}, Y_{ik}] &= \sigma^2_{b0} + ((\text{Time}_{ij}) + (\t
 ::: {.absolute top=250 right=100 width="45%"}
 [The covariance is decreasing with increased distance between time points!]{.alert}
 :::
+
+---
+
+## Take home messages
+
+<br>
+
+- We can account for non-exchangeable types of correlation in a GLMM by adding [random slopes]{.alert} for time
+
+<br>
+
+- Adding random slopes allows for total variance and covariance to change with time (unlike GEEs)
+
+<br>
+
+- Interpretation of model cofficients continues to be conditional "within-cluster" interpretation
+
+   - Fixed effects time slope interpreted as a [person-specific]{.underline} outcome trajectory
+
+---
+
+# Appendices
 
 ---
 
@@ -572,40 +771,6 @@ Interpreting the output:
 - `nugget`: if this is 0, there's no measurement error
 :::
 ::::
-
----
-
-## Example: Exercise therapy trial
-
-Comparing hybrid and random slopes models:
-
-:::: {.columns}
-::: {.column width="50%"}
-```{r hybrid 2}
-summary(exercise_hybrid)$tTable[,1:4]
-```
-:::
-
-::: {.column width="50%"}
-```{r slopes 2}
-summary(exercise_lme)$coef
-```
-:::
-::::
-
-$$E[\text{body strength}_{ij} | \boldsymbol{X}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Program}_i \times \text{Time}_{ij})$$
-
-- $\beta_0$: 
-
-- $\beta_1$: 
-
-- $\beta_2$: 
-
-- $(\beta_2 + \beta_3)$: 
-
-- $(\beta_1 + \beta_3)$: 
-
-- $\beta_3$: 
 
 ---
 

@@ -422,12 +422,35 @@ October 27, 2025
 </div>
 </div>
 </section><section id="roadmap" class="slide level2"><h2>Roadmap</h2>
-</section><section id="concepts-to-practice" class="slide level2"><h2>Concepts to practice</h2>
+<ul>
+<li><p>Recap: non-longitudinal GLMMs</p></li>
+<li><p>Interpretation of GLMM <span class="math inline">\(\beta\)</span>s when adding time as a fixed effect</p></li>
+<li>
+<p>Adding random slopes to a GLMM</p>
+<ul>
+<li>How this changes the outcome covariance matrix (math optional)</li>
+</ul>
+</li>
+<li>
+<p>Data example</p>
+<ul>
+<li><p>Interpretations of <span class="math inline">\(\beta\)</span>s under GLMM with random intercepts <em>and</em> slopes</p></li>
+<li><p>Calculating simple slopes/linear constrasts</p></li>
+<li><p>How variance/covariance changes with time</p></li>
+</ul>
+</li>
+<li>
+<p>Appendices</p>
+<ul>
+<li>Other ways to account for longitudinal correlation in mixed effect-type models</li>
+</ul>
+</li>
+</ul></section><section id="concepts-to-practice" class="slide level2"><h2>Concepts to practice</h2>
 <p>The last few weeks we’ve talked about how longitudinal data impacts our <span class="alert">correlation/covariance matrix</span>, and the types of correlation structures that may be appropriate</p>
 <ul>
 <li>Exchangeable, Toeplitz, autoregressive, exponential, unstructured…</li>
 </ul>
-<p>But how do we apply correlation/covariance structures to a modeling framework?</p>
+<p><strong>But how do we apply correlation/covariance structures to a modeling framework?</strong></p>
 <ul>
 <li>
 <p>Two ways:</p>
@@ -447,8 +470,9 @@ October 27, 2025
 <ul>
 <li><p>Where we assumed that each cluster had it’s own <u>cluster-specific mean</u> (<span class="math inline">\(\beta_0 + b_{0i}\)</span>) that varied by some <span class="math inline">\(b_{0i}\)</span> around the overall sample mean <span class="math inline">\(\beta_0\)</span></p></li>
 <li><p>We called <span class="math inline">\(b_{0i}\)</span> the <span class="alert">random intercept</span></p></li>
-</ul>
-<p>The random intercept induced an <span class="alert">exchangeable</span> covariance matrix: <span class="math display">\[\begin{align*}Cov[\vec{Y}_i] &amp;= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
+</ul></section><section id="recap-non-longitudinal-glmms-1" class="slide level2"><h2>Recap: Non-longitudinal GLMMs</h2>
+<p><br><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
+<p>Including a random intercept induced an <span class="alert">exchangeable</span> covariance matrix: <span class="math display">\[\begin{align*}Cov[\vec{Y}_i] &amp;= [\text{cluster-to-cluster variation}] + [\text{within-cluster member-to-member variation}]\\
 &amp;=\begin{bmatrix}
 \sigma^2_b &amp; \sigma^2_b &amp; \dots &amp; \sigma^2_b\\
 \sigma^2_b &amp; \ddots &amp; \dots &amp; \sigma^2_b\\
@@ -465,18 +489,22 @@ October 27, 2025
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
 \sigma^2_b &amp; \dots &amp; \sigma^2_b &amp; \sigma^2_b + \sigma^2_\epsilon
 \end{bmatrix}\end{align*}\]</span></p>
-</section><section id="recap-non-longitudinal-glmms-1" class="slide level2"><h2>Recap: Non-longitudinal GLMMs</h2>
-<p>Recall the random effects model we used for non-longitudinal clustered data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
-<p>If the correlation between 2 outcome observations in cluster <em>i</em> is: <span class="math display">\[Corr[Y_{ij}, Y_{ik}] = \sigma^2_b/(\sigma^2_b + \sigma^2_\epsilon) = \sigma^2_b/\sigma^2= \alpha,\]</span> we can rewrite the covariance matrix <span class="math inline">\(Cov[\vec{Y}_i]\)</span> as:</p>
-<p><span class="math display">\[\sigma^2\begin{bmatrix}
+<ul>
+<li><p><span class="math inline">\(\sigma^2_\epsilon\)</span>: within-cluster member-to-member variance</p></li>
+<li><p><span class="math inline">\(\sigma^2_b\)</span>: cluster-to-cluster variation</p></li>
+<li><p><span class="math inline">\(\sigma^2_b + \sigma^2_\epsilon\)</span>: total variance</p></li>
+</ul></section><section id="recap-non-longitudinal-glmms-2" class="slide level2"><h2>Recap: Non-longitudinal GLMMs</h2>
+<p><br><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
+<p>We can approximate the <span class="alert">correlation</span> between 2 outcome observations in cluster <em>i</em> via the <span class="alert">ICC</span>: <span class="math display">\[Corr[Y_{ij}, Y_{ik}] = \sigma^2_b/(\sigma^2_b + \sigma^2_\epsilon) = \sigma^2_b/\sigma^2= \alpha,\]</span> we can rewrite the covariance matrix <span class="math inline">\(Cov[\vec{Y}_i]\)</span> as:</p>
+<p><span class="math display">\[[marginal variance] \times [correlation structure] = \sigma^2\begin{bmatrix}
 1 &amp; \alpha &amp; \dots &amp; \alpha\\
 \alpha&amp; \ddots &amp; \dots &amp; \alpha\\
 \vdots &amp; \dots &amp; \ddots &amp; \vdots\\
 \alpha &amp; \dots &amp; \alpha &amp; 1
 \end{bmatrix},\]</span></p>
 <p>which looks much more like the exchangeable covariance structure we see in GEEs!</p>
-</section><section id="recap-non-longitudinal-glmms-2" class="slide level2"><h2>Recap: Non-longitudinal GLMMs</h2>
-<p>Recall the random effects model we used for non-longitudinal clustered data: <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
+</section><section id="recap-non-longitudinal-glmms-3" class="slide level2"><h2>Recap: Non-longitudinal GLMMs</h2>
+<p><br><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{ij} + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>We could also express the covariance matrix using matrix notation: <span class="math display">\[Cov[\vec{Y}_i] = \vec{Z}_i\sigma^2_b\boldsymbol{1}\vec{Z}_i^T + \sigma^2_\epsilon \boldsymbol{I}\]</span></p>
@@ -485,13 +513,16 @@ October 27, 2025
 </li>
 </ul>
 </div><div class="column" style="width:50%;">
-<p>Or to write more generally: <span class="math display">\[Cov[\vec{Y}_i] = \vec{Z}_i\boldsymbol{G}\vec{Z}_i^T + \boldsymbol{R_i}\]</span></p>
-<p><br></p>
+<p>Or to write more generally: <span class="math display">\[Cov[\vec{Y}_i] = \vec{Z}_i\boldsymbol{G}\vec{Z}_i^T + \boldsymbol{R_i},\]</span> where:</p>
+<ul>
+<li><p><span class="math inline">\(\boldsymbol{G}\)</span> is the covariance matrix for the random effects <span class="math inline">\(b_i\)</span></p></li>
+<li><p><span class="math inline">\(\boldsymbol{R}_i\)</span> is the covariance matrix for the within-cluster individual variation <span class="math inline">\(\epsilon_{ij}\)</span></p></li>
+</ul>
+</div>
+</div>
 <p><span class="alert">With this reminder of how non-longitudinal GLMMs work, now let’s try to extend them to work with longitudinal data measured over time</span></p>
-</div>
-</div>
 </section><section id="longitudinal-glmms" class="slide level2"><h2>Longitudinal GLMMs</h2>
-<p>Let’s start by just adding a covariate for time (could also include interaction but leaving it off here to focus on main effect interpretations): <span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
+<p>Let’s start by just adding a covariate for time to a model of a continuous, Normal outcome (could add exposure-by-time interaction, but focusing on main effects here for simplicity): <span class="math display">\[Y_{ij} = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
 <p>What is the interpretation of:</p>
 <ul>
 <li>
@@ -512,6 +543,14 @@ October 27, 2025
 <li>
 <span class="math inline">\(\beta_2\)</span>:</li>
 </ul></section><section id="longitudinal-glmms-1" class="slide level2"><h2>Longitudinal GLMMs</h2>
+<p>Let’s start by just adding a covariate for time to a model of a continuous, Normal outcome (could add exposure-by-time interaction, but focusing on main effects here for simplicity): <span class="math display">\[Y_{ij} = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
+<p>What is the interpretation of:</p>
+<ul>
+<li><p><span class="math inline">\(\beta_0\)</span>: The average outcome at baseline under the unexposed/reference condition for variable <span class="math inline">\(U\)</span></p></li>
+<li><p><span class="math inline">\(\beta_0 + b_{0i}\)</span>: The average outcome for persion <em>i</em> at baseline under the unexposed/reference condition for variable <span class="math inline">\(U\)</span></p></li>
+<li><p><span class="math inline">\(\beta_1\)</span>: The average difference in outcomes between the unexposed/reference and exposed conditions, both measured at the same timepoint</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span>: Within the same person, the average difference in outcomes that are measured one time unit apart under the same condition (<u>within-person rate of change</u>)</p></li>
+</ul></section><section id="longitudinal-glmms-2" class="slide level2"><h2>Longitudinal GLMMs</h2>
 <p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -530,7 +569,7 @@ October 27, 2025
 </ul>
 </div>
 </div>
-</section><section id="longitudinal-glmms-2" class="slide level2"><h2>Longitudinal GLMMs</h2>
+</section><section id="longitudinal-glmms-3" class="slide level2"><h2>Longitudinal GLMMs</h2>
 <p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_i+\epsilon_{ij}\]</span></p>
 <p>Inclusion of only <span class="alert">random intercepts</span> assumes that, though everyone may randomly vary around some global baseline, everyone has the <span class="alert">same outcome trajectory</span> over time</p>
 <div class="columns">
@@ -549,10 +588,19 @@ October 27, 2025
 </section><section id="random-slope-and-intercept-model" class="slide level2"><h2>Random slope and intercept model</h2>
 <p>Consider a model with intercepts <span class="alert">and slopes</span> that vary randomly among individuals:</p>
 <p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_{i0} + \color{green}{b_{1i}(\text{Time}_{ij})} + \epsilon_{ij}\]</span></p>
+<div class="columns">
+<div class="column" style="width:40%;">
+<p><img data-src="rand-slope.png"></p>
+</div><div class="column" style="width:60%;">
 <ul>
 <li>This model suggests that individuals vary not only in their baseline level of response (when <span class="math inline">\(t_{i1} = 0\)</span>), but also in terms of their changes in the response over time</li>
 </ul>
-<p><img data-src="rand-slope.png" style="width:40.0%"></p>
+<p><br></p>
+<ul>
+<li>This doesn’t change the interpretation of any of the <span class="math inline">\(\beta\)</span>’s (should still be subject/cluster-specific), just allows for variance to come from an additional source (here, time)</li>
+</ul>
+</div>
+</div>
 </section><section id="random-slope-and-intercept-model-1" class="slide level2"><h2>Random slope and intercept model</h2>
 <p>Consider a model with intercepts <span class="alert">and slopes</span> that vary randomly among individuals:</p>
 <p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_{i0} + \color{green}{b_{1i}(\text{Time}_{ij})} + \epsilon_{ij}\]</span></p>
@@ -561,35 +609,43 @@ October 27, 2025
 <p>We also assume that the random intercepts and slopes covary: <span class="math display">\[Cov[b_{0i}, b_{1i}] = \sigma_{b0,b1}\]</span></p>
 <ul>
 <li>The random slopes and intercepts (may) not be independent!</li>
-</ul></section><section id="variancecovariance-of-random-effects" class="slide level2"><h2>Variance/covariance of random effects</h2>
-<p>In fact, the vector of random effects, <span class="math inline">\(\vec{b}_i\)</span>, are assumed to have a <span class="alert">multivariate normal distribution</span> with mean zero and covariance matrix <span class="math inline">\(\boldsymbol{G}\)</span> (a fancy way of saying “distributed Normal with non-0 covariance”)</p>
-<p><span class="math display">\[\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})\]</span></p>
-<div class="columns">
-<div class="column" style="width:50%;">
+</ul></section><section id="random-slope-and-intercept-model-matrix-notation" class="slide level2"><h2>Random slope and intercept model: matrix notation</h2>
+<p><span class="math display">\[g(Y_{ij}) = \beta_0 + \beta_1U_{i0} + \beta_2(\text{Time}_{ij}) + b_{0i}Z_{i0} + \color{green}{b_{1i}(\text{Time}_{ij})} + \epsilon_{ij}\]</span></p>
+<p>Often, we can rewrite this model more compactly in matrix notation:</p>
+<p><span class="math display">\[g(\vec{Y}_{i}) = \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_i + \vec\epsilon_{i},\]</span> where</p>
+<p><span class="math display">\[\boldsymbol{X}_i = \begin{bmatrix}1 &amp; U_{i0}\\
+1 &amp; U_{i1}\\
+\vdots &amp; \\
+1 &amp; U_{in}\end{bmatrix}~~~ \vec\beta = \begin{bmatrix}\beta_0\\
+\beta_1\end{bmatrix} ~~~ \boldsymbol{Z}_i = \begin{bmatrix}1 &amp; \text{Time}_{i1}\\
+1 &amp; \text{Time}_{i1}\\
+\vdots \\
+1 &amp; \text{Time}_{in}\end{bmatrix} ~~~ \vec b_i = \begin{bmatrix}b_{i0}\\
+b_{i1}\end{bmatrix} ~~~ \vec\epsilon_i = \begin{bmatrix}\epsilon_{i1}\\
+\vdots\\
+\epsilon_{in}\end{bmatrix}\]</span></p>
+</section><section id="variancecovariance-of-random-effects" class="slide level2"><h2>Variance/covariance of random effects</h2>
+<p>The vector of random effects, <span class="math inline">\(\vec{b}_i\)</span>, are assumed to be distributed Normally with mean zero and covariance matrix <span class="math inline">\(\boldsymbol{G}\)</span></p>
+<p><span class="math display">\[\vec{b}_i \sim N(\vec{0}, \boldsymbol{G})\]</span></p>
+<p><br></p>
 <p>For example, in the random intercepts and slopes model we considered earlier, we might write the covariance matrix between the random intercepts and slopes to be: <span class="math display">\[\boldsymbol{G}=Cov[b_{0i}, b_{1i}]=\begin{bmatrix}
 \sigma^2_{b0} &amp; \sigma_{b0,b1}\\
 \sigma_{b0,b1} &amp;  \sigma^2_{b1}\end{bmatrix}\]</span></p>
-</div><div class="column" style="width:50%;">
-<p>Could also re-formulate <span class="math inline">\(Cov[b_{0i}, b_{1i}]\)</span> to be <span class="math inline">\(\alpha\sigma^*_{b0,b1}\)</span>, which would get us: <span class="math display">\[\boldsymbol{G} = \begin{bmatrix}
-\sigma^2_{b0} &amp; \alpha\sigma^*_{b0,b1}\\
-\alpha\sigma^*_{b0,b1} &amp;  \sigma^2_{b1}\end{bmatrix}\]</span></p>
-</div>
-</div>
 </section><section id="variancecovariance-of-the-outcome" class="slide level2"><h2>Variance/covariance of the outcome</h2>
-<p>What does this mean for the covariance matrix of the outcome?</p>
+<p>What does this mean for the covariance matrix of the <u>outcome</u>?</p>
 <p>If we assume the within-individual errors are independent, then the <span class="alert">variance of a single outcome measure</span> is: <span class="math display">\[\begin{align*}Var[Y_{ij}] &amp;= Var[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}]\\
 &amp;= Var[\boldsymbol{Z}_i \vec{b}_{i}+\epsilon_{ij}]\\
 &amp;= Var[\vec{Z}_{1i} b_{0i} + (\text{Time}_{ij}) b_{1i} +\epsilon_{ij}]\\
 &amp;= Var[\vec{Z}_{1i} b_{0i}] + Var[(\text{Time}_{ij}) b_{1i}] + 2Cov[\vec{Z}_{1i} b_{0i}, (\text{Time}_{ij}) b_{1i}]+Var[\epsilon_{ij}]\\
-&amp;= \sigma^2_{b0} + (\text{Time}_{ij})^2\sigma^2_{b1}+ 2(\text{Time}_{ij})\sigma_{b0,b1} + \sigma^2_{\epsilon}\end{align*}\]</span></p>
+&amp;= \sigma^2_{b0} + [\text{Time}_{ij})^2\sigma^2_{b1}+ 2(\text{Time}_{ij}]\sigma_{b0,b1} + \sigma^2_{\epsilon}\end{align*}\]</span></p>
 <p><span class="alert">The variance of our outcome can change with time!</span></p>
 </section><section id="variancecovariance-of-the-outcome-1" class="slide level2"><h2>Variance/covariance of the outcome</h2>
-<p>What does this mean for the covariance matrix of the outcome?</p>
+<p>What does this mean for the covariance matrix of the <u>outcome</u>?</p>
 <p>If we assume the within-individual errors are independent, then the variance of a single outcome measure is: <span class="math display">\[Var[Y_{ij}] = \sigma^2_{b0} + (\text{Time}_{ij})^2\sigma^2_{b1}+ 2(\text{Time}_{ij})\sigma_{b0,b1} + \sigma^2_{\epsilon}\]</span></p>
 <p>And the covariance between 2 outcome measures in the same cluster is: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= Cov[\boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ij}, \boldsymbol{X}_i\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i}+\epsilon_{ik}]\\
 &amp;= Cov[\vec{Z}_{1i}b_{0i} +(\text{Time}_{ij})b_{1i}+\epsilon_{ij}, \vec{Z}_{1i}b_{0i}+(\text{Time}_{ik})b_{1i}+\epsilon_{ik}]\\
 &amp;\dots\\
-&amp;= \sigma^2_{b0} + ((\text{Time}_{ij}) + (\text{Time}_{ik}))\sigma_{b0,b1} + (\text{Time}_{ij})(\text{Time}_{ik})\sigma^2_{b1}\end{align*}\]</span></p>
+&amp;= \sigma^2_{b0} + [(\text{Time}_{ij}) + (\text{Time}_{ik})]\sigma_{b0,b1} + (\text{Time}_{ij})(\text{Time}_{ik})\sigma^2_{b1}\end{align*}\]</span></p>
 <p><span class="alert">The covariance between outcomes in a cluster also changes with time!</span></p>
 <ul>
 <li>Whether it <u>increases</u> over time depends on whether <span class="math inline">\(\sigma_{b0,b1}&gt;0\)</span>
@@ -605,6 +661,7 @@ October 27, 2025
 <p>In general, <span class="alert">any slope <span class="math inline">\(\beta\)</span> from our fixed effects</span> can be allowed to vary randomly by simply including the corresponding covariate in random effects design matrix <span class="math inline">\(\vec{Z}_{ij}\)</span></p>
 </section><section id="random-effects-correlation-structures" class="slide level2"><h2>Random effects &amp; correlation structures</h2>
 <p>When we just had random intercepts it was very clear how this created an exchangeable correlation/covariance matrix</p>
+<p><br></p>
 <p><span class="alert">Do we get a similar result when we add random slopes?</span></p>
 <ul>
 <li>Kind of</li>
@@ -630,7 +687,7 @@ October 27, 2025
 <p><span class="alert">What would our GLMM model look like?</span></p>
 <div class="fragment">
 <p><span class="math display">\[\text{body strength}_{ij} = \beta_0 + \beta_1(\text{Program}_i) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Program}_i \times \text{Time}_{ij}) + b_{0i}(\text{ID}_i) + b_{1i}(\text{Time}_{ij}) + \epsilon_{ij}\]</span></p>
-<p><span class="math display">\[\vec{b}_i \sim MVN(\vec{0}, \boldsymbol{G})\]</span> <span class="math display">\[\vec{\epsilon}_i \sim (\vec{0}, \sigma^2_\epsilon\boldsymbol{I})\]</span></p>
+<p><span class="math display">\[\vec{b}_i \sim N(\vec{0}, \boldsymbol{G})\]</span> <span class="math display">\[\vec{\epsilon}_i \sim (\vec{0}, \boldsymbol{R}_i=\sigma^2_\epsilon\boldsymbol{I})\]</span></p>
 </div>
 </section><section id="example-exercise-therapy-trial-1" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <div class="columns">
@@ -650,6 +707,21 @@ October 27, 2025
 <span id="cb1-4"><a href="#cb1-4"></a>                      <span class="at">data =</span> exercise_long)</span>
 <span id="cb1-5"><a href="#cb1-5"></a><span class="fu">summary</span>(exercise_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>What’s the interpretation of:</p>
+<ul>
+<li>
+<span class="math inline">\(\beta_1\)</span> (Program):</li>
+</ul>
+<p><br></p>
+<ul>
+<li>
+<span class="math inline">\(\beta_2\)</span> (Time):</li>
+</ul>
+<p><br></p>
+<ul>
+<li>
+<span class="math inline">\(\beta_3\)</span> (interaction):</li>
+</ul>
 </div><div class="column" style="width:45%;">
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -687,28 +759,137 @@ PROGRAM2:tm  0.063 -0.085   -0.749</code></pre>
 </div>
 </div>
 </section><section id="example-exercise-therapy-trial-2" class="slide level2"><h2>Example: Exercise therapy trial</h2>
-<p>We can also get estimates of the random effects covariance matrix:</p>
+<div class="columns">
+<div class="column" style="width:55%;">
+<p>What’s the interpretation of:</p>
+<ul>
+<li><p><span class="math inline">\(\beta_1\)</span> (Program): The average difference in strength between programs 2 and 1 at baseline is 1.131. We are 95% confident the true difference is between <span class="math inline">\(\widehat\beta_1 \pm 1.96\times\)</span> 1.064 = (-0.949, 3.214).</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span> (Time): Within the same person in Program 1 (reference group), the average difference in strength measured 1 day apart is 0.117. We are 95% confident the true difference is between <span class="math inline">\(\widehat\beta_2 \pm 1.96\times\)</span> 0.05 = (0.018, 0.216).</p></li>
+<li><p><span class="math inline">\(\beta_3\)</span> (interaction): Within the same person, the average difference in strength rates of change between Program 2 and Program 1 is 0.052. We are 95% confident the true difference is between <span class="math inline">\(\widehat\beta_2 \pm 1.96\times\)</span> 0.067 = (-0.08, 0.184).</p></li>
+</ul>
+</div><div class="column" style="width:45%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">VarCorr</span>(exercise_lme)[[<span class="st">"ID"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>            (Intercept)        time
-(Intercept)  9.95311165 -0.01684718
-time        -0.01684718  0.03432837
-attr(,"stddev")
-(Intercept)        time 
-  3.1548553   0.1852792 
-attr(,"correlation")
-            (Intercept)        time
-(Intercept)  1.00000000 -0.02882181
-time        -0.02882181  1.00000000</code></pre>
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: strength ~ PROGRAM * time + (time | ID)
+   Data: exercise_long
+
+REML criterion at convergence: 818.5
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.9432 -0.6199 -0.0612  0.5352  3.2512 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ ID       (Intercept) 9.95311  3.1549        
+          time        0.03433  0.1853   -0.03
+ Residual             0.66469  0.8153        
+Number of obs: 239, groups:  ID, 37
+
+Fixed effects:
+              Estimate Std. Error t value
+(Intercept)   80.13241    0.80129 100.004
+PROGRAM2       1.13141    1.06373   1.064
+time           0.11699    0.05050   2.317
+PROGRAM2:time  0.05198    0.06745   0.771
+
+Correlation of Fixed Effects:
+            (Intr) PROGRAM2 time  
+PROGRAM2    -0.753                
+time        -0.084  0.063         
+PROGRAM2:tm  0.063 -0.085   -0.749</code></pre>
 </div>
 </div>
-<p>And we can estimate the variance of an outcome at a particular time: <span class="math display">\[\begin{align*}Var[Y_{ij}] &amp;= \sigma^2_{b0} + (\text{Time}_{ij})^2\sigma^2_{b1}+ 2(\text{Time}_{ij})\sigma_{b0,b1} + \sigma^2_{\epsilon}\\
-&amp;= 9.953 + (\text{Time}_{ij})^20.034 + 2(\text{Time}_{ij})(-0.017) + \sigma^2_\epsilon\end{align*}\]</span></p>
+</div>
+</div>
 </section><section id="example-exercise-therapy-trial-3" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<p>What about the combinations of Program/Time and the interaction?</p>
+<ul>
+<li>
+<span class="math inline">\((\beta_2 + \beta_3)\)</span>: <span class="fragment" data-fragment-index="1">Within the same person in Program 2, the average difference in strength measured 1 day apart is 0.169. We are 95% confident the true difference is between <span class="math inline">\(\widehat\beta_2 + \widehat\beta_3 \pm 1.96\times\)</span> 0.002 = (0.165, 0.173).</span>
+</li>
+</ul>
+<p><br></p>
+<ul>
+<li>
+<span class="math inline">\((\beta_1 + \beta_3)\)</span>: <span class="fragment" data-fragment-index="1">Within the same person, the average difference in strength in Programs 2 and 1, measured on the same day is 1.183. We are 95% confident the true difference is between <span class="math inline">\(\widehat\beta_2 + \widehat\beta_3 \pm 1.96\times\)</span> 1.124 = (-1.019, 3.386).</span>
+</li>
+</ul>
+<p><span class="alert fragment" data-fragment-index="2">Where are we getting the standard errors from? Linear contrasts!</span></p>
+</div><div class="column" style="width:45%;">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: strength ~ PROGRAM * time + (time | ID)
+   Data: exercise_long
+
+REML criterion at convergence: 818.5
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.9432 -0.6199 -0.0612  0.5352  3.2512 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ ID       (Intercept) 9.95311  3.1549        
+          time        0.03433  0.1853   -0.03
+ Residual             0.66469  0.8153        
+Number of obs: 239, groups:  ID, 37
+
+Fixed effects:
+              Estimate Std. Error t value
+(Intercept)   80.13241    0.80129 100.004
+PROGRAM2       1.13141    1.06373   1.064
+time           0.11699    0.05050   2.317
+PROGRAM2:time  0.05198    0.06745   0.771
+
+Correlation of Fixed Effects:
+            (Intr) PROGRAM2 time  
+PROGRAM2    -0.753                
+time        -0.084  0.063         
+PROGRAM2:tm  0.063 -0.085   -0.749</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section><section id="example-exercise-therapy-trial-4" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<p>Standard error for <span class="math inline">\(\widehat\beta_2 + \widehat\beta_3\)</span>:</p>
+<ol type="1">
+<li><p>Create contrast vector: <span class="math inline">\(L=(0,0,1,1)\)</span></p></li>
+<li><p>Get the coefficient variance-covariance matrix:</p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">summary</span>(exercise_lme)<span class="sc">$</span>vcov</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>4 x 4 Matrix of class "dpoMatrix"
+               (Intercept)     PROGRAM2         time PROGRAM2:time
+(Intercept)    0.642067977 -0.642067977 -0.003392781   0.003392781
+PROGRAM2      -0.642067977  1.131526580  0.003392781  -0.006127660
+time          -0.003392781  0.003392781  0.002550235  -0.002550235
+PROGRAM2:time  0.003392781 -0.006127660 -0.002550235   0.004548954</code></pre>
+</div>
+</div>
+<ol start="3" type="1">
+<li>Multiply the coefficient variance-covariance matrix <code>summary(exercise_lme)$vcov</code> by the contrast vector</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>b23_L <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>)</span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a>b23_SE <span class="ot">&lt;-</span> <span class="fu">t</span>(b23_L) <span class="sc">%*%</span> <span class="fu">summary</span>(exercise_lme)<span class="sc">$</span>vcov <span class="sc">%*%</span> b23_L</span>
+<span id="cb7-4"><a href="#cb7-4"></a>b23_SE</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>1 x 1 Matrix of class "dgeMatrix"
+            [,1]
+[1,] 0.001998719</code></pre>
+</div>
+</div>
+</section><section id="example-exercise-therapy-trial-5" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <p>We can also get estimates of the random effects covariance matrix:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">VarCorr</span>(exercise_lme)[[<span class="st">"ID"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">VarCorr</span>(exercise_lme)[[<span class="st">"ID"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            (Intercept)        time
 (Intercept)  9.95311165 -0.01684718
@@ -722,7 +903,26 @@ attr(,"correlation")
 time        -0.02882181  1.00000000</code></pre>
 </div>
 </div>
-<p>And the covariance between outcomes at different times:</p>
+<p>And use these to estimate the variance of an outcome at a particular time: <span class="math display">\[\begin{align*}Var[Y_{ij}] &amp;= \sigma^2_{b0} + (\text{Time}_{ij})^2\sigma^2_{b1}+ 2(\text{Time}_{ij})\sigma_{b0,b1} + \sigma^2_{\epsilon}\\
+&amp;= 9.953 + (\text{Time}_{ij})^20.034 + 2(\text{Time}_{ij})(-0.017) + \sigma^2_\epsilon\end{align*}\]</span></p>
+</section><section id="example-exercise-therapy-trial-6" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<p>We can also get estimates of the random effects covariance matrix:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">VarCorr</span>(exercise_lme)[[<span class="st">"ID"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            (Intercept)        time
+(Intercept)  9.95311165 -0.01684718
+time        -0.01684718  0.03432837
+attr(,"stddev")
+(Intercept)        time 
+  3.1548553   0.1852792 
+attr(,"correlation")
+            (Intercept)        time
+(Intercept)  1.00000000 -0.02882181
+time        -0.02882181  1.00000000</code></pre>
+</div>
+</div>
+<p>As well as the covariance between outcomes at different times:</p>
 <div class="columns">
 <div class="column" style="width:&quot;50%;">
 <p>Between day 0 and day 2: <span class="math display">\[\begin{align*}Cov[Y_{ij}, Y_{ik}] &amp;= \sigma^2_{b0} + ((\text{Time}_{ij}) + (\text{Time}_{ik}))\sigma_{b0,b1}\\
@@ -739,6 +939,25 @@ time        -0.02882181  1.00000000</code></pre>
 <div class="absolute" style="top: 250px; right: 100px; width: 45%; ">
 <p><span class="alert">The covariance is decreasing with increased distance between time points!</span></p>
 </div>
+</section><section id="take-home-messages" class="slide level2"><h2>Take home messages</h2>
+<p><br></p>
+<ul>
+<li>We can account for non-exchangeable types of correlation in a GLMM by adding <span class="alert">random slopes</span> for time</li>
+</ul>
+<p><br></p>
+<ul>
+<li>Adding random slopes allows for total variance and covariance to change with time (unlike GEEs)</li>
+</ul>
+<p><br></p>
+<ul>
+<li>
+<p>Interpretation of model cofficients continues to be conditional “within-cluster” interpretation</p>
+<ul>
+<li>Fixed effects time slope interpreted as a <u>person-specific</u> outcome trajectory</li>
+</ul>
+</li>
+</ul></section><section class="slide level2"></section><section><section id="appendices" class="title-slide slide level1"><h1>Appendices</h1>
+
 </section><section id="structures-on-boldsymbolr_i-in-glmms" class="slide level2"><h2>Structures on <span class="math inline">\(\boldsymbol{R_i}\)</span> in GLMMs?</h2>
 <p>Up until now we’ve assumed that the <span class="math inline">\(\epsilon_{ij}\)</span> errors are independent within an individual: <span class="math inline">\(\sigma^2_\epsilon \boldsymbol{I}\)</span></p>
 <ul>
@@ -774,17 +993,17 @@ time        -0.02882181  1.00000000</code></pre>
 </ul>
 </li>
 <li><p>Measurement error: <span class="math inline">\(\epsilon_{ij} \sim (0, \sigma^2_\epsilon)\)</span></p></li>
-</ul></section><section id="example-exercise-therapy-trial-4" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+</ul></section><section id="example-exercise-therapy-trial-7" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <p>Let’s try this with the exercise trial data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">library</span>(nlme)</span>
-<span id="cb7-2"><a href="#cb7-2"></a>exercise_hybrid <span class="ot">&lt;-</span> <span class="fu">lme</span>( strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time,</span>
-<span id="cb7-3"><a href="#cb7-3"></a>                        <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> ID,</span>
-<span id="cb7-4"><a href="#cb7-4"></a>                        <span class="at">correlation =</span> <span class="fu">corExp</span>( <span class="at">form =</span> <span class="sc">~</span> time <span class="sc">|</span> ID, <span class="at">nugget=</span><span class="cn">TRUE</span>),</span>
-<span id="cb7-5"><a href="#cb7-5"></a>                      <span class="at">data =</span> exercise_long_complete )</span>
-<span id="cb7-6"><a href="#cb7-6"></a><span class="fu">summary</span>(exercise_hybrid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb13-2"><a href="#cb13-2"></a>exercise_hybrid <span class="ot">&lt;-</span> <span class="fu">lme</span>( strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time,</span>
+<span id="cb13-3"><a href="#cb13-3"></a>                        <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> ID,</span>
+<span id="cb13-4"><a href="#cb13-4"></a>                        <span class="at">correlation =</span> <span class="fu">corExp</span>( <span class="at">form =</span> <span class="sc">~</span> time <span class="sc">|</span> ID, <span class="at">nugget=</span><span class="cn">TRUE</span>),</span>
+<span id="cb13-5"><a href="#cb13-5"></a>                      <span class="at">data =</span> exercise_long_complete )</span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="fu">summary</span>(exercise_hybrid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="example-exercise-therapy-trial-5" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+</section><section id="example-exercise-therapy-trial-8" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p><img data-src="hybrid-out.png" style="width:80.0%"></p>
@@ -798,12 +1017,12 @@ time        -0.02882181  1.00000000</code></pre>
 </ul>
 </div>
 </div>
-</section><section id="example-exercise-therapy-trial-6" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+</section><section id="example-exercise-therapy-trial-9" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <p>Comparing hybrid and random slopes models:</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">summary</span>(exercise_hybrid)<span class="sc">$</span>tTable[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">summary</span>(exercise_hybrid)<span class="sc">$</span>tTable[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                    Value  Std.Error  DF   t-value
 (Intercept)   79.80730015 0.85532507 200 93.306397
@@ -814,42 +1033,7 @@ PROGRAM2:time  0.04656485 0.06344391 200  0.733953</code></pre>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="fu">summary</span>(exercise_lme)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                 Estimate Std. Error     t value
-(Intercept)   80.13240825 0.80129144 100.0040734
-PROGRAM2       1.13141472 1.06373238   1.0636272
-time           0.11698696 0.05049985   2.3165804
-PROGRAM2:time  0.05197818 0.06744593   0.7706645</code></pre>
-</div>
-</div>
-</div>
-</div>
-<p><span class="math display">\[E[\text{body strength}_{ij} | \boldsymbol{X}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2(\text{Time}_{ij}) + \beta_3(\text{Program}_i \times \text{Time}_{ij})\]</span></p>
-<ul>
-<li><p><span class="math inline">\(\beta_0\)</span>:</p></li>
-<li><p><span class="math inline">\(\beta_1\)</span>:</p></li>
-<li><p><span class="math inline">\(\beta_2\)</span>:</p></li>
-<li><p><span class="math inline">\((\beta_2 + \beta_3)\)</span>:</p></li>
-<li><p><span class="math inline">\((\beta_1 + \beta_3)\)</span>:</p></li>
-<li><p><span class="math inline">\(\beta_3\)</span>:</p></li>
-</ul></section><section id="example-exercise-therapy-trial-7" class="slide level2"><h2>Example: Exercise therapy trial</h2>
-<p>Comparing hybrid and random slopes models:</p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="fu">summary</span>(exercise_hybrid)<span class="sc">$</span>tTable[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                    Value  Std.Error  DF   t-value
-(Intercept)   79.80730015 0.85532507 200 93.306397
-PROGRAM2       1.29439500 1.13534020  35  1.140094
-time           0.12391852 0.04715771 200  2.627747
-PROGRAM2:time  0.04656485 0.06344391 200  0.733953</code></pre>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">summary</span>(exercise_lme)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="fu">summary</span>(exercise_lme)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 Estimate Std. Error     t value
 (Intercept)   80.13240825 0.80129144 100.0040734
@@ -874,7 +1058,7 @@ PROGRAM2:time  0.05197818 0.06744593   0.7706645</code></pre>
 <div class="footer footer-default">
 
 </div>
-</section>
+</section></section>
 </div>
   </div>
 

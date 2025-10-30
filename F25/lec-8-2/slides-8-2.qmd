@@ -1,0 +1,475 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+      pdf-separate-fragments: true
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+library(corrr)
+library(lme4)
+```
+
+```{r exercise, echo=F}
+exercise <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/exercise-data.txt", sep="", na.strings=".")
+colnames(exercise) <- c("ID", "PROGRAM", "day0","day2", "day4", "day6", "day8", "day10", "day12")
+exercise_long <- exercise %>% 
+   pivot_longer(!(c("ID","PROGRAM")), names_to="time", values_to="strength") %>% 
+   mutate(time=parse_number(time))
+
+exercise_long_complete <- exercise_long %>% 
+   filter(complete.cases(.))
+```
+
+<h1>Lecture 8.2: Modeling buidling/comparing longitudinal modeling choices</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>October 30, 2025</h3>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=150 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-8-2/slides-8-2>
+
+:::
+
+::: {.absolute bottom=100 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-8-2/slides-8-2"))
+```
+:::
+
+---
+
+## Building a longitudinal model
+
+Over the last few weeks we've touched on how we might explore the data to make some initial modeling decisions
+
+:::: {.columns}
+::: {.column width="50%"}
+- [How should we model/represent time in the mean model?]{.alert}
+
+<br>
+<br>
+
+- [Should we include a time-by-exposure interaction in the mean model?]{.alert}
+:::
+
+::: {.column width="50%"}
+- [If we're running a GLMM, should we include random slopes?]{.alert}
+
+<br>
+<br>
+
+- [What correlation structures might be appropriate for a GEE?]{.alert}
+:::
+::::
+
+---
+
+## Building a longitudinal model
+
+Over the last few weeks we've touched on how we might explore the data to make some initial modeling decisions
+
+- [How should we model/represent time in the mean model?]{.alert}
+
+   - Is everyone observed at the approximately "same" visit times? (e.g., 6 month visit, 1 year visit, 10 year visit)
+   
+      - If non-standardized visit times, likely can't model as categorical
+   
+   - How many observations per person/cluster do we have?
+   
+      - If many, might not have enough data to model as categorical
+
+<br>
+
+- [Should we include a time-by-exposure interaction in the mean model?]{.alert}
+
+   - First, ask if this is part of our research question
+   
+      - If yes, should include it regardless
+   
+   - Second, plot outcome over time by exposure group to look for evidence of non-parallel trends
+
+---
+
+## Building a longitudinal model   
+
+- [If we're running a GLMM, should we include random slopes?]{.alert}
+
+   - Calculate correlation matrix
+   
+   - Create "spaghetti plot" of a random sample of individuals and observe differences in trends
+
+<br>
+
+- [What correlation structures might be appropriate for a GEE?]{.alert}
+
+   - Calculate a matrix of the raw correlations between outcomes and different time points and observe behavior
+
+---
+
+## Building longitudinal model(s?)
+
+However, even after we perform these exploratory steps, we might still be left with multiple plausible model specifications
+
+- Is there a way to compare multiple model specifications or assess the appropriateness of our modeling decisions? [Yes!]{.alert}
+
+<br>
+
+There are 2 general approaches to compare GLMMs:
+
+1. [Likelihood ratios tests]{.alert} (LRTs)
+
+2. [Akaike Information Criterion]{.alert} (AIC)
+
+<br>
+
+For GEEs, we [can't]{.underline} use LRTs or AIC because GEEs don't have a true likelihood
+
+ - [Can]{.underline} use one of several AIC modifications: [QIC]{.alert} or [CIC]{.alert}
+
+---
+
+## GLMM model comparison via likelihood ratio test
+
+One way to compare multiple models is via a [likelihood ratio test]{.alert} (LRT)
+
+- An LRT is obtained by taking twice the difference in the respective maximized REML log-likelihoods,
+$$G^2 = 2(\hat{l}_{full} - \hat{l}_{reduced})$$
+and comparing statistic to a chi-squared distribution with degrees-of-freedom equal to difference between the number of covariance parameters in full and reduced models
+
+   - The "full" model here would be the [more complicated]{.alert} model, either in terms of covariates added to the mean model or in terms of covariance structure
+   
+   - The "reduced" model would be a simpler one that contains [no additional structure]{.alert} (i.e., no extra covariates)
+   
+- Sometimes it's also written as $G^2 = -2(\hat{l}_{reduced} - \hat{l}_{full})$
+
+- A log-likelihood that is less negative (closer to $+\infty$) is better fitting
+
+---
+
+## GLMM model comparison via likelihood ratio test
+
+One way to compare multiple models is via a [likelihood ratio test]{.alert} (LRT)
+
+- An LRT is obtained by taking twice the difference in the respective maximized REML log-likelihoods,
+$$G^2 = 2(\hat{l}_{full} - \hat{l}_{reduced})$$
+and comparing statistic to a chi-squared distribution with degrees-of-freedom equal to difference between the number of covariance parameters in full and reduced models
+
+- This tests the hypothesis:
+
+$$\begin{align*}&H_0: \text{There is no difference on how the full and reduced models fit the data}\\
+&H_A: \text{There is a difference on how the full and reduced models fit the data}\end{align*}$$
+
+   - Rejecting the null assumes that the "full" or more complicated model is the better-fitting
+
+---
+
+## GLMM model comparison via likelihood ratio test
+
+One way to compare multiple models is via a [likelihood ratio test]{.alert} (LRT)
+
+- An LRT is obtained by taking twice the difference in the respective maximized REML log-likelihoods,
+$$G^2 = 2(\hat{l}_{full} - \hat{l}_{reduced})$$
+and comparing statistic to a chi-squared distribution with degrees-of-freedom equal to difference between the number of covariance parameters in full and reduced models
+
+For GLMMs, this means comparing models:
+
+1. with [the same fixed effects]{.alert} but "nested" random effects
+
+   - i.e., random intercepts vs random slopes + random intercepts; random slopes vs random slopes + random intercepts
+   
+2. or, with the same random effects, but ["nested" fixed effects]{.alert}
+
+A LRT [CANNOT]{.alert} compare a model with just random intercepts to one with just random slopes
+
+---
+
+## GLMM model comparison via AIC
+
+An alternative approach is the [Akaike Information Criterion (AIC)]{.alert}
+
+- According to the AIC, given a set of competing models, one should select the model that [minimizes]{.alert}:
+
+$$AIC = -2(\text{maximized log-likelihood}) + 2(\text{number of [fixed effect/covariance] parameters})$$
+
+According to AIC, we want a model that fits the data well, but not at the price of having to estimate a ton of extra fixed effect or covariance parameters
+
+- You can use AIC to compare either nested [or]{.underline} non-nested models
+
+- SAS reports AIC automatically in `PROC GLIMMIX`
+
+
+<br>
+
+[Let's try both these methods using the exercise therapy trial]{.alert}
+
+---
+
+## Example: Exercise therapy trial
+
+Recall our exercise therapy trial
+
+- Subjects were assigned to one of two weightlifting programs to increase muscle strength
+
+   - Treatment 1: number of repetitions of the exercises was increased as subjects became stronger
+
+   - Treatment 2: number of repetitions was held constant but amount of weight was increased as subjects became stronger
+
+- Measurements of body strength were taken at baseline (0) and on days 2, 4, 6, 8, 10, and 12
+
+The mean model we've been using is:
+
+$$E[\text{body strength}_{ij}|\boldsymbol{X}] = \beta_0 + \beta_1(\text{Program}_i) + \beta_2 (\text{Time}_{ij}) + \beta_3(\text{Program}_i \times \text{Time}_{ij})$$
+
+[But maybe we want to decide whether to just use random intercepts or random intercepts + random slopes...]{.alert}
+
+---
+
+## Example: Exercise therapy trial
+
+We'll fit 2 models: one with random slopes + random intercepts, and one with just random intercepts
+
+- Then use the `anova()` function to both perform a LRT and calculate the AICs for each
+
+```{css, echo=F}
+.reveal code {
+  max-height: 100% !important;
+}
+```
+```{r glmm compare}
+exercise_slopes <- lmer( strength ~ PROGRAM*time + (time | ID),
+                      data = exercise_long )
+
+exercise_int <- lmer( strength ~ PROGRAM*time + (1 | ID),
+                      data = exercise_long )
+
+anova( exercise_slopes, exercise_int )
+```
+
+
+[What can we conclude?]{.alert}
+
+---
+
+## Example: Exercise therapy trial
+
+What if we wanted to compare fitting time as continuous vs categorical?
+
+We'll fit 2 models: one with categorical time, and one with continuous time (both random slopes + random intercepts)
+
+- Models are [not nested]{.alert}, so we can't run a LRT
+
+- But we can calculate AIC on its own using `AIC()`
+```{r glmm compare2}
+exercise_cat <- lmer( strength ~ PROGRAM*as.factor(time) + (time | ID),
+                      data = exercise_long )
+
+exercise_cont <- lmer( strength ~ PROGRAM*time + (time | ID),
+                      data = exercise_long )
+
+AIC( exercise_cat, exercise_cont )
+```
+
+
+[What can we conclude?]{.alert}
+
+---
+
+## GEE model comparison via QIC/CIC
+
+Neither LRTs nor AIC work for GEEs because GEEs do not have a likelihood that is needed to calculate those statistics
+
+- Instead, we can use a modified AIC called the [Quasi-likelihood Information Criterion (QIC)]{.alert}
+
+   - Its calculation is somewhat complicated, but it's interpretation is similar to the AIC: you want to minimize it
+   
+- There is also the [Correlation Information Criterion (CIC)]{.alert} that may be more robust than the QIC if you're comparing very different correlation structures
+
+<br>
+
+If QIC and CIC give conflicting results, it might be best to choose the model whose model-based SEs are closest to their estimated robust SEs
+
+- The literature has no clear consensus on whether QIC or CIC would be better to "trust" in this case
+
+<br>
+
+[Let's test this in the exercise trial, comparing 3 structures: exchangeable, AR-1, and unstructured]{.alert}
+
+---
+
+## Example: Exercise therapy trial
+
+In SAS, QIC is automatically reported as part of `PROC GENMOD`
+
+For R, `QIC()` is only available for models run with the `geeglm()` function from `library(geepack)`
+
+
+```{r gee compare, output=F}
+library(geepack)
+
+# fitting an unstructured correlation structure #
+exercise_gee_un <- geeglm(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="unstructured")
+
+# fitting an autoregression, distance 1 correlation structure #
+exercise_gee_AR <- geeglm(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="ar1")
+
+# fitting an exchangeable correlation structure #
+exercise_gee_exch <- geeglm(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="exchangeable")
+
+```
+
+```{r gee compare2}
+QIC(exercise_gee_un, exercise_gee_AR, exercise_gee_exch)
+```
+
+[What can we conclude?]{.alert}
+
+---
+
+## Example: Exercise therapy trial
+
+Let's try comparing their model-based and robust SEs. First we need to refit the models with `gee()` (`glmgee()` only reports robust SEs)
+```{r gee compare3, output=F}
+library(gee)
+exercise_gee_un2 <- gee(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="unstructured")
+
+# fitting an autoregression, distance 1 correlation structure #
+exercise_gee_AR2 <- gee(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="AR-M", Mv=1)
+
+# fitting an exchangeable correlation structure #
+exercise_gee_exch2 <- gee(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="exchangeable")
+```
+
+---
+
+## Example: Exercise therapy trial
+
+Then we can compare the distance between the SEs within each model
+```{r gee compare4}
+# model-based SE minus robust SE #
+summary(exercise_gee_un2)$coeff[,2] - summary(exercise_gee_un2)$coeff[,4]
+summary(exercise_gee_AR2)$coeff[,2] - summary(exercise_gee_AR2)$coeff[,4]
+summary(exercise_gee_exch2)$coeff[,2] - summary(exercise_gee_exch2)$coeff[,4]
+```
+
+[What can we conclude?]{.alert}
+
+---
+
+## Example: Exercise therapy trial
+
+If we wanted to compare fitting time as continuous vs categorical in the GEE, we can use the [QICu]{.alert} metric!
+
+We'll fit 2 models: one with categorical time, and one with continuous time (both with AR-1 structures)
+
+```{r gee compare5, output=F}
+exercise_gee_cat <- geeglm(strength ~ PROGRAM*as.factor(time), id=ID,
+                    data=exercise_long, corstr="ar1")
+
+exercise_gee_cont <- geeglm(strength ~ PROGRAM*time, id=ID,
+                    data=exercise_long, corstr="ar1")
+```
+```{r gee compare6}
+QIC( exercise_gee_cat, exercise_gee_cont )
+```
+
+
+[What can we conclude?]{.alert}
+
+---
+
+## Model justification
+
+We can use these all metrics in a couple of different ways
+
+1. We can use LRTs and AIC/QIC to help us [make a decision]{.alert} between two competing models
+
+- We've interally justified both to ourselves and just need to make a decision
+
+
+<br>
+
+2. They can also help us [justify a modeling decision]{.alert} we've already made
+
+- Want to show the model we've picked is just as good or better than another specification someone else might suggest
+
+- In this scenario, you need to be open to the idea you might be wrong!
+
+<br>
+
+While the mechanics of both of these are the same, the motivations are different
+
+---
+
+## Take home messages
+
+There are several ways we can compare competing GLMM models:
+
+- Likelihood ratio test (LRT)
+
+   - Can only be used for nested models
+   
+   - Less negative is better
+   
+- Akaike Information Criterion (AIC)
+
+   - Can be used for nested or non-nested models
+   
+   - Smaller is better
+
+<br>
+
+We can also compare competing GEE models with different correlation structures using QIC or CIC
+
+   - Smaller is better
+   
+   - If we want to compare GEEs with different mean models, we can use QICu
+   
+   
+

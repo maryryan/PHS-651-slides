@@ -315,6 +315,18 @@ AIC( exercise_cat, exercise_cont )
 
 ---
 
+## Example: Exercise therapy trial
+
+```{r spaghetti plot, echo=F}
+exercise_long %>% 
+   ggplot(aes(x=time, y=strength, color=as.factor(ID)))+
+   geom_line()+
+   theme_minimal()
+
+```
+
+---
+
 ## GEE model comparison via QIC/CIC
 
 Neither LRTs nor AIC work for GEEs because GEEs do not have a likelihood that is needed to calculate those statistics

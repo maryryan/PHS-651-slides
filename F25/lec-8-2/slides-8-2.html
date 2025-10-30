@@ -633,6 +633,12 @@ exercise_cont  8 834.5395</code></pre>
 </div>
 </div>
 <p><span class="alert">What can we conclude?</span></p>
+</section><section id="example-exercise-therapy-trial-3" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="slides-8-2_files/figure-revealjs/spaghetti%20plot-1.png" width="960"></p>
+</div>
+</div>
 </section><section id="gee-model-comparison-via-qiccic" class="slide level2"><h2>GEE model comparison via QIC/CIC</h2>
 <p>Neither LRTs nor AIC work for GEEs because GEEs do not have a likelihood that is needed to calculate those statistics</p>
 <ul>
@@ -651,7 +657,7 @@ exercise_cont  8 834.5395</code></pre>
 </ul>
 <p><br></p>
 <p><span class="alert">Let’s test this in the exercise trial, comparing 3 structures: exchangeable, AR-1, and unstructured</span></p>
-</section><section id="example-exercise-therapy-trial-3" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+</section><section id="example-exercise-therapy-trial-4" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <p>In SAS, QIC is automatically reported as part of <code>PROC GENMOD</code></p>
 <p>For R, <code>QIC()</code> is only available for models run with the <code>geeglm()</code> function from <code><a href="https://rdrr.io/r/base/library.html">library(geepack)</a></code></p>
 <div class="cell">
@@ -679,7 +685,7 @@ exercise_gee_exch 2672.038 2654.145 -1323.073 12.94616      4 2673.973</code></p
 </div>
 </div>
 <p><span class="alert">What can we conclude?</span></p>
-</section><section id="example-exercise-therapy-trial-4" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+</section><section id="example-exercise-therapy-trial-5" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <p>Let’s try comparing their model-based and robust SEs. First we need to refit the models with <code>gee()</code> (<code>glmgee()</code> only reports robust SEs)</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">library</span>(gee)</span>
@@ -694,7 +700,7 @@ exercise_gee_exch 2672.038 2654.145 -1323.073 12.94616      4 2673.973</code></p
 <span id="cb8-10"><a href="#cb8-10"></a>exercise_gee_exch2 <span class="ot">&lt;-</span> <span class="fu">gee</span>(strength <span class="sc">~</span> PROGRAM<span class="sc">*</span>time, <span class="at">id=</span>ID,</span>
 <span id="cb8-11"><a href="#cb8-11"></a>                    <span class="at">data=</span>exercise_long, <span class="at">corstr=</span><span class="st">"exchangeable"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section><section id="example-exercise-therapy-trial-5" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+</section><section id="example-exercise-therapy-trial-6" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <p>Then we can compare the distance between the SEs within each model</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># model-based SE minus robust SE #</span></span>
@@ -715,7 +721,7 @@ exercise_gee_exch 2672.038 2654.145 -1323.073 12.94616      4 2673.973</code></p
 </div>
 </div>
 <p><span class="alert">What can we conclude?</span></p>
-</section><section id="example-exercise-therapy-trial-6" class="slide level2"><h2>Example: Exercise therapy trial</h2>
+</section><section id="example-exercise-therapy-trial-7" class="slide level2"><h2>Example: Exercise therapy trial</h2>
 <p>If we wanted to compare fitting time as continuous vs categorical in the GEE, we can use the <span class="alert">QICu</span> metric!</p>
 <p>We’ll fit 2 models: one with categorical time, and one with continuous time (both with AR-1 structures)</p>
 <div class="cell">

@@ -1,0 +1,772 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+      pdf-separate-fragments: true
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+```
+
+<h1>Lecture 9.2: Diagnostics for GLMMs and GEEs</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>November 6, 2025</h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=100 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-9-2/slides-9-2>
+
+:::
+
+::: {.absolute bottom=50 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-9-2/slides-9-2"))
+```
+:::
+
+---
+
+## Roadmap
+
+- Modeling choices/assumptions for LMEs/GLMMs and GEEs
+
+- (Some!) diagnostics we can use to assess modeling assumptions
+
+   - Marginal and conditional residual analysis for LMEs/GLMMs
+   
+   - Residual analysis for GEEs
+
+   - Influential observations in LMEs/GLMMs/GEEs: leverage and DFBETA
+
+   - Other diagnostic strategies for GEEs
+
+---
+
+## Model diagnostics
+
+So far we've dealt with how to model correlated and longitudinal data
+
+- But how do we assess whether the modeling choices we've made are sound?
+
+There are some analyses/diagnostics we can perform to explore this
+
+- Heavy emphasis on [explore]{.alert}
+
+   - We know that our model likely won't perfectly reflect the true form/relationships in the data
+   
+   - But we should assess whether there are [major discrepancies]{.alert} between what we've assumed and what's in the data
+   
+   - Use these as a temperature check for whether the model needs to be adjusted, how much confidence can be placed in estimates, and whether estimates need to be presented with caveats
+
+---
+
+## Modeling choices
+
+Let's review the various modeling choices we've covered so far
+
+First, we can choose between [conditional/mixed]{.underline} vs [marginal]{.underline} models
+
+- Usually this will be driven by whether we want a [conditional]{.underline} or [population-averaged]{.underline} interpretation of our effects
+
+- After that, our decision might be driven by how many clusters we have or how much variation in cluster size we have in our data
+
+:::: {.columns}
+::: {.column width="50%"}
+Within [conditional/mixed models]{.underline} we make decisions about:
+
+- Variable(s) for fixed effects (isolating causal pathway)/how we model them (linear, quadratic, splines, etc.)
+
+- Variable for random intercepts/slopes
+
+- Outcome distribution
+
+- Link function
+
+:::
+
+::: {.column width="50%"}
+Within [marginal models]{.underline}, we make decisions about:
+
+- How to specify the mean model/what variables to include to isolate causal pathway/how we model them (linear, quadratic, splines, etc.)
+
+- Marginal variance function
+
+- Correlation structure
+
+- Model-based vs robust confidence intervals
+
+- Link function
+:::
+::::
+
+---
+
+## Mixed model residual analysis
+
+[Residuals]{.alert} are the difference between the observed outcomes ($Y$) and the ones predicted by your model ($\widehat Y$)
+
+- Residuals tell us about how well the model fits our actual data
+
+- We'd ideally like these to be small, but often our goal isn't to *exactly* predict our outcome variable (recall the Harrell reading from Week 1!)
+
+- If the model [adequately captures]{.underline} the systematic trend of the response, then [the residuals should exhibit no systematic pattern]{.underline}
+
+   - i.e., they should be scattered fairly randomly around zero
+   
+- We're usually using residual analysis to check
+
+   1. If we used the correct functional form for our covariates/confounders (linear, quadratic, splines, etc.)
+   
+   2. If assumptions about covariance seem to be (largely) correct (constant marginal variance, normality of random effects, random effects/residuals with mean 0)
+
+---
+
+## Mixed model residual analysis
+
+Recall the form of a LME with one exposure variable $U_{i0}$ for individual $i$ observed at visit $j$ and a variable for visit/time:
+
+$$\begin{align*}&\vec{Y}_i = \boldsymbol{X}_{i}\vec{\beta} + \boldsymbol{Z}_i\vec{b}_{i} + \vec{\epsilon}_{i}\\
+&Y_{ij} = \beta_0 + \beta_1(U_{i0}) + \beta_2(\text{Time}_{ij}) + Z_ib_{0i} + (\text{Time}_{ij})b_{1i} + \epsilon_{ij}\end{align*}$$
+
+We have 2 types of residuals with mixed models:
+
+- [Marginal residuals]{.alert} (only subtracting the fixed effects):
+
+$$r_{ij} = Y_{ij} - \vec{X}_{ij}\widehat{\vec{\beta}}$$
+
+- And [conditional residuals]{.alert} (subtracting fixed and random effects):
+$$r^c_{ij} = Y_{ij} - \left(\vec{X}_{ij}\widehat{\vec{\beta}} + Z_i \widehat{b}_{0i} + (\text{Time}_{ij})\widehat b_{1i}\right)$$
+
+The marginal and conditional residuals will tell us different things about where we might be seeing misspecification/issues with model assumptions
+
+---
+
+## Marginal residuals vs predicted/fitted response
+
+[Marginal]{.alert} residuals can be used to check for systematic departures from the model for the [mean response]{.alert}
+
+- We often do this by making a scatter plot of marginal residuals vs marginal predicted values
+
+   - Fitting a smoothed curve (e.g., lowess) through the scatter plot can help visualize any trends
+
+![](residual-plot-example.png){width=1000}
+
+::: {.absolute right=0 bottom=200 width="45%"}
+- Usually, any (major) systematic pattern in the residual indicates inadequacy of the model in some way
+
+   - [Solution]{.underline}: re-fit the data with a more flexible model (e.g., interactions, quadratic terms, and perhaps more covariates)
+   
+   - This only works for LMEs, though! Usually very hard to check functional form of covariates for logistic or log-linear GLMMs
+:::
+
+---
+
+## Cholesky-transformed marginal residuals vs predicted response
+
+<br>
+
+In longitudinal data, errors from the same person are correlated and don't (necessarily) have the same variance. This means:
+
+1. Residual vs predicted response/covariate may not have a constant range (homoscedasticity may not hold)
+
+2. Residuals may be correlated with covariates $\Rightarrow$ a pattern in residual vs predictor plot may appear even when the model is adequate
+
+<br>
+
+We can fix this by looking at the "de-correlated" residuals, which we get by using what we call a [Cholesky]{.alert} transformation on the residuals
+
+- The details of how to do this transformation are a little complicated, but Cholesky-transformed marginal residuals are available in both R and SAS
+
+---
+
+## Marginal residuals vs predicted response
+```{r exercise, echo=F}
+exercise <- read.table("https://content.sph.harvard.edu/fitzmaur/ala2e/exercise-data.txt", sep="", na.strings=".")
+colnames(exercise) <- c("ID", "PROGRAM", "day0","day2", "day4", "day6", "day8", "day10", "day12")
+exercise_long <- exercise %>% 
+   pivot_longer(!(c("ID","PROGRAM")), names_to="time", values_to="strength") %>% 
+   mutate(time=parse_number(time),
+          time2=time^2,
+          time3=time^3)
+
+exercise_long_complete <- exercise_long %>% 
+   filter(complete.cases(.))
+```
+```{r radon data clean, echo=F}
+radon <- read.table("~/Desktop/teaching/PHS-651/data/Gelman-data/radon/srrs2.dat",header=T,sep=",")
+
+set.seed(081524)
+
+radon.mn <- radon %>% 
+   as.data.frame() %>% 
+   mutate(log_radon = log(activity +0.1),
+          county = str_trim(county)) %>% 
+   dplyr::filter(state == "MN")
+
+library(lme4)
+
+# run an LME with random intercepts for county #
+radon_lme <- lmer(log_radon ~ floor + (1 | county), data=radon.mn)
+```
+
+We can get the (standardized) marginal residuals in R using the `hlm_diag()` function:
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r marg resid plot,echo=F,output=F}
+library(HLMdiag)
+
+# run an LME with random intercepts for county #
+radon_lme <- lmer(log_radon ~ floor + (1 | county), data=radon.mn)
+
+# get various standardized residuals #
+radon_resid <- hlm_resid(radon_lme,
+                         standardize=TRUE)
+
+colnames(radon_resid)
+```
+```{r marg resid plot exercise}
+library(HLMdiag)
+
+# run an LME with random intercepts for subject #
+# and random slope for time #
+exercise_slopes <- lmer( strength ~ PROGRAM*time 
+                         + (time | ID),
+                         data = exercise_long )
+
+# get various standardized residuals #
+exercise_resid <- hlm_resid(exercise_slopes,
+                         standardize=TRUE)
+
+colnames(exercise_resid)
+```
+:::
+
+::: {.column width="50%"}
+```{r marg resid plot2 exercise, echo=F}
+exercise_resid %>% 
+   ggplot(aes(x=.mar.fitted, y=.chol.mar.resid))+
+   geom_point() +
+   geom_smooth(se=F) +
+   theme(text = element_text(size = 20)) 
+```
+:::
+::::
+
+- Looks like residuals are generally evenly spread around 0 without an intense pattern, so no strong indication that the outcome needs to be modeled non-linearly
+
+---
+
+## Conditional residuals vs predicted response
+   
+Conditional residuals can be used to check for overall model fit (mean response, use of random effects, or constant individual-level variance)
+
+![](residual-plot-example.png){width=1000}
+
+::: {.absolute right=0 bottom=180 width="45%"}
+- Plots of [conditional]{.alert} residuals against [conditional]{.alert} fitted values will tell you about how well the data fits your assumptions about the random intercepts (zero mean), the constant $\epsilon_{ij}$ variance assumption, and whether you have outlying subjects/clusters
+
+   - Want to be looking for things like fanning here, in addition to the curvature we look for in marginal plots
+   
+- Don't need to worry about Cholesky-transforming residuals here (only available for marginal residuals)
+:::
+
+---
+
+## Conditional residuals vs predicted response
+
+In R, we can plot the model object to get a (standardized) conditional residuals plot:
+```{r resid plot, output=F,echo=F}
+library(lme4)
+
+# run an LME with random intercepts for county #
+radon_lme <- lmer(log_radon ~ floor + (1 | county), data=radon.mn)
+
+plot(radon_lme, smooth=T)
+```
+
+```{r resid plot exercise}
+plot(exercise_slopes, smooth=T)
+```
+
+::: {.absolute right=0 top=250 width="45%"}
+- Points fairly randomly distributed around 0
+
+- Smoothed line not showing significant trends
+
+- Constant marginal variance assumption probably met
+
+- Mean-0 assumption of marginal variance and random effects probably also met
+:::
+
+
+---
+
+## Conditional residuals vs predicted response
+
+We can also use `hlm_resid()` to get a nicer-looking conditional residuals plot than base R provides
+```{r cond resid plot3 exercise}
+exercise_resid %>% 
+   ggplot(aes(x=.fitted, y=.std.resid))+
+   geom_point() +
+   geom_smooth(se=F, col="orange") +
+   geom_hline(yintercept=0, col="blue", linetype="dashed")+
+   theme(text = element_text(size = 20)) 
+```
+
+---
+
+## Normality of conditional residuals
+
+We can also create a QQ-plot of the (unstandardized) conditional residuals to look for major departures from the Normality assumption of the residuals
+
+```{r cond resid qqplot exercise}
+exercise_resid_raw <- hlm_resid(exercise_slopes)
+qqnorm(exercise_resid_raw$.resid)
+qqline(exercise_resid_raw$.resid)
+```
+
+---
+
+## Normality of random effects
+
+We can also create a QQ-plot of just the random effects using the `plot_ranef()` function from the `redres` library to look for major departures from the Normality of random effects assumption
+
+```{r rand eff plot exercise}
+library(redres)
+
+plot_ranef(exercise_slopes)
+```
+
+::: {.absolute right=0 top=450 width="45%"}
+Looks like there's some slight departure in the tails for the random slopes
+:::
+
+---
+
+## Residuals vs predicted response
+
+:::: {.columns}
+
+::: {.column width="65%"}
+In SAS, we can add the `plots=studentpanel` option to the end of `PROC GLIMMIX` to look at the studentized residuals
+
+<br>
+
+Here's an example with some non-longitudinal data we used back toward the beginning of class:
+
+```{sas eval=F}
+PROC GLIMMIX data=dance plots=studentpanel(marginal conditional);
+   class village_id dance_class_bin(REF="0");
+   model gaitfollowup = dance_class_bin / dist = normal solution cl;
+   random intercept / subject=village_id;
+run;
+```
+
+- Our residuals vs fitted plots would be the ones in the top left (conditional) or second-from-bottom left (marginal)
+
+- `studentpanel` defaults to conditional residuals, but we can add `(marginal conditional)` to have SAS display both
+:::
+
+::: {.column width="35%"}
+![](residualpanel_std.png){width=1000}
+:::
+
+::::
+
+
+---
+
+## Cholesky residuals vs predicted response
+
+
+We can also use the `vcircy` option in the model statement to generate the Cholesky-transformed residuals that are good for longitudinal data, and then plot them using `PROC SGPLOT`
+
+<br>
+
+Here's some example code we could use if we were working with our exercise therapy data:
+```{sas eval=F}
+PROC GLIMMIX data=exercise;
+   class ID PROGRAM(REF="1");
+   model strength = PROGRAM | time / dist = normal solution cl vcircy outpm=resid1;
+   random intercept time / subject=ID;
+run;
+
+PROC SGPLOT data=resid1 noautolegend;
+   title 'Transformed residuals vs time';
+   loess y=ScaledResid x=time;
+run;
+```
+
+
+---
+
+## Residuals vs covariates
+
+We can follow a similar strategy for checking the functional form of covariates
+
+1. Plot (marginal) residual vs covariate
+
+2. If any systematic pattern, try adding a quadratic term for the covariate or transforming the covariate
+
+```{r exercise resid plot}
+exercise_resid %>% 
+   ggplot(aes(x=time, y=.chol.mar.resid))+
+   geom_point() +
+   geom_hline(yintercept=0, col="blue", linetype="dashed")+
+   geom_smooth(method="loess", color="red", se=F)+
+   theme(text = element_text(size = 20)) 
+```
+
+::: {.absolute right=0 top=650 width="45%"}
+Potentially a cubic curve going on here? May need to transform how we fit time...
+:::
+
+---
+
+## Residuals vs covariates
+
+Let's try cubic time
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{css, echo=F}
+.reveal code {
+  max-height: 100% !important;
+}
+```
+```{r exercise resid plot2, eval=F}
+exercise_slopes2 <- lmer( strength ~ PROGRAM*time 
+                          + PROGRAM*time2 
+                          + PROGRAM*time3 
+                         + (time | ID) 
+                         + (0+time2 | ID) 
+                         + (0+time3 | ID),
+                         data = exercise_long )
+
+# get various standardized residuals #
+exercise_resid2 <- hlm_resid(exercise_slopes2,
+                         standardize=TRUE)
+
+exercise_resid2 %>% 
+   ggplot(aes(x=time, y=.chol.mar.resid))+
+   geom_point() +
+   geom_hline(yintercept=0, col="blue", 
+              linetype="dashed")+
+   geom_smooth(method="loess", 
+               color="red", se=F)+
+   theme(text = element_text(size = 20)) 
+```
+:::
+
+::: {.column width="50%"}
+```{r exercise resid plot3, echo=F}
+exercise_slopes2 <- lmer( strength ~ PROGRAM*time 
+                          + PROGRAM*time2 
+                          + PROGRAM*time3 
+                         + (time | ID) 
+                         + (0+time2 | ID) 
+                         + (0+time3 | ID),
+                         data = exercise_long )
+
+# get various standardized residuals #
+exercise_resid2 <- hlm_resid(exercise_slopes2,
+                         standardize=TRUE)
+
+exercise_resid2 %>% 
+   ggplot(aes(x=time, y=.chol.mar.resid))+
+   geom_point() +
+   geom_hline(yintercept=0, col="blue", linetype="dashed")+
+   geom_smooth(method="loess", color="red", se=F)+
+   theme(text = element_text(size = 20)) 
+
+```
+
+- Maybe slightly less wavey?
+:::
+
+::::
+
+---
+
+## Residuals vs covariates
+
+We can look at the AIC to see if this made a difference:
+```{r exercise resid plot4}
+anova(exercise_slopes2, exercise_slopes)
+```
+
+<br>
+
+- AIC is smaller, so looks like cubic time helped
+
+---
+
+## GEEs and residuals
+
+We can also do residual plots for GEE
+
+- Don't need to think about marginal vs conditional residuals (because we have no random effects)
+
+- However, I have found it difficult to find functions that actually plot residuals for GEEs in SAS and R
+
+- In R, if we fit the GEE using `glmgee()`, we can use the `residuals()` function
+
+```{r gee}
+library(glmtoolbox)
+exercise_gee <- glmgee( strength ~ PROGRAM*time, id=ID,
+                     data=exercise_long, corstr="AR-M-dependent")
+
+residuals(exercise_gee, type="pearson",plot.it=T)
+```
+
+---
+
+## GEEs and residuals
+
+In SAS, you can use the `ASSESS` argument in `PROC GENMOD`
+
+```{sas, eval=F}
+PROC GENMOD data=sleep_long;
+   class subject wake_type(REF="night") deprived(REF='0');
+   model reaction = wake_type | days | deprived;
+   repeated subject=subject / type=ar(1);
+   assess var=(days)/ resample seed=603708000;
+run;
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+![](sas-gee-resid.png){width=1000}
+:::
+
+
+::: {.column width="50%"}
+- I've found this example in the SAS documentation helpful for interpreting these results: 
+<br>
+https://support.sas.com/documentation/cdl/en/statug/
+63962/HTML/default/viewer.htm
+#statug_genmod_sect069.htm
+:::
+
+::::
+
+
+
+
+---
+
+## Leverage
+
+We may also be interested in whether we have particularly influential observations in our data that are (overly) influencing our model estimates - we investigate this via "leverage" or Cook's distance plots
+
+- [Leverage]{.alert} looks at how removing an observation/cluster affects predicted values/residuals -- it will tell us us about [extreme values in the predictor space]{.underline}
+
+- [Cook's distance]{.alert} looks at how removing an observation/cluster affects regression coefficients when [combined]{.underline} (how removing one observation affects all fitted values)
+   
+   - Leverage is used to calculate Cook's distance
+
+Observations are allowed to be influential!
+
+- This breaks no assumptions
+
+- But if your results look very different with and without the influential observations, it might bring the validity of your results into question
+
+We can also see whether we have any particularly influential clusters as well
+
+Unfortunately `PROC GLIMMIX` doesn't have functionality for influence metrics, but R does
+
+---
+
+## Leverage 
+
+Observation-level leverage/Cook's D
+```{r leverage, out.width="65%", echo=F, output=F}
+library(ggpubr)
+# looking at observation-level leverage #
+radon_leverage_obs <- hlm_influence(radon_lme, leverage="overall")
+
+ggarrange(
+dotplot_diag(radon_leverage_obs$leverage.overall, cutoff="internal", name="leverage")+ ylab("Leverage"),
+dotplot_diag(radon_leverage_obs$cooksd, cutoff="internal", name="cooks.distance")+ ylab("Cook's distance"),
+ncol=2,nrow=1)
+```
+
+```{r leverage exercise, out.width="65%"}
+library(ggpubr)
+# looking at observation-level leverage #
+exercise_leverage_obs <- hlm_influence(exercise_slopes, leverage="overall")
+
+ggarrange(
+dotplot_diag(exercise_leverage_obs$leverage.overall, cutoff="internal", name="leverage")+ ylab("Leverage"),
+dotplot_diag(exercise_leverage_obs$cooksd, cutoff="internal", name="cooks.distance")+ ylab("Cook's distance"),
+ncol=2,nrow=1)
+```
+
+::: {.absolute right=0 bottom=200 width="30%"}
+Looks like we have some observations that are influential based on Cook's distance...
+:::
+
+---
+
+## Leverage 
+
+Cluster-level leverage/Cook's D
+```{r leverage cluster, out.width="65%", echo=F, output=F}
+# looking at county-level leverage #
+radon_leverage_cnty <- hlm_influence(radon_lme, leverage="overall", level="county")
+
+ggarrange(
+dotplot_diag(radon_leverage_cnty$leverage.overall, cutoff="internal", name="leverage"),
+dotplot_diag(radon_leverage_cnty$cooksd, cutoff="internal", name="cooks.distance"),
+ncol=2,nrow=1)
+```
+
+```{r leverage cluster exercise, out.width="65%"}
+# looking at county-level leverage #
+exercise_leverage_id <- hlm_influence(exercise_slopes, leverage="overall", level="ID")
+
+ggarrange(
+dotplot_diag(exercise_leverage_id$leverage.overall, cutoff="internal", name="leverage"),
+dotplot_diag(exercise_leverage_id$cooksd, cutoff="internal", name="cooks.distance"),
+ncol=2,nrow=1)
+```
+
+::: {.absolute right=0 bottom=200 width="30%"}
+No individual people who are influential based on leverage of Cook's distance
+:::
+
+---
+
+## DFBETA
+
+A similar measure of influential observations is DFBETA - it's the change in a regression coefficient if the $ij^{th}$ observation were removed
+
+- Most functions/procedures will plot DFBETAs for each coefficients in the regression
+
+DFBETA is technically agnostic to model type - should work for both conditional and marginal models
+
+- For SAS, `PROC GLIMMIX` doesn't have any influence statistics built in but `PROC GENMOD` does
+
+- For R, I've had issues getting the `lmer()`, `glmer()`, and `gee()` functions to play nicely with the `dfbeta()` function
+
+---
+
+## DFBETA in `PROC GENMOD`
+
+In SAS, we use the `PLOTS(UNPACK)=DFBETA` option:
+```{sas DFBETA, eval=F}
+proc genmod data=dance PLOTS(UNPACK)=DFBETA;
+        class village_id dance_class_bin(REF="0");
+        model gaitfollowup = dance_class_bin / dist = normal;
+        repeated subject=village_id / type=exch;
+run;
+```
+
+:::: {.columns}
+::: {.column widht="60%"}
+- We're looking for observations that are clearly apart from the "herd"
+
+   - This plot looks fairly random and scattered, though
+
+- We could also look at the standardized DFBETA by using PLOTS(UNPACK)=DFBETAS
+:::
+::::
+
+::: {.absolute right=-100 bottom=50}
+![](DFBETA.png){width=900}
+:::
+
+---
+
+## Other diagnostics for GEEs
+
+<br>
+
+While we don't do a lot of stand-alone model testing for GEEs, we can compare the empirical estimates of the covariance structure to the model-based estimates
+
+- For this we can compare the model-based and robust standard errors or confidence intervals of regression coefficients
+
+<br>
+
+- If there is a large discrepancy, our robust variance estimator is probably doing the heavy lifting of correcting this for us and maybe an alternative correlation structure would be "more correct"
+
+   - What's a "large" difference? Hard to say -- it can be helpful to form a ratio $\frac{\text{robust SE}}{\text{model-based SE}}$ to see what percentage larger/smaller the robust standard error is compared to the model-based one
+   
+---
+
+## Other diagnosics for GEEs
+
+But since GEEs only require the mean model to be correct, we don't actually need the correlation structure to be correct to get correct inference (but it should be reasonable!)
+
+<br>
+
+"When regression coeﬃcients are the scientific focus, as in the examples here, one should invest the lion's share of time in modeling the mean structure, while [using a reasonable approximation to the covariance]{.underline}. [The robustness of the inference about $\beta$ can be checked by fitting a final model using different covariance assumptions and comparing the two sets of estimates and their robust standard errors.]{.alert} If they differ substantially, a more careful treatment of the covariance model may be necessary." - *Ch. 7.5 of "Analysis of Longitudinal Data" by Diggle et al.*
+
+- Can then use QIC model comparison methods we discussed in lecture 8.2!
+
+---
+
+## Take away messages
+
+More diagnostics available for assessing LMEs/GLMMs because we make more assumptions in those models
+
+<br>
+
+[Residual plots]{.alert} can be useful to assess whether modeled variance/covariance correctly (constant variance, random intercepts), and sometimes to assess functional form of fixed effect covariates
+
+- I've found this tutorial of the `redres` library in R to be a helpful walkthrough of the different types of residuals and what they are useful for: <https://goodekat.github.io/redres/articles/redres-vignette.html#resids>
+   
+<br>
+
+Influential observation analyses, like looking at [leverage or DFBETA]{.alert}, can be useful for either LMEs/GLMMs or GEEs to see if "outlier" observations are strongly influencing the fit of our model
+
+<br>
+
+We can assess how well we've modeled the covariance in GEEs by comparing the model-based standard errors to the robust standard errors
+
+- We can also perform diagnostics by fitting multiple models with different assumptions and compare them on model fit $\Rightarrow$ refer to lecture 8.2!

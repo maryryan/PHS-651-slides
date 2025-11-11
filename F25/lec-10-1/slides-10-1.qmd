@@ -1,0 +1,858 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+      pdf-separate-fragments: true
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(ggdag)
+library(dagitty)
+library(gridExtra)
+library(qrcode)
+```
+
+<h1>Lecture 10.1: Time-to-event data and studies</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>November 11, 2025</h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=100 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-10-1/slides-10-1>
+
+:::
+
+::: {.absolute bottom=50 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-10-1/slides-10-1"))
+```
+:::
+
+---
+
+## The road ahead
+
+We're almost at the end of the semester 🥳
+
+:::: {.columns}
+::: {.column width="50%"}
+[Some reminders:]{.alert}
+
+- Homework 4 due today
+
+- Milestone 5: Create Table 1 due 11/25
+
+- Homework 5 due 12/02
+
+- Final project oral presentations 12/02, 12/04, & 12/09
+
+   - Time-slot sign-up sheet will go live 11/25
+
+- Final papers due 12/15
+:::
+
+::: {.column width="50%"}
+[Lecture topics through the end of the term:]{.alert}
+
+- 11/11 (Today): Intro to time-to-event data
+
+- Th 11/13: Kaplan-Meier survival function estimator and logrank tests
+
+- Tues 11/18: Cox proportional hazards model
+
+- Th 11/20: Hands-on tutorial day
+
+- Tues 11/25: Time-dependent covariates and time-varying coefficients in survival analysis
+:::
+::::
+
+---
+
+## Today's roadmap
+
+- Introducing time-to-event/survival data
+
+- How do we measure time to an event?
+
+   - Time origin
+   
+   - Study time
+
+- Types of "missing" data when we're measuring time to an event
+
+   - Truncation
+   
+   - Censoring
+
+- How to describe time to an event? 
+
+   - Survival function
+   
+   - Hazard function/rate
+   
+   - Cumulative hazard
+   
+- Probability distributions for survival time
+
+
+---
+
+## A new type of longitudinal data
+
+Previously we've dealt with longitudinal data that was focused on [repeated measures]{.alert}
+
+- An outcome is measured for an individual multiple times across time
+
+- Analysis focus was on how the outcome trend changes through time
+
+<br>
+
+A different type of longitudinal question, though, may instead ask about the [time]{.alert} it takes for individuals to experience a particular [event]{.alert} and how factors influence that time
+
+- i.e., Time to: diagnosis, remission, graduation, death, etc
+
+- This is known as [time-to-event]{.alert} or [survival]{.alert} data
+
+In time-to-event data, the outcome we are interested in is actually a combination of 2 outcomes:
+
+- Did an individual experience an event?
+
+- At what time did that event happen?
+
+---
+
+## Examples
+
+:::: {.columns}
+::: {.column width="50%"}
+The Worcester Heart Attack study considered the length of [time from hospital discharge for acute myocardial infarction to death]{.alert} as a function of cohort year
+
+- Event of interest: mortality (general)
+
+- Covariate/exposure of interest: year of discharge
+
+<br>
+
+::: {.fragment}
+A study of Welsh nickel refiners} considered the [time from 1st employment to death from nasal cancer]{.alert} as a function of age at 1st employment
+
+- Event of interest: death from nasal cancer
+
+- Covariate/exposure of interest: age at 1st employment
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+A trial of the leukemia drug 6-MP compared the [time to relapse]{.alert} between placebo and 6-MP treamtnet groups among children in leukemia remission
+
+- Event of interest: cancer relapse
+
+- Covariate/exposure of interest: treatment with 6-MP
+:::
+
+<br>
+
+::: {.fragment}
+A hemodialysis study looked at [time to access failure]{.alert} as a function of access type and the number of previous accesses
+
+- Event of interest: access failure
+
+- Covariate/exposure of interest: type of access, number of previous accesses
+:::
+:::
+::::
+
+---
+
+## Time from when?
+
+In studies dealing with time-to-event outcomes, we can't just think about what (calendar) time that event happened - we must think about when that event happened 
+[in relation to something else]{.alert}
+
+- This "something else" tells us when we should start counting down from
+
+
+This creates 2 types of "start time"
+
+1. Time origin: when the (research question) clock starts
+
+   - e.g., birth, first exposure, etc.
+   
+   - The time between the time origin and the event is known as the [survival time]{.alert}
+   
+2. Entry to study (study time 0)
+
+- For [randomized studies]{.underline}, the time origin of the study and the point of entry for every patient into the study is [the same]{.alert}: the point of randomization
+
+---
+
+## Time from when?
+
+In studies dealing with time-to-event outcomes, we can't just think about what (calendar) time that event happened - we must think about when that event happened 
+[in relation to something else]{.alert}
+
+- This "something else" tells us when we should start counting down from
+
+This creates 2 types of "start time"
+
+1. Time origin: when the (research question) clock starts
+
+2. Entry to study (study time 0)
+   
+:::: {.columns}
+::: {.column width="60%"}
+- In [observational studies]{.underline} we might wish to ask questions about:
+      
+   - survival from birth (or even conception) when analyzing natural history
+   
+   - survival from presentation when studying an acute (or chronic illness)
+      
+   - survival from treatment when studying the effects of alternative interventions
+:::
+
+::: {.column width="40%"}
+- In observational studies, the time origin of the study and the beginning of the period of observation of the patient typically [do not coincide]{.alert} (the patient may come under observation before or after the time origin of the study)
+:::
+::::
+
+---
+
+## Examples
+
+[How might we get information on time origin, prospectively or retrospectively?]{.alert .fragment fragment-index=1}
+
+[The Worcester Heart Attack study]{.alert} considered the length of time from hospital discharge for acute myocardial infarction to death as a function of cohort year
+
+- Time origin: [discharge from hospital]{.fragment fragment-index=1}
+
+[Welsh nickel refiners]{.alert} considered the time from 1st employment to death from nasal cancer as a function of age at 1st employment
+
+- Time origin: [date of 1st employment]{.fragment fragment-index=1}
+
+[6-MP]{.alert} compared the time to relapse between placebo and 6-MP treamtnet groups among children in leukemia remission
+
+- Time origin: [entry into the study (clinical trial)]{.fragment fragment-index=1}
+
+[Hemodialysis study]{.alert} looked at time to access failure as a function of access type and the number of previous accesses
+
+- Time origin: [placement of access (could be multiple accesses)]{.fragment fragment-index=1}
+
+---
+
+## "Missing" data: truncation
+
+The concepts of time-to-event outcomes, time origin, and study entry combine to create the opportunity for several types of "missing" data
+
+<br>
+
+1. Truncation
+
+   1.1 Left truncation
+   
+   1.2 Right truncation
+
+<br>
+
+2. Censoring
+
+   2.1 Right censoring
+   
+   2.2 Left censoring
+   
+   2.3 Interval censoring
+
+---
+
+## "Missing" data: truncation
+
+The concepts of time-to-event outcomes, time origin, and study entry combine to create the opportunity for several types of "missing" data
+
+<br>
+
+The first, [truncation]{.alert}, occurs because we can't observe people for every second of every day [of their whole lives]{.alert}, and therefore we end up [excluding]{.alert} them from analysis
+
+<br>
+
+1.1. [Left truncation]{.alert}: when, for some individuals, there is a delay between the time origin of the study and the entry time, and therefore we don't include them in our study
+
+   - If a individual's event occurred *before* entry time, they're excluded from analysis
+   
+      - i.e., Someone comes to baseline visit of a time-to-diagnosis study having already been diagnosed with condition
+
+   - Common in observational studies
+
+---
+
+## "Missing" data: truncation
+
+The concepts of time-to-event outcomes, time origin, and study entry combine to create the opportunity for several types of "missing" data
+
+:::: {.columns}
+
+::: {.column width="60%"}
+
+1.1. [Left truncation]{.alert}: when, for some individuals, there is a delay between the time origin of the study and the entry time, and therefore we don't include them in our study
+
+<br> 
+
+We exclude people who have already experienced their event prior to the study from our analysis because [we're interested in studying people's time [at risk]{.underline}]{.alert}
+
+- Everyone who has not experienced their event yet is considered to be "at risk" for experiencing that event in the future
+
+- We can have [observed periods at risk]{.alert} when we are observing a participant prior to an event
+
+- We can also have [unobserved periods at risk]{.alert} when someone has still not experienced an event but we are not directly observing them
+:::
+
+::: {.column width="40%"}
+<br>
+<br>
+![](left-trunc.png){width=1250}
+:::
+
+::::
+
+---
+
+## "Missing" data: truncation
+
+The concepts of time-to-event outcomes, time origin, and study entry combine to create the opportunity for several types of "missing" data
+
+<br>
+   
+1.1. [Left truncation]{.alert}: when, for some individuals, there is a delay between the time origin of the study and the entry time, and therefore we don't include them in our study
+
+<br>
+
+1.2. [Right truncation]{.alert}: when people who have not had an event are not recorded
+
+- i.e., We don't know to identify you before it's a problem
+
+- Much less common than left truncation
+
+<br>
+
+If we're not careful, truncation of either kind can create [survival bias]{.alert} in our analyses
+
+
+
+---
+
+## "Missing" data: censoring
+
+The concepts of time-to-event outcomes, time origin, and study entry combine to create the opportunity for several types of "missing" data
+
+<br>
+
+The second occurs because we can't observe people for every second of every day [of the study]{.alert}, but we can still include the information we have in the analysis
+   
+2. [Censoring]{.alert}: we have some information about individual survival time, but don't know what someone's precise survival time is
+
+- There are three common types of censoring: right, left, and interval
+
+---
+
+## "Missing" data: censoring
+
+Three common types of censoring:
+
+2.1 [Right censoring]{.alert}: if it occurred, the event must have happened *after* a certain observation time, but we don't know when
+
+   - Example: Everyone experiences death eventually. We last saw Individual 1 alive at time 10 but have since lost contact with them; so though we don't know their current status, we know they can't have died before time 10.
+
+2.2 [Left censoring]{.alert}: if it occurred, an event must have happened *before* a certain observation time, but we don't know when (this type is relatively rare)
+
+   - Example: In a study of marijuana use, one of the interview participants says they have tried it before but don't know when the first time was. We still include their data in our study.
+
+
+2.3 [Interval censoring]{.alert}: an event is known to have occurred *between* two certain times
+
+   - Example: A PCP assesses their patient for a medical condition during periodic exams. When the condition is present, the time when the condition developed is only known to be between the previous exam and the current exam
+   
+---
+
+## "Missing" data: censoring
+
+The concepts of time-to-event outcomes, time origin, and study entry combine to create the opportunity for several types of "missing" data
+
+<br>
+
+The second occurs because we can't observe people for every second of every day [of the study]{.alert}, but we can still include the information we have in the analysis
+   
+2. [Censoring]{.alert}: we have some information about individual survival time, but don't know what someone's precise survival time is
+
+<br> 
+
+[In most analyses, we need to assume that censoring happens *randomly* and unrelated to their event risk (non-informative censoring assumption)]{.alert}
+
+---
+
+## An example
+
+Even when we know the time origin, we don't always know when in someone's event cycle we're enrolling them
+
+$\Delta$ = time origin; X = event; o = censoring time
+
+:::: {.columns}
+
+::: {.column width="50%"}
+![](studyEntry.png){width=90%}
+:::
+
+::: {.column width="50%"}
+![](timeOrigin.png){width=90%}
+:::
+
+::::
+
+---
+
+## Another example: heart-lung transplants
+
+Consider an artificial study of the survival of heart-lung transplant patients who are followed up after surgery for a period of 12 months
+
+:::: {.columns}
+
+::: {.column width="55%"}
+- A = non-event observed month; a = non-event non-observed month
+
+- D = observed death; d = non-observed death
+
+![](censoring-edit.png){width=1000}
+:::
+
+::: {.column width="45%"}
+- [[Subject 1]{.underline}: enrolled directly after transplant (time origin), no missing visits; observed death at month 6]{.fragment fragment-index=1}
+ 
+- [[Subject 2]{.underline}: enrolled directly after transplant, observed for full study time (12 months); unobserved death at month 21. [Fixed/administrative right censoring]{.alert}]{.fragment fragment-index=1}
+
+- [[Subject 3]{.underline}: enrolled directly after transplant, lost to follow up after month 7; unobserved death at month 11. [Right censoring]{.alert}]{.fragment fragment-index=1}
+
+- [[Subject 4]{.underline}:  enrolled in the study 4 months after transplant; observed death 9 months after transplant. [Left truncation]{.alert}]{.fragment fragment-index=1}
+:::
+
+:::
+
+---
+
+## Example: heart-lung transplants
+
+Consider an artificial study of the survival of heart-lung transplant patients who are followed up after surgery for a period of 12 months
+
+:::: {.columns}
+
+::: {.column width="55%"}
+- A = non-event observed month; a = non-event non-observed month
+
+- D = observed death; d = non-observed death
+
+![](censoring-edit.png){width=1000}
+:::
+
+::: {.column width="45%"}
+- [Subject 5]{.underline}: never enrolled in study; unobserved death at month 2. [Left truncation, left censoring]{.alert}
+
+- [Subject 6]{.underline}: enrolled in the study 6 months after transplant, observed until 12 months after transplant; unobserved death at month 15. [Left truncation, fixed right censoring]{.alert}
+
+- [Subject 7]{.underline}: enrolled directly after transplant; misses visit months 3-6, returns to study in month 7; observed death at month 11.
+:::
+
+:::
+
+---
+
+## Example: heart-lung transplants
+
+Consider an artificial study of the survival of heart-lung transplant patients who are followed up after surgery for a period of 12 months
+
+:::: {.columns}
+
+::: {.column width="55%"}
+- A = non-event observed month; a = non-event non-observed month
+
+- D = observed death; d = non-observed death
+
+![](censoring-edit.png){width=1000}
+:::
+
+::: {.column width="45%"}
+[We can't analyze what we don't observe!]{.alert}
+
+- But we can still use information about a person who we *partially* observe, even if we don't observe their event
+:::
+
+::::
+
+---
+
+## What does survival data actually look like?
+
+Example: A tonsil cancer clinical trial study conducted from 1968-1972 to understand time from diagnosis to death.
+
+<br>
+
+:::: {.columns}
+::: {.column width="60%"}
+
+- EntryDate: Day of year, and year, participant entered study
+
+- Status: 0=censored, 1=died
+
+- Time: days observed
+
+:::
+
+::: {.column width="40%"}
+
+```{css, echo=F}
+.reveal code {
+  max-height: 100% !important;
+}
+```
+```{r tonsil, echo=F}
+library(geecure)
+data(tonsil)
+tonsil %>% 
+   select(Case, EntryDate, Status, Time) %>% 
+   head(n=20)
+```
+
+:::
+::::
+
+---
+
+## Describing time to an event
+
+In analyzing time-to-event data, what would we want to know?
+
+<br>
+
+There are several ways we can describe the survival time:
+
+- The [survival]{.alert} function: the probability of the event occurring after a time $t$
+
+- The [hazard]{.alert} function/rate: the number of events (among a population) we can expect to occur at any given moment
+
+- The [cumulative hazard]{.alert} function/rate: the number of events (among a population) we can expect to occur over a given time interval
+
+<br>
+
+All 3 of these have mathematical definitions that I'll provide, but we're mostly going to focus on what those definitions mean conceptually/in words
+
+---
+
+## Some notation
+
+- $T^*$: someone's true time to failure/event (from origin)
+
+- $C$: the time at which someone is censored/lost to follow up (censoring time)
+
+- $T = \min(T^*, C)$: the observed time is equal to whichever happens first: the event or censoring
+
+   - We only see this!
+
+- $t$: some arbitrary time point
+
+
+---
+
+## The survival function
+
+We say that the [survival function]{.alert} $S(t)$ is a function that will give the [probability that someone's true event time $T$ is greater than some time $t$]{.underline}:
+$$S(t) = P(T>t)$$
+
+- Probably that someone survives [beyond]{.underline} time $t$
+
+<br>
+
+- Recall from 551: $P(T>t) = 1 - P(T\le t) = \int_t^\infty f(u) du$
+
+   - We call $P(T\le t)$ the [cumulative distribution function]{.alert} (CDF)
+   
+   - We call $f(u)$ the [probability density function]{.alert} (pdf)
+   
+<br>
+
+- This means we can probably assume that someone's survival time follows some kind of [probability distribution]{.alert} (more on that in a few slides...)
+
+---
+
+## The survival function
+
+We say that the [survival function]{.alert} $S(t)$ is a function that will give the [probability that someone's true event time $T$ is greater than some time $t$]{.underline}:
+$$S(t) = P(T>t)$$
+
+:::: {.columns}
+::: {.column width="55%"}
+
+Some other characteristics of the survival function $S(t)$:
+
+- $S(0) = 1$
+
+   - All observations are "at risk" at time 0 (no one is having their event at time 0)
+
+- $S(\infty) = \lim_{t \rightarrow \infty} S(t) = 0$
+
+   - We assume all observations will fail eventually (with infinite time)
+   
+- $S(t)$ cannot increase with time
+   
+   - Your probability of an event can stay constant over time, but you can't return to a higher probability of survival
+   
+:::
+
+::: {.column width="45%"}
+
+![](surv-fnc.png){width=1000}
+
+:::
+::::
+
+---
+
+## The hazard function
+
+The [hazard function]{.alert} $\lambda(t)$ is the instantaneous rate of an event happening
+
+$$\lambda(t) = \lim_{\delta \rightarrow 0} \frac{P(t\le T < t + \delta | T \ge t)}{\delta}$$
+
+
+
+- Numerator: conditional probability that the event will occur in the interval $[t, t+\delta)$, given that the event has not occurred before time $t$
+
+- Denominator: the width of the interval
+
+<br>
+
+The hazard function gives us the rate of event occurrence per unit time
+
+- Taking the limit as the width of the interval goes down to zero gives an *instantaneous* rate of occurrence
+
+   - Rate of occurrence with the time interval is very, very, very tiny
+   
+
+But how do we get this?
+
+---
+
+## The hazard function
+
+The [hazard function]{.alert} $\lambda(t)$ is the instantaneous rate of an event happening
+
+$$\lambda(t) = \lim_{\delta \rightarrow 0} \frac{P(t\le T < t + \delta | T \ge t)}{\delta}$$
+
+- Recall the rule of conditional probability: $P(A|B) = \frac{P(A\cap B)}{P(B)}$ (the probability of A and B happening, over the probability of B happening)
+
+
+We can rewrite the hazard function as:
+
+$$\lambda(t) = \lim_{\delta \rightarrow 0} \frac{\frac{P(t\le T < t + \delta)}{P(T\ge t)}}{\delta} \approx \frac{P(t\le T < t_+)}{P(T\ge t)} = \frac{f(t)}{S(t)}$$
+
+- The instantaneous rate of events at time $t$ is equal to the density of events at time $t$ divided by the probability of surviving to time $t$
+
+
+But do we care about the hazard rate in an instant?
+
+---
+
+## The cumulative hazard function
+
+To understand the rate of event occurrence over a period of time, we can calculate the [cumulative hazard function]{.alert} $\Lambda(t)$:
+
+$$\Lambda(t) = \int_0^t \lambda(u) du$$
+
+- Basically: how many events we expect to happen between time 0 and time $t$
+
+<br>
+
+We can rewrite the survival and cumulative hazard functions in terms of each other:
+
+$$S(t) = e^{-\Lambda(t)}$$
+
+$$\Lambda(t) = -\log\{S(t)\}$$
+
+---
+
+## Some notes on survival/hazard functions
+
+The hazard function [is not a probability]{.alert}
+
+- It can be greater than 1
+
+- Kind of like how a probability density function (pdf) is not a probability
+
+<br>
+
+Given the survival function, we can find that hazards; given the hazard function, we can find the survival function
+
+- When the hazard is [high]{.underline}, the cumulative hazard increases (seeing more events over a time interval) and survival decreases faster with time
+
+- When the hazard is [low]{.underline}, the cumulative hazard and survival change very little over time (likely going to take a long time for someone's event to occur)
+
+---
+
+## Some notes on survival/hazard functions
+
+But how do we actually calculate values for these functions?
+
+<br>
+
+Easiest (for me at least) to start with the survival function $S(t)$ because it's just a regular probability $P(T>t)$
+
+- If we know $S(t)$, we can calculate the cumulative hazard $\Lambda(t)=-\log\{S(t)\}$
+
+- If we know $\Lambda(t)$, we can calculate the hazard $\lambda(t)=\frac{\partial}{\partial t}\Lambda(t)$ (the derivative of the cumulative hazard)
+
+<br>
+
+But how do we get the survival function in the first place?
+
+- We could assume that survival time $T$ follows a probability distribution like we do with other data...
+
+---
+
+## Survival time and the exponential distribution
+
+The simplest survival distribution is the [exponential]{.alert} distribution with parameter $\lambda$: $T\sim \text{Exponential}(\lambda)$
+
+<br>
+
+The exponential distribution assumes [constant hazard]{.alert} over time: $\lambda(t) = \lambda$
+
+- This means the cumulative hazard function for the interval $(0,t)$ is $\Lambda(t) = \lambda t$
+
+   - linearly increasing with time
+
+- the survival function is: $S(t) = e^{-\Lambda(t)} = e^{-\lambda t}$
+
+- the density function is: $f(t) = \lambda(t) \times S(t) = \lambda e^{-\lambda t}$
+
+::: {.absolute right=0 top=400}
+![](exponential.png){width=700px}
+:::
+
+<br>
+
+An exponential survival distribution also tells us that:
+
+- the mean survival time will be: $E[T] = \frac{1}{\lambda}$
+
+- the variance of the survival time will be: $Var[T] = \frac{1}{\lambda^2}$
+
+---
+
+## Survival time and the Weibull
+
+:::: {.columns}
+::: {.column width="65%"}
+We could also assume a [Weibull]{.alert} distribution with parameters $\lambda$ and $\alpha$: $T\sim \text{Weibull}(\lambda, \alpha)$
+
+- The $\alpha$ parameter will determine whether the hazard [increases or decreases]{.alert} over time: $\lambda(t) = \alpha \lambda t^{\alpha-1}$
+
+- This means the cumulative hazard function for the interval $(0,t)$ is a more complicated function: $\Lambda(t) = \int_0^t\alpha \lambda u^{\alpha-1} du$
+
+   - How much the cumulative hazard changes over time will change with time
+
+- and the density function is: $f(t) = \lambda \alpha t^{\alpha-1}e^{-\lambda t^\alpha}$
+
+<br>
+
+A Weibull distribution also tells us that:
+
+- the mean survival time will be $E[T] = \lambda (1/\alpha)!$
+
+:::
+::: {.column width="35%"}
+![](weibull.png){width=800px}
+:::
+::::
+
+---
+
+## Survival time and other distributions
+
+Exponential and Weibull are not the only distributions we can assume
+
+- Other include:
+
+   - Gamma
+   
+   - Log-normal
+   
+   - Log-logistic
+   
+   - Gompertz
+   
+   - Generalized gamma
+   
+Exponential and Weibull are by far the most common, though
+
+- We'll refer back to these probability distributions when we try to create regression models for survival data next week
+
+---
+
+## Take home messages
+
+The outcome in time-to-event data is composed of 2 parts:
+
+- How long was the person observed for?
+
+- Did the event happen?
+
+<br>
+
+Measuring someone's time to an event can get complicated because we can't observe them all the time
+
+- Truncation (we end up excluding the person from analysis)
+
+- Censoring (we can use some of a person's data to summarize time-to-event)
+
+<br>
+
+Several ways we can describe time-to-event data
+
+- Survival function (probability that their event will happen after some time $t$)
+
+- Hazard function/rate (instantaneous rate of an event occurrence)
+
+- Cumulative hazard (rate of event occurrence over a period of time)

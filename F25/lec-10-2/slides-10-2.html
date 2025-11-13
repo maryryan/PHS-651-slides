@@ -428,13 +428,7 @@ November 13, 2025
 <p>Estimating <span class="math inline">\(S(t)\)</span> without a probability distribution (non-parametrically)</p>
 <ul>
 <li><p>When we don’t have censoring</p></li>
-<li>
-<p>When we do have censoring</p>
-<ul>
-<li><p>Strategy 1: Uniform censoring adjustment with life tables</p></li>
-<li><p>Strategy 2: Kaplan-Meier estimator</p></li>
-</ul>
-</li>
+<li><p>When we do have censoring</p></li>
 </ul>
 </li>
 <li><p>Confidence intervals for <span class="math inline">\(S(t)\)</span></p></li>
@@ -640,181 +634,63 @@ November 13, 2025
 </tbody>
 </table>
 </div><div class="column" style="width:50%;">
-<div class="fragment">
 <p>How do we account for censoring when estimating <span class="math inline">\(S(t)\)</span>?</p>
-<ul>
-<li>
-<p>Could adjust the beginning totals for censoring</p>
-<ul>
-<li>Assume censoring occurs <span class="alert">uniformly</span> throughout the interval <span class="math inline">\(\Rightarrow\)</span> censored participants are at risk for half the interval (on average)</li>
-</ul>
-</li>
-<li><p><span class="alert">Adjusted total at risk</span> in an interval is then: <span class="math display">\[\begin{align*}\text{Adju. total} &amp;= (\text{Uncens. total}) + (\text{# lost})/2\\
-&amp; = (\text{Beg. total}) - (\text{# lost}) + (\text{# lost})/2\\
-&amp; = (\text{Beg. total}) - (\text{# lost})/2\end{align*}\]</span></p></li>
-</ul>
+<!-- - Could adjust the beginning totals for censoring -->
+<!--    - Assume censoring occurs [uniformly]{.alert} throughout the interval $\Rightarrow$ censored participants are at risk for half the interval (on average) -->
+<!-- - [Adjusted total at risk]{.alert} in an interval is then: -->
+<!-- $$\begin{align*}\text{Adju. total} &= (\text{Uncens. total}) + (\text{# lost})/2\\ -->
+<!-- & = (\text{Beg. total}) - (\text{# lost}) + (\text{# lost})/2\\ -->
+<!-- & = (\text{Beg. total}) - (\text{# lost})/2\end{align*}$$ -->
 </div>
 </div>
-</div>
-</section><section id="life-table-estimates-1" class="slide level2"><h2>Life table estimates</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>This gets us:</p>
-<table>
-<thead><tr class="header">
-<th>Interval</th>
-<th>Beginning total</th>
-<th># lost</th>
-<th>Adju. total</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>(0 - 5]</td>
-<td>21</td>
-<td>0</td>
-<td>21</td>
-</tr>
-<tr class="even">
-<td>(5 - 10]</td>
-<td>21</td>
-<td>3</td>
-<td>19.5</td>
-</tr>
-<tr class="odd">
-<td>(10 - 15]</td>
-<td>13</td>
-<td>1</td>
-<td>12.5</td>
-</tr>
-<tr class="even">
-<td>(15 - 20]</td>
-<td>11</td>
-<td>3</td>
-<td>9.5</td>
-</tr>
-<tr class="odd">
-<td>(20 - 25]</td>
-<td>7</td>
-<td>1</td>
-<td>6.5</td>
-</tr>
-<tr class="even">
-<td>(25 - 30]</td>
-<td>4</td>
-<td>0</td>
-<td>4</td>
-</tr>
-<tr class="odd">
-<td>(30 - 35]</td>
-<td>4</td>
-<td>4</td>
-<td>2</td>
-</tr>
-</tbody>
-</table>
-</div><div class="column" style="width:50%;">
-<p>Then we can compute the survival proportion for each interval: <span class="math display">\[(0 - 5]: \frac{21-0}{21} = 1\]</span> <span class="math display">\[(5 - 10]: \frac{19.5-5}{19.5} = 14.5/19.5 = 0.74 \Rightarrow \]</span> 75% of those not relapsed at the end of month 5 have not relapsed by the end of the 10th month</p>
-<div class="fragment">
-<p><span class="math display">\[(10 - 15]: \frac{12.5-1}{12.5} = 11.5/12.5 = 0.92 \Rightarrow \]</span> 92% of those not relapsed at the end of month 10 have not relapsed by the end of the 15th month</p>
-</div>
-</div>
-</div>
-</section><section id="life-table-estimates-2" class="slide level2"><h2>Life table estimates</h2>
-<p>Then we can use conditional probability to compute the surviving proportions</p>
-<p><span class="math display">\[P(T &gt; 10) = P(T&gt;5) \times \frac{P(T&gt;10)}{P(T&gt;5)} = 1 \times 0.74 = 0.74\]</span></p>
-<p><span class="math display">\[P(T &gt; 15) = P(T&gt;5) \times \frac{P(T&gt;10)}{P(T&gt;5)} \times \frac{P(T&gt;15)}{P(T&gt;10)} = 1 \times 0.74 \times 0.92 = 0.68\]</span></p>
-</section><section id="life-table-estimates-3" class="slide level2"><h2>Life table estimates</h2>
-<p>Which gets us:</p>
-<table>
-<colgroup>
-<col style="width: 17%">
-<col style="width: 15%">
-<col style="width: 12%">
-<col style="width: 12%">
-<col style="width: 12%">
-<col style="width: 15%">
-<col style="width: 15%">
-</colgroup>
-<thead><tr class="header">
-<th>Interval</th>
-<th>Beginning total</th>
-<th># lost</th>
-<th>Adju. total</th>
-<th># relapsed</th>
-<th>Cond. interval survival</th>
-<th>Marg. survival</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>(0 - 5]</td>
-<td>21</td>
-<td>0</td>
-<td>21</td>
-<td>0</td>
-<td>1</td>
-<td>1</td>
-</tr>
-<tr class="even">
-<td>(5 - 10]</td>
-<td>21</td>
-<td>3</td>
-<td>19.5</td>
-<td>5</td>
-<td>0.7436</td>
-<td>0.7436</td>
-</tr>
-<tr class="odd">
-<td>(10 - 15]</td>
-<td>13</td>
-<td>1</td>
-<td>12.5</td>
-<td>1</td>
-<td>0.92</td>
-<td>0.6841</td>
-</tr>
-<tr class="even">
-<td>(15 - 20]</td>
-<td>11</td>
-<td>3</td>
-<td>9.5</td>
-<td>1</td>
-<td>0.8947</td>
-<td>0.6121</td>
-</tr>
-<tr class="odd">
-<td>(20 - 25]</td>
-<td>7</td>
-<td>1</td>
-<td>6.5</td>
-<td>2</td>
-<td>0.6923</td>
-<td>0.4236</td>
-</tr>
-<tr class="even">
-<td>(25 - 30]</td>
-<td>4</td>
-<td>0</td>
-<td>4</td>
-<td>0</td>
-<td>1</td>
-<td>0.4236</td>
-</tr>
-<tr class="odd">
-<td>(30 - 35]</td>
-<td>4</td>
-<td>4</td>
-<td>2</td>
-<td>0</td>
-<td>1</td>
-<td>0.4236</td>
-</tr>
-</tbody>
-</table>
-<p>This method requires us to come up with the intervals <u>on our own</u></p>
-<ul>
-<li><p>Some of these intervals have no events or censoring, some have multiple</p></li>
-<li><p>Who’s to say what’s the correct interval? … or is there a better way?</p></li>
-</ul></section><section id="kaplan-meier-estimator-of-st" class="slide level2"><h2>Kaplan-Meier estimator of <span class="math inline">\(S(t)\)</span>
+<!-- --- -->
+
+<!-- ## Life table estimates -->
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- This gets us: -->
+<!-- | Interval | Beginning total | # lost | Adju. total | # relapsed | -->
+<!-- |---------|----------|---------|---------| -->
+<!-- | (0 - 5] | 21 | 0 | 21 | 0 | -->
+<!-- | (5 - 10] | 21 | 3 | 19.5 | 5 | -->
+<!-- | (10 - 15] | 13 | 1 | 12.5 | 1 | -->
+<!-- | (15 - 20] | 11 | 3 | 9.5 | 1 | -->
+<!-- | (20 - 25] | 7 | 1 | 6.5 | 2 | -->
+<!-- | (25 - 30] | 4 | 0 | 4 | 0 | -->
+<!-- | (30 - 35] | 4 | 4 | 2 | 0 | -->
+<!-- ::: -->
+<!-- ::: {.column width="50%"} -->
+<!-- Then we can compute the survival proportion for each interval: -->
+<!-- $$(0 - 5]: \frac{21-0}{21} = 1$$ -->
+<!-- $$(5 - 10]: \frac{19.5-5}{19.5} = 14.5/19.5 = 0.74 \Rightarrow $$ 75% of those not relapsed at the end of month 5 have not relapsed by the end of the 10th month -->
+<!-- ::: {.fragment} -->
+<!-- $$(10 - 15]: \frac{12.5-1}{12.5} = 11.5/12.5 = 0.92 \Rightarrow $$ 92% of those not relapsed at the end of month 10 have not relapsed by the end of the 15th month -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- :::: -->
+<!-- --- -->
+
+<!-- ## Life table estimates -->
+<!-- Then we can use conditional probability to compute the surviving proportions -->
+<!-- $$P(T > 10) = P(T>5) \times \frac{P(T>10)}{P(T>5)} = 1 \times 0.74 = 0.74$$ -->
+<!-- $$P(T > 15) = P(T>5) \times \frac{P(T>10)}{P(T>5)} \times \frac{P(T>15)}{P(T>10)} = 1 \times 0.74 \times 0.92 = 0.68$$ -->
+<!-- --- -->
+
+<!-- ## Life table estimates -->
+<!-- Which gets us: -->
+<!-- | Interval | Beginning total | # lost | Adju. total | # relapsed | Cond. interval survival | Marg. survival| -->
+<!-- |-------|------|-----|-----|-----|------|------| -->
+<!-- | (0 - 5] | 21 | 0 | 21 | 0 | 1 | 1 | -->
+<!-- | (5 - 10] | 21 | 3 | 19.5 | 5 | 0.7436 | 0.7436 | -->
+<!-- | (10 - 15] | 13 | 1 | 12.5 | 1 | 0.92 | 0.6841 | -->
+<!-- | (15 - 20] | 11 | 3 | 9.5 | 1 | 0.8947 | 0.6121 | -->
+<!-- | (20 - 25] | 7 | 1 | 6.5 | 2 | 0.6923 | 0.4236 | -->
+<!-- | (25 - 30] | 4 | 0 | 4 | 0 | 1 | 0.4236 | -->
+<!-- | (30 - 35] | 4 | 4 | 2 | 0 | 1 | 0.4236 | -->
+<!-- This method requires us to come up with the intervals [on our own]{.underline} -->
+<!-- - Some of these intervals have no events or censoring, some have multiple -->
+<!-- - Who's to say what's the correct interval? ... or is there a better way? -->
+</section><section id="kaplan-meier-estimator-of-st" class="slide level2"><h2>Kaplan-Meier estimator of <span class="math inline">\(S(t)\)</span>
 </h2>
 <p>The <span class="alert">Kaplan-Meier estimator</span> of <span class="math inline">\(S(t)\)</span> considers the probability of survival a (very small) interval of time, given that an individual is at risk at the beginning of the interval</p>
 <p><br></p>
@@ -827,7 +703,7 @@ November 13, 2025
 <p><br></p>
 <p>Total number of events at time <span class="math inline">\(t_i\)</span> is equal to total number at risk minus those who haven’t failed <span class="math display">\[d_i = Y_i - s_i\]</span></p>
 </section><section id="km-estimator" class="slide level2"><h2>KM estimator</h2>
-<p>Instead of looking at neatly-spaced calendar time intervals (like we did before), the KM estimator calculates a conditional survival probability for each time interval in which <u>only 1 event occurs</u>, and then multiplies them together:</p>
+<p>The KM estimator calculates a conditional survival probability for each time interval in which <u>only 1 event occurs</u>, and then multiplies them together:</p>
 <p><span class="math display">\[\begin{align*}\widehat{S}_{KM}(t) &amp;= P(T&gt;t)\\
 &amp;= P(T&gt;t | T &gt; t_k) \times P(T&gt;t_k | T&gt;t_{k-1})\times \dots \times P(T&gt;t_1)\\
 &amp;= \prod_{t_i \le t}\left[1-\frac{d_i}{Y_i}\right]\end{align*}\]</span></p>
@@ -859,43 +735,43 @@ November 13, 2025
 <td>7</td>
 <td>1</td>
 <td>17</td>
-<td><span class="fragment" data-fragment-index="1"><span class="math inline">\(0.857(1-\frac{1}{17})=0.807\)</span></span></td>
+<td><span class="fragment" data-fragment-index="2"><span class="math inline">\(0.857(1-\frac{1}{17})=0.807\)</span></span></td>
 </tr>
 <tr class="odd">
 <td>10</td>
 <td>1</td>
 <td>15</td>
-<td><span class="fragment" data-fragment-index="1"><span class="math inline">\(0.807(1-\frac{1}{15})=0.753\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.807(1-\frac{1}{15})=0.753\)</span></span></td>
 </tr>
 <tr class="even">
 <td>13</td>
 <td>1</td>
 <td>12</td>
-<td><span class="fragment" data-fragment-index="1"><span class="math inline">\(0.753(1-\frac{1}{12})=0.690\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.753(1-\frac{1}{12})=0.690\)</span></span></td>
 </tr>
 <tr class="odd">
 <td>16</td>
 <td>1</td>
 <td>11</td>
-<td><span class="fragment" data-fragment-index="1"><span class="math inline">\(0.690(1-\frac{1}{11})=0.628\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.690(1-\frac{1}{11})=0.628\)</span></span></td>
 </tr>
 <tr class="even">
 <td>22</td>
 <td>1</td>
 <td>7</td>
-<td><span class="fragment" data-fragment-index="1"><span class="math inline">\(0.628(1-\frac{1}{7})=0.538\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.628(1-\frac{1}{7})=0.538\)</span></span></td>
 </tr>
 <tr class="odd">
 <td>23</td>
 <td>1</td>
 <td>6</td>
-<td><span class="fragment" data-fragment-index="1"><span class="math inline">\(0.538(1-\frac{1}{16})=0.448\)</span></span></td>
+<td><span class="fragment" data-fragment-index="3"><span class="math inline">\(0.538(1-\frac{1}{16})=0.448\)</span></span></td>
 </tr>
 </tbody>
 </table></section><section id="example-6-mp-1" class="slide level2"><h2>Example: 6-MP</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>If we were to wite our KM estimates in the style of a life table, this would look like:</p>
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<p>If we were to wite our KM estimates in the style of a life table (which shows survival probabilities over intervals), this would look like:</p>
 <table>
 <thead><tr class="header">
 <th><span class="math inline">\(t\)</span></th>
@@ -932,50 +808,7 @@ November 13, 2025
 </tr>
 </tbody>
 </table>
-</div><div class="column" style="width:10%;">
-
-</div><div class="column" style="width:40%;">
-<p><br></p>
-<p>Compared to before:</p>
-<table>
-<thead><tr class="header">
-<th>Interval</th>
-<th>Marg. survival</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>(0 - 5]</td>
-<td>1</td>
-</tr>
-<tr class="even">
-<td>(5 - 10]</td>
-<td>0.7436</td>
-</tr>
-<tr class="odd">
-<td>(10 - 15]</td>
-<td>0.6841</td>
-</tr>
-<tr class="even">
-<td>(15 - 20]</td>
-<td>0.6121</td>
-</tr>
-<tr class="odd">
-<td>(20 - 25]</td>
-<td>0.4236</td>
-</tr>
-<tr class="even">
-<td>(25 - 30]</td>
-<td>0.4236</td>
-</tr>
-<tr class="odd">
-<td>(30 - 35]</td>
-<td>0.4236</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><br></p>
+<!-- ::: --><!-- ::: {.column width="10%"} --><!-- ::: --><!-- ::: {.column width="40%"} --><!-- <br> --><!-- Compared to before: --><!-- | Interval | Marg. survival| --><!-- |-------|------| --><!-- | (0 - 5]  | 1 | --><!-- | (5 - 10] | 0.7436 | --><!-- | (10 - 15] | 0.6841 | --><!-- | (15 - 20] | 0.6121 | --><!-- | (20 - 25] | 0.4236 | --><!-- | (25 - 30] | 0.4236 | --><!-- | (30 - 35] | 0.4236 | --><!-- ::: --><!-- :::: --><p><br></p>
 <p>We’ve estimated the survival function, but maybe we’d also like some confidence intervals around this probability…</p>
 </section><section id="km-confidence-intervals" class="slide level2"><h2>KM confidence intervals</h2>
 <p><span class="math inline">\(d_i\)</span>: total number of <u>events</u> at time <span class="math inline">\(t_i\)</span>; <span class="math inline">\(Y_i\)</span>: total number <u>at risk</u> at time <span class="math inline">\(t_i\)</span> (under observation, not failed)</p>
@@ -997,7 +830,7 @@ November 13, 2025
 <p>One way to avoid this is by using the <span class="alert">complementary log-log transformation</span></p>
 <ul>
 <li><p>Recall that the cumulative hazard function <span class="math inline">\(\Lambda(t)=-\log S(t)\)</span></p></li>
-<li><p>So, the complementary log-log transformation gives us:</p></li>
+<li><p>So, the complementary log-log transformation looks at the log of the cumulative hazard:</p></li>
 </ul>
 <p><span class="math display">\[\log\left[-\log S(t)\right] = \log\left[\Lambda(t)\right]\]</span></p>
 <p><br></p>
@@ -1007,13 +840,13 @@ November 13, 2025
 <p><br></p>
 <p>The variance for <span class="math inline">\(\log\left[\widehat{\Lambda}(t)\right]\)</span> is: <span class="math display">\[Var\left[\log\left[\widehat{\Lambda}(t)\right]\right] = \frac{Var\left[\widehat S(t)\right]}{\left(\widehat S(t) \log\left[\widehat S(t)\right]\right)^2}\]</span></p>
 <p><br></p>
-<p>This means the confidence interval for <span class="math inline">\(\log\left[\widehat{\Lambda}(t)\right]\)</span> is: <span class="math display">\[\widehat \Lambda(t) \pm Z_{1-\alpha/2} \times \sqrt{ \frac{Var\left[\widehat S(t)\right]}{\left(\widehat S(t) \log\left[\widehat S(t)\right]\right)^2} } \Rightarrow\widehat \Lambda(t) \pm Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\]</span></p>
+<p>This means the confidence interval for <span class="math inline">\(\log\left[\widehat{\Lambda}(t)\right]\)</span> is: <span class="math display">\[\log\left[\widehat \Lambda(t)\right] \pm Z_{1-\alpha/2} \times \sqrt{ Var\left[\widehat S(t)\right]/\left(\widehat S(t) \log\left[\widehat S(t)\right]\right)^2}  \Rightarrow\log\left[\widehat \Lambda(t)\right] \pm Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\]</span></p>
 </section><section id="km-confidence-intervals-3" class="slide level2"><h2>KM confidence intervals</h2>
 <p><span class="alert">Complementary log-log transformation</span>: <span class="math inline">\(\log\left[-\log S(t)\right] = \log\left[\Lambda(t)\right]\)</span></p>
 <p><br></p>
-<p>This means the confidence interval for <span class="math inline">\(\log\left[\widehat{\Lambda}(t)\right]\)</span> is: <span class="math display">\[\widehat \Lambda(t) \pm Z_{1-\alpha/2} \times \sqrt{ \frac{Var\left[\widehat S_{KM}(t)\right]}{\left(\widehat S_{KM}(t) \log\left[\widehat S_{KM}(t)\right]\right)^2} } \Rightarrow\widehat \Lambda(t) \pm Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\]</span></p>
+<p>This means the confidence interval for <span class="math inline">\(\log\left[\widehat{\Lambda}(t)\right]\)</span> is: <span class="math display">\[\log\left[\widehat \Lambda(t)\right] \pm Z_{1-\alpha/2} \times \sqrt{ Var\left[\widehat S(t)\right]/\left(\widehat S(t) \log\left[\widehat S(t)\right]\right)^2 } \Rightarrow\log\left[\widehat \Lambda(t)\right] \pm Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\]</span></p>
 <p><br></p>
-<p>Back-transforming this to <span class="math inline">\(\widehat S_{KM}(t)\)</span> gets us the confidence interval: <span class="math display">\[\left(\widehat S_{KM}(t)^{\exp\left\{Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\right\}}, ~ \widehat S_{KM}(t)^{\exp\left\{-Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\right\}}\right)\]</span></p>
+<p>If we use <span class="math inline">\(\widehat S_{KM}(t)\)</span> for every <span class="math inline">\(\widehat S(t)\)</span>, and back-transform the above to be a confidence interval around <span class="math inline">\(\widehat S_{KM}(t)\)</span>, we would get: <span class="math display">\[\left(\widehat S_{KM}(t)^{\exp\left\{Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\right\}}, ~ \widehat S_{KM}(t)^{\exp\left\{-Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\right\}}\right)\]</span></p>
 </section><section id="nelson-aalen-estimator-of-lambdat" class="slide level2"><h2>Nelson-Aalen estimator of <span class="math inline">\(\Lambda(t)\)</span>
 </h2>
 <p>We can also use the KM estimator <span class="math inline">\(\widehat{S}_{KM}(t)\)</span> to get an estimate of the cumulative hazard function: <span class="math display">\[\widehat{\Lambda}_{KM}(t) = -\log\left[\widehat{S}_{KM}(t)\right]\]</span></p>
@@ -1237,10 +1070,10 @@ November 13, 2025
 <p>Under the null hypothesis <span class="math inline">\(H_0\)</span>, every subject at risk at time <span class="math inline">\(t_i\)</span> has the <u>same probability</u> of experiencing an event at time <span class="math inline">\(t_i\)</span> regardless of group</p>
 <ul>
 <li>
-<p>Under <span class="math inline">\(H_0\)</span>, the expected number of subjects in group 1 who experience an event at time <span class="math inline">\(t_i\)</span> is <span class="math inline">\(E_{1i} = E[d_{1i}] = d_i \frac{Y_{1i}}{Y_i}\)</span></p>
+<p>Under <span class="math inline">\(H_0\)</span>:</p>
 <ul>
-<li>The variance is then <span class="math inline">\(V_{1i} = Var[d_{1i}] = d_i \times \frac{Y_{1i}}{Y_i}\times\frac{Y_{2i}}{Y_i}\times\frac{Y_i - d_i}{Y_i - 1}\)</span>
-</li>
+<li><p>the expected number of subjects in group 1 who experience an event at time <span class="math inline">\(t_i\)</span> is <span class="math inline">\(E_{1i} = E[d_{1i}] = d_i \frac{Y_{1i}}{Y_i}\)</span></p></li>
+<li><p>the variance is <span class="math inline">\(V_{1i} = Var[d_{1i}] = d_i \times \frac{Y_{1i}}{Y_i}\times\frac{Y_{2i}}{Y_i}\times\frac{Y_i - d_i}{Y_i - 1}\)</span></p></li>
 </ul>
 </li>
 </ul></section><section id="logrank-tests" class="slide level2"><h2>Logrank tests</h2>
@@ -1249,12 +1082,17 @@ November 13, 2025
 <p>If we choose <span class="math inline">\(W(t_i) = 1\)</span> for all <span class="math inline">\(t\)</span>, we get the <span class="alert">Mantel-Haenszel</span> or <span class="alert">logrank</span> test statistic:</p>
 <p><span class="math display">\[Z = \frac{\sum_{i=1}^D (d_{1i} - E_{1i})}{\sqrt{\sum_{i=1}^D V_{1i}}}\]</span></p>
 <ul>
+<li><p>It looks a little bit like a chi-squared test!</p></li>
 <li><p>We can compare this test statistic to a standard Normal distribution to determine whether we should reject <span class="math inline">\(H_0\)</span></p></li>
 <li><p>If we reject, this means that we have evidence that people in group 1 <u>do not</u> have the same probability of experiencing an event at time <span class="math inline">\(t_i\)</span> as the people in group 2!</p></li>
 </ul></section><section id="proportional-hazards" class="slide level2"><h2>Proportional hazards</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>The logrank test is <span class="alert">most powerful</span> when the alternative looks at a hazard for group 2 that is <span class="alert">different but proportional</span> to the group 1 hazard: <span class="math inline">\(\lambda_2(t) = \alpha \lambda_1(t)\)</span></p>
+<ul>
+<li>Can also rewrite this in terms of survival functions: <span class="math inline">\(S_2(t) = S_1(t)^\alpha\)</span>
+</li>
+</ul>
 </div><div class="column" style="width:50%;">
 <p><img data-src="prop-hazards.png" width="1000"></p>
 </div>
@@ -1304,9 +1142,15 @@ sixmp=1 21        9     19.3      5.46      16.8
  Chisq= 16.8  on 1 degrees of freedom, p= 4e-05 </code></pre>
 </div>
 </div>
-<p>A test statistic of 16.8 with a p-value of 0.00004… probably pretty different!</p>
+<p>A chi-squared test statistic of 16.8 (<span class="math inline">\(Z=4.1\)</span>) with a p-value of 0.00004… probably pretty different!</p>
 <ul>
-<li>Can conclude that 6-MP treatment group has higher relapse-free survival than placebo (higher probability that the treatment group’s relapse time is greater that some time <span class="math inline">\(t\)</span> compared to the placebo group)</li>
+<li>
+<p>Can conclude that 6-MP treatment group has higher relapse-free survival than placebo</p>
+<ul>
+<li><p>AKA: higher probability that the treatment group’s relapse time is greater that some time <span class="math inline">\(t\)</span> compared to the placebo group</p></li>
+<li><p>AKA: treatment group takes longer to experience relapse, on average, compared to the placebo group</p></li>
+</ul>
+</li>
 </ul></section><section id="weighted-logrank-tests" class="slide level2"><h2>Weighted logrank tests</h2>
 <p>While the logrank test will still work work under <u>non-proportional hazards</u>, we might want to choose a different weight function <span class="math inline">\(W(t_i)\)</span> that would allow us to weight differences in the observed and expected number of events (<span class="math inline">\(d_{1i} - E_{1i}\)</span>) differently over time</p>
 <p><br></p>
@@ -1317,10 +1161,24 @@ sixmp=1 21        9     19.3      5.46      16.8
 <p><span class="alert">Fleming &amp; Harrington</span> weights: <span class="math inline">\(W_{p,q}(t_i) = \left[\widehat{S}_{KM}(t_{i-1})\right]^p\left[1-\widehat{S}_{KM}(t_{i-1})\right]^q\)</span></p>
 <ul>
 <li><p><span class="math inline">\(p=q=0\)</span> gives the unweighted logrank statistic</p></li>
-<li><p><span class="math inline">\(p=1\)</span>, <span class="math inline">\(q=0\)</span> gives the generalized Wilcoxon logrank statistic</p></li>
+<li><p><span class="math inline">\(p=1\)</span>, <span class="math inline">\(q=0\)</span> gives the generalized Wilcoxon logrank statistic (weight to early failures)</p></li>
+<li><p><span class="math inline">\(p=0\)</span>, <span class="math inline">\(q=1\)</span> gives more weight to late failure times</p></li>
 </ul>
 </li>
-</ul></section><section id="take-home-messages" class="slide level2"><h2>Take home messages</h2>
+</ul>
+<p>No objectively “correct” choice for weights – it depends on whether early or late events are more important in your research context</p>
+</section><section id="non-proportional-hazards" class="slide level2"><h2>Non-proportional hazards</h2>
+<div class="columns">
+<div class="column" style="width:75%;">
+<p><img data-src="Real-study-examples-on-non-proportional-hazards-NPH-patterns-a-Delayed-treatment.png" width="1200"></p>
+</div><div class="column" style="width:25%;">
+<p><em>Figure from “Treating non-responders: Pitfalls and implications for cancer immunotherapy trial design” by Xu, Park, Liu, &amp; Zhu (2020)</em></p>
+<ul>
+<li>Whether you care about early success or late success depends on your health context!</li>
+</ul>
+</div>
+</div>
+</section><section id="take-home-messages" class="slide level2"><h2>Take home messages</h2>
 <ul>
 <li>Can be hard to know that we’re right about our assumed probability distribution for survival time</li>
 </ul>
@@ -1336,7 +1194,12 @@ sixmp=1 21        9     19.3      5.46      16.8
 </ul>
 <p><br></p>
 <ul>
-<li>We can plot the survival function as a curve over time, and we can compare whether curves for different groups differ by using a logrank test</li>
+<li>
+<p>We can plot the survival function as a curve over time, and we can compare whether curves for different groups differ by using a logrank test</p>
+<ul>
+<li>We can use a weighted logrank test when we have non-proportional hazards, but we need to choose whether we care more about differences between early or late failures</li>
+</ul>
+</li>
 </ul>
 <p><img src="POPUHEALSMPH_color-flush.png" class="slide-logo"></p>
 <div class="footer footer-default">

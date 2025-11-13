@@ -75,10 +75,6 @@ plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-10-2/slides-10-2
    - When we don't have censoring
    
    - When we do have censoring
-   
-      - Strategy 1: Uniform censoring adjustment with life tables
-   
-      - Strategy 2: Kaplan-Meier estimator
 
 - Confidence intervals for $S(t)$
    
@@ -257,83 +253,81 @@ Consider some data from the 6-MP leukemia trial we discussed in lecture 10.1
 :::
 
 ::: {.column width="50%"}
-::: {.fragment}
 How do we account for censoring when estimating $S(t)$?
 
-- Could adjust the beginning totals for censoring
+<!-- - Could adjust the beginning totals for censoring -->
 
-   - Assume censoring occurs [uniformly]{.alert} throughout the interval $\Rightarrow$ censored participants are at risk for half the interval (on average)
+<!--    - Assume censoring occurs [uniformly]{.alert} throughout the interval $\Rightarrow$ censored participants are at risk for half the interval (on average) -->
 
-- [Adjusted total at risk]{.alert} in an interval is then:
-$$\begin{align*}\text{Adju. total} &= (\text{Uncens. total}) + (\text{# lost})/2\\
-& = (\text{Beg. total}) - (\text{# lost}) + (\text{# lost})/2\\
-& = (\text{Beg. total}) - (\text{# lost})/2\end{align*}$$
-:::
-:::
-::::
-
----
-
-## Life table estimates
-
-:::: {.columns}
-::: {.column width="50%"}
-This gets us:
-
-| Interval | Beginning total | # lost | Adju. total | # relapsed |
-|---------|----------|---------|---------|
-| (0 - 5] | 21 | 0 | 21 | 0 |
-| (5 - 10] | 21 | 3 | 19.5 | 5 |
-| (10 - 15] | 13 | 1 | 12.5 | 1 |
-| (15 - 20] | 11 | 3 | 9.5 | 1 |
-| (20 - 25] | 7 | 1 | 6.5 | 2 |
-| (25 - 30] | 4 | 0 | 4 | 0 |
-| (30 - 35] | 4 | 4 | 2 | 0 |
-:::
-
-::: {.column width="50%"}
-Then we can compute the survival proportion for each interval:
-$$(0 - 5]: \frac{21-0}{21} = 1$$
-$$(5 - 10]: \frac{19.5-5}{19.5} = 14.5/19.5 = 0.74 \Rightarrow $$ 75% of those not relapsed at the end of month 5 have not relapsed by the end of the 10th month
-
-::: {.fragment}
-$$(10 - 15]: \frac{12.5-1}{12.5} = 11.5/12.5 = 0.92 \Rightarrow $$ 92% of those not relapsed at the end of month 10 have not relapsed by the end of the 15th month
-:::
+<!-- - [Adjusted total at risk]{.alert} in an interval is then: -->
+<!-- $$\begin{align*}\text{Adju. total} &= (\text{Uncens. total}) + (\text{# lost})/2\\ -->
+<!-- & = (\text{Beg. total}) - (\text{# lost}) + (\text{# lost})/2\\ -->
+<!-- & = (\text{Beg. total}) - (\text{# lost})/2\end{align*}$$ -->
 :::
 ::::
 
----
+<!-- --- -->
 
-## Life table estimates
+<!-- ## Life table estimates -->
 
-Then we can use conditional probability to compute the surviving proportions
+<!-- :::: {.columns} -->
+<!-- ::: {.column width="50%"} -->
+<!-- This gets us: -->
 
-$$P(T > 10) = P(T>5) \times \frac{P(T>10)}{P(T>5)} = 1 \times 0.74 = 0.74$$
+<!-- | Interval | Beginning total | # lost | Adju. total | # relapsed | -->
+<!-- |---------|----------|---------|---------| -->
+<!-- | (0 - 5] | 21 | 0 | 21 | 0 | -->
+<!-- | (5 - 10] | 21 | 3 | 19.5 | 5 | -->
+<!-- | (10 - 15] | 13 | 1 | 12.5 | 1 | -->
+<!-- | (15 - 20] | 11 | 3 | 9.5 | 1 | -->
+<!-- | (20 - 25] | 7 | 1 | 6.5 | 2 | -->
+<!-- | (25 - 30] | 4 | 0 | 4 | 0 | -->
+<!-- | (30 - 35] | 4 | 4 | 2 | 0 | -->
+<!-- ::: -->
 
-$$P(T > 15) = P(T>5) \times \frac{P(T>10)}{P(T>5)} \times \frac{P(T>15)}{P(T>10)} = 1 \times 0.74 \times 0.92 = 0.68$$
+<!-- ::: {.column width="50%"} -->
+<!-- Then we can compute the survival proportion for each interval: -->
+<!-- $$(0 - 5]: \frac{21-0}{21} = 1$$ -->
+<!-- $$(5 - 10]: \frac{19.5-5}{19.5} = 14.5/19.5 = 0.74 \Rightarrow $$ 75% of those not relapsed at the end of month 5 have not relapsed by the end of the 10th month -->
 
----
+<!-- ::: {.fragment} -->
+<!-- $$(10 - 15]: \frac{12.5-1}{12.5} = 11.5/12.5 = 0.92 \Rightarrow $$ 92% of those not relapsed at the end of month 10 have not relapsed by the end of the 15th month -->
+<!-- ::: -->
+<!-- ::: -->
+<!-- :::: -->
 
-## Life table estimates
+<!-- --- -->
 
-Which gets us:
+<!-- ## Life table estimates -->
 
-| Interval | Beginning total | # lost | Adju. total | # relapsed | Cond. interval survival | Marg. survival|
-|-------|------|-----|-----|-----|------|------|
-| (0 - 5] | 21 | 0 | 21 | 0 | 1 | 1 |
-| (5 - 10] | 21 | 3 | 19.5 | 5 | 0.7436 | 0.7436 |
-| (10 - 15] | 13 | 1 | 12.5 | 1 | 0.92 | 0.6841 |
-| (15 - 20] | 11 | 3 | 9.5 | 1 | 0.8947 | 0.6121 |
-| (20 - 25] | 7 | 1 | 6.5 | 2 | 0.6923 | 0.4236 |
-| (25 - 30] | 4 | 0 | 4 | 0 | 1 | 0.4236 |
-| (30 - 35] | 4 | 4 | 2 | 0 | 1 | 0.4236 |
+<!-- Then we can use conditional probability to compute the surviving proportions -->
+
+<!-- $$P(T > 10) = P(T>5) \times \frac{P(T>10)}{P(T>5)} = 1 \times 0.74 = 0.74$$ -->
+
+<!-- $$P(T > 15) = P(T>5) \times \frac{P(T>10)}{P(T>5)} \times \frac{P(T>15)}{P(T>10)} = 1 \times 0.74 \times 0.92 = 0.68$$ -->
+
+<!-- --- -->
+
+<!-- ## Life table estimates -->
+
+<!-- Which gets us: -->
+
+<!-- | Interval | Beginning total | # lost | Adju. total | # relapsed | Cond. interval survival | Marg. survival| -->
+<!-- |-------|------|-----|-----|-----|------|------| -->
+<!-- | (0 - 5] | 21 | 0 | 21 | 0 | 1 | 1 | -->
+<!-- | (5 - 10] | 21 | 3 | 19.5 | 5 | 0.7436 | 0.7436 | -->
+<!-- | (10 - 15] | 13 | 1 | 12.5 | 1 | 0.92 | 0.6841 | -->
+<!-- | (15 - 20] | 11 | 3 | 9.5 | 1 | 0.8947 | 0.6121 | -->
+<!-- | (20 - 25] | 7 | 1 | 6.5 | 2 | 0.6923 | 0.4236 | -->
+<!-- | (25 - 30] | 4 | 0 | 4 | 0 | 1 | 0.4236 | -->
+<!-- | (30 - 35] | 4 | 4 | 2 | 0 | 1 | 0.4236 | -->
 
 
-This method requires us to come up with the intervals [on our own]{.underline}
+<!-- This method requires us to come up with the intervals [on our own]{.underline} -->
 
-- Some of these intervals have no events or censoring, some have multiple
+<!-- - Some of these intervals have no events or censoring, some have multiple -->
 
-- Who's to say what's the correct interval? ... or is there a better way?
+<!-- - Who's to say what's the correct interval? ... or is there a better way? -->
 
 ---
 
@@ -360,7 +354,7 @@ $$d_i = Y_i - s_i$$
 
 ## KM estimator 
 
-Instead of looking at neatly-spaced calendar time intervals (like we did before), the KM estimator calculates a conditional survival probability for each time interval in which [only 1 event occurs]{.underline}, and then multiplies them together:
+The KM estimator calculates a conditional survival probability for each time interval in which [only 1 event occurs]{.underline}, and then multiplies them together:
 
 $$\begin{align*}\widehat{S}_{KM}(t) &= P(T>t)\\
 &= P(T>t | T > t_k) \times P(T>t_k | T>t_{k-1})\times \dots \times P(T>t_1)\\
@@ -377,22 +371,22 @@ Back to our 6-MP example, with event and censoring times: 6, 6, 6, 7, 10, 13, 16
 | $t_i$ | $d_i$ | $Y_i$ | $\widehat{S}_{KM}(t)$ | 
 |-------|------|-----|-----|
 | 6 | 3 | 21 | [$1-\frac{3}{21}=0.857$]{.fragment fragment-index=1} |
-| 7 | 1 | 17 | [$0.857(1-\frac{1}{17})=0.807$]{.fragment fragment-index=1} |
-| 10 | 1 | 15 | [$0.807(1-\frac{1}{15})=0.753$]{.fragment fragment-index=1} |
-| 13 | 1 | 12 | [$0.753(1-\frac{1}{12})=0.690$]{.fragment fragment-index=1} |
-| 16 | 1 | 11 | [$0.690(1-\frac{1}{11})=0.628$]{.fragment fragment-index=1} |
-| 22 | 1 | 7 | [$0.628(1-\frac{1}{7})=0.538$]{.fragment fragment-index=1} |
-| 23 | 1 | 6 | [$0.538(1-\frac{1}{16})=0.448$]{.fragment fragment-index=1} |
+| 7 | 1 | 17 | [$0.857(1-\frac{1}{17})=0.807$]{.fragment fragment-index=2} |
+| 10 | 1 | 15 | [$0.807(1-\frac{1}{15})=0.753$]{.fragment fragment-index=3} |
+| 13 | 1 | 12 | [$0.753(1-\frac{1}{12})=0.690$]{.fragment fragment-index=3} |
+| 16 | 1 | 11 | [$0.690(1-\frac{1}{11})=0.628$]{.fragment fragment-index=3} |
+| 22 | 1 | 7 | [$0.628(1-\frac{1}{7})=0.538$]{.fragment fragment-index=3} |
+| 23 | 1 | 6 | [$0.538(1-\frac{1}{16})=0.448$]{.fragment fragment-index=3} |
 
 ---
 
 ## Example: 6-MP
 
-:::: {.columns}
+<!-- :::: {.columns} -->
 
-::: {.column width="50%"}
+<!-- ::: {.column width="50%"} -->
 
-If we were to wite our KM estimates in the style of a life table, this would look like:
+If we were to wite our KM estimates in the style of a life table (which shows survival probabilities over intervals), this would look like:
 
 | $t$ | $\widehat{S}_{KM}(t)$ | 
 |-------|------|
@@ -404,30 +398,30 @@ If we were to wite our KM estimates in the style of a life table, this would loo
 | [16 - 22) | 0.538 |
 | [22 - 23) | 0.448 |
 
-:::
+<!-- ::: -->
 
-::: {.column width="10%"}
-:::
+<!-- ::: {.column width="10%"} -->
+<!-- ::: -->
 
-::: {.column width="40%"}
+<!-- ::: {.column width="40%"} -->
 
-<br>
+<!-- <br> -->
 
-Compared to before:
+<!-- Compared to before: -->
 
-| Interval | Marg. survival|
-|-------|------|
-| (0 - 5]  | 1 |
-| (5 - 10] | 0.7436 |
-| (10 - 15] | 0.6841 |
-| (15 - 20] | 0.6121 |
-| (20 - 25] | 0.4236 |
-| (25 - 30] | 0.4236 |
-| (30 - 35] | 0.4236 |
+<!-- | Interval | Marg. survival| -->
+<!-- |-------|------| -->
+<!-- | (0 - 5]  | 1 | -->
+<!-- | (5 - 10] | 0.7436 | -->
+<!-- | (10 - 15] | 0.6841 | -->
+<!-- | (15 - 20] | 0.6121 | -->
+<!-- | (20 - 25] | 0.4236 | -->
+<!-- | (25 - 30] | 0.4236 | -->
+<!-- | (30 - 35] | 0.4236 | -->
 
-:::
+<!-- ::: -->
 
-::::
+<!-- :::: -->
 
 <br>
 
@@ -468,7 +462,7 @@ One way to avoid this is by using the [complementary log-log transformation]{.al
 
 - Recall that the cumulative hazard function $\Lambda(t)=-\log S(t)$
 
-- So, the complementary log-log transformation gives us:
+- So, the complementary log-log transformation looks at the log of the cumulative hazard:
 
 $$\log\left[-\log S(t)\right] = \log\left[\Lambda(t)\right]$$
 
@@ -490,7 +484,7 @@ $$Var\left[\log\left[\widehat{\Lambda}(t)\right]\right] = \frac{Var\left[\wideha
 <br>
 
 This means the confidence interval for $\log\left[\widehat{\Lambda}(t)\right]$ is:
-$$\widehat \Lambda(t) \pm Z_{1-\alpha/2} \times \sqrt{ \frac{Var\left[\widehat S(t)\right]}{\left(\widehat S(t) \log\left[\widehat S(t)\right]\right)^2} } \Rightarrow\widehat \Lambda(t) \pm Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)$$
+$$\log\left[\widehat \Lambda(t)\right] \pm Z_{1-\alpha/2} \times \sqrt{ Var\left[\widehat S(t)\right]/\left(\widehat S(t) \log\left[\widehat S(t)\right]\right)^2}  \Rightarrow\log\left[\widehat \Lambda(t)\right] \pm Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)$$
 
 
 ---
@@ -502,11 +496,11 @@ $$\widehat \Lambda(t) \pm Z_{1-\alpha/2} \times \sqrt{ \frac{Var\left[\widehat S
 <br>
 
 This means the confidence interval for $\log\left[\widehat{\Lambda}(t)\right]$ is:
-$$\widehat \Lambda(t) \pm Z_{1-\alpha/2} \times \sqrt{ \frac{Var\left[\widehat S_{KM}(t)\right]}{\left(\widehat S_{KM}(t) \log\left[\widehat S_{KM}(t)\right]\right)^2} } \Rightarrow\widehat \Lambda(t) \pm Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)$$
+$$\log\left[\widehat \Lambda(t)\right] \pm Z_{1-\alpha/2} \times \sqrt{ Var\left[\widehat S(t)\right]/\left(\widehat S(t) \log\left[\widehat S(t)\right]\right)^2 } \Rightarrow\log\left[\widehat \Lambda(t)\right] \pm Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)$$
 
 <br>
 
-Back-transforming this to $\widehat S_{KM}(t)$ gets us the confidence interval:
+If we use $\widehat S_{KM}(t)$ for every $\widehat S(t)$, and back-transform the above to be a confidence interval around $\widehat S_{KM}(t)$, we would get:
 $$\left(\widehat S_{KM}(t)^{\exp\left\{Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\right\}}, ~ \widehat S_{KM}(t)^{\exp\left\{-Z_{1-\alpha/2} \times \widehat{SE}_{\Lambda}(t)\right\}}\right)$$
 
 ---
@@ -649,9 +643,11 @@ We can then make a contingency table for events and non-events at time $t_i$:
 
 Under the null hypothesis $H_0$, every subject at risk at time $t_i$ has the [same probability]{.underline} of experiencing an event at time $t_i$ regardless of group
 
-- Under $H_0$, the expected number of subjects in group 1 who experience an event at time $t_i$ is $E_{1i} = E[d_{1i}] = d_i \frac{Y_{1i}}{Y_i}$
+- Under $H_0$: 
 
-   - The variance is then $V_{1i} = Var[d_{1i}] = d_i \times \frac{Y_{1i}}{Y_i}\times\frac{Y_{2i}}{Y_i}\times\frac{Y_i - d_i}{Y_i - 1}$
+   - the expected number of subjects in group 1 who experience an event at time $t_i$ is $E_{1i} = E[d_{1i}] = d_i \frac{Y_{1i}}{Y_i}$
+
+   - the variance is $V_{1i} = Var[d_{1i}] = d_i \times \frac{Y_{1i}}{Y_i}\times\frac{Y_{2i}}{Y_i}\times\frac{Y_i - d_i}{Y_i - 1}$
 
 
 ---
@@ -666,6 +662,8 @@ If we choose $W(t_i) = 1$ for all $t$, we get the [Mantel-Haenszel]{.alert} or [
 
 $$Z = \frac{\sum_{i=1}^D (d_{1i} - E_{1i})}{\sqrt{\sum_{i=1}^D V_{1i}}}$$
 
+- It looks a little bit like a chi-squared test!
+
 - We can compare this test statistic to a standard Normal distribution to determine whether we should reject $H_0$
 
 - If we reject, this means that we have evidence that people in group 1 [do not]{.underline} have the same probability of experiencing an event at time $t_i$ as the people in group 2!
@@ -677,6 +675,8 @@ $$Z = \frac{\sum_{i=1}^D (d_{1i} - E_{1i})}{\sqrt{\sum_{i=1}^D V_{1i}}}$$
 :::: {.columns}
 ::: {.column width="50%"}
 The logrank test is [most powerful]{.alert} when the alternative looks at a hazard for group 2 that is [different but proportional]{.alert} to the group 1 hazard: $\lambda_2(t) = \alpha \lambda_1(t)$
+
+- Can also rewrite this in terms of survival functions: $S_2(t) = S_1(t)^\alpha$
 :::
 
 ::: {.column width="50%"}
@@ -738,9 +738,13 @@ Curves look pretty proportional... Let's do a logrank test to see if these curve
 survdiff( Surv(time, relapse) ~ sixmp, data=drug6mp_long )
 ```
 
-A test statistic of 16.8 with a p-value of 0.00004... probably pretty different!
+A chi-squared test statistic of 16.8 ($Z=4.1$) with a p-value of 0.00004... probably pretty different!
 
-- Can conclude that 6-MP treatment group has higher relapse-free survival than placebo (higher probability that the treatment group's relapse time is greater that some time $t$ compared to the placebo group)
+- Can conclude that 6-MP treatment group has higher relapse-free survival than placebo
+
+   - AKA: higher probability that the treatment group's relapse time is greater that some time $t$ compared to the placebo group
+   
+   - AKA: treatment group takes longer to experience relapse, on average, compared to the placebo group
 
 ---
 
@@ -758,8 +762,28 @@ While the logrank test will still work work under [non-proportional hazards]{.un
 
    - $p=q=0$ gives the unweighted logrank statistic
    
-   - $p=1$, $q=0$ gives the generalized Wilcoxon logrank statistic
+   - $p=1$, $q=0$ gives the generalized Wilcoxon logrank statistic (weight to early failures)
    
+   - $p=0$, $q=1$ gives more weight to late failure times
+   
+No objectively "correct" choice for weights -- it depends on whether early or late events are more important in your research context
+   
+---
+
+## Non-proportional hazards
+
+:::: {.columns}
+::: {.column width="75%"}
+![ ](Real-study-examples-on-non-proportional-hazards-NPH-patterns-a-Delayed-treatment.png){width=1200}
+:::
+
+::: {.column width="25%"}
+*Figure from "Treating non-responders: Pitfalls and implications for cancer immunotherapy trial design" by Xu, Park, Liu, & Zhu (2020)*
+
+- Whether you care about early success or late success depends on your health context!
+:::
+::::
+
 ---
 
 ## Take home messages
@@ -777,3 +801,5 @@ While the logrank test will still work work under [non-proportional hazards]{.un
 <br>
 
 - We can plot the survival function as a curve over time, and we can compare whether curves for different groups differ by using a logrank test
+
+   - We can use a weighted logrank test when we have non-proportional hazards, but we need to choose whether we care more about differences between early or late failures

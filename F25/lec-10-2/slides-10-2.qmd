@@ -606,7 +606,7 @@ library(survival)
 data(drug6mp)
 
 ```
-```{r survival curve, out.width="90%"}
+```{r survival curve, out.width="80%"}
 km.6mp <- survfit( Surv(t2, relapse) ~ 1, data=drug6mp )
 plot(km.6mp, mark.time=T, xlab="Months since study start", ylab="Survival")
 ```

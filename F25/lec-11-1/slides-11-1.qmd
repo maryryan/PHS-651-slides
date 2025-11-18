@@ -1,0 +1,604 @@
+---
+format: 
+   revealjs:
+      theme: ["../theme/q-theme.scss"]
+      slide-number: c/t
+      logo: POPUHEALSMPH_color-flush.png
+      code-copy: true
+      center-title-slide: false
+      code-link: true
+      code-overflow: wrap
+      highlight-style: a11y
+      height: 1080
+      width: 1920
+      chalkboard: true
+      from: markdown+emoji
+      fragment: true
+      auto-stretch: false
+      pdf-separate-fragments: true
+execute: 
+   eval: true
+   echo: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r load libraries, echo=F}
+library(tidyverse)
+library(gridExtra)
+library(qrcode)
+```
+
+<h1>Lecture 11.1: Proportional hazard regression & the Cox model</h1>
+
+<h2>PHS 651: Advanced regression methods</h2>
+
+<hr>
+
+<h3>Mary Ryan Baumann, PhD</h3>
+
+<h3>November 18, 2025</h3>
+
+<br>
+
+::: {style="font-size: 75%;"}
+**Recording disclosure**
+
+*This class is being conducted in person, as well as over [Zoom]{.alert}. As the instructor, I will be [recording]{.alert} this session. I have disabled the recording feature for others so that no one else will be able to record this session. I will be posting this session to the course’s website.*
+
+*If you have privacy concerns and do not wish to appear in the recording, you may turn video off (click “stop video”) so that Zoom does not record you.*
+
+*The chat box is always open for discussion and questions to the entire class. You may also send messages privately to the instructor. Please note that Zoom saves all chat transcripts.*
+:::
+
+::: {.absolute bottom=100 left=260 width=1500}
+
+Slides found at: <https://maryryan.github.io/PHS-651-slides/F25/lec-11-1/slides-11-1>
+
+:::
+
+::: {.absolute bottom=50 left=100 width=150}
+```{r qr code, echo=F, fig.height=2, fig.width=2}
+plot(qr_code("https://maryryan.github.io/PHS-651-slides/F25/lec-11-1/slides-11-1"))
+```
+:::
+
+---
+
+## Recap: Estimating survival functions
+
+Last week we discussed how to estimate the survival function $S(t)$
+
+- Could assume $T$ follows a probability distribution [... but there's a lot of room for us to be wrong about the distribution]{.alert}
+
+- Could use a non-parametric method like [Kaplan-Meier]{.alert}
+
+<br>
+
+While KM estimates of $S(t)$ also allow us to estimate the cumulative hazard $\Lambda(t)$, this estimate doesn't perform well when your sample size is small
+
+- An alternative approach is the estimate $\Lambda(t)$ using the [Nelson-Aalen]{.alert} method
+
+- Typically we report $\widehat S_{KM}(t)$ and $\tilde \Lambda_{NA}(t)$
+
+To visualize how survival changes, we can plot $\widehat S_{KM}(t)$ over time to create a [survival curve]{.alert}
+
+---
+
+## Recap: Comparing survival curves
+
+We also discussed how to compare 2 (or more) survival curves via a [logrank test]{.alert}
+
+- The (unweighted) logrank test is most powerful under [proportional hazards]{.alert}
+
+- When we have evidence of non-proportional hazards, it might be of interest to give different weight to events that happen early vs late
+
+   - Several types of logrank test weights, including the Fleming-Harrington family of weights
+   
+<br>
+
+These methods work well when we're looking at a finite number of separate distinct groups. But what happens when we want to look at the impact of multiple covariates?
+
+- Much like in other types of statistical analysis, stratified hypothesis tests can only get us so far
+
+- Sounds like we need a regression method...
+
+---
+
+## Parametric proportional hazards regression
+
+Models for survival times are commonly specified in terms of the [(log) hazard function]{.alert} for an individual $i$: $\log[\lambda_i(t)]$
+
+- A parametric regression model for the (log) hazard based on an [exponential distribution]{.alert} for the survival times gets us:
+
+$$\log\left[\lambda_i(t)\right] = \beta_0 + \beta_1 x_{i1} + \dots + \beta_k x_{ik}$$
+
+
+This model is [parametric]{.alert} because $\lambda_i(t)$ is fully characterized by the regression coefficients $\beta_0, \dots, \beta_k$ we're estimating
+
+<br>
+
+$e^{\beta_0}$ is called the [baseline hazard]{.alert}, or the hazard when all covariates are 0
+
+- We also denote this as $\lambda_0(t)$
+
+
+
+---
+
+## Parametric proportional hazards regression
+
+$$\log\left[\lambda_i(t)\right] = \beta_0 + \beta_1 x_{i1} + \dots + \beta_k x_{ik}$$
+
+We call this type of model a [proportional hazards]{.alert} regression since the hazard for participant $i$ is a [constant multiple]{.underline} of the baseline hazard for all times $t$
+
+$$\lambda_i(t) = \lambda_0(t)e^{\beta_1 x_{i1} + \dots \beta_k x_{ik}}$$
+
+- Model does not incorporate the possibility for curve-crossing
+
+<br>
+
+The estimand of interest from this model is the [hazard ratio]{.alert} for participant $i$ with respect to participant $j$:
+$$\frac{\lambda_i(t)}{\lambda_j(t)} = e^{\beta_1(x_{i1} - x_{j1}) + \dots + \beta_k (x_{ik} - x_{jk})}$$
+
+
+---
+
+## Distributions for parametric regression
+
+Under an [exponential]{.alert} model, the baseline hazard is equal to: $h_0(t) = e^{\beta_0}$
+
+There are other distributions we could assume:
+
+- Weibull: $h_0(t) = \alpha \lambda t^{\alpha-1}$
+
+- Gompertz: $h_0(t) = \theta e^{\alpha t}$
+
+- Pareto: $h_0(t) = \theta/t$
+
+<br>
+
+But again, getting valid inference from a parametric regression model is highly dependent on choosing the [correct probability distribution]{.underline} to correctly model how the (baseline) [hazard behaves over time]{.underline}
+
+- Is there a less parametric way we can construct a regression?
+
+---
+
+## Cox proportional hazards model
+
+The [Cox proportional hazards model]{.alert} leaves the baseline hazard function $\lambda_0(t)$ unspecified:
+$$\log\left[\lambda_i(t)\right] = \beta_0(t) + \beta_1 x_{i1} + \dots + \beta_k x_{ik}$$
+
+$$\lambda_i(t) = \lambda_0(t)e^{\beta_1 x_{i1} + \dots + \beta_k x_{ik}}$$
+
+<br>
+
+We call this a [semi-parametric]{.alert} approach because we are only assuming a parametric form for the covariate effects $\beta_1, \dots \beta_k$
+
+- The traditional regression "intercept" is absorbed into the baseline hazard $\lambda_0(t)$
+
+---
+
+## Cox proportional hazards model
+
+$$\log\left[\lambda_i(t)\right] = \beta_0(t) + \beta_1 x_{i1} + \dots + \beta_k x_{ik}$$
+$$\lambda_i(t) = \lambda_0(t)e^{\beta_1 x_{i1} + \dots + \beta_k x_{ik}}$$
+
+Cox models are another example of a [proportional hazards]{.alert} regression since the hazard for participant $i$ is a constant multiple of the baseline hazard for all times $t$
+
+<br>
+
+This means that any regression coefficient $\beta_k$ can be interpreted as the [log hazard ratio]{.alert} comparing an individual $i$ with $x_{ik}$ that is 1 unit larger than an individual $j$, all else held constant
+$$\log\left[\frac{\lambda_i(t)}{\lambda_j(t)}\right] = \beta_k(x_{i1} - x_{j1}) = \beta_k$$
+
+   - *"Compared to an individual with $x_{k}$ that is one unit smaller, we estimate that an individual with $x_{k}$ that is one unit larger will have a hazard that is approximately $e^{\beta_k}$ times larger, all other covariates held constant"*
+
+---
+
+## Cox proportional hazards model
+
+$$\log\left[\lambda_i(t)\right] = \beta_0(t) + \beta_1 x_{i1} + \dots + \beta_k x_{ik}$$
+$$\lambda_i(t) = \lambda_0(t)e^{\beta_1 x_{i1} + \dots + \beta_k x_{ik}}$$
+
+This means that any regression coefficient $\beta_k$ can be interpreted as the [log hazard ratio]{.alert} comparing an individual $i$ with $x_{ik}$ that is 1 unit larger than an individual $j$, all else held constant
+$$\log\left[\frac{\lambda_i(t)}{\lambda_j(t)}\right] = \beta_k(x_{i1} - x_{j1}) = \beta_k$$
+
+- The hazard ratios from Cox models are sometimes interpreted as [risk ratios/relative risks]{.underline}
+
+   - This is only valid when the [baseline risk for the time period is small]{.underline} (see Sashegyi & Ferry [2017]!)
+   
+   - This is because we think of "risk" as being related to something that *might* happen, and "hazard" being related to something that *will* happen
+
+---
+
+## Cox model partial likelihood
+
+Because Cox models are semi-parametric, we estimate model parameters by maximizing the [partial likelihood]{.alert}
+
+$$L_p(\beta_1, \dots, \beta_k) = \prod_{i=1}^N \left[\frac{\exp(\beta_1 x_{i1} + \dots+ \beta_k x_{ik})}{\sum_{j\in \color{blue}{R(t_i)}}\exp(\beta_1 x_{j1}  + \dots+\beta_k x_{jk})}\right]^{\color{red}{c_i}}$$
+which does not depend on correct specification of the baseline hazard
+
+You don't need to internalize this equation, but can be helpful to see how some of the components fit together
+
+- $\color{red}{c_i}$ denotes a censoring indicator function (1=event observed, 0=censored)
+
+- $\color{blue}{R(t_i)}$ denotes [risk set]{.alert}, or the set of subjects who were at risk for an event at time $t_i$
+
+   - This means that censored observations are only included in the likelihood through the risk set (the denominator)
+   
+   - Once someone has their event (or is censored), they no longer contribute to the risk set in the denominator
+   
+   
+---
+
+## Cox model partial likelihood
+
+Because Cox models are semi-parametric, we estimate model parameters by maximizing the [partial likelihood]{.alert}
+
+$$L_p(\beta_1, \dots, \beta_k) = \prod_{i=1}^N \left[\frac{\exp(\beta_1 x_{i1} + \dots+ \beta_k x_{ik})}{\sum_{j\in \color{blue}{R(t_i)}}\exp(\beta_1 x_{j1}  + \dots+\beta_k x_{jk})}\right]^{\color{red}{c_i}}$$
+which does not depend on correct specification of the baseline hazard
+
+- $\color{red}{c_i}$ denotes a censoring indicator function (1=event observed, 0=censored)
+
+- $\color{blue}{R(t_i)}$ denotes [risk set]{.alert}, or the set of subjects who were at risk for an event at time $t_i$
+
+A partial likelihood is [less efficient]{.alert} (produces larger variance) than using a regression with a full (parametric) likelihood that is correctly specified
+
+- But the partial likelihood is [more robust]{.alert} than a parametric regression to misspecification - and we are very likely to misspecify the parametric regression!
+   
+---
+
+## Cox model partial likelihood
+
+The [conditional probability]{.alert} that participant $i$ with covariate values $x_{i1}, \dots, x_{ik}$ experiences an event at time $t_i$ given that exactly one person in the risk set experiences an event at that time is:
+$$\frac{\exp(\beta_1 x_{i1} + \beta_k x_{ik})}{\sum_{j\in R(t_i)}\exp(\beta_1 x_{j1} + \beta_k x_{jk})}$$
+
+- The partial likelihood is just multiplying up conditional probabilities over all (observed) events!
+
+- This is kind of like how the KM estimator of the survival function worked last week, but now we're just adjusting for additional covariates
+
+---
+
+## Tied event times
+
+Most of the intuitive theory for Cox models (but also KM survival and NA cumulative hazard estimators) build off of an assumption that we don't have any ["tied"]{.alert} event times
+
+- i.e., no two people have their event at the exact same moment
+
+<br>
+
+While this makes sense theoretically, we usually end up with at least some tied times in practice because we can't accurately observe everyone continuously
+
+- Sometimes we get interval censoring!
+
+
+---
+
+## Tied event times
+
+Two main types of methods are used to account for ties
+
+1. [Exact]{.alert} method: calculates conditional probability that all tied event times occur before all other observations in risk set
+
+   - This is computationally intensive
+
+<br>
+
+2. A less computationally intensive method is the [Efron approximation]{.alert}
+
+   - This allows for the multiple people who experience an event at time $t_i$ to contribute partially to the risk set at time $t_i$
+   
+   - [This is the recommended method]{.alert} - it's the default in R, but you need to specify `TIES=EFRON` in SAS
+
+
+---
+
+## Assumptions of the Cox model
+
+The Cox model doesn't make many assumptions but it's main ones are:
+
+1. Correct functional form of the covariates ([correct "mean" model]{.alert})
+
+2. Observations from each participant are [independent]{.alert} (no "clustering")
+
+   - You can relax this assumption... more on this later
+
+3. [Non-informative]{.alert} censoring (all non-administrative censoring is random)
+
+   - Common across most survival analysis methods
+
+4. [Proportional]{.alert} hazards
+
+<br>
+
+The main assumption we tend to focus on is the [proportional hazards]{.underline} (PH) assumption
+
+- We can assess this by plotting KM curves, or by calculating and plotting Schoenfeld residuals (more on this next week)
+
+---
+
+## Example: Laryngeal cancer
+
+We have data on 90 men diagnosed with cancer of the larynx between 1970-1978
+
+- Men entered the study when they began their first treatment (time origin)
+
+```{r larynx, echo=F}
+library(KMsurv)
+data(larynx)
+larynx <- larynx %>% 
+   mutate(age_grp = case_when((age >= 40 & age <50) ~ "[40-50)",
+                              (age >= 50 & age <60) ~ "[50-60)",
+                              (age >= 60 & age <70) ~ "[60-70)",
+                              age >= 70 ~ "70+"),
+          age_center = age - mean(age))
+
+larynx
+
+```
+
+If we want to understand how time to death might change for different disease stages, is there any variables we might want to condition on/include as covariates?
+
+. . .
+
+- Maybe age at diagnosis?
+
+---
+
+## Example: Laryngeal cancer
+
+First let's plot the unconditional KM curves for disease stage:
+
+```{r KM curves, out.width="80%"}
+library(survival)
+library(survminer)
+KM.age <- survfit( Surv(time, delta) ~ factor(stage), data=larynx )
+ggsurvplot(KM.age, mark.time=T, xlab="Months since 1st treatment", ylab="Survival")
+```
+
+---
+
+## Example: Laryngeal cancer
+
+What do we think about our proportional hazards assumption here?
+
+```{r KM curves2, out.width="80%", echo=F}
+ggsurvplot(KM.age, mark.time=T, xlab="Months since 1st treatment", ylab="Survival")
+```
+
+---
+
+## Example: Laryngeal cancer
+
+<br>
+
+What would our Cox model for this relationship would then look like?
+
+. . .
+
+$$\log\left[\lambda_i(t)\right] = \beta_0(t) + \beta_1 (\text{Age}_i) + \beta_2 (\text{Stage II}_i) + \beta_3 (\text{Stage III}_i) + \beta_4 (\text{Stage IV}_i)$$
+
+<br>
+
+[Let's run that model]{.alert}
+
+---
+
+## Example: Laryngeal cancer
+
+```{r cox}
+cox.model <- coxph( Surv(time, delta) ~ age + factor(stage), data=larynx )
+summary(cox.model)
+```
+
+- $e^{\beta_2(\text{Stage II})} = 1.15$: [Compared to those with Stage I cancer who were the same age at diagnosis, patients with Stage II cancer are expected to have a 15% higher hazard]{.fragment fragment-index=1}
+
+- $e^{\beta_3(\text{Stage III})} = 1.90$: [Compared to those with Stage I cancer who were the same age at diagnosis, patients with Stage III cancer are expected to have a 90% higher hazard]{.fragment fragment-index=1}
+
+- $e^{\beta_4(\text{Stage IV})} = 5.51$: [Patients with Stage IV cancer are expected to have a hazard that is 5.51 times higher compared to those with Stage I cancer who were the same age at diagnosis]{.fragment fragment-index=1}
+
+---
+
+## Cox model coefficient inference
+
+Just like any regression model, it's not enough to just get esimates of the regression coefficients
+
+- We need a way to perform [inference]{.alert} to understand how much uncertainty we have around that estimate
+
+A $(1-\alpha/2)\times 100$% confidence interval for a regression estimate takes the usual form:
+$$\widehat{\beta} \pm Z_{1-\alpha/2} \times SE(\widehat \beta)$$
+
+<br>
+
+Much like with logistic regression, though, it is more interpretable to [perform inference on the hazard ratio]{.alert} $e^\beta$ than the log hazard ratio
+ 
+ - This just means we need to exponentiate the upper and lower limits of the log hazard ratio confidence interval:
+ 
+ $$\left(\exp\left\{\widehat{\beta} - Z_{1-\alpha/2} \times SE(\widehat \beta)\right\}, \exp\left\{\widehat{\beta} + Z_{1-\alpha/2} \times SE(\widehat \beta)\right\}\right)$$
+ 
+ ---
+
+## Cox model standard errors
+
+$$\widehat{\beta} \pm Z_{1-\alpha/2} \times SE(\widehat \beta)$$
+
+How do we get $SE(\widehat \beta)$ though?
+
+<br>
+
+We can get the variance of $\widehat \beta$ by taking the negative second-derivative of the log-partial likelihood:
+$$Var(\widehat \beta) = \frac{- \partial^2 \log(L_p)}{\partial\beta^2}$$
+
+- The standard error is then: $SE(\widehat \beta) = \sqrt{Var(\widehat \beta)}$
+
+This doesn't have a nice formulaic equation... but the standard error is also reported in any Cox model output
+
+---
+
+## Example: Laryngeal cancer
+
+Our model from before:
+
+```{r cox2}
+cox.model <- coxph( Surv(time, delta) ~ age + factor(stage), data=larynx )
+summary(cox.model)$coef
+
+se.cox <- summary(cox.model)$coef[,3]
+
+CI.lower <- exp( summary(cox.model)$coef[,1] - qnorm(0.975)*se.cox )
+CI.upper <- exp( summary(cox.model)$coef[,1] + qnorm(0.975)*se.cox )
+```
+
+- 95% CI for $e^{\beta_2}$: (`r round(CI.lower[2], 4)`, `r round(CI.upper[2], 4)`) ["We are 95% confident that the true hazard ratio comparing patients with Stage II cancer to similarly-aged patients with Stage I cancer is between `r round(CI.lower[2], 4)` and `r round(CI.upper[2], 4)`."]{.fragment .alert}
+
+- 95% CI for $e^{\beta_3}$: (`r round(CI.lower[3], 4)`, `r round(CI.upper[3], 4)`)
+
+- 95% CI for $e^{\beta_4}$: (`r round(CI.lower[4], 4)`, `r round(CI.upper[4], 4)`)
+
+---
+
+## Cox model hypothesis tests
+
+There are also multiple ways we can perform a hypothesis test for Cox model regression coefficients
+
+- A regular [Wald/Z-statistic test]{.alert} is convenient for testing whether a single parameter estimate $\widehat \beta =\beta_{H0}$ (usually $\beta_{H0}=0 \Rightarrow e^{\beta_0}=1$)
+
+$$H_0: \beta = \beta_{H0}$$ 
+$$H_A: \beta \ne \beta_{H0}$$
+
+$$Z = \frac{\widehat \beta - \beta_{H0}}{SE(\widehat \beta)} \sim N(0,1)$$
+
+---
+
+## Cox model hypothesis tests
+
+There are also multiple ways we can perform a hypothesis test for Cox model regression coefficients
+
+- A [partial likelihood ratio test]{.alert} allows us to test whether multiple parameter estimates are $\beta_{H0}$
+
+   - Full model: $\lambda(t | x_1, \dots, x_p) = \lambda_0(t)e^{\beta_1 x_1 + \dots + \beta_p x_p}$
+   
+   - Reduced model: $\lambda(t | x_1, \dots, x_k) = \lambda_0(t)e^{\beta_1 x_1 + \dots + \beta_k x_k}$
+   
+$$H_0: \beta_{k+1} = \dots = \beta_p = \beta_{H0}$$
+$$H_A: \text{at least one of }\beta_{k+1}, \dots, \beta_p \ne \beta_{H0}$$
+
+$$T = 2\times \left\{\log(L_{p,full}) - \log(L_{p,reduced})\right\} \sim \chi^2_{p-k}$$
+
+---
+
+## Example: Laryngeal cancer
+
+Let's return to the question of how disease stage impacts time to death, conditional on age at diagnosis
+
+- We can compare the model that adjusts for cancer stage + age against a model that only adjusts for age:
+
+$$H_0: \beta_2 = \beta_3 = \beta_4 = 0$$
+$$H_A: \text{at least one of }\beta_2, \beta_3, \beta_4 \ne 0$$
+
+```{r lr test}
+#| output-location: column
+cox.red <- coxph( Surv(time, delta) ~ age,
+                  data=larynx)
+
+anova(cox.red, cox.model)
+```
+
+
+$T = 15.68$, p-value=0.001... Looks like at least one of the cancer stage coefficients is statistically-significantly non-zero
+
+---
+
+## Estimating the baseline hazard and survival functions
+
+We can also use the a Cox model to estimate the survival and hazard functions of a group of individuals with specific covariate values
+
+- Let $t_1 < \dots< t_D$ denote the event times and $d_i$ denote the number of events at time $t_i$. Then the cumulative hazard is:
+
+$$\widehat \Lambda_{0B}(t) = \sum_{t_i \le t} \frac{d_i}{\sum_{j\in R(t_i)}\exp(\widehat\beta_1 x_{j1} + \dots + \widehat\beta_k x_{jk})}$$
+
+is the [Breslow estimator]{.alert} of the baseline cumulative hazard
+
+- Reduces to the Nelson-Aalen estimator of the cumulative hazard function when no covariates are present
+
+
+---
+
+## Interpreting estimates of baseline survival function
+
+We can then transform the Breslow estimator to get an estimate of the baseline survival function:
+
+$$\widehat S_{0B}(t) = \exp\left[-\widehat \Lambda_{0B}(t)\right]$$
+
+$\widehat S_{0B}(t)$ is the [fitted]{.alert} survival function for:
+
+- $\vec{x}_{i}=0$ (all covariate values equal to 0)
+
+- proportional hazards assumption
+
+If the proportional hazards assumption is correct, $\widehat S_{0B}(t)$ can be thought of as an [adjusted survival function]{.alert}, where the adjustment is to the case where all subjects have $\vec{x}_{i}=0$
+
+<br>
+
+What if there are no observations where $\vec{x}_i=0$?
+
+- Then $\widehat S_{0B}(t)$ is [meaningless extrapolation]{.alert}
+
+- In that case, it might be a good idea to [center your covariates]{.alert}
+
+
+---
+
+## Estimating non-baseline hazard and survival functions
+
+Once we've estimated the baseline hazard and survival functions, we can use those to estimate cumulative hazard and survival functions for individuals with particular covariate values:
+
+$$\widehat \Lambda_*(t) = e^{(\widehat \beta_1 x_1^* + \widehat \beta_k x_k^*)}\widehat \Lambda_{0B}(t)$$
+
+$$\widehat S_*(t) = \left[\widehat S_{0B}(t)\right]^{\exp(\widehat \beta_1 x_1^* + \widehat \beta_k x_k^*)}$$
+
+<br>
+
+Note that because these estimates of $\Lambda(t)$ and $S(t)$ are based on a proportional hazards model, [the proportional hazards assumption will be forced onto whatever survival curves you estimate]{.alert}
+
+- This may or may not be accurate to what's observed in the data!
+
+---
+
+## Example: Laryngeal cancer
+
+Let's say we want to see what the survival curve would look like for someone with [stage III cancer who was 45 years old]{.alert} at diagnosis, and compare this to the baseline hazard
+
+- Issue: baseline hazard would be for 0-year-olds with stage I cancer $\Rightarrow$ these don't exist
+
+- Solution: mean center age (avg age is `r round(mean(larynx$age), 2)`)
+
+   - This means we want to look at someone with stage III cancer who is `r 45-round(mean(larynx$age), 2)` years below the mean and compare this to the baseline hazard (which is for 64.61-year-olds with stage I cancer)
+
+---
+
+## Example: Laryngeal cancer
+
+```{r est S, out.width="80%"}
+cox.model.center <- coxph( Surv(time, delta) ~ age_center + factor(stage), data=larynx )
+estSurv <- survfit( cox.model.center, newdata=data.frame(stage=c(3,1), age_center=c(-19.61,0)))
+ggsurvplot(estSurv, data=larynx, legend.labs=c("Stage III, 45yo", "Baseline (64yo, stage I)"))
+
+```
+
+---
+
+## Example: Laryngeal cancer
+
+Instead of plotting, we can also use this to get the survival function estimates of these 2 groups at each event time point
+
+```{r est S2}
+summary( estSurv )
+```
+
+And we could use this to estimate the probability that each of these groups survives to 5 years
+
+```{r est S3}
+summary(estSurv)$surv[length(which(summary(estSurv)$time<5)),]
+```
